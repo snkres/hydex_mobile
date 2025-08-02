@@ -1,0 +1,150 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hydex/src/widgets/backbtn.dart';
+import 'package:hydex/src/widgets/primary_btn.dart';
+
+class ULike extends StatefulWidget {
+  const ULike({super.key});
+
+  @override
+  State<ULike> createState() => _ULikeState();
+}
+
+class _ULikeState extends State<ULike> {
+  String? describeType;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(leading: CustomBackButton()),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 16,
+                    children: [
+                      Text(
+                        "What describes you best?",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 26,
+                        ),
+                      ),
+                      DescribeItem(
+                        title: "🏢 I have a venue to rent",
+                        description:
+                            "List your space and start getting bookings.",
+                        isSelected: describeType == "venue",
+                        onTap: () {
+                          setState(() {
+                            describeType = "venue";
+                          });
+                        },
+                      ),
+
+                      DescribeItem(
+                        title: "🎉 I’m organizing an event",
+                        description:
+                            "Book exclusive venues and promote your event.",
+                        isSelected: describeType == "event",
+                        onTap: () {
+                          setState(() {
+                            describeType = "event";
+                          });
+                        },
+                      ),
+                      DescribeItem(
+                        title: "📣 I want more exposure for my business",
+                        description: "Get discovered by high value guests.",
+                        isSelected: describeType == "exposure",
+                        onTap: () {
+                          setState(() {
+                            describeType = "exposure";
+                          });
+                        },
+                      ),
+                      DescribeItem(
+                        title: "🧩 Other",
+                        description: "Let’s explore how we can help.",
+                        isSelected: describeType == "other",
+                        onTap: () {
+                          setState(() {
+                            describeType = "other";
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: PrimaryButton(
+                      onTap: describeType != null
+                          ? () => context.push("/nationality")
+                          : null,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DescribeItem extends StatelessWidget {
+  const DescribeItem({
+    super.key,
+    required this.title,
+    required this.description,
+    required this.onTap,
+    this.isSelected = false,
+  });
+  final String title, description;
+  final VoidCallback onTap;
+  final bool isSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        width: MediaQuery.sizeOf(context).width,
+        height: 66,
+        duration: Duration(milliseconds: 300),
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          color: Color.fromRGBO(247, 247, 247, 1),
+          borderRadius: BorderRadius.circular(16),
+          border: isSelected
+              ? BoxBorder.all(color: Colors.black, width: 1)
+              : null,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+            ),
+            Text(
+              description,
+              style: TextStyle(
+                color: Color.fromRGBO(122, 127, 153, 1),
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
