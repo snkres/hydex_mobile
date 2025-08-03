@@ -1,4 +1,6 @@
+*.cpp linguist-detectable=false
 *.rb linguist-detectable=false
+*.cmake linguist-detectable=false
 *.json linguist-detectable=false
 *.html linguist-detectable=false
 *.xib linguist-detectable=false
