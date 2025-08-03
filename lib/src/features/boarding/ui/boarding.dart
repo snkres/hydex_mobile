@@ -1,10 +1,24 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hydex/src/widgets/primary_btn.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:hydex/src/features/boarding/ui/components/pick_type.dart';
+import 'package:hydex/src/features/boarding/ui/components/sign_up.dart';
 
-class BoardingScreen extends StatelessWidget {
+class BoardingScreen extends StatefulWidget {
   const BoardingScreen({super.key});
+
+  @override
+  State<BoardingScreen> createState() => _BoardingScreenState();
+}
+
+class _BoardingScreenState extends State<BoardingScreen> {
+  final pageController = PageController();
+
+  @override
+  void dispose() {
+    pageController.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +78,7 @@ class BoardingScreen extends StatelessWidget {
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
-                    constraints: BoxConstraints(minHeight: 500),
+                    constraints: BoxConstraints(maxHeight: 500),
                     isScrollControlled: true,
                     builder: (context) {
                       return Padding(
@@ -75,68 +89,30 @@ class BoardingScreen extends StatelessWidget {
                           right: 16,
                         ),
                         child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Sign up",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 22,
-                                  ),
+                            Center(
+                              child: Container(
+                                height: 4,
+                                width: 44,
+                                decoration: BoxDecoration(
+                                  color: Color(0xffDEDEDE),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
-                                SizedBox(height: 8),
-                                Text(
-                                  "Access the city’s most coveted spots, luxury deals, and curated experiences.",
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                SizedBox(height: 16),
-                                InternationalPhoneNumberInput(
-                                  autoFocus: true,
-                                  onInputChanged: (PhoneNumber number) {
-                                    print(number.phoneNumber);
-                                  },
-                                  // Set initial country to Egypt
-                                  initialValue: PhoneNumber(isoCode: 'EG'),
-                                  selectorConfig: const SelectorConfig(
-                                    selectorType:
-                                        PhoneInputSelectorType.BOTTOM_SHEET,
-                                    // You can use this to show the flag and code
-                                  ),
-                                  textFieldController: TextEditingController(),
-                                  keyboardType: TextInputType.phone,
-
-                                  inputDecoration: InputDecoration(
-                                    labelText: 'Phone Number',
-                                    floatingLabelAlignment:
-                                        FloatingLabelAlignment.start,
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.auto,
-
-                                    filled: true,
-                                    fillColor: Colors.grey.shade200,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12.0),
-                                      borderSide: BorderSide.none,
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            Expanded(
+                              child: PageView(
+                                controller: pageController,
+                                physics: const NeverScrollableScrollPhysics(),
+                                children: [
+                                  SizedBox(
+                                    child: PickUserType(
+                                      pageController: pageController,
                                     ),
                                   ),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  "By continuing, you agree to to Hyde’x Privacy and Terms",
-                                ),
-                                SizedBox(height: 16),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 16),
-                              child: PrimaryButton(
-                                onTap: () {
-                                  context.push("/otp");
-                                },
+                                  SizedBox(child: SignUpComponent()),
+                                ],
                               ),
                             ),
                           ],
@@ -149,6 +125,25 @@ class BoardingScreen extends StatelessWidget {
                   "Get Started",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
+              ),
+            ),
+            SizedBox(height: 24),
+            Center(
+              child: Text.rich(
+                TextSpan(
+                  text: "Already have an account? ",
+                  children: [
+                    TextSpan(
+                      text: "Sign in",
+                      recognizer: TapGestureRecognizer()..onTap = () {},
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ],

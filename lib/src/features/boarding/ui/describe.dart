@@ -86,7 +86,7 @@ class _DescribeState extends State<Describe> {
                     padding: const EdgeInsets.only(top: 16),
                     child: PrimaryButton(
                       onTap: describeType != null
-                          ? () => context.push("/nationality")
+                          ? () => context.push("/waitlist")
                           : null,
                     ),
                   ),

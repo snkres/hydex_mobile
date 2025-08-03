@@ -7,7 +7,7 @@ class AppTheme {
 
   static ThemeData theme() {
     return ThemeData(
-      textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black,),
+      textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black),
       scaffoldBackgroundColor: Colors.white,
       appBarTheme: AppBarTheme(backgroundColor: Colors.white),
       bottomSheetTheme: BottomSheetThemeData(
@@ -26,18 +26,17 @@ class AppTheme {
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        constraints: BoxConstraints(minHeight: 55),
         suffixIconColor: Color.fromRGBO(164, 164, 164, 1),
         filled: true,
 
         prefixIconConstraints: BoxConstraints(minWidth: 23),
-        hintStyle: TextStyle(
+        labelStyle: TextStyle(
           fontWeight: FontWeight.w400,
           fontSize: 15,
           color: Color.fromRGBO(164, 164, 164, 1),
         ),
 
-        border: OutlineInputBorder(
+        border: UnderlineInputBorder(
           borderSide: BorderSide.none,
 
           borderRadius: BorderRadius.circular(16),
@@ -45,14 +44,13 @@ class AppTheme {
         contentPadding: EdgeInsets.all(20),
         fillColor: Color.fromRGBO(246, 246, 246, 0.7),
       ),
-      radioTheme: RadioThemeData(
-        fillColor: WidgetStatePropertyAll(Color(0XFF03392E)),
-      ),
+
       filledButtonTheme: FilledButtonThemeData(
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(Color(0xff01271f)),
         ),
       ),
+
       textTheme: typography,
     );
   }

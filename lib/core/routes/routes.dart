@@ -16,7 +16,7 @@ class AppRoutes {
   AppRoutes(this.ref);
 
   final routes = GoRouter(
-    initialLocation: '/waitlist',
+    initialLocation: '/',
     routes: [
       GoRoute(
         path: "/",

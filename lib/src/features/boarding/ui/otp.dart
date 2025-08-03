@@ -31,6 +31,7 @@ class OtpScreen extends StatelessWidget {
                 Pinput(
                   autofocus: true,
                   keyboardType: TextInputType.number,
+                  onSubmitted: (_) => context.push("/password"),
                   defaultPinTheme: PinTheme(
                     width: 60,
                     height: 60,

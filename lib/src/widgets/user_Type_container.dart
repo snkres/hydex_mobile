@@ -1,0 +1,53 @@
+import 'package:flutter/material.dart';
+import 'package:hydex/src/widgets/custom_radio.dart';
+
+class UserTypeContainer<T> extends StatelessWidget {
+  const UserTypeContainer({
+    super.key,
+    required this.title,
+    required this.description,
+    required this.emoji,
+    required this.value,
+    required this.groupValue,
+    required this.onChanged,
+  });
+
+  final String title, description, emoji;
+  final T value;
+  final T groupValue;
+  final ValueChanged<T> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => onChanged(value),
+      child: Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Color(0xffF7F7F7),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(emoji),
+                CustomRadio(isSelected: value == groupValue),
+              ],
+            ),
+            Text(
+              title,
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+            ),
+            Text(
+              description,
+              style: TextStyle(fontSize: 12, color: Color(0xff4D5269)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
