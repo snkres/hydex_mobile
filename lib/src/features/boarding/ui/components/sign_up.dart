@@ -1,7 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/src/features/boarding/provider/country_picker_provider.dart';
 import 'package:hydex/src/features/boarding/ui/components/country_picker.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
@@ -23,6 +25,8 @@ class _SignUpComponentState extends State<SignUpComponent> {
     textController.dispose();
     super.dispose();
   }
+
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +73,9 @@ class _SignUpComponentState extends State<SignUpComponent> {
                               height: 70,
                               padding: EdgeInsets.all(15),
                               decoration: BoxDecoration(
-                                color: Color(0xffF7F7F7),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.secondaryContainer,
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: Row(
@@ -88,22 +94,47 @@ class _SignUpComponentState extends State<SignUpComponent> {
                               ),
                             ),
                           ),
-                          Expanded(
-                            child: TextFormField(
-                              controller: textController,
-                              keyboardType: TextInputType.phone,
-                              onChanged: (v) {
-                                setState(() {
-                                  phoneNumber =
-                                      selectedCountry.dialCode +
-                                      textController.text;
-                                });
-                              },
-                              onFieldSubmitted: (v) {
-                                context.push("/otp");
-                              },
-                              decoration: InputDecoration(
-                                labelText: "Phone Number",
+                          Form(
+                            key: formKey,
+                            child: Expanded(
+                              child: TextFormField(
+                                controller: textController,
+                                keyboardType: TextInputType.phone,
+                                onChanged: (v) {
+                                  setState(() {
+                                    phoneNumber =
+                                        selectedCountry.dialCode +
+                                        textController.text;
+                                  });
+                                },
+                                validator: (v) {
+                                  if (v!.isEmpty) {
+                                    return "please write phone number";
+                                  }
+
+                                  return null;
+                                },
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9+]+'),
+                                  ),
+                                ],
+                                maxLength: 10,
+                                onFieldSubmitted: (v) async {
+                                  if (formKey.currentState!.validate()) {
+                                    await ref
+                                        .read(authServiceProvider)
+                                        .sendOTP(phoneNumber!);
+                                    if (!context.mounted) return;
+                                    context.push("/otp");
+                                  }
+                                },
+
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                decoration: InputDecoration(
+                                  labelText: "Phone Number",
+                                ),
                               ),
                             ),
                           ),
@@ -139,13 +170,25 @@ class _SignUpComponentState extends State<SignUpComponent> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: PrimaryButton(
-                  onTap: phoneNumber != null
-                      ? () {
-                          context.push("/otp");
-                        }
-                      : null,
+                padding: const EdgeInsets.only(bottom: 250),
+                child: Consumer(
+                  builder: (context, ref, child) {
+                    return PrimaryButton(
+                      onTap: phoneNumber != null
+                          ? () async {
+                              if (formKey.currentState!.validate()) {
+                                await ref
+                                    .read(authServiceProvider)
+                                    .sendOTP(phoneNumber!);
+
+                                if (!context.mounted) return;
+
+                                context.push("/otp");
+                              }
+                            }
+                          : null,
+                    );
+                  },
                 ),
               ),
             ],

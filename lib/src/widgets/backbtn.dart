@@ -14,7 +14,7 @@ class CustomBackButton extends StatelessWidget {
         padding: EdgeInsets.zero,
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(
-            Color.fromRGBO(247, 247, 247, 1),
+            Theme.of(context).colorScheme.secondaryContainer,
           ),
         ),
         onPressed: () {

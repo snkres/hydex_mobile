@@ -122,10 +122,13 @@ class DescribeItem extends StatelessWidget {
         duration: Duration(milliseconds: 300),
         padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          color: Color.fromRGBO(247, 247, 247, 1),
+          color: Theme.of(context).colorScheme.secondaryContainer,
           borderRadius: BorderRadius.circular(16),
           border: isSelected
-              ? BoxBorder.all(color: Colors.black, width: 1)
+              ? BoxBorder.all(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 1,
+                )
               : null,
         ),
         child: Column(
@@ -138,7 +141,7 @@ class DescribeItem extends StatelessWidget {
             Text(
               description,
               style: TextStyle(
-                color: Color.fromRGBO(122, 127, 153, 1),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 12,
               ),
             ),

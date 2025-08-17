@@ -1,5 +1,4 @@
 import 'package:hydex/src/features/boarding/data/country.dart';
-import 'package:hydex/src/features/boarding/data/usertype.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'country_picker_provider.g.dart';

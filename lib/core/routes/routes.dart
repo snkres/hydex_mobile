@@ -1,11 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/src/features/boarding/seeker.dart';
 import 'package:hydex/src/features/boarding/ui/boarding.dart';
 import 'package:hydex/src/features/boarding/ui/create_pass.dart';
 import 'package:hydex/src/features/boarding/ui/describe.dart';
+import 'package:hydex/src/features/boarding/ui/influencer.dart';
 import 'package:hydex/src/features/boarding/ui/nationality.dart';
 import 'package:hydex/src/features/boarding/ui/otp.dart';
 import 'package:hydex/src/features/boarding/ui/tellus.dart';
+import 'package:hydex/src/features/boarding/ui/ugo.dart';
 import 'package:hydex/src/features/boarding/ui/waitlist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -35,6 +38,18 @@ class AppRoutes {
           GoRoute(
             path: "describe",
             builder: (context, state) => const Describe(),
+          ),
+          GoRoute(
+            path: "seeker",
+            builder: (context, state) => const SeekerScreen(),
+          ),
+          GoRoute(
+            path: "wego",
+            builder: (context, state) => const WhereWeGOScreen(),
+          ),
+          GoRoute(
+            path: "influencer",
+            builder: (context, state) => const InfluencerScreen(),
           ),
           GoRoute(path: "ulike", builder: (context, state) => const Describe()),
           GoRoute(

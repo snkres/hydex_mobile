@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/src/widgets/custom_radio.dart';
 
 class UserTypeContainer<T> extends StatelessWidget {
@@ -24,7 +25,7 @@ class UserTypeContainer<T> extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Color(0xffF7F7F7),
+          color: Theme.of(context).colorScheme.secondaryContainer,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
@@ -43,7 +44,10 @@ class UserTypeContainer<T> extends StatelessWidget {
             ),
             Text(
               description,
-              style: TextStyle(fontSize: 12, color: Color(0xff4D5269)),
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
           ],
         ),

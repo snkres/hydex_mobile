@@ -12,9 +12,13 @@ class PrimaryButton extends StatelessWidget {
         onPressed: onTap,
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(
-            onTap != null ? Colors.black : Color.fromRGBO(235, 235, 235, 1),
+            onTap != null
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.primaryContainer,
           ),
-          foregroundColor: WidgetStatePropertyAll(Colors.white),
+          foregroundColor: WidgetStatePropertyAll(
+            Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
         child: Text("Continue"),
       ),

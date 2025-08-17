@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hydex/core/network/auth_service.dart';
+import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/src/features/boarding/data/usertype.dart';
 import 'package:hydex/src/features/boarding/provider/usertype_provider.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
@@ -28,15 +30,18 @@ class PickUserType extends StatelessWidget {
                 SizedBox(height: 8),
                 Text(
                   "Help us tailor your experience.",
-                  style: TextStyle(fontSize: 14),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
                 SizedBox(height: 16),
-                UserTypeContainer<UserType>(
+                UserTypeContainer<Role>(
                   emoji: "👩‍🎤",
                   onChanged: (v) {
                     ref.read(userTypeNotifierProvider.notifier).change(v);
                   },
-                  value: UserType.seeker,
+                  value: Role.seeker,
                   groupValue: currentType,
                   title: "I’m an Experience Seeker",
                   description:
@@ -44,24 +49,24 @@ class PickUserType extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
 
-                UserTypeContainer<UserType>(
+                UserTypeContainer<Role>(
                   emoji: "💫",
                   onChanged: (v) {
                     ref.read(userTypeNotifierProvider.notifier).change(v);
                   },
-                  value: UserType.ambassador,
+                  value: Role.ambassador,
                   groupValue: currentType,
 
                   title: "I’m an Influencer or Ambassador",
                   description: "Promote venues, host events, earn money",
                 ),
                 SizedBox(height: 16),
-                UserTypeContainer<UserType>(
+                UserTypeContainer<Role>(
                   emoji: "💼",
                   onChanged: (v) {
                     ref.read(userTypeNotifierProvider.notifier).change(v);
                   },
-                  value: UserType.owner,
+                  value: Role.owner,
 
                   groupValue: currentType,
 
@@ -72,15 +77,22 @@ class PickUserType extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
-              child: PrimaryButton(
-                onTap: currentType != UserType.none
-                    ? () {
-                        pageController.nextPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
-                      }
-                    : null,
+              child: Consumer(
+                builder: (context, ref, child) {
+                  return PrimaryButton(
+                    onTap: currentType != Role.none
+                        ? () {
+                            pageController.nextPage(
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                            ref
+                                .read(userNotifierProvider.notifier)
+                                .create(role: currentType.toValue());
+                          }
+                        : null,
+                  );
+                },
               ),
             ),
           ],

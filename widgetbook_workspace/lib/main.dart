@@ -18,12 +18,12 @@ class WidgetbookApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Widgetbook.material(
-      lightTheme: AppTheme.theme(),
-      darkTheme: AppTheme.theme(),
+      lightTheme: AppTheme.lightTheme(),
+      darkTheme: AppTheme.lightTheme(),
       addons: [
         ViewportAddon(IosViewports.phones),
         MaterialThemeAddon(
-          themes: [WidgetbookTheme(name: "Light", data: AppTheme.theme())],
+          themes: [WidgetbookTheme(name: "Light", data: AppTheme.lightTheme())],
         ),
       ],
       directories: directories,

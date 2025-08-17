@@ -1,14 +1,14 @@
-import 'package:hydex/src/features/boarding/data/usertype.dart';
+import 'package:hydex/core/network/user/user.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'usertype_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class UserTypeNotifier extends _$UserTypeNotifier {
   @override
-  UserType build() {
-    return UserType.none;
+  Role build() {
+    return Role.none;
   }
 
-  void change(UserType type) => state = type;
+  void change(Role type) => state = type;
 }
