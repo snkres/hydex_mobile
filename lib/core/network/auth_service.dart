@@ -108,6 +108,23 @@ class AuthService {
     }
   }
 
+  Future<String> verifyReferalCode({required String referralCode}) async {
+    try {
+      final response = await DioHelper.post<Map<String, dynamic>>(
+        '/waitlist/check-referral',
+        data: {'referralCode': referralCode},
+      );
+
+      if (response.success && response.data != null) {
+        return response.data?["message"];
+      } else {
+        throw ApiException(response.errorMessage ?? 'Failed to verify user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<String> register() async {
     try {
       final user = ref.read(userNotifierProvider);
@@ -116,7 +133,7 @@ class AuthService {
         data: {
           "email": user?.email,
           "phone": user?.phone,
-          "password": user?.phone,
+          "password": user?.password,
           "fullName": user?.fullName,
           "role": user?.role,
           "referralCode": user?.referralCode,
@@ -124,9 +141,9 @@ class AuthService {
             "nationality": user?.personalInfo?.nationality,
             "gender": user?.personalInfo?.gender,
             "dateOfBirth": user?.personalInfo?.dateOfBirth,
-            "socialStatus": user?.personalInfo?.gender,
+            "employmentStatus": user?.personalInfo?.socialStatus,
             "instagram": user?.personalInfo?.instagram ?? "",
-            "facebook": user?.personalInfo?.facebook ?? "",
+            "facebook": user?.personalInfo?.facebook,
           },
         },
       );
@@ -183,7 +200,6 @@ class UserNotifier extends _$UserNotifier {
     String? socialStatus,
     String? instagram,
     String? facebook,
-
   }) {
     final currentState = state;
 

@@ -7,7 +7,6 @@ import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/src/features/boarding/provider/country_picker_provider.dart';
 import 'package:hydex/src/features/boarding/ui/components/country_picker.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class SignUpComponent extends StatefulWidget {
   const SignUpComponent({super.key});
@@ -31,9 +30,10 @@ class _SignUpComponentState extends State<SignUpComponent> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      physics: NeverScrollableScrollPhysics(),
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          minHeight: MediaQuery.sizeOf(context).height - 336,
+          minHeight: MediaQuery.sizeOf(context).height - 100,
         ),
         child: IntrinsicHeight(
           child: Column(
@@ -54,91 +54,101 @@ class _SignUpComponentState extends State<SignUpComponent> {
                   SizedBox(height: 16),
                   Consumer(
                     builder: (context, ref, child) {
-                      final selectedCountry = ref
-                          .watch(countryPickerNotifierProvider)
-                          .requireValue;
-                      return Row(
-                        spacing: 8,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                builder: (context) =>
-                                    CountryPickerBottomSheet(),
-                              );
-                            },
-                            child: Container(
-                              height: 70,
-                              padding: EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.secondaryContainer,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                spacing: 10,
-                                children: [
-                                  Text(
-                                    selectedCountry.emoji,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  Text(
-                                    selectedCountry.dialCode,
-                                    style: TextStyle(fontSize: 14),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Form(
-                            key: formKey,
-                            child: Expanded(
-                              child: TextFormField(
-                                controller: textController,
-                                keyboardType: TextInputType.phone,
-                                onChanged: (v) {
-                                  setState(() {
-                                    phoneNumber =
-                                        selectedCountry.dialCode +
-                                        textController.text;
-                                  });
+                      final selectedCountry = ref.watch(
+                        countryPickerNotifierProvider,
+                      );
+                      return selectedCountry.when(
+                        data: (data) {
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: 8,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    builder: (context) =>
+                                        CountryPickerBottomSheet(),
+                                  );
                                 },
-                                validator: (v) {
-                                  if (v!.isEmpty) {
-                                    return "please write phone number";
-                                  }
-
-                                  return null;
-                                },
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9+]+'),
+                                child: Container(
+                                  height: 80,
+                                  padding: EdgeInsets.all(15),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondaryContainer,
+                                    borderRadius: BorderRadius.circular(16),
                                   ),
-                                ],
-                                maxLength: 10,
-                                onFieldSubmitted: (v) async {
-                                  if (formKey.currentState!.validate()) {
-                                    await ref
-                                        .read(authServiceProvider)
-                                        .sendOTP(phoneNumber!);
-                                    if (!context.mounted) return;
-                                    context.push("/otp");
-                                  }
-                                },
-
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                decoration: InputDecoration(
-                                  labelText: "Phone Number",
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    spacing: 10,
+                                    children: [
+                                      Text(
+                                        data.emoji,
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                      Text(
+                                        data.dialCode,
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                        ],
+                              Expanded(
+                                child: Form(
+                                  key: formKey,
+                                  child: TextFormField(
+                                    controller: textController,
+                                    keyboardType: TextInputType.phone,
+                                    onChanged: (v) {
+                                      setState(() {
+                                        phoneNumber =
+                                            data.dialCode + textController.text;
+                                      });
+                                    },
+                                    validator: (v) {
+                                      if (v!.isEmpty) {
+                                        return "please write phone number";
+                                      }
+
+                                      return null;
+                                    },
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                        RegExp(r'[0-9+]+'),
+                                      ),
+                                    ],
+                                    maxLength: 10,
+                                    
+                                    onFieldSubmitted: (v) async {
+                                      if (formKey.currentState!.validate()) {
+                                        await ref
+                                            .read(authServiceProvider)
+                                            .sendOTP(phoneNumber!);
+                                        if (!context.mounted) return;
+                                        context.push("/otp");
+                                      }
+                                    },
+
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    decoration: InputDecoration(
+                                      labelText: "Phone Number",
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        error: (e, s) {
+                          return Center(child: Text("Error"));
+                        },
+                        loading: () =>
+                            Center(child: CircularProgressIndicator()),
                       );
                     },
                   ),

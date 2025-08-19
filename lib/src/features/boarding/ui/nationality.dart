@@ -21,6 +21,8 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
   final nationalityController = TextEditingController();
   final instagramController = TextEditingController();
   final facebookController = TextEditingController();
+  final referralCodeController = TextEditingController();
+  String? codeErrorText;
 
   @override
   Widget build(BuildContext context) {
@@ -105,35 +107,41 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                   child: TextFormField(
                                     controller: instagramController,
                                     textInputAction: TextInputAction.next,
-                                    keyboardType: TextInputType.text,
-                                    autovalidateMode:
-                                        AutovalidateMode.onUserInteraction,
+                                    keyboardType: TextInputType.url,
                                     decoration: InputDecoration(
-                                      labelText: "Instagram",
-                                      hintText: "username",
-                                      prefixText: "@",
-                                      prefixStyle: TextStyle(
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                                      labelText: "Instagram Link",
+                                      hintText:
+                                          "https://instagram.com/username",
                                     ),
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                        RegExp(r'[a-zA-Z0-9._]'),
-                                      ),
-                                    ],
                                     validator: (value) {
                                       if (value != null && value.isNotEmpty) {
-                                        if (value.length < 3) {
-                                          return "Username must be at least 3 characters";
+                                        if (!Uri.tryParse(
+                                              value,
+                                            )!.hasAbsolutePath ==
+                                            true) {
+                                          return "Must be a url";
                                         }
-                                        if (value.length > 30) {
-                                          return "Username must be less than 30 characters";
+
+                                        Uri? uri = Uri.tryParse(value);
+                                        if (uri == null) {
+                                          return "Must be a url";
                                         }
-                                        if (!RegExp(
-                                          r'^[a-zA-Z0-9._]+$',
-                                        ).hasMatch(value)) {
-                                          return "Only letters, numbers, dots and underscores allowed";
+
+                                        // Check if it's a valid Instagram URL
+                                        if (!uri.host.contains(
+                                              'instagram.com',
+                                            ) &&
+                                            !uri.host.contains('instagr.am')) {
+                                          return "Please enter a valid Instagram URL";
+                                        }
+
+                                        // Check if URL has proper scheme
+                                        if (!uri.hasScheme ||
+                                            (!uri.scheme.startsWith('http') &&
+                                                !uri.scheme.startsWith(
+                                                  'https',
+                                                ))) {
+                                          return "URL must start with http:// or https://";
                                         }
                                       }
                                       return null;
@@ -144,30 +152,42 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                   child: TextFormField(
                                     controller: facebookController,
                                     textInputAction: TextInputAction.next,
-                                    keyboardType: TextInputType.text,
-                                    autovalidateMode:
-                                        AutovalidateMode.onUserInteraction,
+                                    keyboardType: TextInputType.url,
                                     decoration: InputDecoration(
-                                      labelText: "Facebook",
-                                      hintText: "username",
+                                      labelText: "Facebook Link",
+                                      hintText: "https://facebook.com/username",
                                     ),
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                        RegExp(r'[a-zA-Z0-9.]'),
-                                      ),
-                                    ],
                                     validator: (value) {
                                       if (value != null && value.isNotEmpty) {
-                                        if (value.length < 5) {
-                                          return "Username must be at least 5 characters";
+                                        // Basic URL validation
+                                        if (!Uri.tryParse(
+                                              value,
+                                            )!.hasAbsolutePath ==
+                                            true) {
+                                          return "Please enter a valid URL";
                                         }
-                                        if (value.length > 50) {
-                                          return "Username must be less than 50 characters";
+
+                                        Uri? uri = Uri.tryParse(value);
+                                        if (uri == null) {
+                                          return "Please enter a valid URL";
                                         }
-                                        if (!RegExp(
-                                          r'^[a-zA-Z0-9.]+$',
-                                        ).hasMatch(value)) {
-                                          return "Only letters, numbers and dots allowed";
+
+                                        // Check if it's a valid Facebook URL
+                                        if (!uri.host.contains(
+                                              'facebook.com',
+                                            ) &&
+                                            !uri.host.contains('fb.com') &&
+                                            !uri.host.contains('fb.me')) {
+                                          return "Please enter a valid Facebook URL";
+                                        }
+
+                                        // Check if URL has proper scheme
+                                        if (!uri.hasScheme ||
+                                            (!uri.scheme.startsWith('http') &&
+                                                !uri.scheme.startsWith(
+                                                  'https',
+                                                ))) {
+                                          return "URL must start with http:// or https://";
                                         }
                                       }
                                       return null;
@@ -176,11 +196,33 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                 ),
                               ],
                             ),
-                            TextFormField(
-                              textInputAction: TextInputAction.done,
-                              decoration: InputDecoration(
-                                labelText: "Invitation Code",
-                              ),
+                            Consumer(
+                              builder: (context, ref, child) {
+                                return TextFormField(
+                                  controller: referralCodeController,
+                                  forceErrorText: codeErrorText,
+                                  validator: (code) {
+                                    if (code!.length < 8) {
+                                      return "Code must be 8 characters";
+                                    }
+                                    return null;
+                                  },
+                                  onFieldSubmitted: (code) async {
+                                    ref
+                                        .read(authServiceProvider)
+                                        .verifyReferalCode(referralCode: code)
+                                        .catchError((e) {
+                                          setState(() {
+                                            codeErrorText = e.message;
+                                          });
+                                        });
+                                  },
+                                  textInputAction: TextInputAction.done,
+                                  decoration: InputDecoration(
+                                    labelText: "Invitation Code",
+                                  ),
+                                );
+                              },
                             ),
                             Text(
                               "if you don’t have an invite code just skip it.",
@@ -205,8 +247,9 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                 .create(
                                   nationality: nationalityController.text,
                                   socialStatus: type,
-                                  instagram: "@${instagramController.text}",
+                                  instagram: instagramController.text,
                                   facebook: facebookController.text,
+                                  referralCode: referralCodeController.text,
                                 );
                             await ref
                                 .read(authServiceProvider)
