@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hydex/src/features/boarding/provider/waitlist_provider.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 
 class WaitlistScreen extends StatelessWidget {
@@ -19,111 +21,23 @@ class WaitlistScreen extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               children: [
                 SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        "img/stars.png",
-                        package: "assets",
-                        width: 121,
-                      ),
-                      SizedBox(height: 12),
-
-                      Text.rich(
-                        TextSpan(
-                          text: "Congrats! You’re ",
-                          children: [
-                            TextSpan(
-                              text: "11th on the waitlist.",
-                              style: TextStyle(fontWeight: FontWeight.w700),
-                            ),
-                          ],
-                        ),
-
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 32),
-                      ),
-                      SizedBox(height: 12),
-
-                      Text.rich(
-                        TextSpan(
-                          text: "Your ticket to our ",
-                          children: [
-                            TextSpan(
-                              text: "exclusive launch party ",
-                              style: TextStyle(fontWeight: FontWeight.w700),
-                            ),
-                            TextSpan(text: "unlocks when you’re in!"),
-                          ],
-                        ),
-
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 14),
-                      ),
-                      SizedBox(height: 58),
-
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.all(24),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            colorFilter: ColorFilter.mode(
-                              Colors.black26,
-                              BlendMode.darken,
-                            ),
-                            image: NetworkImage(
-                              "https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg",
-                            ),
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Column(
-                          spacing: 16,
-                          children: [
-                            Text(
-                              "In the meantime enjoy this offer",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white,
-                              ),
-                            ),
-                            Text(
-                              "25%",
-                              style: TextStyle(
-                                fontSize: 32,
-                                color: Colors.white,
-                              ),
-                            ),
-                            Text(
-                              "Discount",
-                              style: TextStyle(
-                                fontSize: 32,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 32),
-
-                      Text.rich(
-                        TextSpan(
-                          text:
-                              "P.S. Skip the line? Refer 2 friends to move up 10 spots! with code ",
-                          children: [
-                            TextSpan(
-                              text: "#14123",
-                              style: TextStyle(fontWeight: FontWeight.w700),
-                            ),
-                          ],
-                        ),
-
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 14),
-                      ),
-                      SizedBox(height: 100),
-                    ],
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      final waitlist = ref.watch(waitlistProvider);
+                      return waitlist.when(
+                        data: (data) {
+                          return WaitingWidget(
+                            position: data.originalPosition,
+                            code: data.referralCode,
+                          );
+                        },
+                        error: (e, s) {
+                          return Center(child: Text("Error"));
+                        },
+                        loading: () =>
+                            Center(child: CircularProgressIndicator()),
+                      );
+                    },
                   ),
                 ),
                 LiquidGlass(
@@ -183,6 +97,103 @@ class WaitlistScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class WaitingWidget extends StatelessWidget {
+  const WaitingWidget({super.key, required this.position, required this.code});
+
+  final String position, code;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Image.asset("img/stars.png", package: "assets", width: 121),
+        SizedBox(height: 12),
+
+        Text.rich(
+          TextSpan(
+            text: "Congrats! You’re ",
+            children: [
+              TextSpan(
+                text: "${position}th on the waitlist.",
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontSize: 32),
+        ),
+        SizedBox(height: 12),
+
+        Text.rich(
+          TextSpan(
+            text: "Your ticket to our ",
+            children: [
+              TextSpan(
+                text: "exclusive launch party ",
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              TextSpan(text: "unlocks when you’re in!"),
+            ],
+          ),
+
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontSize: 14),
+        ),
+        SizedBox(height: 58),
+
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(24),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              colorFilter: ColorFilter.mode(Colors.black26, BlendMode.darken),
+              image: NetworkImage(
+                "https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg",
+              ),
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            spacing: 16,
+            children: [
+              Text(
+                "In the meantime enjoy this offer",
+                style: TextStyle(fontSize: 14, color: Colors.white),
+              ),
+              Text("25%", style: TextStyle(fontSize: 32, color: Colors.white)),
+              Text(
+                "Discount",
+                style: TextStyle(fontSize: 32, color: Colors.white),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 32),
+
+        Text.rich(
+          TextSpan(
+            text:
+                "P.S. Skip the line? Refer 2 friends to move up 10 spots! with code ",
+            children: [
+              TextSpan(
+                text: "#$code",
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontSize: 14),
+        ),
+        SizedBox(height: 100),
+      ],
     );
   }
 }

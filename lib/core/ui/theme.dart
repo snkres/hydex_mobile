@@ -17,7 +17,6 @@ class AppTheme {
       snackBarTheme: SnackBarThemeData(
         width: 400,
         insetPadding: EdgeInsets.all(100),
-        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(99),
         ),

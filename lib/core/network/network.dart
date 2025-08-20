@@ -148,7 +148,7 @@ class DioHelper {
   _pendingRequests = [];
 
   // Secure storage instance
-  static const FlutterSecureStorage _secureStorage = FlutterSecureStorage(
+  static const FlutterSecureStorage secureStorage = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
     iOptions: IOSOptions(
       accessibility: KeychainAccessibility.first_unlock_this_device,
@@ -193,9 +193,9 @@ class DioHelper {
   // Load tokens from secure storage
   static Future<void> _loadStoredTokens() async {
     try {
-      final accessToken = await _secureStorage.read(key: _accessTokenKey);
-      final refreshToken = await _secureStorage.read(key: _refreshTokenKey);
-      final expiryString = await _secureStorage.read(key: _tokenExpiryKey);
+      final accessToken = await secureStorage.read(key: _accessTokenKey);
+      final refreshToken = await secureStorage.read(key: _refreshTokenKey);
+      final expiryString = await secureStorage.read(key: _tokenExpiryKey);
 
       if (accessToken != null) {
         DateTime? expiresAt;
@@ -221,22 +221,22 @@ class DioHelper {
   }
 
   // Save tokens to secure storage
-  static Future<void> _saveTokensToStorage(TokenPair tokens) async {
+  static Future<void> saveTokensToStorage(TokenPair tokens) async {
     try {
-      await _secureStorage.write(
+      await secureStorage.write(
         key: _accessTokenKey,
         value: tokens.accessToken,
       );
 
       if (tokens.refreshToken != null) {
-        await _secureStorage.write(
+        await secureStorage.write(
           key: _refreshTokenKey,
           value: tokens.refreshToken!,
         );
       }
 
       if (tokens.expiresAt != null) {
-        await _secureStorage.write(
+        await secureStorage.write(
           key: _tokenExpiryKey,
           value: tokens.expiresAt!.toIso8601String(),
         );
@@ -255,9 +255,9 @@ class DioHelper {
   // Clear tokens from secure storage
   static Future<void> _clearTokensFromStorage() async {
     try {
-      await _secureStorage.delete(key: _accessTokenKey);
-      await _secureStorage.delete(key: _refreshTokenKey);
-      await _secureStorage.delete(key: _tokenExpiryKey);
+      await secureStorage.delete(key: _accessTokenKey);
+      await secureStorage.delete(key: _refreshTokenKey);
+      await secureStorage.delete(key: _tokenExpiryKey);
 
       if (kDebugMode) {
         print('🔓 Tokens cleared from secure storage');
@@ -363,7 +363,7 @@ class DioHelper {
                 refreshToken: refreshToken,
                 expiresAt: _tokenPair!.expiresAt,
               );
-              _saveTokensToStorage(_tokenPair!);
+              saveTokensToStorage(_tokenPair!);
             }
           }
 
@@ -431,8 +431,8 @@ class DioHelper {
     }
   }
 
-  // Set authentication tokens from login response
-  static Future<void> setTokensFromLoginResponse(
+  // Set authentication tokens from login/register response
+  static Future<void> setTokensFromAuthResponse(
     Map<String, dynamic> responseData,
     Response response,
   ) async {
@@ -445,18 +445,23 @@ class DioHelper {
     _tokenPair = TokenPair.fromLoginResponse(responseData, refreshToken);
 
     // Save to secure storage
-    await _saveTokensToStorage(_tokenPair!);
+    await saveTokensToStorage(_tokenPair!);
+
+    // Trigger auth event
+    _authEventListener?.onTokenRefreshed(_tokenPair!);
 
     if (kDebugMode) {
       print(
-        '🔐 Tokens set from login response. Access token from data, refresh token from cookies',
+        '🔐 Tokens set from auth response. Access token from data, refresh token from cookies',
       );
       print('🔐 Expires at: ${_tokenPair!.expiresAt}');
     }
   }
 
   // Get current tokens
-  static TokenPair? getTokens() => _tokenPair;
+  static Future<String?> getAccessToken() async {
+    return secureStorage.read(key: _accessTokenKey);
+  }
 
   // Check if user is authenticated
   static bool get isAuthenticated => _tokenPair != null;
@@ -527,7 +532,7 @@ class DioHelper {
         );
 
         _tokenPair = newTokens;
-        await _saveTokensToStorage(newTokens);
+        await saveTokensToStorage(newTokens);
         _authEventListener?.onTokenRefreshed(newTokens);
 
         if (kDebugMode) {
@@ -574,16 +579,6 @@ class DioHelper {
           print('❌ Failed to process pending request: $e');
         }
       }
-    }
-  }
-
-  // Manual token refresh
-  static Future<bool> refreshToken() async {
-    try {
-      await _refreshToken();
-      return true;
-    } catch (e) {
-      return false;
     }
   }
 
@@ -734,25 +729,42 @@ class DioHelper {
     }
   }
 
+  // Enhanced auth method that handles both login and register
+  static Future<Map<String, dynamic>> authenticate(
+    String endpoint,
+    Map<String, dynamic> authData,
+  ) async {
+    try {
+      final response = await _dio.post(endpoint, data: authData);
+
+      if (response.statusCode == 201 && response.data != null ||
+          response.statusCode == 200) {
+        // Set tokens from auth response (access token from data, refresh token from cookies)
+        await setTokensFromAuthResponse(response.data["data"], response);
+
+        return response.data;
+      } else {
+        throw ApiException('Authentication failed');
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   // Enhanced login method that handles tokens from response data and cookies
   static Future<Map<String, dynamic>> login(
     String endpoint,
     Map<String, dynamic> credentials,
   ) async {
-    try {
-      final response = await _dio.post(endpoint, data: credentials);
+    return authenticate(endpoint, credentials);
+  }
 
-      if (response.statusCode == 200 && response.data != null) {
-        // Set tokens from login response (access token from data, refresh token from cookies)
-        await setTokensFromLoginResponse(response.data, response);
-
-        return response.data;
-      } else {
-        throw ApiException('Login failed');
-      }
-    } catch (e) {
-      throw _handleError(e);
-    }
+  // Enhanced register method that handles tokens from response data and cookies
+  static Future<Map<String, dynamic>> register(
+    String endpoint,
+    Map<String, dynamic> registrationData,
+  ) async {
+    return authenticate(endpoint, registrationData);
   }
 
   // Enhanced logout method
@@ -890,12 +902,9 @@ class DioHelper {
       if (data.containsKey("message") && data["message"] is String) {
         return data["message"] as String;
       }
-
-      // Handle validation errors
     }
     return null;
   }
 
-  // Get current Dio instance (for advanced usage)
   static Dio get instance => _dio;
 }

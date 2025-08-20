@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/auth_handler.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/network/user/user.dart';
+import 'package:hydex/core/network/waitlist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auth_service.g.dart';
 
@@ -128,31 +129,28 @@ class AuthService {
   Future<String> register() async {
     try {
       final user = ref.read(userNotifierProvider);
-      final response = await DioHelper.post<Map<String, dynamic>>(
-        '/auth/register',
-        data: {
-          "email": user?.email,
-          "phone": user?.phone,
-          "password": user?.password,
-          "fullName": user?.fullName,
-          "role": user?.role,
-          "referralCode": user?.referralCode,
-          "personalInfo": {
-            "nationality": user?.personalInfo?.nationality,
-            "gender": user?.personalInfo?.gender,
-            "dateOfBirth": user?.personalInfo?.dateOfBirth,
-            "employmentStatus": user?.personalInfo?.socialStatus,
-            "instagram": user?.personalInfo?.instagram ?? "",
-            "facebook": user?.personalInfo?.facebook,
-          },
+      final data = {
+        "email": user?.email,
+        "phone": user?.phone,
+        "password": user?.password,
+        "fullName": user?.fullName,
+        "role": user?.role,
+        "personalInfo": {
+          "nationality": user?.personalInfo?.nationality,
+          "gender": user?.personalInfo?.gender,
+          "dateOfBirth": user?.personalInfo?.dateOfBirth,
+          "employmentStatus": user?.personalInfo?.socialStatus,
+          "instagram": user?.personalInfo?.instagram ?? "",
+          "facebook": user?.personalInfo?.facebook,
         },
-      );
-
-      if (response.success && response.data != null) {
-        return response.data?["message"];
-      } else {
-        throw ApiException(response.errorMessage ?? 'Failed to verify user');
+      };
+      if (user!.referralCode!.isNotEmpty) {
+        data["referralCode"] = user.referralCode;
       }
+
+      final response = await DioHelper.authenticate('/auth/register', data);
+
+      return response.keys.first;
     } catch (e) {
       rethrow;
     }

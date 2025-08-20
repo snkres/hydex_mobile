@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/network/auth_service.dart';
+import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/boarding/seeker.dart';
 import 'package:hydex/src/features/boarding/ui/boarding.dart';
 import 'package:hydex/src/features/boarding/ui/create_pass.dart';
@@ -17,9 +19,47 @@ part 'routes.g.dart';
 class AppRoutes {
   Ref ref;
   AppRoutes(this.ref);
-
   final routes = GoRouter(
-    initialLocation: '/',
+    redirect: (context, state) async {
+      // Define the set of public routes that don't require authentication.
+      const Set<String> publicRoutes = {
+        '/',
+        '/otp',
+        '/password',
+        '/tellus',
+        '/nationality',
+        '/describe',
+        '/seeker',
+        '/wego',
+        '/influencer',
+        '/ulike',
+      };
+
+      final token = await DioHelper.getAccessToken();
+      final bool isAuthenticated = token != null;
+      final String currentPath = state.uri.path;
+
+      // Check if the path the user is trying to access is a public route.
+      final bool isGoingToPublicRoute = publicRoutes.contains(currentPath);
+
+      // If the user is NOT authenticated and trying to access a PROTECTED route,
+      // redirect them to the root (boarding screen).
+      if (!isAuthenticated && !isGoingToPublicRoute) {
+        return '/';
+      }
+
+      // If the user IS authenticated and trying to access a PUBLIC route,
+      // redirect them to their main screen (e.g., '/waitlist').
+      // This prevents logged-in users from seeing the login/signup flow again.
+      if (isAuthenticated && isGoingToPublicRoute) {
+        return '/waitlist';
+      }
+
+      // In all other cases, no redirect is needed:
+      // - User is authenticated and accessing a protected route.
+      // - User is not authenticated and accessing a public route.
+      return null;
+    },
     routes: [
       GoRoute(
         path: "/",
@@ -52,11 +92,11 @@ class AppRoutes {
             builder: (context, state) => const InfluencerScreen(),
           ),
           GoRoute(path: "ulike", builder: (context, state) => const Describe()),
-          GoRoute(
-            path: "waitlist",
-            builder: (context, state) => const WaitlistScreen(),
-          ),
         ],
+      ),
+      GoRoute(
+        path: "/waitlist",
+        builder: (context, state) => const WaitlistScreen(),
       ),
     ],
   );

@@ -22,6 +22,7 @@ class _TellusState extends State<Tellus> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final birthController = TextEditingController();
+  String? requiredBirth;
 
   @override
   Widget build(BuildContext context) {
@@ -116,11 +117,17 @@ class _TellusState extends State<Tellus> {
                                         final DateFormat formatter = DateFormat(
                                           'd/M/yyyy',
                                         );
+                                        final DateFormat requiredFormatter =
+                                            DateFormat('yyyy/MM/dd');
+
                                         String formatted = formatter.format(
                                           date,
                                         );
+                                        String requiredFormat =
+                                            requiredFormatter.format(date);
                                         setState(() {
                                           birthController.text = formatted;
+                                          requiredBirth = requiredFormat;
                                         });
                                       },
                                     );
@@ -171,7 +178,7 @@ class _TellusState extends State<Tellus> {
                                 .read(userNotifierProvider.notifier)
                                 .create(
                                   gender: gender,
-                                  dateOfBirth: birthController.text,
+                                  dateOfBirth: requiredBirth,
                                   email: emailController.text,
                                   fullName: nameController.text,
                                 );

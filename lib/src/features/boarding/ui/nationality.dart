@@ -17,12 +17,13 @@ class NationalityTellUs extends StatefulWidget {
 }
 
 class _NationalityTellUsState extends State<NationalityTellUs> {
-  String? type;
+  String type = "Self Employed";
   final nationalityController = TextEditingController();
   final instagramController = TextEditingController();
   final facebookController = TextEditingController();
   final referralCodeController = TextEditingController();
   String? codeErrorText;
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +56,7 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                       ),
                       SizedBox(height: 16),
                       Form(
+                        key: formKey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           spacing: 12,
@@ -63,6 +65,12 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                               autofocus: true,
                               controller: nationalityController,
                               textInputAction: TextInputAction.next,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Please enter your nationality";
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 labelText: "Nationality",
                               ),
@@ -114,7 +122,10 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                           "https://instagram.com/username",
                                     ),
                                     validator: (value) {
-                                      if (value != null && value.isNotEmpty) {
+                                      if (value!.isEmpty) {
+                                        return "Please enter instagram link";
+                                      }
+                                      if (value.isNotEmpty) {
                                         if (!Uri.tryParse(
                                               value,
                                             )!.hasAbsolutePath ==
@@ -158,7 +169,10 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                       hintText: "https://facebook.com/username",
                                     ),
                                     validator: (value) {
-                                      if (value != null && value.isNotEmpty) {
+                                      if (value!.isEmpty) {
+                                        return "Please enter facebook link";
+                                      }
+                                      if (value.isNotEmpty) {
                                         // Basic URL validation
                                         if (!Uri.tryParse(
                                               value,
@@ -202,24 +216,32 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                   controller: referralCodeController,
                                   forceErrorText: codeErrorText,
                                   validator: (code) {
-                                    if (code!.length < 8) {
+                                    if (code == null || code.isEmpty) {
+                                      return null;
+                                    }
+
+                                    if (code.length < 8) {
                                       return "Code must be 8 characters";
                                     }
+
                                     return null;
                                   },
                                   onFieldSubmitted: (code) async {
-                                    ref
-                                        .read(authServiceProvider)
-                                        .verifyReferalCode(referralCode: code)
-                                        .catchError((e) {
-                                          setState(() {
-                                            codeErrorText = e.message;
+                                    if (code.isNotEmpty) {
+                                      ref
+                                          .read(authServiceProvider)
+                                          .verifyReferalCode(referralCode: code)
+                                          .catchError((e) {
+                                            setState(() {
+                                              codeErrorText = e.message;
+                                            });
                                           });
-                                        });
+                                    }
                                   },
                                   textInputAction: TextInputAction.done,
                                   decoration: InputDecoration(
-                                    labelText: "Invitation Code",
+                                    labelText: "Invitation Code (Optional)",
+                                    hintText: "Enter 8-character code",
                                   ),
                                 );
                               },
@@ -242,44 +264,48 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                       builder: (context, ref, child) {
                         return PrimaryButton(
                           onTap: () async {
-                            ref
-                                .read(userNotifierProvider.notifier)
-                                .create(
-                                  nationality: nationalityController.text,
-                                  socialStatus: type,
-                                  instagram: instagramController.text,
-                                  facebook: facebookController.text,
-                                  referralCode: referralCodeController.text,
-                                );
-                            await ref
-                                .read(authServiceProvider)
-                                .register()
-                                .catchError((error) {
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Center(
-                                          child: Text("❎ ${error.message}"),
+                            if (formKey.currentState!.validate()) {
+                              ref
+                                  .read(userNotifierProvider.notifier)
+                                  .create(
+                                    nationality: nationalityController.text,
+                                    socialStatus: type,
+                                    instagram: instagramController.text,
+                                    facebook: facebookController.text,
+                                    referralCode: referralCodeController.text,
+                                  );
+                              await ref
+                                  .read(authServiceProvider)
+                                  .register()
+                                  .catchError((error) {
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Center(
+                                            child: Text("❎ ${error.message}"),
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  }
-                                });
-                            final currentType = ref.read(
-                              userTypeNotifierProvider,
-                            );
-                            if (context.mounted) {
-                              switch (currentType) {
-                                case Role.seeker:
-                                  context.push("/seeker");
-                                  break;
-                                case Role.ambassador:
-                                  context.push("/seeker");
-                                  break;
-                                case Role.owner:
-                                  context.push("/describe");
-                                  break;
-                                default:
+                                      );
+                                    }
+                                  });
+                              final currentType = ref.read(
+                                userTypeNotifierProvider,
+                              );
+                              if (context.mounted) {
+                                switch (currentType) {
+                                  case Role.seeker:
+                                    context.push("/seeker");
+                                    break;
+                                  case Role.ambassador:
+                                    context.push("/seeker");
+                                    break;
+                                  case Role.owner:
+                                    context.push("/describe");
+                                    break;
+                                  default:
+                                }
                               }
                             }
                           },
