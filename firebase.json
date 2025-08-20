@@ -3,16 +3,16 @@
         "platforms": {
             "android": {
                 "default": {
-                    "projectId": "massive-capsule-246916",
-                    "appId": "1:781755219907:android:298477f745588fc6198776",
+                    "projectId": "hydex-4adc5",
+                    "appId": "1:427325460457:android:a0fdedb453df58aaf90578",
                     "fileOutput": "android/app/google-services.json"
                 }
             },
             "dart": {
                 "lib/firebase_options.dart": {
-                    "projectId": "massive-capsule-246916",
+                    "projectId": "hydex-4adc5",
                     "configurations": {
-                        "android": "1:781755219907:android:298477f745588fc6198776",
+                        "android": "1:427325460457:android:a0fdedb453df58aaf90578",
                         "ios": "1:781755219907:ios:2fb9e3af0d4be3a5198776"
                     }
                 }
