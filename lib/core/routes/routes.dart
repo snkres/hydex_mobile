@@ -21,7 +21,6 @@ class AppRoutes {
   AppRoutes(this.ref);
   final routes = GoRouter(
     redirect: (context, state) async {
-      // Define the set of public routes that don't require authentication.
       const Set<String> publicRoutes = {
         '/',
         '/otp',
@@ -39,25 +38,14 @@ class AppRoutes {
       final bool isAuthenticated = token != null;
       final String currentPath = state.uri.path;
 
-      // Check if the path the user is trying to access is a public route.
       final bool isGoingToPublicRoute = publicRoutes.contains(currentPath);
 
-      // If the user is NOT authenticated and trying to access a PROTECTED route,
-      // redirect them to the root (boarding screen).
       if (!isAuthenticated && !isGoingToPublicRoute) {
         return '/';
       }
-
-      // If the user IS authenticated and trying to access a PUBLIC route,
-      // redirect them to their main screen (e.g., '/waitlist').
-      // This prevents logged-in users from seeing the login/signup flow again.
       if (isAuthenticated && isGoingToPublicRoute) {
         return '/waitlist';
       }
-
-      // In all other cases, no redirect is needed:
-      // - User is authenticated and accessing a protected route.
-      // - User is not authenticated and accessing a public route.
       return null;
     },
     routes: [
