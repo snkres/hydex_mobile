@@ -1,4 +1,4 @@
-com.hyde_x.hydex// !$*UTF8*$!
+// !$*UTF8*$!
 {
 	archiveVersion = 1;
 	classes = {
