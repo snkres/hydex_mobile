@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
+import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:pinput/pinput.dart';
@@ -21,102 +23,146 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: CustomBackButton(),
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: Text(
-              "Verify with email",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "We just sent you a text",
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(height: 8),
-                Consumer(
-                  builder: (context, ref, child) {
-                    final phone = ref.watch(userNotifierProvider)?.phone ?? "";
-                    return Text(
-                      "Enter the security code we sent to $phone over WhatsApp",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: 24),
-                Form(
-                  key: formKey,
-                  child: Pinput(
-                    autofocus: true,
-                    forceErrorState: true,
-                    controller: otpController,
-                    errorText: errorText,
-                    onChanged: (v) {
-                      setState(() {
-                        otp = v;
-                      });
-                    },
-                    keyboardType: TextInputType.number,
-                    pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "please enter otp";
-                      }
-                      return null;
-                    },
-                    onSubmitted: (_) => context.push("/password"),
-                    defaultPinTheme: PinTheme(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondaryContainer,
-                        borderRadius: BorderRadius.circular(100),
-                      ),
+                CustomBackButton(),
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    "Verify with email",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
               ],
             ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "We just sent you a text",
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            final phone =
+                                ref.watch(userNotifierProvider)?.phone ?? "";
+                            return Text(
+                              "Enter the security code we sent to $phone over WhatsApp",
+                              style: AppTextStyles.smallRegular,
+                            );
+                          },
+                        ),
+                        SizedBox(height: 24),
+                        Form(
+                          key: formKey,
+                          child: Pinput(
+                            autofocus: true,
+                            forceErrorState: true,
+                            controller: otpController,
+                            errorText: errorText,
+                            onChanged: (v) {
+                              setState(() {
+                                otp = v;
+                              });
+                            },
+                            keyboardType: TextInputType.number,
+                            pinputAutovalidateMode:
+                                PinputAutovalidateMode.onSubmit,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "please enter otp";
+                              }
+                              return null;
+                            },
+                            onSubmitted: (_) => context.push("/password"),
+                            defaultPinTheme: PinTheme(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.secondaryContainer,
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 16),
 
-            Consumer(
-              builder: (context, ref, child) {
-                return PrimaryButton(
-                  onTap: otp!.length == 4
-                      ? () async {
-                          if (formKey.currentState!.validate()) {
-                            await ref
-                                .read(authServiceProvider)
-                                .verifyOTP(otp: otpController.text)
-                                .catchError((error) {
-                                  setState(() {
-                                    errorText = error.message;
-                                  });
-                                });
-                            if (!context.mounted) return;
+                        Row(
+                          spacing: 16,
+                          children: [
+                            TextButton(
+                              onPressed: () => context.pop(),
 
-                            context.push("/password");
-                          }
-                        }
-                      : null,
-                );
-              },
+                              child: Text(
+                                "Change Number",
+                                style: AppTextStyles.smallRegular.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {},
+
+                              child: Text(
+                                "Resend Code",
+                                style: AppTextStyles.smallRegular.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    Consumer(
+                      builder: (context, ref, child) {
+                        return PrimaryButton(
+                          onTap: otp?.length == 4
+                              ? () async {
+                                  if (formKey.currentState!.validate()) {
+                                    await ref
+                                        .read(authServiceProvider)
+                                        .verifyOTP(otp: otpController.text)
+                                        .catchError((error) {
+                                          setState(() {
+                                            errorText = error.message;
+                                          });
+                                        });
+                                    if (!context.mounted) return;
+
+                                    context.push("/password");
+                                  }
+                                }
+                              : null,
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

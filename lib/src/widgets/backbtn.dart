@@ -9,7 +9,7 @@ class CustomBackButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: IconButton(
-        iconSize: 16,
+        iconSize: 24,
         alignment: Alignment.center,
         padding: EdgeInsets.zero,
         style: ButtonStyle(
@@ -22,7 +22,7 @@ class CustomBackButton extends StatelessWidget {
             context.pop();
           }
         },
-        color: Color.fromRGBO(122, 127, 153, 1),
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
         icon: Icon(Icons.arrow_back_sharp),
       ),
     );

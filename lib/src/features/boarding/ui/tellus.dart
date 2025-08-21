@@ -24,168 +24,197 @@ class _TellusState extends State<Tellus> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(leading: CustomBackButton()),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Tell us about yourself",
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        "Help us get to know you and tailor your experience.",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      SizedBox(height: 16),
-                      Form(
-                        child: Column(
-                          spacing: 12,
-                          children: [
-                            TextFormField(
-                              controller: nameController,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return "Please enter your name";
-                                }
-                                return null;
-                              },
-                              autofocus: true,
-                              textInputAction: TextInputAction.next,
-                              decoration: InputDecoration(
-                                labelText: "Full Name",
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomBackButton(),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: CustomScrollView(
+                  slivers: [
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Tell us about yourself",
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
-                            ),
-                            TextFormField(
-                              controller: emailController,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return "Please enter your email";
-                                }
-                                final emailRegex = RegExp(
-                                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                                );
-                                if (!emailRegex.hasMatch(value)) {
-                                  return "Please enter a valid email";
-                                }
-                                return null;
-                              },
-                              textInputAction: TextInputAction.next,
-                              decoration: InputDecoration(labelText: "Email"),
-                            ),
-                            TextFormField(
-                              controller: birthController,
-                              readOnly: true,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return "Please enter date of birth";
-                                }
-                                return null;
-                              },
-                              onTap: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  builder: (context) {
-                                    return CupertinoDatePicker(
-                                      mode: CupertinoDatePickerMode.date,
-                                      initialDateTime: DateTime.now(),
-                                      minimumDate: DateTime.now().subtract(
-                                        Duration(days: 10000),
-                                      ),
-                                      onDateTimeChanged: (date) {
-                                        final DateFormat formatter = DateFormat(
-                                          'd/M/yyyy',
-                                        );
-                                        final DateFormat requiredFormatter =
-                                            DateFormat('yyyy/MM/dd');
-
-                                        String formatted = formatter.format(
-                                          date,
-                                        );
-                                        String requiredFormat =
-                                            requiredFormatter.format(date);
-                                        setState(() {
-                                          birthController.text = formatted;
-                                          requiredBirth = requiredFormat;
-                                        });
+                              SizedBox(height: 8),
+                              Text(
+                                "Help us get to know you and tailor your experience.",
+                                style: TextStyle(fontSize: 14),
+                              ),
+                              SizedBox(height: 16),
+                              Form(
+                                child: Column(
+                                  spacing: 12,
+                                  children: [
+                                    TextFormField(
+                                      controller: nameController,
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please enter your name";
+                                        }
+                                        return null;
                                       },
-                                    );
+                                      autofocus: true,
+                                      textInputAction: TextInputAction.next,
+                                      decoration: InputDecoration(
+                                        labelText: "Full Name",
+                                      ),
+                                    ),
+                                    TextFormField(
+                                      controller: emailController,
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
+
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please enter your email";
+                                        }
+                                        final emailRegex = RegExp(
+                                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                        );
+                                        if (!emailRegex.hasMatch(value)) {
+                                          return "Please enter a valid email";
+                                        }
+                                        return null;
+                                      },
+                                      textInputAction: TextInputAction.next,
+                                      decoration: InputDecoration(
+                                        labelText: "Email",
+                                      ),
+                                    ),
+                                    TextFormField(
+                                      controller: birthController,
+                                      readOnly: true,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please enter date of birth";
+                                        }
+                                        return null;
+                                      },
+                                      onTap: () {
+                                        showModalBottomSheet(
+                                          context: context,
+                                          builder: (context) {
+                                            return CupertinoDatePicker(
+                                              mode:
+                                                  CupertinoDatePickerMode.date,
+                                              initialDateTime: DateTime.now(),
+                                              minimumDate: DateTime.now()
+                                                  .subtract(
+                                                    Duration(days: 10000),
+                                                  ),
+                                              onDateTimeChanged: (date) {
+                                                final DateFormat formatter =
+                                                    DateFormat('d/M/yyyy');
+                                                final DateFormat
+                                                requiredFormatter = DateFormat(
+                                                  'yyyy/MM/dd',
+                                                );
+
+                                                String formatted = formatter
+                                                    .format(date);
+                                                String requiredFormat =
+                                                    requiredFormatter.format(
+                                                      date,
+                                                    );
+                                                setState(() {
+                                                  birthController.text =
+                                                      formatted;
+                                                  requiredBirth =
+                                                      requiredFormat;
+                                                });
+                                              },
+                                            );
+                                          },
+                                        );
+                                      },
+                                      textInputAction: TextInputAction.done,
+                                      decoration: InputDecoration(
+                                        labelText: "Date of Birth",
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 12),
+                              Row(
+                                spacing: 8,
+                                children: [
+                                  CustomChip(
+                                    title: "Male",
+                                    isSelected: gender == "Male",
+                                    onTap: () {
+                                      setState(() {
+                                        gender = "Male";
+                                      });
+                                    },
+                                  ),
+                                  CustomChip(
+                                    title: "Female",
+                                    isSelected: gender == "Female",
+                                    onTap: () {
+                                      setState(() {
+                                        gender = "Female";
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: Consumer(
+                              builder: (context, ref, child) {
+                                return PrimaryButton(
+                                  onTap: () {
+                                    if (gender == null) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            "Please choose your gender",
+                                          ),
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    ref
+                                        .read(userNotifierProvider.notifier)
+                                        .create(
+                                          gender: gender,
+                                          dateOfBirth: requiredBirth,
+                                          email: emailController.text,
+                                          fullName: nameController.text,
+                                        );
+                                    context.push("/nationality");
                                   },
                                 );
                               },
-                              textInputAction: TextInputAction.done,
-                              decoration: InputDecoration(
-                                labelText: "Date of Birth",
-                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 12),
-                      Row(
-                        spacing: 8,
-                        children: [
-                          CustomChip(
-                            title: "Male",
-                            isSelected: gender == "Male",
-                            onTap: () {
-                              setState(() {
-                                gender = "Male";
-                              });
-                            },
-                          ),
-                          CustomChip(
-                            title: "Female",
-                            isSelected: gender == "Female",
-                            onTap: () {
-                              setState(() {
-                                gender = "Female";
-                              });
-                            },
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: Consumer(
-                      builder: (context, ref, child) {
-                        return PrimaryButton(
-                          onTap: () {
-                            ref
-                                .read(userNotifierProvider.notifier)
-                                .create(
-                                  gender: gender,
-                                  dateOfBirth: requiredBirth,
-                                  email: emailController.text,
-                                  fullName: nameController.text,
-                                );
-                            context.push("/nationality");
-                          },
-                        );
-                      },
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],

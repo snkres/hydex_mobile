@@ -15,82 +15,94 @@ class _ULikeState extends State<ULike> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(leading: CustomBackButton()),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 16,
-                    children: [
-                      Text(
-                        "What describes you best?",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 26,
-                        ),
-                      ),
-                      DescribeItem(
-                        title: "🏢 I have a venue to rent",
-                        description:
-                            "List your space and start getting bookings.",
-                        isSelected: describeType == "venue",
-                        onTap: () {
-                          setState(() {
-                            describeType = "venue";
-                          });
-                        },
-                      ),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomBackButton(),
 
-                      DescribeItem(
-                        title: "🎉 I’m organizing an event",
-                        description:
-                            "Book exclusive venues and promote your event.",
-                        isSelected: describeType == "event",
-                        onTap: () {
-                          setState(() {
-                            describeType = "event";
-                          });
-                        },
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: CustomScrollView(
+                  slivers: [
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: 16,
+                            children: [
+                              Text(
+                                "What describes you best?",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 26,
+                                ),
+                              ),
+                              DescribeItem(
+                                title: "🏢 I have a venue to rent",
+                                description:
+                                    "List your space and start getting bookings.",
+                                isSelected: describeType == "venue",
+                                onTap: () {
+                                  setState(() {
+                                    describeType = "venue";
+                                  });
+                                },
+                              ),
+
+                              DescribeItem(
+                                title: "🎉 I’m organizing an event",
+                                description:
+                                    "Book exclusive venues and promote your event.",
+                                isSelected: describeType == "event",
+                                onTap: () {
+                                  setState(() {
+                                    describeType = "event";
+                                  });
+                                },
+                              ),
+                              DescribeItem(
+                                title:
+                                    "📣 I want more exposure for my business",
+                                description:
+                                    "Get discovered by high value guests.",
+                                isSelected: describeType == "exposure",
+                                onTap: () {
+                                  setState(() {
+                                    describeType = "exposure";
+                                  });
+                                },
+                              ),
+                              DescribeItem(
+                                title: "🧩 Other",
+                                description: "Let’s explore how we can help.",
+                                isSelected: describeType == "other",
+                                onTap: () {
+                                  setState(() {
+                                    describeType = "other";
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: PrimaryButton(
+                              onTap: describeType != null
+                                  ? () => context.push("/nationality")
+                                  : null,
+                            ),
+                          ),
+                        ],
                       ),
-                      DescribeItem(
-                        title: "📣 I want more exposure for my business",
-                        description: "Get discovered by high value guests.",
-                        isSelected: describeType == "exposure",
-                        onTap: () {
-                          setState(() {
-                            describeType = "exposure";
-                          });
-                        },
-                      ),
-                      DescribeItem(
-                        title: "🧩 Other",
-                        description: "Let’s explore how we can help.",
-                        isSelected: describeType == "other",
-                        onTap: () {
-                          setState(() {
-                            describeType = "other";
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: PrimaryButton(
-                      onTap: describeType != null
-                          ? () => context.push("/nationality")
-                          : null,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],

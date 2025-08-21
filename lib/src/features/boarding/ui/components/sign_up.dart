@@ -22,20 +22,21 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
   final textController = TextEditingController();
   String? phoneNumber;
   final formKey = GlobalKey<FormState>();
-  final FocusNode _focusNode = FocusNode();
+  late final _focusNode;
 
   void _remove() {
     if (!_focusNode.hasFocus) {
-      ref.read(heightProvider.notifier).state = 360;
+      ref.read(heightProvider.notifier).state = 460;
     } else {
-      ref.read(heightProvider.notifier).state = 650;
+      ref.read(heightProvider.notifier).state = 660;
     }
   }
 
   @override
   void initState() {
     super.initState();
-    _focusNode.addListener(_remove);
+    _focusNode = FocusNode();
+    // _focusNode.addListener(_remove);
   }
 
   @override
@@ -45,196 +46,187 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
     super.dispose();
   }
 
-  KeyboardActionsConfig _buildConfig(BuildContext context) {
-    return KeyboardActionsConfig(
-      keyboardActionsPlatform: KeyboardActionsPlatform.IOS,
-      keyboardBarColor: CupertinoColors.extraLightBackgroundGray,
-      nextFocus: false,
-      actions: [
-        KeyboardActionsItem(
-          focusNode: _focusNode,
-          toolbarButtons: [
-            (node) {
-              return GestureDetector(
-                onTap: () async {
-                  node.unfocus();
-                  if (formKey.currentState!.validate()) {
-                    await ref.read(authServiceProvider).sendOTP(phoneNumber!);
-                    if (!context.mounted) return;
-                    context.push("/otp");
-                  }
-                },
-                child: Container(
-                  color: CupertinoColors.extraLightBackgroundGray,
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    "Done",
-                    style: TextStyle(color: CupertinoColors.activeBlue),
-                  ),
-                ),
-              );
-            },
-          ],
-        ),
-      ],
-    );
-  }
+  // KeyboardActionsConfig _buildConfig(BuildContext context) {
+  //   return KeyboardActionsConfig(
+  //     keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+  //     keyboardBarColor: CupertinoColors.extraLightBackgroundGray,
+  //     nextFocus: false,
+  //     actions: [
+  //       KeyboardActionsItem(
+  //         focusNode: _focusNode,
+  //         toolbarButtons: [
+  //           (node) {
+  //             return GestureDetector(
+  //               onTap: () async {
+  //                 node.unfocus();
+  //                 if (formKey.currentState!.validate()) {
+  //                   await ref.read(authServiceProvider).sendOTP(phoneNumber!);
+  //                   if (!context.mounted) return;
+  //                   context.push("/otp");
+  //                 }
+  //               },
+  //               child: Container(
+  //                 color: CupertinoColors.extraLightBackgroundGray,
+  //                 padding: EdgeInsets.all(8.0),
+  //                 child: Text(
+  //                   "Done",
+  //                   style: TextStyle(color: CupertinoColors.activeBlue),
+  //                 ),
+  //               ),
+  //             );
+  //           },
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
     final selectedCountry = ref.watch(countryPickerNotifierProvider);
-    return KeyboardActions(
-      config: _buildConfig(context),
-      child: Column(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Sign up",
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
-              ),
-              SizedBox(height: 8),
-              Text(
-                "Access the city’s most coveted spots, luxury deals, and curated experiences.",
-                style: TextStyle(fontSize: 14, color: Color(0xff7A7F99)),
-              ),
-              SizedBox(height: 16),
-              selectedCountry.when(
-                data: (data) {
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 8,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (context) => CountryPickerBottomSheet(),
-                          );
-                        },
-                        child: Container(
-                          height: 80,
-                          width: 95,
-                          padding: EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.secondaryContainer,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: FittedBox(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              spacing: 10,
-                              children: [
-                                Text(
-                                  data.emoji,
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                                Text(data.dialCode),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Form(
-                          key: formKey,
-                          child: TextFormField(
-                            controller: textController,
-                            focusNode: _focusNode,
-                            autofocus: true,
-                            keyboardType: TextInputType.phone,
-                            textInputAction: TextInputAction.done,
-                            onChanged: (v) {
-                              setState(() {
-                                phoneNumber =
-                                    data.dialCode + textController.text;
-                              });
-                            },
-                            validator: (v) {
-                              if (v!.isEmpty) {
-                                return "please write phone number";
-                              }
-                              return null;
-                            },
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                RegExp(r'[0-9+]+'),
-                              ),
-                            ],
-                            maxLength: 10,
-                            onFieldSubmitted: (v) async {
-                              if (formKey.currentState!.validate()) {
-                                await ref
-                                    .read(authServiceProvider)
-                                    .sendOTP(phoneNumber!);
-                                if (!context.mounted) return;
-                                context.push("/otp");
-                              }
-                            },
-
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            decoration: InputDecoration(
-                              labelText: "Phone Number",
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-                error: (e, s) {
-                  return Center(child: Text("Error"));
-                },
-                loading: () => Center(child: CircularProgressIndicator()),
-              ),
-              SizedBox(height: 8),
-              Text.rich(
-                TextSpan(
-                  text: "By continuing, you agree to to Hyde’x ",
-                  style: TextStyle(color: Color(0xff7A7F99)),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Sign up",
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
+            ),
+            SizedBox(height: 8),
+            Text(
+              "Access the city’s most coveted spots, luxury deals, and curated experiences.",
+              style: TextStyle(fontSize: 14, color: Color(0xff7A7F99)),
+            ),
+            SizedBox(height: 16),
+            selectedCountry.when(
+              data: (data) {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 8,
                   children: [
-                    TextSpan(
-                      text: "Privacy ",
-                      recognizer: TapGestureRecognizer()..onTap = () {},
-                      style: TextStyle(decoration: TextDecoration.underline),
+                    GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) => CountryPickerBottomSheet(),
+                        );
+                      },
+                      child: Container(
+                        height: 80,
+                        width: 95,
+                        padding: EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: FittedBox(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            spacing: 10,
+                            children: [
+                              Text(data.emoji, style: TextStyle(fontSize: 20)),
+                              Text(data.dialCode),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                    TextSpan(text: "and "),
-                    TextSpan(
-                      text: "Terms",
-                      recognizer: TapGestureRecognizer()..onTap = () {},
-                      style: TextStyle(decoration: TextDecoration.underline),
+                    Expanded(
+                      child: Form(
+                        key: formKey,
+                        child: TextFormField(
+                          controller: textController,
+                          focusNode: _focusNode,
+                          autofocus: true,
+                          keyboardType: TextInputType.phone,
+                          textInputAction: TextInputAction.done,
+                          onChanged: (v) {
+                            setState(() {
+                              phoneNumber = data.dialCode + textController.text;
+                            });
+                          },
+                          validator: (v) {
+                            if (v!.isEmpty) {
+                              return "please write phone number";
+                            }
+                            return null;
+                          },
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'[0-9+]+'),
+                            ),
+                          ],
+                          maxLength: 10,
+                          onFieldSubmitted: (v) async {
+                            if (formKey.currentState!.validate()) {
+                              await ref
+                                  .read(authServiceProvider)
+                                  .sendOTP(phoneNumber!);
+                              if (!context.mounted) return;
+                              context.push("/otp");
+                            }
+                          },
+
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          decoration: InputDecoration(
+                            labelText: "Phone Number",
+                          ),
+                        ),
+                      ),
                     ),
                   ],
-                ),
+                );
+              },
+              error: (e, s) {
+                return Center(child: Text("Error"));
+              },
+              loading: () => Center(child: CircularProgressIndicator()),
+            ),
+            SizedBox(height: 8),
+            Text.rich(
+              TextSpan(
+                text: "By continuing, you agree to to Hyde’x ",
+                style: TextStyle(color: Color(0xff7A7F99)),
+                children: [
+                  TextSpan(
+                    text: "Privacy ",
+                    recognizer: TapGestureRecognizer()..onTap = () {},
+                    style: TextStyle(decoration: TextDecoration.underline),
+                  ),
+                  TextSpan(text: "and "),
+                  TextSpan(
+                    text: "Terms",
+                    recognizer: TapGestureRecognizer()..onTap = () {},
+                    style: TextStyle(decoration: TextDecoration.underline),
+                  ),
+                ],
               ),
-              SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 24),
-                child: PrimaryButton(
-                  onTap: phoneNumber != null
-                      ? () async {
-                          if (formKey.currentState!.validate()) {
-                            await ref
-                                .read(authServiceProvider)
-                                .sendOTP(phoneNumber!);
+            ),
+            SizedBox(height: 16),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 24),
+          child: PrimaryButton(
+            onTap: phoneNumber != null
+                ? () async {
+                    if (formKey.currentState!.validate()) {
+                      await ref.read(authServiceProvider).sendOTP(phoneNumber!);
 
-                            if (!context.mounted) return;
+                      if (!context.mounted) return;
 
-                            context.push("/otp");
-                          }
-                        }
-                      : null,
-                ),
-              ),
-            ],
+                      context.push("/otp");
+                    }
+                  }
+                : null,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

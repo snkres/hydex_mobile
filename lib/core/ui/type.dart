@@ -1,8 +1,9 @@
 import 'dart:io';
-import 'dart:ui';
+
+import 'package:flutter/material.dart';
 
 class AppTextStyles {
-  static String get fontFamily => Platform.isIOS ? "SF Pro" : "";
+  static String get fontFamily => Platform.isIOS ? "SF Pro" : "Roboto";
 
   // Display
   static final displayLargeLight = TextStyle(
@@ -40,9 +41,8 @@ class AppTextStyles {
   // Primary Body
   static final primaryRegular = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 22,
+    fontSize: 16,
     fontWeight: FontWeight.w400,
-    height: 1.27, // 28/22 = 1.27
     letterSpacing: 0.0,
   );
 

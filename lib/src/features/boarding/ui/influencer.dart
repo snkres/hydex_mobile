@@ -35,103 +35,114 @@ class _InfluencerScreenState extends State<InfluencerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(leading: CustomBackButton()),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomBackButton(),
 
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Your influencer story",
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        "Tell us about your work as a content creator so we can tailor the right opportunities for you.",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        "Choose your content niches",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: 12),
-
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: contentNiche
-                            .map(
-                              (e) => CustomChip(
-                                title: e,
-                                isSelected: e == selectedContent,
-                                onTap: () {
-                                  setState(() {
-                                    selectedContent = e;
-                                  });
-                                },
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: CustomScrollView(
+                  slivers: [
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Your influencer story",
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
-                            )
-                            .toList(),
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        "Audience size range",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: 12),
-
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: audienceSizeRange
-                            .map(
-                              (e) => CustomChip(
-                                title: e,
-                                isSelected: e == selectedSize,
-                                onTap: () {
-                                  setState(() {
-                                    selectedSize = e;
-                                  });
-                                },
+                              SizedBox(height: 8),
+                              Text(
+                                "Tell us about your work as a content creator so we can tailor the right opportunities for you.",
+                                style: TextStyle(fontSize: 14),
                               ),
-                            )
-                            .toList(),
+                              SizedBox(height: 16),
+                              Text(
+                                "Choose your content niches",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              SizedBox(height: 12),
+
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: contentNiche
+                                    .map(
+                                      (e) => CustomChip(
+                                        title: e,
+                                        isSelected: e == selectedContent,
+                                        onTap: () {
+                                          setState(() {
+                                            selectedContent = e;
+                                          });
+                                        },
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                "Audience size range",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              SizedBox(height: 12),
+
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: audienceSizeRange
+                                    .map(
+                                      (e) => CustomChip(
+                                        title: e,
+                                        isSelected: e == selectedSize,
+                                        onTap: () {
+                                          setState(() {
+                                            selectedSize = e;
+                                          });
+                                        },
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                              SizedBox(height: 16),
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: "City of primary activity",
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 16),
+                            child: PrimaryButton(
+                              onTap:
+                                  selectedContent != null &&
+                                      selectedSize != null
+                                  ? () => context.go("/waitlist")
+                                  : null,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 16),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          labelText: "City of primary activity",
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: PrimaryButton(
-                      onTap: selectedContent != null && selectedSize != null
-                          ? () => context.go("/waitlist")
-                          : null,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],

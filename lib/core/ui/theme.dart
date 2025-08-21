@@ -5,13 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:hydex/core/ui/colors.dart';
 
 class AppTheme {
-  static final typography = TextTheme(
-    displayLarge: TextStyle(
-      fontFamily: Platform.isIOS ? "Sf-Pro" : "",
-      fontSize: 50,
-    ),
-  );
-
   static ThemeData lightTheme() {
     return ThemeData(
       colorScheme: lightColorScheme,
@@ -79,8 +72,6 @@ class AppTheme {
           backgroundColor: WidgetStatePropertyAll(Color(0xff01271f)),
         ),
       ),
-
-      textTheme: typography,
     );
   }
 
@@ -88,7 +79,9 @@ class AppTheme {
     return ThemeData(
       brightness: Brightness.dark,
       colorScheme: darkColorScheme,
-      textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: darkColorScheme.onSurface,
+      ),
       bottomSheetTheme: BottomSheetThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.only(
@@ -123,8 +116,6 @@ class AppTheme {
         contentPadding: EdgeInsets.all(20),
         fillColor: darkColorScheme.secondaryContainer,
       ),
-
-      textTheme: typography,
     );
   }
 }

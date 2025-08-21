@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/widgets/custom_radio.dart';
 
 class UserTypeContainer<T> extends StatelessWidget {
@@ -37,15 +38,11 @@ class UserTypeContainer<T> extends StatelessWidget {
                 CustomRadio(isSelected: value == groupValue),
               ],
             ),
-            Text(
-              title,
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-            ),
+            Text(title, style: AppTextStyles.smallSemibold),
             Text(
               description,
-              style: TextStyle(
-                fontSize: 12,
-                color: Theme.of(context).colorScheme.onSurface,
+              style: AppTextStyles.captionRegular.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
           ],

@@ -114,6 +114,7 @@ class _CountryPickerBottomSheetState extends State<CountryPickerBottomSheet> {
                   itemBuilder: (context, index) {
                     final country = filteredCountries[index];
                     return ListTile(
+                      contentPadding: EdgeInsets.zero,
                       leading: Text(
                         country.emoji,
                         style: const TextStyle(fontSize: 26),

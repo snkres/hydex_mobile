@@ -2,10 +2,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/boarding/ui/components/pick_type.dart';
 import 'package:hydex/src/features/boarding/ui/components/sign_up.dart';
 
-final heightProvider = StateProvider<double>((ref) => 500);
+final heightProvider = StateProvider<double>((ref) => 460);
 
 class BoardingScreen extends StatefulWidget {
   const BoardingScreen({super.key});
@@ -25,7 +26,11 @@ class _BoardingScreenState extends State<BoardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(systemOverlayStyle: SystemUiOverlayStyle.light),
+      appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarIconBrightness: Brightness.light,
+        ),
+      ),
       backgroundColor: Colors.black,
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -63,7 +68,9 @@ class _BoardingScreenState extends State<BoardingScreen> {
             SizedBox(height: 35),
             Text(
               "For Experience Seekers.",
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+              style: AppTextStyles.primaryRegular.copyWith(
+                color: Colors.white.withValues(alpha: 0.5),
+              ),
             ),
             SizedBox(height: 4),
 
@@ -83,9 +90,8 @@ class _BoardingScreenState extends State<BoardingScreen> {
                     onPressed: () {
                       showModalBottomSheet(
                         context: context,
-                        showDragHandle: true,
                         isScrollControlled: true,
-
+                        showDragHandle: true,
                         // constraints: BoxConstraints(minHeight: 500, maxHeight: 700),
                         builder: (context) {
                           return AnimatedContainer(
@@ -106,7 +112,19 @@ class _BoardingScreenState extends State<BoardingScreen> {
                                   Expanded(
                                     child: PageView(
                                       controller: pageController,
-
+                                      onPageChanged: (page) {
+                                        if (page == 0) {
+                                          ref
+                                                  .read(heightProvider.notifier)
+                                                  .state =
+                                              460;
+                                        } else {
+                                          ref
+                                                  .read(heightProvider.notifier)
+                                                  .state =
+                                              660;
+                                        }
+                                      },
                                       physics:
                                           const NeverScrollableScrollPhysics(),
                                       children: [
@@ -125,7 +143,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
                           );
                         },
                       ).whenComplete(() {
-                        ref.read(heightProvider.notifier).state = 500;
+                        ref.read(heightProvider.notifier).state = 460;
                       });
                     },
                     child: Text(
@@ -145,7 +163,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
                     TextSpan(
                       text: "Sign in",
                       recognizer: TapGestureRecognizer()..onTap = () {},
-                      style: TextStyle(
+                      style: AppTextStyles.smallRegular.copyWith(
                         decoration: TextDecoration.underline,
                         decorationColor: Colors.white,
                       ),
@@ -155,6 +173,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
                 style: TextStyle(color: Colors.white),
               ),
             ),
+            SizedBox(height: 16),
           ],
         ),
       ),
