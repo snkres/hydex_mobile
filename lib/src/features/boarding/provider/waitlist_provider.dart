@@ -10,7 +10,7 @@ final waitlistProvider = FutureProvider<WaitlistResponse>((ref) async {
 
     if (response.success && response.data != null) {
       final data = response.data?["data"];
-      return WaitlistResponseMapper.fromJson(data);
+      return WaitlistResponseMapper.fromMap(data);
     } else {
       throw ApiException(response.errorMessage ?? 'Failed to verify user');
     }

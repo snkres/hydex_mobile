@@ -62,7 +62,7 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
                       SizedBox(height: 16),
                       DropdownButtonFormField<String>(
                         hint: Text("Country"),
-                        value: selectedCountry,
+                        initialValue: selectedCountry,
                         items: countries
                             .map(
                               (e) => DropdownMenuItem(value: e, child: Text(e)),

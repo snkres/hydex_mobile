@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/user/user.dart';
-import 'package:hydex/src/features/boarding/data/usertype.dart';
 import 'package:hydex/src/features/boarding/provider/usertype_provider.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
-import 'package:hydex/src/widgets/user_Type_container.dart';
+import 'package:hydex/src/widgets/user_type_container.dart';
 
 class PickUserType extends StatelessWidget {
   const PickUserType({super.key, required this.pageController});

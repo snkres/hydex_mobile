@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/boarding/seeker.dart';
 import 'package:hydex/src/features/boarding/ui/boarding.dart';

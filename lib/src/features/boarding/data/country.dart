@@ -46,7 +46,6 @@ class CountryService {
 
       return _countries;
     } catch (e) {
-      print('Error loading countries: $e');
       return [];
     }
   }

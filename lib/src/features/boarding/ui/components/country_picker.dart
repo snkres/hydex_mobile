@@ -38,7 +38,6 @@ class _CountryPickerBottomSheetState extends State<CountryPickerBottomSheet> {
       setState(() {
         isLoading = false;
       });
-      print('Error loading countries: $e');
     }
   }
 
