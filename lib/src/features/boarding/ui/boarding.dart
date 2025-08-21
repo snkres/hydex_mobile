@@ -12,7 +12,7 @@ class BoardingScreen extends StatefulWidget {
 
 class _BoardingScreenState extends State<BoardingScreen> {
   final pageController = PageController();
-
+  double sheetHeight = 500;
   @override
   void dispose() {
     pageController.dispose();
@@ -78,44 +78,49 @@ class _BoardingScreenState extends State<BoardingScreen> {
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
-                    constraints: BoxConstraints(maxHeight: 500),
+                    showDragHandle: true,
                     isScrollControlled: true,
+                    // constraints: BoxConstraints(minHeight: 500, maxHeight: 700),
                     builder: (context) {
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom,
-                          top: 16,
-                          left: 16,
-                          right: 16,
-                        ),
-                        child: Column(
-                          children: [
-                            Center(
-                              child: Container(
-                                height: 4,
-                                width: 44,
-                                decoration: BoxDecoration(
-                                  color: Color(0xffDEDEDE),
-                                  borderRadius: BorderRadius.circular(4),
+                      return AnimatedContainer(
+                        height: sheetHeight,
+                        duration: Duration(milliseconds: 300),
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                            top: 16,
+                            left: 16,
+                            right: 16,
+                          ),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: PageView(
+                                  controller: pageController,
+                                  onPageChanged: (page) {
+                                    if (page == 0) {
+                                      setState(() {
+                                        sheetHeight = 500;
+                                      });
+                                    } else {
+                                      setState(() {
+                                        sheetHeight = 700;
+                                      });
+                                    }
+                                  },
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  children: [
+                                    SizedBox(
+                                      child: PickUserType(
+                                        pageController: pageController,
+                                      ),
+                                    ),
+                                    SizedBox(child: SignUpComponent()),
+                                  ],
                                 ),
                               ),
-                            ),
-                            SizedBox(height: 20),
-                            Expanded(
-                              child: PageView(
-                                controller: pageController,
-                                physics: const NeverScrollableScrollPhysics(),
-                                children: [
-                                  SizedBox(
-                                    child: PickUserType(
-                                      pageController: pageController,
-                                    ),
-                                  ),
-                                  SizedBox(child: SignUpComponent()),
-                                ],
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     },
