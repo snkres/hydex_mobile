@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hydex/core/ui/colors.dart';
 
 class AppTheme {
@@ -28,7 +29,16 @@ class AppTheme {
       ),
       textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black),
       scaffoldBackgroundColor: Colors.white,
-      appBarTheme: AppBarTheme(backgroundColor: Colors.white),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.white,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          // Status bar color
+
+          // Status bar brightness (optional)
+          statusBarIconBrightness: Brightness.light, // For Android (dark icons)
+          statusBarBrightness: Brightness.light, // For iOS (dark icons)
+        ),
+      ),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
@@ -87,6 +97,7 @@ class AppTheme {
           ),
         ),
       ),
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(darkColorScheme.primary),

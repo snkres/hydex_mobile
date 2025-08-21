@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/src/features/boarding/provider/country_picker_provider.dart';
+import 'package:hydex/src/features/boarding/ui/boarding.dart';
 import 'package:hydex/src/features/boarding/ui/components/country_picker.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -20,15 +21,28 @@ class SignUpComponent extends ConsumerStatefulWidget {
 class _SignUpComponentState extends ConsumerState<SignUpComponent> {
   final textController = TextEditingController();
   String? phoneNumber;
+  final formKey = GlobalKey<FormState>();
+  final FocusNode _focusNode = FocusNode();
+
+  void _remove() {
+    if (!_focusNode.hasFocus) {
+      ref.read(heightProvider.notifier).state = 340;
+    } else {
+      ref.read(heightProvider.notifier).state = 650;
+    }
+  }
+
+  @override
+  void initState() {
+    _focusNode.addListener(_remove);
+    super.initState();
+  }
 
   @override
   void dispose() {
     textController.dispose();
     super.dispose();
   }
-
-  final formKey = GlobalKey<FormState>();
-  final FocusNode _focusNode = FocusNode();
 
   KeyboardActionsConfig _buildConfig(BuildContext context) {
     return KeyboardActionsConfig(
@@ -71,7 +85,6 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
     return KeyboardActions(
       config: _buildConfig(context),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,6 +144,7 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                           child: TextFormField(
                             controller: textController,
                             focusNode: _focusNode,
+                            autofocus: true,
                             keyboardType: TextInputType.phone,
                             textInputAction: TextInputAction.done,
                             onChanged: (v) {

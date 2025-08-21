@@ -1,7 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/src/features/boarding/ui/components/pick_type.dart';
 import 'package:hydex/src/features/boarding/ui/components/sign_up.dart';
+
+final heightProvider = StateProvider<double>((ref) => 500);
 
 class BoardingScreen extends StatefulWidget {
   const BoardingScreen({super.key});
@@ -12,11 +15,9 @@ class BoardingScreen extends StatefulWidget {
 
 class _BoardingScreenState extends State<BoardingScreen> {
   final pageController = PageController();
-  double sheetHeight = 500;
   @override
   void dispose() {
     pageController.dispose();
-
     super.dispose();
   }
 
@@ -74,62 +75,63 @@ class _BoardingScreenState extends State<BoardingScreen> {
                 minWidth: double.infinity,
                 minHeight: 50,
               ),
-              child: ElevatedButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    showDragHandle: true,
-                    isScrollControlled: true,
-                    // constraints: BoxConstraints(minHeight: 500, maxHeight: 700),
-                    builder: (context) {
-                      return AnimatedContainer(
-                        height: sheetHeight,
-                        duration: Duration(milliseconds: 300),
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).viewInsets.bottom,
-                            top: 16,
-                            left: 16,
-                            right: 16,
-                          ),
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: PageView(
-                                  controller: pageController,
-                                  onPageChanged: (page) {
-                                    if (page == 0) {
-                                      setState(() {
-                                        sheetHeight = 500;
-                                      });
-                                    } else {
-                                      setState(() {
-                                        sheetHeight = 700;
-                                      });
-                                    }
-                                  },
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  children: [
-                                    SizedBox(
-                                      child: PickUserType(
-                                        pageController: pageController,
-                                      ),
-                                    ),
-                                    SizedBox(child: SignUpComponent()),
-                                  ],
-                                ),
+              child: Consumer(
+                builder: (context, ref, child) {
+                  return ElevatedButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        showDragHandle: true,
+                        isScrollControlled: true,
+
+                        // constraints: BoxConstraints(minHeight: 500, maxHeight: 700),
+                        builder: (context) {
+                          return AnimatedContainer(
+                            height: ref.watch(heightProvider),
+                            curve: Curves.easeIn,
+                            duration: Duration(milliseconds: 250),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                bottom: MediaQuery.of(
+                                  context,
+                                ).viewInsets.bottom,
+                                top: 16,
+                                left: 16,
+                                right: 16,
                               ),
-                            ],
-                          ),
-                        ),
-                      );
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: PageView(
+                                      controller: pageController,
+
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      children: [
+                                        SizedBox(
+                                          child: PickUserType(
+                                            pageController: pageController,
+                                          ),
+                                        ),
+                                        SizedBox(child: SignUpComponent()),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ).whenComplete(() {
+                        ref.read(heightProvider.notifier).state = 500;
+                      });
                     },
+                    child: Text(
+                      "Get Started",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   );
                 },
-                child: Text(
-                  "Get Started",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
               ),
             ),
             SizedBox(height: 24),

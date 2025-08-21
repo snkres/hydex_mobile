@@ -17,7 +17,7 @@ class _OtpScreenState extends State<OtpScreen> {
   String? errorText;
   static final otpController = TextEditingController();
   static final formKey = GlobalKey<FormState>();
-
+  String? otp;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,6 +68,11 @@ class _OtpScreenState extends State<OtpScreen> {
                     forceErrorState: true,
                     controller: otpController,
                     errorText: errorText,
+                    onChanged: (v) {
+                      setState(() {
+                        otp = v;
+                      });
+                    },
                     keyboardType: TextInputType.number,
                     pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
                     validator: (value) {
@@ -93,21 +98,23 @@ class _OtpScreenState extends State<OtpScreen> {
             Consumer(
               builder: (context, ref, child) {
                 return PrimaryButton(
-                  onTap: () async {
-                    if (formKey.currentState!.validate()) {
-                      await ref
-                          .read(authServiceProvider)
-                          .verifyOTP(otp: otpController.text)
-                          .catchError((error) {
-                            setState(() {
-                              errorText = error.message;
-                            });
-                          });
-                      if (!context.mounted) return;
+                  onTap: otp!.length == 4
+                      ? () async {
+                          if (formKey.currentState!.validate()) {
+                            await ref
+                                .read(authServiceProvider)
+                                .verifyOTP(otp: otpController.text)
+                                .catchError((error) {
+                                  setState(() {
+                                    errorText = error.message;
+                                  });
+                                });
+                            if (!context.mounted) return;
 
-                      context.push("/password");
-                    }
-                  },
+                            context.push("/password");
+                          }
+                        }
+                      : null,
                 );
               },
             ),
