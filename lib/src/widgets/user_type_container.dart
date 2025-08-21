@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/src/widgets/custom_radio.dart';
 
 class UserTypeContainer<T> extends StatelessWidget {

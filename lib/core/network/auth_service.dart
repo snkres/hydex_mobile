@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/auth_handler.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/network/user/user.dart';
-import 'package:hydex/core/network/waitlist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auth_service.g.dart';
 

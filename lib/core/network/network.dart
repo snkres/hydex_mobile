@@ -431,7 +431,6 @@ class DioHelper {
     }
   }
 
-  // Set authentication tokens from login/register response
   static Future<void> setTokensFromAuthResponse(
     Map<String, dynamic> responseData,
     Response response,
@@ -729,7 +728,6 @@ class DioHelper {
     }
   }
 
-  // Enhanced auth method that handles both login and register
   static Future<Map<String, dynamic>> authenticate(
     String endpoint,
     Map<String, dynamic> authData,
@@ -757,14 +755,6 @@ class DioHelper {
     Map<String, dynamic> credentials,
   ) async {
     return authenticate(endpoint, credentials);
-  }
-
-  // Enhanced register method that handles tokens from response data and cookies
-  static Future<Map<String, dynamic>> register(
-    String endpoint,
-    Map<String, dynamic> registrationData,
-  ) async {
-    return authenticate(endpoint, registrationData);
   }
 
   // Enhanced logout method

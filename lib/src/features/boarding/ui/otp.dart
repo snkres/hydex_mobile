@@ -1,10 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
-import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:pinput/pinput.dart';
@@ -106,6 +103,8 @@ class _OtpScreenState extends State<OtpScreen> {
                               errorText = error.message;
                             });
                           });
+                      if (!context.mounted) return;
+
                       context.push("/password");
                     }
                   },
