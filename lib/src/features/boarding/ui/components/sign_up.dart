@@ -102,7 +102,7 @@ class _SignUpComponentState extends State<SignUpComponent> {
                                   key: formKey,
                                   child: TextFormField(
                                     controller: textController,
-                                    keyboardType: TextInputType.phone,
+                                    keyboardType: TextInputType.number,
                                     textInputAction: TextInputAction.done,
                                     onChanged: (v) {
                                       setState(() {
@@ -123,6 +123,7 @@ class _SignUpComponentState extends State<SignUpComponent> {
                                     ],
                                     maxLength: 10,
                                     onFieldSubmitted: (v) async {
+                                      FocusScope.of(context).unfocus();
                                       if (formKey.currentState!.validate()) {
                                         await ref
                                             .read(authServiceProvider)
@@ -131,7 +132,6 @@ class _SignUpComponentState extends State<SignUpComponent> {
                                         context.push("/otp");
                                       }
                                     },
-
                                     autovalidateMode:
                                         AutovalidateMode.onUserInteraction,
                                     decoration: InputDecoration(
