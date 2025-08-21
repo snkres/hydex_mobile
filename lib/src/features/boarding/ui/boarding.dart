@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/src/features/boarding/ui/components/pick_type.dart';
 import 'package:hydex/src/features/boarding/ui/components/sign_up.dart';
@@ -24,6 +25,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(systemOverlayStyle: SystemUiOverlayStyle.light),
       backgroundColor: Colors.black,
       body: Padding(
         padding: EdgeInsets.all(16.0),
