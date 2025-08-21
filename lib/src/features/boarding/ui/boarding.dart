@@ -91,7 +91,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
                           return AnimatedContainer(
                             height: ref.watch(heightProvider),
                             curve: Curves.easeIn,
-                            duration: Duration(milliseconds: 250),
+                            duration: Duration(milliseconds: 200),
                             child: Padding(
                               padding: EdgeInsets.only(
                                 bottom: MediaQuery.of(

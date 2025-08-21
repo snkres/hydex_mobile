@@ -26,7 +26,7 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
 
   void _remove() {
     if (!_focusNode.hasFocus) {
-      ref.read(heightProvider.notifier).state = 340;
+      ref.read(heightProvider.notifier).state = 360;
     } else {
       ref.read(heightProvider.notifier).state = 650;
     }
@@ -34,13 +34,14 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
 
   @override
   void initState() {
-    _focusNode.addListener(_remove);
     super.initState();
+    _focusNode.addListener(_remove);
   }
 
   @override
   void dispose() {
     textController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -212,25 +213,25 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                 ),
               ),
               SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: PrimaryButton(
+                  onTap: phoneNumber != null
+                      ? () async {
+                          if (formKey.currentState!.validate()) {
+                            await ref
+                                .read(authServiceProvider)
+                                .sendOTP(phoneNumber!);
+
+                            if (!context.mounted) return;
+
+                            context.push("/otp");
+                          }
+                        }
+                      : null,
+                ),
+              ),
             ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: PrimaryButton(
-              onTap: phoneNumber != null
-                  ? () async {
-                      if (formKey.currentState!.validate()) {
-                        await ref
-                            .read(authServiceProvider)
-                            .sendOTP(phoneNumber!);
-
-                        if (!context.mounted) return;
-
-                        context.push("/otp");
-                      }
-                    }
-                  : null,
-            ),
           ),
         ],
       ),

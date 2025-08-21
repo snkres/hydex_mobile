@@ -72,27 +72,27 @@ class PickUserType extends StatelessWidget {
                   title: "I’m a business owner",
                   description: "Boost bookings, attract guests, grow exposure",
                 ),
+                SizedBox(height: 16),
+
+                Consumer(
+                  builder: (context, ref, child) {
+                    return PrimaryButton(
+                      onTap: currentType != Role.none
+                          ? () {
+                              pageController.nextPage(
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                              ref
+                                  .read(userNotifierProvider.notifier)
+                                  .create(role: currentType.toValue());
+                            }
+                          : null,
+                    );
+                  },
+                ),
+                SizedBox(height: 24),
               ],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Consumer(
-                builder: (context, ref, child) {
-                  return PrimaryButton(
-                    onTap: currentType != Role.none
-                        ? () {
-                            pageController.nextPage(
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                            ref
-                                .read(userNotifierProvider.notifier)
-                                .create(role: currentType.toValue());
-                          }
-                        : null,
-                  );
-                },
-              ),
             ),
           ],
         );
