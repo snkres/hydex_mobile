@@ -28,11 +28,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarBrightness: Brightness.light,
-        ),
-      ),
+
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
