@@ -26,12 +26,13 @@ class _BoardingScreenState extends State<BoardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.black,
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.light,
         ),
       ),
-      backgroundColor: Colors.black,
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
