@@ -74,6 +74,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           child: Pinput(
                             autofocus: true,
                             forceErrorState: true,
+                            
                             controller: otpController,
                             errorText: errorText,
                             onChanged: (v) {
@@ -104,7 +105,6 @@ class _OtpScreenState extends State<OtpScreen> {
                           ),
                         ),
                         SizedBox(height: 16),
-
                         Row(
                           spacing: 16,
                           children: [

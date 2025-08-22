@@ -64,8 +64,8 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                         );
                       },
                       child: Container(
-                        height: 80,
                         width: 95,
+                        height: 55,
                         padding: EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: Theme.of(

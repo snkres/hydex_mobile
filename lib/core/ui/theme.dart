@@ -9,15 +9,12 @@ class AppTheme {
     return ThemeData(
       colorScheme: lightColorScheme,
       snackBarTheme: SnackBarThemeData(
-        width: 400,
-        insetPadding: EdgeInsets.all(100),
+        width: 250,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(99),
         ),
         backgroundColor: lightColorScheme.secondaryContainer,
-        contentTextStyle: TextStyle(
-          color: lightColorScheme.onSecondaryContainer,
-        ),
+        contentTextStyle: TextStyle(color: lightColorScheme.onSurfaceVariant),
         behavior: SnackBarBehavior.floating,
       ),
       textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black),
@@ -63,7 +60,6 @@ class AppTheme {
 
           borderRadius: BorderRadius.circular(16),
         ),
-        contentPadding: EdgeInsets.all(20),
         fillColor: Color.fromRGBO(246, 246, 246, 0.7),
       ),
 
@@ -77,6 +73,16 @@ class AppTheme {
 
   static ThemeData darkTheme() {
     return ThemeData(
+      snackBarTheme: SnackBarThemeData(
+        width: 250,
+        insetPadding: EdgeInsets.all(100),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.circular(99),
+        ),
+        backgroundColor: darkColorScheme.secondaryContainer,
+        contentTextStyle: TextStyle(color: darkColorScheme.onSurfaceVariant),
+        behavior: SnackBarBehavior.floating,
+      ),
       brightness: Brightness.dark,
       colorScheme: darkColorScheme,
       textSelectionTheme: TextSelectionThemeData(
@@ -112,7 +118,6 @@ class AppTheme {
 
           borderRadius: BorderRadius.circular(16),
         ),
-        contentPadding: EdgeInsets.all(20),
         fillColor: darkColorScheme.secondaryContainer,
       ),
     );

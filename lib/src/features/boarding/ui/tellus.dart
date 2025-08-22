@@ -20,6 +20,7 @@ class _TellusState extends State<Tellus> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final birthController = TextEditingController();
+  final formkey = GlobalKey<FormState>();
   String? requiredBirth;
 
   @override
@@ -58,6 +59,7 @@ class _TellusState extends State<Tellus> {
                               ),
                               SizedBox(height: 16),
                               Form(
+                                key: formkey,
                                 child: Column(
                                   spacing: 12,
                                   children: [
@@ -218,27 +220,31 @@ class _TellusState extends State<Tellus> {
                               builder: (context, ref, child) {
                                 return PrimaryButton(
                                   onTap: () {
-                                    if (gender == null) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            "Please choose your gender",
+                                    if (formkey.currentState!.validate()) {
+                                      if (gender == null) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Center(
+                                              child: Text(
+                                                "Please choose your gender",
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                      return;
-                                    }
-                                    ref
-                                        .read(userNotifierProvider.notifier)
-                                        .create(
-                                          gender: gender,
-                                          dateOfBirth: requiredBirth,
-                                          email: emailController.text,
-                                          fullName: nameController.text,
                                         );
-                                    context.push("/nationality");
+                                        return;
+                                      }
+                                      ref
+                                          .read(userNotifierProvider.notifier)
+                                          .create(
+                                            gender: gender,
+                                            dateOfBirth: requiredBirth,
+                                            email: emailController.text,
+                                            fullName: nameController.text,
+                                          );
+                                      context.push("/nationality");
+                                    }
                                   },
                                 );
                               },

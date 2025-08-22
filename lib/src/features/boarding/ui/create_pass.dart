@@ -28,6 +28,17 @@ class _CreatePasswordState extends State<CreatePassword> {
     return null;
   }
 
+  String? _validatePassword(String? value) {
+    if (value!.isEmpty) {
+      return "Please enter your password";
+    }
+    final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d).{8,}$');
+    if (!passwordRegex.hasMatch(value)) {
+      return "Password must be at least 8 characters, contain letters and numbers";
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,24 +73,12 @@ class _CreatePasswordState extends State<CreatePassword> {
                         children: [
                           TextFormField(
                             controller: passwordController,
-                            autofocus: true,
                             obscureText: true,
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
 
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Please enter your password";
-                              }
-                              final passwordRegex = RegExp(
-                                r'^(?=.*[A-Za-z])(?=.*\d).{8,}$',
-                              );
-                              if (!passwordRegex.hasMatch(value)) {
-                                return "Password must be at least 8 characters, contain letters and numbers";
-                              }
+                            validator: _validatePassword,
 
-                              return null;
-                            },
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(labelText: "Password"),
                           ),
@@ -90,7 +89,6 @@ class _CreatePasswordState extends State<CreatePassword> {
 
                             obscureText: true,
                             onChanged: (value) {
-                              // Use the same validation logic as the validator
                               bool hasError =
                                   _validatePasswordConfirmation(value) != null;
 
