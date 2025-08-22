@@ -161,7 +161,6 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                               RegExp(r'[0-9+]+'),
                             ),
                           ],
-                          maxLength: 10,
                           onFieldSubmitted: (v) async {
                             if (formKey.currentState!.validate()) {
                               await ref
@@ -169,6 +168,7 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                                   .sendOTP(phoneNumber!);
                               if (!context.mounted) return;
                               context.push("/otp");
+                              // TODO (" Sheel El 0 w 5aleh ydefha")
                             }
                           },
 

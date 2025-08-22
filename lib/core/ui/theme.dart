@@ -100,7 +100,6 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         suffixIconColor: Color.fromRGBO(164, 164, 164, 1),
         filled: true,
-
         prefixIconConstraints: BoxConstraints(minWidth: 23),
         labelStyle: TextStyle(
           fontWeight: FontWeight.w400,

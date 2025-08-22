@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/user/user.dart';
+import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/boarding/provider/usertype_provider.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:hydex/src/widgets/user_type_container.dart';
@@ -29,12 +30,11 @@ class PickUserType extends StatelessWidget {
                 SizedBox(height: 8),
                 Text(
                   "Help us tailor your experience.",
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: AppTextStyles.smallRegular.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 15),
                 UserTypeContainer<Role>(
                   emoji: "👩‍🎤",
                   onChanged: (v) {
@@ -46,7 +46,7 @@ class PickUserType extends StatelessWidget {
                   description:
                       "Discover luxury events, nightlife, and adventures",
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 15),
 
                 UserTypeContainer<Role>(
                   emoji: "💫",
@@ -59,7 +59,7 @@ class PickUserType extends StatelessWidget {
                   title: "I’m an Influencer or Ambassador",
                   description: "Promote venues, host events, earn money",
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 15),
                 UserTypeContainer<Role>(
                   emoji: "💼",
                   onChanged: (v) {
@@ -72,10 +72,12 @@ class PickUserType extends StatelessWidget {
                   title: "I’m a business owner",
                   description: "Boost bookings, attract guests, grow exposure",
                 ),
+                SizedBox(height: 16),
               ],
             ),
+
             Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: 32),
               child: Consumer(
                 builder: (context, ref, child) {
                   return PrimaryButton(

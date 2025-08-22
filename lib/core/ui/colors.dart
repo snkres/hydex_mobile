@@ -34,8 +34,8 @@ class AppColors {
   static const Color onSurfaceDark = Color(0xFFd4d4d4);
 
   // OnSurface/On Surface Var
-  static const Color onSurfaceVarLight = Color(0xFF7a7a7a);
-  static const Color onSurfaceVarDark = Color(0xFF9d9d9d);
+  static const Color onSurfaceVarLight = Color(0x0ff7af99);
+  static const Color onSurfaceVarDark = Color(0xfffa0a0b0);
 
   // OnSurface/On Surface Var 2
   static const Color onSurfaceVar2Light = Color(0xFF6e6e6e);
@@ -106,7 +106,7 @@ const darkColorScheme = ColorScheme(
   errorContainer: AppColors.onSurfaceErrorDark,
   onErrorContainer: AppColors.surfaceOnPrimaryDark,
   surface: AppColors.surfaceDark,
-  onSurface: AppColors.onSurfaceDark,
+  onSurface: Color(0xFFD4D4D4),
   onSurfaceVariant: AppColors.onSurfaceVarDark,
   outline: AppColors.onSurfaceOutlineDark,
   shadow: Colors.black,

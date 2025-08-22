@@ -90,7 +90,7 @@ class AppTextStyles {
   // Small Text
   static final smallRegular = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: FontWeight.w400,
     height: 1.43, // 20/14 = 1.43
     letterSpacing: 0.0,
@@ -114,7 +114,7 @@ class AppTextStyles {
 
   static final smallSemibold = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: FontWeight.w600,
     height: 1.43,
     letterSpacing: 0.0,

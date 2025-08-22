@@ -34,11 +34,12 @@ class UserTypeContainer<T> extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(emoji),
+                Text(emoji, style: TextStyle(fontSize: 20)),
                 CustomRadio(isSelected: value == groupValue),
               ],
             ),
             Text(title, style: AppTextStyles.smallSemibold),
+            SizedBox(height: 6),
             Text(
               description,
               style: AppTextStyles.captionRegular.copyWith(

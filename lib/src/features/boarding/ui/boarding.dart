@@ -6,7 +6,7 @@ import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/boarding/ui/components/pick_type.dart';
 import 'package:hydex/src/features/boarding/ui/components/sign_up.dart';
 
-final heightProvider = StateProvider<double>((ref) => 460);
+final heightProvider = StateProvider<double>((ref) => 550);
 
 class BoardingScreen extends StatefulWidget {
   const BoardingScreen({super.key});
@@ -88,7 +88,6 @@ class _BoardingScreenState extends State<BoardingScreen> {
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
-                        showDragHandle: true,
                         // constraints: BoxConstraints(minHeight: 500, maxHeight: 700),
                         builder: (context) {
                           return AnimatedContainer(
@@ -106,6 +105,18 @@ class _BoardingScreenState extends State<BoardingScreen> {
                               ),
                               child: Column(
                                 children: [
+                                  Center(
+                                    child: Container(
+                                      height: 4,
+                                      width: 44,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xffDEDEDE),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 22),
+
                                   Expanded(
                                     child: PageView(
                                       controller: pageController,
@@ -114,12 +125,12 @@ class _BoardingScreenState extends State<BoardingScreen> {
                                           ref
                                                   .read(heightProvider.notifier)
                                                   .state =
-                                              460;
+                                              550;
                                         } else {
                                           ref
                                                   .read(heightProvider.notifier)
                                                   .state =
-                                              660;
+                                              670;
                                         }
                                       },
                                       physics:
@@ -140,7 +151,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
                           );
                         },
                       ).whenComplete(() {
-                        ref.read(heightProvider.notifier).state = 460;
+                        ref.read(heightProvider.notifier).state = 550;
                       });
                     },
                     child: Text(
@@ -170,7 +181,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
                 style: TextStyle(color: Colors.white),
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 24),
           ],
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
+import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:intl/intl.dart';
@@ -244,7 +245,7 @@ class CustomChip extends StatelessWidget {
         height: 32,
         duration: Duration(milliseconds: 300),
         curve: Curves.easeIn,
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
               ? Theme.of(context).colorScheme.primary
@@ -253,7 +254,7 @@ class CustomChip extends StatelessWidget {
         ),
         child: Text(
           title,
-          style: TextStyle(
+          style: AppTextStyles.secondaryRegular.copyWith(
             color: isSelected
                 ? Theme.of(context).colorScheme.onPrimary
                 : Theme.of(context).colorScheme.onSecondaryContainer,
