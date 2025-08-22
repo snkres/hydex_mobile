@@ -130,7 +130,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
                                           ref
                                                   .read(heightProvider.notifier)
                                                   .state =
-                                              670;
+                                              680;
                                         }
                                       },
                                       physics:

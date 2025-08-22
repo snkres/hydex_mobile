@@ -112,35 +112,68 @@ class _TellusState extends State<Tellus> {
                                         showModalBottomSheet(
                                           context: context,
                                           builder: (context) {
-                                            return CupertinoDatePicker(
-                                              mode:
-                                                  CupertinoDatePickerMode.date,
-                                              initialDateTime: DateTime.now(),
-                                              minimumDate: DateTime.now()
-                                                  .subtract(
-                                                    Duration(days: 10000),
+                                            return Column(
+                                              children: [
+                                                SizedBox(height: 20),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 40,
+                                                      ),
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.topRight,
+                                                    child: TextButton(
+                                                      onPressed: () =>
+                                                          context.pop(),
+                                                      child: Text(
+                                                        "Done",
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ),
-                                              onDateTimeChanged: (date) {
-                                                final DateFormat formatter =
-                                                    DateFormat('d/M/yyyy');
-                                                final DateFormat
-                                                requiredFormatter = DateFormat(
-                                                  'yyyy/MM/dd',
-                                                );
+                                                ),
+                                                Expanded(
+                                                  child: CupertinoDatePicker(
+                                                    mode:
+                                                        CupertinoDatePickerMode
+                                                            .date,
+                                                    initialDateTime:
+                                                        DateTime.now(),
+                                                    minimumDate: DateTime.now()
+                                                        .subtract(
+                                                          Duration(days: 10000),
+                                                        ),
+                                                    onDateTimeChanged: (date) {
+                                                      final DateFormat
+                                                      formatter = DateFormat(
+                                                        'd/M/yyyy',
+                                                      );
+                                                      final DateFormat
+                                                      requiredFormatter =
+                                                          DateFormat(
+                                                            'yyyy/MM/dd',
+                                                          );
 
-                                                String formatted = formatter
-                                                    .format(date);
-                                                String requiredFormat =
-                                                    requiredFormatter.format(
-                                                      date,
-                                                    );
-                                                setState(() {
-                                                  birthController.text =
-                                                      formatted;
-                                                  requiredBirth =
-                                                      requiredFormat;
-                                                });
-                                              },
+                                                      String formatted =
+                                                          formatter.format(
+                                                            date,
+                                                          );
+                                                      String requiredFormat =
+                                                          requiredFormatter
+                                                              .format(date);
+                                                      setState(() {
+                                                        birthController.text =
+                                                            formatted;
+                                                        requiredBirth =
+                                                            requiredFormat;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
                                             );
                                           },
                                         );

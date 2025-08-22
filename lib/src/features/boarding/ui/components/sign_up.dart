@@ -22,64 +22,13 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
   final textController = TextEditingController();
   String? phoneNumber;
   final formKey = GlobalKey<FormState>();
-  late final _focusNode;
-
-  void _remove() {
-    if (!_focusNode.hasFocus) {
-      ref.read(heightProvider.notifier).state = 460;
-    } else {
-      ref.read(heightProvider.notifier).state = 660;
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _focusNode = FocusNode();
-    // _focusNode.addListener(_remove);
-  }
+  String? phoneError;
 
   @override
   void dispose() {
     textController.dispose();
-    _focusNode.dispose();
     super.dispose();
   }
-
-  // KeyboardActionsConfig _buildConfig(BuildContext context) {
-  //   return KeyboardActionsConfig(
-  //     keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
-  //     keyboardBarColor: CupertinoColors.extraLightBackgroundGray,
-  //     nextFocus: false,
-  //     actions: [
-  //       KeyboardActionsItem(
-  //         focusNode: _focusNode,
-  //         toolbarButtons: [
-  //           (node) {
-  //             return GestureDetector(
-  //               onTap: () async {
-  //                 node.unfocus();
-  //                 if (formKey.currentState!.validate()) {
-  //                   await ref.read(authServiceProvider).sendOTP(phoneNumber!);
-  //                   if (!context.mounted) return;
-  //                   context.push("/otp");
-  //                 }
-  //               },
-  //               child: Container(
-  //                 color: CupertinoColors.extraLightBackgroundGray,
-  //                 padding: EdgeInsets.all(8.0),
-  //                 child: Text(
-  //                   "Done",
-  //                   style: TextStyle(color: CupertinoColors.activeBlue),
-  //                 ),
-  //               ),
-  //             );
-  //           },
-  //         ],
-  //       ),
-  //     ],
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -141,18 +90,30 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                         key: formKey,
                         child: TextFormField(
                           controller: textController,
-                          focusNode: _focusNode,
                           autofocus: true,
+
                           keyboardType: TextInputType.phone,
                           textInputAction: TextInputAction.done,
                           onChanged: (v) {
-                            setState(() {
-                              phoneNumber = data.dialCode + textController.text;
-                            });
+                            if (textController.text.startsWith("0")) {
+                              setState(() {
+                                phoneNumber =
+                                    data.dialCode +
+                                    textController.text.substring(1);
+                              });
+                            } else {
+                              setState(() {
+                                phoneNumber =
+                                    data.dialCode + textController.text;
+                              });
+                            }
                           },
                           validator: (v) {
                             if (v!.isEmpty) {
-                              return "please write phone number";
+                              return "Please write phone number";
+                            }
+                            if (v.length > 13) {
+                              return "Phone shouldn't be more than 13 characters";
                             }
                             return null;
                           },
@@ -161,6 +122,7 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                               RegExp(r'[0-9+]+'),
                             ),
                           ],
+                          forceErrorText: phoneError,
                           onFieldSubmitted: (v) async {
                             if (formKey.currentState!.validate()) {
                               await ref
@@ -168,7 +130,6 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                                   .sendOTP(phoneNumber!);
                               if (!context.mounted) return;
                               context.push("/otp");
-                              // TODO (" Sheel El 0 w 5aleh ydefha")
                             }
                           },
 
@@ -217,10 +178,9 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                 ? () async {
                     if (formKey.currentState!.validate()) {
                       await ref.read(authServiceProvider).sendOTP(phoneNumber!);
-
-                      if (!context.mounted) return;
-
-                      context.push("/otp");
+                      if (context.mounted) {
+                        context.go("/otp");
+                      }
                     }
                   }
                 : null,

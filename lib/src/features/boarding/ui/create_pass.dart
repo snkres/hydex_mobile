@@ -5,12 +5,29 @@ import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 
-class CreatePassword extends StatelessWidget {
+class CreatePassword extends StatefulWidget {
   const CreatePassword({super.key});
 
-  static final formKey = GlobalKey<FormState>();
-  static final passwordController = TextEditingController();
-  static final passwordConfirmController = TextEditingController();
+  @override
+  State<CreatePassword> createState() => _CreatePasswordState();
+}
+
+class _CreatePasswordState extends State<CreatePassword> {
+  bool dontShow = true;
+  final formKey = GlobalKey<FormState>();
+  final passwordController = TextEditingController();
+  final passwordConfirmController = TextEditingController();
+
+  String? _validatePasswordConfirmation(String? value) {
+    if (value!.isEmpty) {
+      return "Please confirm your password";
+    }
+    if (value != passwordController.text) {
+      return "Passwords do not match";
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,16 +87,18 @@ class CreatePassword extends StatelessWidget {
                             controller: passwordConfirmController,
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
+
                             obscureText: true,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Please confirm your password";
-                              }
-                              if (value != passwordController.text) {
-                                return "Passwords do not match";
-                              }
-                              return null;
+                            onChanged: (value) {
+                              // Use the same validation logic as the validator
+                              bool hasError =
+                                  _validatePasswordConfirmation(value) != null;
+
+                              setState(() {
+                                dontShow = hasError;
+                              });
                             },
+                            validator: _validatePasswordConfirmation,
                             textInputAction: TextInputAction.done,
                             onFieldSubmitted: (v) {},
                             decoration: InputDecoration(
@@ -93,16 +112,19 @@ class CreatePassword extends StatelessWidget {
                     Consumer(
                       builder: (context, ref, child) {
                         return PrimaryButton(
-                          onTap: () {
-                            if (formKey.currentState!.validate()) {
-                              ref
-                                  .read(userNotifierProvider.notifier)
-                                  .create(
-                                    password: passwordConfirmController.text,
-                                  );
-                              context.go("/tellus");
-                            }
-                          },
+                          onTap: dontShow
+                              ? null
+                              : () {
+                                  if (formKey.currentState!.validate()) {
+                                    ref
+                                        .read(userNotifierProvider.notifier)
+                                        .create(
+                                          password:
+                                              passwordConfirmController.text,
+                                        );
+                                    context.go("/tellus");
+                                  }
+                                },
                         );
                       },
                     ),
