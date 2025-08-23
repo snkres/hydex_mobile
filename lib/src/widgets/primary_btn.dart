@@ -8,7 +8,7 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: BoxConstraints(minWidth: double.infinity, minHeight: 50),
+      constraints: BoxConstraints(minWidth: double.infinity, minHeight: 55),
       child: ElevatedButton(
         onPressed: onTap,
         style: ButtonStyle(

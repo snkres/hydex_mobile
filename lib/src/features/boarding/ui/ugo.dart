@@ -34,18 +34,18 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomBackButton(),
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomBackButton(),
 
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: CustomScrollView(
-                  slivers: [
-                    SliverFillRemaining(
-                      hasScrollBody: false,
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -119,8 +119,9 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
                               ),
                               SizedBox(height: 12),
 
-                              Row(
+                              Wrap(
                                 spacing: 6,
+                                runSpacing: 6,
                                 children: groupSizes
                                     .map(
                                       (e) => CustomChip(
@@ -146,8 +147,8 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
