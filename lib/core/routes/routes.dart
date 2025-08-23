@@ -1,16 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/network.dart';
-import 'package:hydex/src/features/boarding/seeker.dart';
-import 'package:hydex/src/features/boarding/ui/boarding.dart';
-import 'package:hydex/src/features/boarding/ui/create_pass.dart';
-import 'package:hydex/src/features/boarding/ui/describe.dart';
-import 'package:hydex/src/features/boarding/ui/influencer.dart';
-import 'package:hydex/src/features/boarding/ui/nationality.dart';
-import 'package:hydex/src/features/boarding/ui/otp.dart';
-import 'package:hydex/src/features/boarding/ui/tellus.dart';
-import 'package:hydex/src/features/boarding/ui/ugo.dart';
-import 'package:hydex/src/features/boarding/ui/waitlist.dart';
+import 'package:hydex/src/features/auth/seeker.dart';
+import 'package:hydex/src/features/auth/ui/boarding.dart';
+import 'package:hydex/src/features/auth/ui/create_pass.dart';
+import 'package:hydex/src/features/auth/ui/describe.dart';
+import 'package:hydex/src/features/auth/ui/influencer.dart';
+import 'package:hydex/src/features/auth/ui/login.dart';
+import 'package:hydex/src/features/auth/ui/nationality.dart';
+import 'package:hydex/src/features/auth/ui/otp.dart';
+import 'package:hydex/src/features/auth/ui/tellus.dart';
+import 'package:hydex/src/features/auth/ui/ugo.dart';
+import 'package:hydex/src/features/auth/ui/waitlist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'routes.g.dart';
@@ -19,34 +20,35 @@ class AppRoutes {
   Ref ref;
   AppRoutes(this.ref);
   final routes = GoRouter(
-    redirect: (context, state) async {
-      const Set<String> publicRoutes = {
-        '/',
-        '/otp',
-        '/password',
-        '/tellus',
-        '/nationality',
-        '/describe',
-        '/seeker',
-        '/wego',
-        '/influencer',
-        '/ulike',
-      };
+    initialLocation: "/",
+    // redirect: (context, state) async {
+    //   const Set<String> publicRoutes = {
+    //     '/',
+    //     '/otp',
+    //     '/password',
+    //     '/tellus',
+    //     '/nationality',
+    //     '/describe',
+    //     '/seeker',
+    //     '/wego',
+    //     '/influencer',
+    //     '/ulike',
+    //   };
 
-      final token = await DioHelper.getAccessToken();
-      final bool isAuthenticated = token != null;
-      final String currentPath = state.uri.path;
+    //   final token = await DioHelper.getAccessToken();
+    //   final bool isAuthenticated = token != null;
+    //   final String currentPath = state.uri.path;
 
-      final bool isGoingToPublicRoute = publicRoutes.contains(currentPath);
+    //   final bool isGoingToPublicRoute = publicRoutes.contains(currentPath);
 
-      if (!isAuthenticated && !isGoingToPublicRoute) {
-        return '/';
-      }
-      if (isAuthenticated && isGoingToPublicRoute) {
-        return '/waitlist';
-      }
-      return null;
-    },
+    //   if (!isAuthenticated && !isGoingToPublicRoute) {
+    //     return '/';
+    //   }
+    //   if (isAuthenticated && isGoingToPublicRoute) {
+    //     return '/waitlist';
+    //   }
+    //   return null;
+    // },
     routes: [
       GoRoute(
         path: "/",
@@ -78,13 +80,13 @@ class AppRoutes {
             path: "influencer",
             builder: (context, state) => const InfluencerScreen(),
           ),
-          GoRoute(path: "ulike", builder: (context, state) => const Describe()),
         ],
       ),
       GoRoute(
         path: "/waitlist",
         builder: (context, state) => const WaitlistScreen(),
       ),
+      GoRoute(path: "/login", builder: (context, state) => const LoginScreen()),
     ],
   );
 }

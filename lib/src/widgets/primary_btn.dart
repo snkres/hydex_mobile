@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hydex/core/ui/type.dart';
 
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({super.key, required this.onTap});
@@ -20,7 +21,7 @@ class PrimaryButton extends StatelessWidget {
             Theme.of(context).colorScheme.onPrimary,
           ),
         ),
-        child: Text("Continue"),
+        child: Text("Continue", style: AppTextStyles(context).smallBold),
       ),
     );
   }

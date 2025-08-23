@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   // Surface
   static const Color surfaceLight = Color(0xFFffffff);
-  static const Color surfaceDark = Color(0xFF080808);
+  static const Color surfaceDark = Color(0xFF131318);
 
   // Surface Dim
   static const Color surfaceDimLight = Color(0xFFfafafa);
@@ -11,11 +11,11 @@ class AppColors {
 
   // Surface Dimmer
   static const Color surfaceDimmerLight = Color(0xFFf5f5f5);
-  static const Color surfaceDimmerDark = Color(0xFF1a1a1a);
+  static const Color surfaceDimmerDark = Color(0xFF1A1A1A);
 
   // Surface/Surf Container
   static const Color surfaceSurfContainerLight = Color(0xFFf7f7f7);
-  static const Color surfaceSurfContainerDark = Color(0xFF1e1e1e);
+  static const Color surfaceSurfContainerDark = Color(0xFF202029);
 
   // Surface/Primary
   static const Color surfacePrimaryLight = Color(0xFF080808);
@@ -31,11 +31,11 @@ class AppColors {
 
   // OnSurface/On Surface
   static const Color onSurfaceLight = Color(0xFF1a1a1a);
-  static const Color onSurfaceDark = Color(0xFFd4d4d4);
+  static const Color onSurfaceDark = Color(0xFFFFFFFF);
 
   // OnSurface/On Surface Var
-  static const Color onSurfaceVarLight = Color(0xFF7a7a7a);
-  static const Color onSurfaceVarDark = Color(0xFF9d9d9d);
+  static const Color onSurfaceVarLight = Color(0xfff7a7f99);
+  static const Color onSurfaceVarDark = Color(0xfffa0a0b0);
 
   // OnSurface/On Surface Var 2
   static const Color onSurfaceVar2Light = Color(0xFF6e6e6e);
@@ -106,7 +106,7 @@ const darkColorScheme = ColorScheme(
   errorContainer: AppColors.onSurfaceErrorDark,
   onErrorContainer: AppColors.surfaceOnPrimaryDark,
   surface: AppColors.surfaceDark,
-  onSurface: AppColors.onSurfaceDark,
+  onSurface: Color(0xFFD4D4D4),
   onSurfaceVariant: AppColors.onSurfaceVarDark,
   outline: AppColors.onSurfaceOutlineDark,
   shadow: Colors.black,

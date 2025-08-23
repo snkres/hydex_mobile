@@ -1,34 +1,34 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hydex/core/ui/colors.dart';
 
 class AppTheme {
-  static final typography = TextTheme(
-    displayLarge: TextStyle(
-      fontFamily: Platform.isIOS ? "Sf-Pro" : "",
-      fontSize: 50,
-    ),
-  );
-
   static ThemeData lightTheme() {
     return ThemeData(
       colorScheme: lightColorScheme,
       snackBarTheme: SnackBarThemeData(
-        width: 400,
-        insetPadding: EdgeInsets.all(100),
+        width: 250,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(99),
         ),
         backgroundColor: lightColorScheme.secondaryContainer,
-        contentTextStyle: TextStyle(
-          color: lightColorScheme.onSecondaryContainer,
-        ),
+        contentTextStyle: TextStyle(color: lightColorScheme.onSurfaceVariant),
         behavior: SnackBarBehavior.floating,
       ),
       textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black),
       scaffoldBackgroundColor: Colors.white,
-      appBarTheme: AppBarTheme(backgroundColor: Colors.white),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.white,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          // Status bar color
+
+          // Status bar brightness (optional)
+          statusBarIconBrightness: Brightness.light, // For Android (dark icons)
+          statusBarBrightness: Brightness.light, // For iOS (dark icons)
+        ),
+      ),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
@@ -60,7 +60,6 @@ class AppTheme {
 
           borderRadius: BorderRadius.circular(16),
         ),
-        contentPadding: EdgeInsets.all(20),
         fillColor: Color.fromRGBO(246, 246, 246, 0.7),
       ),
 
@@ -69,16 +68,26 @@ class AppTheme {
           backgroundColor: WidgetStatePropertyAll(Color(0xff01271f)),
         ),
       ),
-
-      textTheme: typography,
     );
   }
 
   static ThemeData darkTheme() {
     return ThemeData(
+      snackBarTheme: SnackBarThemeData(
+        width: 250,
+        insetPadding: EdgeInsets.all(100),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.circular(99),
+        ),
+        backgroundColor: darkColorScheme.secondaryContainer,
+        contentTextStyle: TextStyle(color: darkColorScheme.onSurfaceVariant),
+        behavior: SnackBarBehavior.floating,
+      ),
       brightness: Brightness.dark,
       colorScheme: darkColorScheme,
-      textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: darkColorScheme.onSurface,
+      ),
       bottomSheetTheme: BottomSheetThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.only(
@@ -87,6 +96,7 @@ class AppTheme {
           ),
         ),
       ),
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(darkColorScheme.primary),
@@ -96,7 +106,6 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         suffixIconColor: Color.fromRGBO(164, 164, 164, 1),
         filled: true,
-
         prefixIconConstraints: BoxConstraints(minWidth: 23),
         labelStyle: TextStyle(
           fontWeight: FontWeight.w400,
@@ -109,11 +118,8 @@ class AppTheme {
 
           borderRadius: BorderRadius.circular(16),
         ),
-        contentPadding: EdgeInsets.all(20),
         fillColor: darkColorScheme.secondaryContainer,
       ),
-
-      textTheme: typography,
     );
   }
 }
