@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +56,9 @@ class _BoardingScreenState extends State<BoardingScreen> {
     _videoController = VideoPlayerController.asset(
       "video/video.mp4",
       package: "assets",
-      viewType: VideoViewType.textureView,
+      viewType: Platform.isAndroid
+          ? VideoViewType.textureView
+          : VideoViewType.platformView,
     );
     _videoController.setLooping(true);
     _videoController.initialize().then((_) => setState(() {}));
@@ -137,7 +140,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               SizedBox(
-                height: MediaQuery.sizeOf(context).width / 1.7,
+                height: MediaQuery.sizeOf(context).height / 3.5,
                 child: PageView.builder(
                   controller: boardingPageController,
                   onPageChanged: (int page) {
@@ -156,7 +159,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
-                            height: 0.95,
+                            height: 0.9,
                             fontSize: AppTextStyles(context).accumulator * 55,
                             fontWeight: FontWeight.w900,
                           ),
