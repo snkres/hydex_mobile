@@ -38,11 +38,11 @@ class UserTypeContainer<T> extends StatelessWidget {
                 CustomRadio(isSelected: value == groupValue),
               ],
             ),
-            Text(title, style: AppTextStyles.smallSemibold),
+            Text(title, style: AppTextStyles(context).smallSemibold),
             SizedBox(height: 6),
             Text(
               description,
-              style: AppTextStyles.captionRegular.copyWith(
+              style: AppTextStyles(context).captionRegular.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),

@@ -72,11 +72,11 @@ class AuthService {
   }
 
   // Verify user
-  Future<String> sendOTP(String phone) async {
+  Future<String> sendOTP(String phone, OTPType type) async {
     try {
       final response = await DioHelper.post<Map<String, dynamic>>(
         '/auth/send-verification',
-        data: {'identifier': phone},
+        data: {'identifier': phone, "type": type.name},
       );
 
       if (response.success && response.data != null) {
@@ -250,3 +250,5 @@ class UserNotifier extends _$UserNotifier {
     }
   }
 }
+
+enum OTPType { phone, email }

@@ -1,16 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/network.dart';
-import 'package:hydex/src/features/boarding/seeker.dart';
-import 'package:hydex/src/features/boarding/ui/boarding.dart';
-import 'package:hydex/src/features/boarding/ui/create_pass.dart';
-import 'package:hydex/src/features/boarding/ui/describe.dart';
-import 'package:hydex/src/features/boarding/ui/influencer.dart';
-import 'package:hydex/src/features/boarding/ui/nationality.dart';
-import 'package:hydex/src/features/boarding/ui/otp.dart';
-import 'package:hydex/src/features/boarding/ui/tellus.dart';
-import 'package:hydex/src/features/boarding/ui/ugo.dart';
-import 'package:hydex/src/features/boarding/ui/waitlist.dart';
+import 'package:hydex/src/features/auth/seeker.dart';
+import 'package:hydex/src/features/auth/ui/boarding.dart';
+import 'package:hydex/src/features/auth/ui/create_pass.dart';
+import 'package:hydex/src/features/auth/ui/describe.dart';
+import 'package:hydex/src/features/auth/ui/influencer.dart';
+import 'package:hydex/src/features/auth/ui/login.dart';
+import 'package:hydex/src/features/auth/ui/nationality.dart';
+import 'package:hydex/src/features/auth/ui/otp.dart';
+import 'package:hydex/src/features/auth/ui/tellus.dart';
+import 'package:hydex/src/features/auth/ui/ugo.dart';
+import 'package:hydex/src/features/auth/ui/waitlist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'routes.g.dart';
@@ -79,13 +80,13 @@ class AppRoutes {
             path: "influencer",
             builder: (context, state) => const InfluencerScreen(),
           ),
-          GoRoute(path: "ulike", builder: (context, state) => const Describe()),
         ],
       ),
       GoRoute(
         path: "/waitlist",
         builder: (context, state) => const WaitlistScreen(),
       ),
+      GoRoute(path: "/login", builder: (context, state) => const LoginScreen()),
     ],
   );
 }

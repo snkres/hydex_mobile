@@ -8,7 +8,7 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: BoxConstraints(minWidth: double.infinity, minHeight: 55),
+      constraints: BoxConstraints(minWidth: double.infinity, minHeight: 50),
       child: ElevatedButton(
         onPressed: onTap,
         style: ButtonStyle(
@@ -21,7 +21,7 @@ class PrimaryButton extends StatelessWidget {
             Theme.of(context).colorScheme.onPrimary,
           ),
         ),
-        child: Text("Continue", style: AppTextStyles.smallBold),
+        child: Text("Continue", style: AppTextStyles(context).smallBold),
       ),
     );
   }

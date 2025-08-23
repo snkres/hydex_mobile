@@ -3,145 +3,140 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class AppTextStyles {
-  static String get fontFamily => Platform.isIOS ? "SF Pro" : "Roboto";
+  final BuildContext context;
 
+  AppTextStyles(this.context);
+  String get fontFamily => Platform.isIOS ? "SF Pro" : "Roboto";
+  double get accumulator => MediaQuery.sizeOf(context).width / 375;
   // Display
-  static final displayLargeLight = TextStyle(
+  TextStyle get displayLargeLight => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 50,
+    fontSize: accumulator * 50,
     fontWeight: FontWeight.w300,
     height: 1.12,
-    letterSpacing: 0.0,
   );
 
-  static final displayLargeRegular = TextStyle(
+  TextStyle get displayLargeRegular => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 50,
+    fontSize: accumulator * 50,
     fontWeight: FontWeight.w400,
     height: 1.12,
     letterSpacing: 0.0,
   );
 
-  static final displayLargeMedium = TextStyle(
+  TextStyle get displayLargeMedium => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 50,
+    fontSize: accumulator * 50,
     fontWeight: FontWeight.w500,
     height: 1.12,
     letterSpacing: 0.0,
   );
 
-  static final displayLargeBold = TextStyle(
+  TextStyle get displayLargeBold => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 50,
+    fontSize: accumulator * 50,
     fontWeight: FontWeight.w700,
     height: 1.12,
     letterSpacing: 0.0,
   );
 
   // Primary Body
-  static final primaryRegular = TextStyle(
+  TextStyle get primaryRegular => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 16,
+    fontSize: accumulator * 16,
     fontWeight: FontWeight.w400,
     letterSpacing: 0.0,
   );
 
-  static final primaryMedium = TextStyle(
+  TextStyle get primaryMedium => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 22,
+    fontSize: accumulator * 22,
     fontWeight: FontWeight.w500,
     height: 1.27,
     letterSpacing: 0.0,
   );
 
-  static final primaryBold = TextStyle(
+  TextStyle get primaryBold => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 22,
+    fontSize: accumulator * 22,
     fontWeight: FontWeight.w700,
     height: 1.27,
     letterSpacing: 0.0,
   );
 
   // Secondary Body
-  static final secondaryRegular = TextStyle(
+  TextStyle get secondaryRegular => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 16,
+    fontSize: accumulator * 16,
     fontWeight: FontWeight.w400,
-    height: 1.25, // 20/16 = 1.25
+    height: 1.25, // 20/16 => 1.25
     letterSpacing: 0.0,
   );
 
-  static final secondaryMedium = TextStyle(
+  TextStyle get secondaryMedium => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 16,
+    fontSize: accumulator * 16,
     fontWeight: FontWeight.w500,
     height: 1.25,
     letterSpacing: 0.0,
   );
 
-  static final secondaryBold = TextStyle(
+  TextStyle get secondaryBold => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 16,
+    fontSize: accumulator * 16,
     fontWeight: FontWeight.w700,
     height: 1.25,
     letterSpacing: 0.0,
   );
 
   // Small Text
-  static final smallRegular = TextStyle(
+  TextStyle get smallRegular => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 15,
+    fontSize: accumulator * 15,
     fontWeight: FontWeight.w400,
-    height: 1.43, // 20/14 = 1.43
-    letterSpacing: 0.0,
+    height: 1.43, // 20/14 => 1.43
   );
 
-  static final smallMedium = TextStyle(
+  TextStyle get smallMedium => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 14,
+    fontSize: accumulator * 14,
     fontWeight: FontWeight.w500,
     height: 1.43,
-    letterSpacing: 0.0,
   );
 
-  static final smallBold = TextStyle(
+  TextStyle get smallBold => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 14,
+    fontSize: accumulator * 14,
     fontWeight: FontWeight.w700,
     height: 1.43,
-    letterSpacing: 0.0,
   );
 
-  static final smallSemibold = TextStyle(
+  TextStyle get smallSemibold => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 15,
+    fontSize: accumulator * 15,
     fontWeight: FontWeight.w600,
     height: 1.43,
-    letterSpacing: 0.0,
   );
 
   // Caption
-  static final captionRegular = TextStyle(
+  TextStyle get captionRegular => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 12,
+    fontSize: accumulator * 12,
     fontWeight: FontWeight.w400,
-    height: 1.5, // 18/12 = 1.5
-    letterSpacing: 0.0,
+    height: 1.5, // 18/12 => 1.5
   );
 
-  static final captionMedium = TextStyle(
+  TextStyle get captionMedium => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 12,
+    fontSize: accumulator * 12,
     fontWeight: FontWeight.w500,
     height: 1.5,
-    letterSpacing: 0.0,
   );
 
-  static final captionBold = TextStyle(
+  TextStyle get captionBold => TextStyle(
     fontFamily: fontFamily,
-    fontSize: 12,
+    fontSize: accumulator * 12,
     fontWeight: FontWeight.w700,
     height: 1.5,
-    letterSpacing: 0.0,
   );
 }

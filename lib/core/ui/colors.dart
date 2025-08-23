@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   // Surface
   static const Color surfaceLight = Color(0xFFffffff);
-  static const Color surfaceDark = Color(0xFF080808);
+  static const Color surfaceDark = Color(0xFF131318);
 
   // Surface Dim
   static const Color surfaceDimLight = Color(0xFFfafafa);
@@ -11,11 +11,11 @@ class AppColors {
 
   // Surface Dimmer
   static const Color surfaceDimmerLight = Color(0xFFf5f5f5);
-  static const Color surfaceDimmerDark = Color(0xFF1a1a1a);
+  static const Color surfaceDimmerDark = Color(0xFF1A1A1A);
 
   // Surface/Surf Container
   static const Color surfaceSurfContainerLight = Color(0xFFf7f7f7);
-  static const Color surfaceSurfContainerDark = Color(0xFF1e1e1e);
+  static const Color surfaceSurfContainerDark = Color(0xFF202029);
 
   // Surface/Primary
   static const Color surfacePrimaryLight = Color(0xFF080808);
