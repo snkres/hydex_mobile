@@ -55,6 +55,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
     _videoController = VideoPlayerController.asset(
       "video/video.mp4",
       package: "assets",
+      viewType: VideoViewType.textureView,
     );
     _videoController.setLooping(true);
     _videoController.initialize().then((_) => setState(() {}));
@@ -111,6 +112,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
             style: TextStyle(
               fontSize: AppTextStyles(context).accumulator * 24,
               fontWeight: FontWeight.w900,
+              color: Colors.white,
             ),
           ),
         ),
@@ -130,73 +132,81 @@ class _BoardingScreenState extends State<BoardingScreen> {
             ),
           ),
           Container(color: Colors.black.withValues(alpha: 0.4)),
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                SizedBox(
-                  height: 265,
-                  child: PageView.builder(
-                    controller: boardingPageController,
-                    onPageChanged: (int page) {
-                      setState(() {
-                        _currentPage = page;
-                      });
-                      // Reset timer when user manually swipes
-                      _resetTimer();
-                    },
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              SizedBox(
+                height: MediaQuery.sizeOf(context).width / 1.7,
+                child: PageView.builder(
+                  controller: boardingPageController,
+                  onPageChanged: (int page) {
+                    setState(() {
+                      _currentPage = page;
+                    });
+                    // Reset timer when user manually swipes
+                    _resetTimer();
+                  },
+                  itemBuilder: (context, index) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          boardings[index].title.toUpperCase(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            height: 0.95,
+                            fontSize: AppTextStyles(context).accumulator * 55,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          boardings[index].userType,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
 
-                    itemBuilder: (context, index) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            boardings[index].title.toUpperCase(),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 55,
-                              fontWeight: FontWeight.w900,
-                            ),
+                            fontSize: AppTextStyles(context).accumulator * 14,
+                            fontWeight: FontWeight.w500,
                           ),
-                          SizedBox(height: 16),
-                          Text(
-                            boardings[index].userType,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
+                        ),
+                        SizedBox(height: 4),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
                             boardings[index].description,
                             textAlign: TextAlign.center,
                             style: TextStyle(
+                              color: Colors.white,
+
                               fontSize: AppTextStyles(context).accumulator * 15,
                               fontWeight: FontWeight.w300,
                             ),
                           ),
-                        ],
-                      );
-                    },
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              Center(
+                child: SmoothPageIndicator(
+                  controller: boardingPageController,
+                  count: boardings.length,
+                  effect: ExpandingDotsEffect(
+                    activeDotColor: Colors.white,
+                    dotColor: Colors.white.withValues(alpha: 0.2),
+                    dotHeight: 10,
+                    dotWidth: 13,
                   ),
                 ),
-                Center(
-                  child: SmoothPageIndicator(
-                    controller: boardingPageController,
-                    count: boardings.length,
-                    effect: ExpandingDotsEffect(
-                      activeDotColor: Colors.white,
-                      dotColor: Color(0xff33333A),
-                      dotHeight: 10,
-                      dotWidth: 13,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 200),
-                ConstrainedBox(
+              ),
+              SizedBox(height: 200),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ConstrainedBox(
                   constraints: BoxConstraints(
                     minWidth: double.infinity,
                     minHeight: 50,
@@ -287,31 +297,31 @@ class _BoardingScreenState extends State<BoardingScreen> {
                     },
                   ),
                 ),
-                SizedBox(height: 24),
-                Center(
-                  child: Text.rich(
-                    TextSpan(
-                      text: "Already have an account? ",
-                      style: AppTextStyles(context).secondaryRegular,
-                      children: [
-                        TextSpan(
-                          text: "Sign in",
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            decorationColor: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () => context.push("/login"),
+              ),
+              SizedBox(height: 24),
+              Center(
+                child: Text.rich(
+                  TextSpan(
+                    text: "Already have an account? ",
+                    style: AppTextStyles(context).secondaryRegular,
+                    children: [
+                      TextSpan(
+                        text: "Sign in",
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          decorationColor: Colors.white,
+                          fontWeight: FontWeight.w700,
                         ),
-                      ],
-                    ),
-                    style: TextStyle(color: Colors.white),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => context.push("/login"),
+                      ),
+                    ],
                   ),
+                  style: TextStyle(color: Colors.white),
                 ),
-                SizedBox(height: 24),
-              ],
-            ),
+              ),
+              SizedBox(height: 24),
+            ],
           ),
         ],
       ),

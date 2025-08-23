@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 class CustomBackButton extends StatelessWidget {
@@ -23,7 +24,16 @@ class CustomBackButton extends StatelessWidget {
           }
         },
         color: Theme.of(context).colorScheme.onSurfaceVariant,
-        icon: Icon(Icons.arrow_back_sharp),
+        icon: SvgPicture.asset(
+          "img/svg/back.svg",
+          package: "assets",
+          colorFilter: ColorFilter.mode(
+            Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+            BlendMode.srcIn,
+          ),
+        ),
       ),
     );
   }
