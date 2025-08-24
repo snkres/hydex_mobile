@@ -115,7 +115,6 @@ class AppTextStyles {
     fontFamily: fontFamily,
     fontSize: accumulator * 14,
     fontWeight: FontWeight.w600,
-    height: 1.43,
   );
 
   // Caption

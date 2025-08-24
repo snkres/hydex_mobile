@@ -108,107 +108,111 @@ class _BoardingScreenState extends State<BoardingScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.black,
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                minWidth: double.infinity,
-                minHeight: 50,
-              ),
-              child: Consumer(
-                builder: (context, ref, child) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-
-                        builder: (context) {
-                          return Wrap(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  bottom: MediaQuery.of(
-                                    context,
-                                  ).viewInsets.bottom,
-                                  top: 16,
-                                  left: 16,
-                                  right: 16,
-                                ),
-                                child: Column(
-                                  children: [
-                                    Center(
-                                      child: Container(
-                                        height: 4,
-                                        width: 44,
-                                        decoration: BoxDecoration(
-                                          color: Color(0xffDEDEDE),
-                                          borderRadius: BorderRadius.circular(
-                                            4,
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: double.infinity,
+                  minHeight: 50,
+                ),
+                child: Consumer(
+                  builder: (context, ref, child) {
+                    return ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) {
+                            return Wrap(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: MediaQuery.of(
+                                      context,
+                                    ).viewInsets.bottom,
+                                    top: 16,
+                                    left: 16,
+                                    right: 16,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Center(
+                                        child: Container(
+                                          height: 4,
+                                          width: 44,
+                                          decoration: BoxDecoration(
+                                            color: Color(0xffDEDEDE),
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(height: 22),
-                                    ExpandablePageView(
-                                      controller: pageController,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      children: [
-                                        SizedBox(
-                                          child: PickUserType(
-                                            pageController: pageController,
-                                          ),
+                                      SizedBox(height: 22),
+                                      ExpandablePageView(
+                                        controller: pageController,
+                                        animationCurve: Curves.easeIn,
+                                        animationDuration: Duration(
+                                          milliseconds: 250,
                                         ),
-                                        SizedBox(child: SignUpComponent()),
-                                      ],
-                                    ),
-                                  ],
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        children: [
+                                          SizedBox(
+                                            child: PickUserType(
+                                              pageController: pageController,
+                                            ),
+                                          ),
+                                          SizedBox(child: SignUpComponent()),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    child: Text(
-                      "Get Started",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: AppTextStyles(context).accumulator * 14,
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: Text(
+                        "Create an Account",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: AppTextStyles(context).accumulator * 14,
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 24),
-            Center(
-              child: Text.rich(
-                TextSpan(
-                  text: "Already have an account? ",
-                  style: AppTextStyles(context).secondaryRegular,
-                  children: [
-                    TextSpan(
-                      text: "Sign in",
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        decorationColor: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () => context.push("/login"),
-                    ),
-                  ],
+                    );
+                  },
                 ),
-                style: TextStyle(color: Colors.white),
               ),
-            ),
-            SizedBox(height: 24),
-          ],
+              SizedBox(height: 24),
+              Center(
+                child: Text.rich(
+                  TextSpan(
+                    text: "Already have an account? ",
+                    style: AppTextStyles(context).secondaryRegular,
+                    children: [
+                      TextSpan(
+                        text: "Sign in",
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          decorationColor: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => context.push("/login"),
+                      ),
+                    ],
+                  ),
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       appBar: AppBar(

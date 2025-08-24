@@ -20,7 +20,7 @@ class AppRoutes {
   Ref ref;
   AppRoutes(this.ref);
   final routes = GoRouter(
-    initialLocation: "/",
+    initialLocation: "/nationality",
     // redirect: (context, state) async {
     //   const Set<String> publicRoutes = {
     //     '/',

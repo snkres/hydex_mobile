@@ -28,19 +28,19 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Stack(
-              children: [
-                Image.asset(
-                  "img/gradient.png",
-                  package: "assets",
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-                SafeArea(
+      body: Stack(
+        children: [
+          Image.asset(
+            "img/gradient.png",
+            package: "assets",
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
+          SafeArea(
+            child: CustomScrollView(
+              slivers: [
+                SliverFillRemaining(
+                  hasScrollBody: false,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -296,16 +296,14 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                           },
                                         ),
                                         Text(
-                                          "if you don’t have an invite code just skip it.",
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Color.fromRGBO(
-                                              122,
-                                              127,
-                                              153,
-                                              1,
-                                            ),
-                                          ),
+                                          "If you don’t have an invite code just skip it.",
+                                          style: AppTextStyles(context)
+                                              .captionRegular
+                                              .copyWith(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurfaceVariant,
+                                              ),
                                         ),
                                       ],
                                     ),

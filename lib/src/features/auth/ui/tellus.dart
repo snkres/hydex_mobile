@@ -26,19 +26,19 @@ class _TellusState extends State<Tellus> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Stack(
-              children: [
-                Image.asset(
-                  "img/gradient.png",
-                  package: "assets",
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-                SafeArea(
+      body: Stack(
+        children: [
+          Image.asset(
+            "img/gradient.png",
+            package: "assets",
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
+          SafeArea(
+            child: CustomScrollView(
+              slivers: [
+                SliverFillRemaining(
+                  hasScrollBody: false,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

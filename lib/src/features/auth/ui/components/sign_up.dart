@@ -88,7 +88,6 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                         key: formKey,
                         child: TextFormField(
                           controller: textController,
-                          autofocus: true,
 
                           keyboardType: TextInputType.phone,
                           textInputAction: TextInputAction.done,
