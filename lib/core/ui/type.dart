@@ -7,7 +7,7 @@ class AppTextStyles {
 
   AppTextStyles(this.context);
   String get fontFamily => Platform.isIOS ? "SF Pro" : "Roboto";
-  double get accumulator => MediaQuery.sizeOf(context).width / 375;
+  double get accumulator => MediaQuery.widthOf(context) / 375;
   // Display
   TextStyle get displayLargeLight => TextStyle(
     fontFamily: fontFamily,

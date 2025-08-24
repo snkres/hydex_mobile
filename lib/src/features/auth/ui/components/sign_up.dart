@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,10 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/country_picker_provider.dart';
-import 'package:hydex/src/features/auth/ui/boarding.dart';
 import 'package:hydex/src/features/auth/ui/components/country_picker.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
-import 'package:keyboard_actions/keyboard_actions.dart';
 
 class SignUpComponent extends ConsumerStatefulWidget {
   const SignUpComponent({super.key});
@@ -111,7 +108,7 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                           },
                           validator: (v) {
                             if (v!.isEmpty) {
-                              return "Please write phone number";
+                              return "Please add your phone number";
                             }
                             if (v.length > 13) {
                               return "Phone shouldn't be more than 13 characters";

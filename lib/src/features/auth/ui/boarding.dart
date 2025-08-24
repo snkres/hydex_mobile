@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/type.dart';
@@ -12,8 +11,6 @@ import 'package:hydex/src/features/auth/ui/components/pick_type.dart';
 import 'package:hydex/src/features/auth/ui/components/sign_up.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:video_player/video_player.dart';
-
-final heightProvider = StateProvider<double>((ref) => 550);
 
 class BoardingScreen extends StatefulWidget {
   const BoardingScreen({super.key});
@@ -46,7 +43,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
       title: "Unlock Growth",
       userType: "For Business Owners",
       description:
-          " Grow through a community built around exclusive lifestyle experiences.",
+          "Grow through a community built around exclusive lifestyle experiences.",
     ),
   ];
 
@@ -58,11 +55,12 @@ class _BoardingScreenState extends State<BoardingScreen> {
       package: "assets",
       videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
     );
-    _videoController.setVolume(0.0); // Mute the video
     _videoController.setLooping(true);
     _videoController.initialize().then((_) => setState(() {}));
-
-    _videoController.play();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _videoController.setVolume(0);
+      _videoController.play();
+    });
     _startAutoSwipe();
   }
 
@@ -122,49 +120,37 @@ class _BoardingScreenState extends State<BoardingScreen> {
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
+
                         builder: (context) {
-                          return AnimatedContainer(
-                            height: ref.watch(heightProvider),
-                            curve: Curves.easeIn,
-                            duration: Duration(milliseconds: 200),
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                bottom: MediaQuery.of(
-                                  context,
-                                ).viewInsets.bottom,
-                                top: 16,
-                                left: 16,
-                                right: 16,
-                              ),
-                              child: Column(
-                                children: [
-                                  Center(
-                                    child: Container(
-                                      height: 4,
-                                      width: 44,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xffDEDEDE),
-                                        borderRadius: BorderRadius.circular(4),
+                          return Wrap(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: MediaQuery.of(
+                                    context,
+                                  ).viewInsets.bottom,
+                                  top: 16,
+                                  left: 16,
+                                  right: 16,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Center(
+                                      child: Container(
+                                        height: 4,
+                                        width: 44,
+                                        decoration: BoxDecoration(
+                                          color: Color(0xffDEDEDE),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(height: 22),
-                                  Expanded(
-                                    child: PageView(
+                                    SizedBox(height: 22),
+                                    ExpandablePageView(
                                       controller: pageController,
-                                      onPageChanged: (page) {
-                                        if (page == 0) {
-                                          ref
-                                                  .read(heightProvider.notifier)
-                                                  .state =
-                                              550;
-                                        } else {
-                                          ref
-                                                  .read(heightProvider.notifier)
-                                                  .state =
-                                              680;
-                                        }
-                                      },
+
                                       physics:
                                           const NeverScrollableScrollPhysics(),
                                       children: [
@@ -176,15 +162,13 @@ class _BoardingScreenState extends State<BoardingScreen> {
                                         SizedBox(child: SignUpComponent()),
                                       ],
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
+                            ],
                           );
                         },
-                      ).whenComplete(() {
-                        ref.read(heightProvider.notifier).state = 550;
-                      });
+                      );
                     },
                     child: Text(
                       "Get Started",
@@ -253,8 +237,8 @@ class _BoardingScreenState extends State<BoardingScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                flex: 4,
+              SizedBox(
+                height: MediaQuery.widthOf(context) / 1.75,
                 child: PageView.builder(
                   controller: boardingPageController,
                   itemCount: boardings.length,

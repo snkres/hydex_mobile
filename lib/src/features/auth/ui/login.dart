@@ -142,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 },
                                                 validator: (v) {
                                                   if (v!.isEmpty) {
-                                                    return "Please write phone number";
+                                                    return "Please add your phone number";
                                                   }
                                                   if (v.length > 13) {
                                                     return "Phone shouldn't be more than 13 characters";
@@ -166,8 +166,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                                           phoneNumber!,
                                                           OTPType.phone,
                                                         );
-                                                    if (!context.mounted)
+                                                    if (!context.mounted) {
                                                       return;
+                                                    }
 
                                                     context.push("/otp");
                                                   }
