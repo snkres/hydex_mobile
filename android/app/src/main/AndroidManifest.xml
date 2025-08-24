@@ -31,8 +31,8 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" />
-                <data android:host="hyde-x.com" />
+                <data android:scheme="http" android:host="app.hyde-x.com"/>
+                <data android:scheme="https" android:host="app.hyde-x.com"/>
                 <data android:path="/forgot-password" />  
             </intent-filter>
 

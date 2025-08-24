@@ -30,17 +30,17 @@ class _SeekerScreenState extends State<SeekerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Image.asset(
-              "img/gradient.png",
-              package: "assets",
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
+      body: Stack(
+        children: [
+          Image.asset(
+            "img/gradient.png",
+            package: "assets",
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
 
-            Column(
+          SafeArea(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomBackButton(),
@@ -126,8 +126,8 @@ class _SeekerScreenState extends State<SeekerScreen> {
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

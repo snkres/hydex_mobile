@@ -53,14 +53,19 @@ class _BoardingScreenState extends State<BoardingScreen> {
     _videoController = VideoPlayerController.asset(
       "video/video.mp4",
       package: "assets",
-      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+      videoPlayerOptions: VideoPlayerOptions(
+        mixWithOthers: true,
+        allowBackgroundPlayback: true,
+      ),
     );
     _videoController.setLooping(true);
-    _videoController.initialize().then((_) => setState(() {}));
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _videoController.setVolume(0);
-      _videoController.play();
+    _videoController.setVolume(0);
+    _videoController.initialize().then((_) {
+      setState(() {
+        _videoController.play();
+      });
     });
+
     _startAutoSwipe();
   }
 

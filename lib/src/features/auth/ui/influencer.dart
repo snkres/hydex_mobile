@@ -36,20 +36,20 @@ class _InfluencerScreenState extends State<InfluencerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Stack(
-                children: [
-                  Image.asset(
-                    "img/gradient.png",
-                    package: "assets",
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                  Column(
+      body: CustomScrollView(
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Stack(
+              children: [
+                Image.asset(
+                  "img/gradient.png",
+                  package: "assets",
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+                SafeArea(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomBackButton(),
@@ -162,11 +162,11 @@ class _InfluencerScreenState extends State<InfluencerScreen> {
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
