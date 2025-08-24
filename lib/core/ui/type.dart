@@ -67,7 +67,7 @@ class AppTextStyles {
   // Secondary Body
   TextStyle get secondaryRegular => TextStyle(
     fontFamily: fontFamily,
-    fontSize: accumulator * 16,
+    fontSize: accumulator * 14,
     fontWeight: FontWeight.w400,
     height: 1.25, // 20/16 => 1.25
     letterSpacing: 0.0,
@@ -113,7 +113,7 @@ class AppTextStyles {
 
   TextStyle get smallSemibold => TextStyle(
     fontFamily: fontFamily,
-    fontSize: accumulator * 15,
+    fontSize: accumulator * 14,
     fontWeight: FontWeight.w600,
     height: 1.43,
   );

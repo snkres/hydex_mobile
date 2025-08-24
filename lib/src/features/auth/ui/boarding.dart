@@ -109,7 +109,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.black,
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -155,7 +155,6 @@ class _BoardingScreenState extends State<BoardingScreen> {
                                     SizedBox(height: 22),
                                     ExpandablePageView(
                                       controller: pageController,
-
                                       physics:
                                           const NeverScrollableScrollPhysics(),
                                       children: [
@@ -177,7 +176,10 @@ class _BoardingScreenState extends State<BoardingScreen> {
                     },
                     child: Text(
                       "Get Started",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppTextStyles(context).accumulator * 14,
+                      ),
                     ),
                   );
                 },
@@ -205,6 +207,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
                 style: TextStyle(color: Colors.white),
               ),
             ),
+            SizedBox(height: 24),
           ],
         ),
       ),

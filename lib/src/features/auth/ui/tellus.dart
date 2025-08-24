@@ -318,7 +318,7 @@ class CustomChip extends StatelessWidget {
         child: Text(
           title,
           style: TextStyle(
-            fontSize: AppTextStyles(context).accumulator * 15,
+            fontSize: AppTextStyles(context).accumulator * 14,
             height: 1.7,
             color: isSelected
                 ? Theme.of(context).colorScheme.onPrimary
