@@ -106,7 +106,7 @@ const darkColorScheme = ColorScheme(
   errorContainer: AppColors.onSurfaceErrorDark,
   onErrorContainer: AppColors.surfaceOnPrimaryDark,
   surface: AppColors.surfaceDark,
-  onSurface: Color(0xFFD4D4D4),
+  onSurface: AppColors.onSurfaceDark,
   onSurfaceVariant: AppColors.onSurfaceVarDark,
   outline: AppColors.onSurfaceOutlineDark,
   shadow: Colors.black,

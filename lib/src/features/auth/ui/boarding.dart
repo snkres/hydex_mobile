@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/gestures.dart';
@@ -60,11 +61,13 @@ class _BoardingScreenState extends State<BoardingScreen> {
     );
     _videoController.setLooping(true);
     _videoController.setVolume(0);
-    _videoController.initialize().then((_) {
-      setState(() {
-        _videoController.play();
+    if (!Platform.isLinux) {
+      _videoController.initialize().then((_) {
+        setState(() {
+          _videoController.play();
+        });
       });
-    });
+    }
 
     _startAutoSwipe();
   }

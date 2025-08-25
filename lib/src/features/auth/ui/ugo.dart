@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
+import 'package:hydex/src/widgets/custom_radio.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 
 class WhereWeGOScreen extends StatefulWidget {
@@ -13,14 +15,14 @@ class WhereWeGOScreen extends StatefulWidget {
 
 class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
   final List<String> countries = ["Egypt", "Dubai"];
-
+  final countryController = TextEditingController();
   String? selectedCountry;
 
   String? selectedSize;
   List<String> groupSizes = ["Solo", "2–3", "4–6", "Large group 7+"];
 
   String? selectedArea;
-  List<String> areas = [
+  List<String> egyptAreas = [
     "Gouna",
     "North Coast",
     "Sheikh Zayed",
@@ -28,6 +30,13 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
     "Zamalek",
     "Maadi",
     "New Cairo",
+    "Sharm El Sheikh",
+  ];
+  List<String> uaeAreas = [
+    "Dubai",
+    "Abu Dhabi ",
+    "Sharjah",
+    "Northern Emirates ",
   ];
 
   @override
@@ -72,50 +81,159 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
                                     style: TextStyle(fontSize: 14),
                                   ),
                                   SizedBox(height: 16),
-                                  DropdownButtonFormField<String>(
-                                    hint: Text("Country"),
-                                    initialValue: selectedCountry,
-                                    items: countries
-                                        .map(
-                                          (e) => DropdownMenuItem(
-                                            value: e,
-                                            child: Text(e),
-                                          ),
-                                        )
-                                        .toList(),
-                                    onChanged: (v) {
-                                      setState(() {
-                                        selectedCountry = v;
-                                      });
-                                    },
-                                    icon: Icon(Icons.keyboard_arrow_down),
-                                  ),
-                                  selectedCountry != null
-                                      ? Column(
-                                          children: [
-                                            SizedBox(height: 16),
+                                  TextFormField(
+                                    controller: countryController,
+                                    enableInteractiveSelection: false,
+                                    textInputAction: TextInputAction.next,
+                                    readOnly: true,
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) {
+                                          return Wrap(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(
+                                                  16,
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Center(
+                                                      child: Container(
+                                                        width: 40,
+                                                        height: 4,
+                                                        decoration: BoxDecoration(
+                                                          color: Colors
+                                                              .grey
+                                                              .shade300,
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                2,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 16),
 
-                                            Wrap(
-                                              spacing: 8,
-                                              runSpacing: 8,
-                                              children: areas
-                                                  .map(
-                                                    (e) => CustomChip(
-                                                      title: e,
-                                                      isSelected:
-                                                          e == selectedArea,
+                                                    // Title
+                                                    const Text(
+                                                      'Select Country',
+                                                      style: TextStyle(
+                                                        fontSize: 22,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 16),
+                                                    ListTile(
+                                                      contentPadding:
+                                                          EdgeInsets.zero,
+                                                      leading: Text(
+                                                        '🇪🇬',
+                                                        style: const TextStyle(
+                                                          fontSize: 26,
+                                                        ),
+                                                      ),
+                                                      title: Text(
+                                                        'Egypt',
+                                                        style: TextStyle(
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
+                                                      trailing: CustomRadio(
+                                                        isSelected:
+                                                            selectedCountry ==
+                                                            "EG",
+                                                      ),
                                                       onTap: () {
-                                                        setState(() {
-                                                          selectedArea = e;
-                                                        });
+                                                        _selectCountry(
+                                                          "Egypt",
+                                                          "EG",
+                                                        );
+                                                        context.pop();
                                                       },
                                                     ),
-                                                  )
-                                                  .toList(),
-                                            ),
-                                          ],
-                                        )
-                                      : SizedBox.shrink(),
+                                                    ListTile(
+                                                      contentPadding:
+                                                          EdgeInsets.zero,
+                                                      leading: Text(
+                                                        '🇦🇪',
+                                                        style: const TextStyle(
+                                                          fontSize: 26,
+                                                        ),
+                                                      ),
+                                                      title: Text(
+                                                        'United Arab Emirates (UAE)',
+                                                        style: TextStyle(
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
+                                                      trailing: CustomRadio(
+                                                        isSelected:
+                                                            selectedCountry ==
+                                                            "UAE",
+                                                      ),
+                                                      onTap: () {
+                                                        _selectCountry(
+                                                          "United Arab Emirates (UAE)",
+                                                          "UAE",
+                                                        );
+
+                                                        context.pop();
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Please choose your country";
+                                      }
+                                      return null;
+                                    },
+                                    decoration: InputDecoration(
+                                      hint: Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 5,
+                                          top: 3,
+                                          left: 16,
+                                        ),
+                                        child: Text(
+                                          "Country",
+                                          style: TextStyle(
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant,
+                                            fontSize:
+                                                AppTextStyles(
+                                                  context,
+                                                ).accumulator *
+                                                15,
+                                          ),
+                                        ),
+                                      ),
+                                      suffixIcon: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                        ),
+                                        child: Icon(
+                                          Icons.keyboard_arrow_down,
+
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  _buildInlineAreaSelector(),
                                   SizedBox(height: 16),
 
                                   Text(
@@ -165,5 +283,37 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildInlineAreaSelector() {
+    if (selectedCountry == null) return const SizedBox.shrink();
+
+    final areas = selectedCountry == "EG" ? egyptAreas : uaeAreas;
+
+    return Column(
+      children: [
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: areas
+              .map(
+                (area) => CustomChip(
+                  title: area,
+                  isSelected: area == selectedArea,
+                  onTap: () => setState(() => selectedArea = area),
+                ),
+              )
+              .toList(),
+        ),
+      ],
+    );
+  }
+
+  void _selectCountry(String displayText, String countryCode) {
+    setState(() {
+      selectedCountry = countryCode;
+      countryController.text = displayText;
+    });
   }
 }

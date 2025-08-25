@@ -43,8 +43,11 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
             ),
             SizedBox(height: 8),
             Text(
-              "Access the city’s most coveted spots, luxury deals, and curated experiences.",
-              style: TextStyle(fontSize: 14, color: Color(0xff7A7F99)),
+              "Access exclusive spots and luxury experiences.",
+              style: TextStyle(
+                fontSize: AppTextStyles(context).accumulator * 14,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             SizedBox(height: 16),
             selectedCountry.when(
@@ -88,7 +91,6 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                         key: formKey,
                         child: TextFormField(
                           controller: textController,
-
                           keyboardType: TextInputType.phone,
                           textInputAction: TextInputAction.done,
                           onChanged: (v) {
@@ -150,20 +152,18 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
               TextSpan(
                 text: "By continuing, you agree to to Hyde’x ",
                 style: TextStyle(
-                  color: Color(0xff7A7F99),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: AppTextStyles(context).accumulator * 12,
                 ),
                 children: [
                   TextSpan(
                     text: "Privacy ",
                     recognizer: TapGestureRecognizer()..onTap = () {},
-                    style: TextStyle(decoration: TextDecoration.underline),
                   ),
                   TextSpan(text: "and "),
                   TextSpan(
                     text: "Terms",
                     recognizer: TapGestureRecognizer()..onTap = () {},
-                    style: TextStyle(decoration: TextDecoration.underline),
                   ),
                 ],
               ),

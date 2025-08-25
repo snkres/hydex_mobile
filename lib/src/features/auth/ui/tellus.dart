@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
+import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:intl/intl.dart';
@@ -20,9 +22,11 @@ class _TellusState extends State<Tellus> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final birthController = TextEditingController();
+  final referralCodeController = TextEditingController();
+
   final formkey = GlobalKey<FormState>();
   String? requiredBirth;
-
+  String? codeErrorText;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -233,6 +237,70 @@ class _TellusState extends State<Tellus> {
                                       ),
                                     ],
                                   ),
+                                  SizedBox(height: 12),
+
+                                  Consumer(
+                                    builder: (context, ref, child) {
+                                      final userType = ref.watch(
+                                        userTypeNotifierProvider,
+                                      );
+                                      return Visibility(
+                                        visible: userType == Role.owner,
+                                        child: Column(
+                                          children: [
+                                            TextFormField(
+                                              controller:
+                                                  referralCodeController,
+                                              forceErrorText: codeErrorText,
+                                              validator: (code) {
+                                                if (code == null ||
+                                                    code.isEmpty) {
+                                                  return null;
+                                                }
+                                                if (code.length < 8) {
+                                                  return "Code must be 8 characters";
+                                                }
+                                                return null;
+                                              },
+                                              onFieldSubmitted: (code) async {
+                                                if (code.isNotEmpty) {
+                                                  ref
+                                                      .read(authServiceProvider)
+                                                      .verifyReferalCode(
+                                                        referralCode: code,
+                                                      )
+                                                      .catchError((e) {
+                                                        setState(() {
+                                                          codeErrorText =
+                                                              e.message;
+                                                        });
+                                                      });
+                                                }
+                                              },
+                                              textInputAction:
+                                                  TextInputAction.done,
+                                              decoration: InputDecoration(
+                                                labelText:
+                                                    "Invitation Code (Optional)",
+                                                hintText:
+                                                    "Enter 8-character code",
+                                              ),
+                                            ),
+                                            Text(
+                                              "If you don’t have an invite code just skip it.",
+                                              style: AppTextStyles(context)
+                                                  .captionRegular
+                                                  .copyWith(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurfaceVariant,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ],
                               ),
                               Padding(
@@ -263,10 +331,28 @@ class _TellusState extends State<Tellus> {
                                               .create(
                                                 gender: gender,
                                                 dateOfBirth: requiredBirth,
+                                                referralCode:
+                                                    referralCodeController.text,
                                                 email: emailController.text,
                                                 fullName: nameController.text,
                                               );
-                                          context.push("/nationality");
+                                          final currentType = ref.read(
+                                            userTypeNotifierProvider,
+                                          );
+                                          if (context.mounted) {
+                                            switch (currentType) {
+                                              case Role.seeker:
+                                                context.push("/seeker");
+                                                break;
+                                              case Role.ambassador:
+                                                context.push("/seeker");
+                                                break;
+                                              case Role.owner:
+                                                context.push("/nationality");
+                                                break;
+                                              default:
+                                            }
+                                          }
                                         }
                                       },
                                     );

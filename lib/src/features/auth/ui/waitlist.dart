@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/waitlist_provider.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 
@@ -68,7 +69,15 @@ class WaitlistScreen extends StatelessWidget {
                               package: "assets",
                               width: 24,
                             ),
-                            Text("Home", style: TextStyle(color: Colors.white)),
+                            Text(
+                              "Home",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 12,
+                              ),
+                            ),
                           ],
                         ),
                         Column(
@@ -78,12 +87,17 @@ class WaitlistScreen extends StatelessWidget {
                               "img/svg/settings.svg",
                               package: "assets",
                               width: 24,
+                              colorFilter: ColorFilter.mode(
+                                Colors.white.withValues(alpha: 0.5),
+                                BlendMode.srcIn,
+                              ),
                             ),
                             Text(
                               "Settings",
                               style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w300,
+                                color: Colors.white.withValues(alpha: 0.5),
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 12,
                               ),
                             ),
                           ],

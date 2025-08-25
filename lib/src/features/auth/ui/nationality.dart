@@ -18,8 +18,8 @@ class NationalityTellUs extends StatefulWidget {
 
 class _NationalityTellUsState extends State<NationalityTellUs> {
   String? type;
-  final nationalityController = TextEditingController();
-  final instagramController = TextEditingController();
+  final businessController = TextEditingController();
+  final linkController = TextEditingController();
   final facebookController = TextEditingController();
   final referralCodeController = TextEditingController();
   String? codeErrorText;
@@ -56,7 +56,7 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Tell us about yourself",
+                                    "About your business",
                                     style: TextStyle(
                                       fontSize:
                                           AppTextStyles(context).accumulator *
@@ -66,7 +66,7 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                   ),
                                   SizedBox(height: 8),
                                   Text(
-                                    "Help us get to know you and tailor your experience.",
+                                    "Help us get to know you and boost your growth.",
                                     style: TextStyle(
                                       color: Theme.of(
                                         context,
@@ -86,224 +86,84 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                       children: [
                                         TextFormField(
                                           autofocus: true,
-                                          controller: nationalityController,
+                                          controller: businessController,
                                           textInputAction: TextInputAction.next,
                                           validator: (value) {
                                             if (value!.isEmpty) {
-                                              return "Please enter your nationality";
+                                              return "Please enter your business name";
                                             }
                                             return null;
                                           },
                                           decoration: InputDecoration(
-                                            labelText: "Nationality",
+                                            labelText: "Business Name",
                                           ),
                                         ),
-                                        Wrap(
-                                          spacing: 8,
-                                          runSpacing: 8,
-                                          children: [
-                                            CustomChip(
-                                              title: "Self Employed",
-                                              isSelected:
-                                                  type == "Self Employed",
-                                              onTap: () {
-                                                setState(() {
-                                                  type = "Self Employed";
-                                                });
-                                              },
-                                            ),
-                                            CustomChip(
-                                              title: "Student",
-                                              isSelected: type == "Student",
-                                              onTap: () {
-                                                setState(() {
-                                                  type = "Student";
-                                                });
-                                              },
-                                            ),
-                                            CustomChip(
-                                              title: "Employed",
-                                              isSelected: type == "Employed",
-                                              onTap: () {
-                                                setState(() {
-                                                  type = "Employed";
-                                                });
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          spacing: 12,
-                                          children: [
-                                            Expanded(
-                                              child: TextFormField(
-                                                controller: instagramController,
-                                                textInputAction:
-                                                    TextInputAction.next,
-                                                keyboardType: TextInputType.url,
-                                                decoration: InputDecoration(
-                                                  labelText: "Instagram Link",
-                                                  hintText:
-                                                      "https://instagram.com/username",
-                                                ),
-                                                validator: (value) {
-                                                  if (value!.isEmpty) {
-                                                    return "Please enter instagram link";
-                                                  }
-                                                  if (value.isNotEmpty) {
-                                                    if (!Uri.tryParse(
-                                                          value,
-                                                        )!.hasAbsolutePath ==
-                                                        true) {
-                                                      return "Must be a url";
-                                                    }
 
-                                                    Uri? uri = Uri.tryParse(
-                                                      value,
-                                                    );
-                                                    if (uri == null) {
-                                                      return "Must be a url";
-                                                    }
+                                        TextFormField(
+                                          controller: linkController,
+                                          textInputAction: TextInputAction.next,
+                                          keyboardType: TextInputType.url,
+                                          decoration: InputDecoration(
+                                            labelText:
+                                                "Instagram or Website link",
+                                          ),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return "Please enter instagram or website link";
+                                            }
+                                            if (value.isNotEmpty) {
+                                              if (!Uri.tryParse(
+                                                    value,
+                                                  )!.hasAbsolutePath ==
+                                                  true) {
+                                                return "Must be a url";
+                                              }
 
-                                                    // Check if it's a valid Instagram URL
-                                                    if (!uri.host.contains(
-                                                          'instagram.com',
-                                                        ) &&
-                                                        !uri.host.contains(
-                                                          'instagr.am',
-                                                        )) {
-                                                      return "Please enter a valid Instagram URL";
-                                                    }
+                                              Uri? uri = Uri.tryParse(value);
+                                              if (uri == null) {
+                                                return "Must be a url";
+                                              }
 
-                                                    // Check if URL has proper scheme
-                                                    if (!uri.hasScheme ||
-                                                        (!uri.scheme.startsWith(
-                                                              'http',
-                                                            ) &&
-                                                            !uri.scheme
-                                                                .startsWith(
-                                                                  'https',
-                                                                ))) {
-                                                      return "URL must start with http:// or https://";
-                                                    }
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: TextFormField(
-                                                controller: facebookController,
-                                                textInputAction:
-                                                    TextInputAction.next,
-                                                keyboardType: TextInputType.url,
-                                                decoration: InputDecoration(
-                                                  labelText: "Facebook Link",
-                                                  hintText:
-                                                      "https://facebook.com/username",
-                                                ),
-                                                validator: (value) {
-                                                  if (value!.isEmpty) {
-                                                    return "Please enter facebook link";
-                                                  }
-                                                  if (value.isNotEmpty) {
-                                                    // Basic URL validation
-                                                    if (!Uri.tryParse(
-                                                          value,
-                                                        )!.hasAbsolutePath ==
-                                                        true) {
-                                                      return "Please enter a valid URL";
-                                                    }
-
-                                                    Uri? uri = Uri.tryParse(
-                                                      value,
-                                                    );
-                                                    if (uri == null) {
-                                                      return "Please enter a valid URL";
-                                                    }
-
-                                                    // Check if it's a valid Facebook URL
-                                                    if (!uri.host.contains(
-                                                          'facebook.com',
-                                                        ) &&
-                                                        !uri.host.contains(
-                                                          'fb.com',
-                                                        ) &&
-                                                        !uri.host.contains(
-                                                          'fb.me',
-                                                        )) {
-                                                      return "Please enter a valid Facebook URL";
-                                                    }
-
-                                                    // Check if URL has proper scheme
-                                                    if (!uri.hasScheme ||
-                                                        (!uri.scheme.startsWith(
-                                                              'http',
-                                                            ) &&
-                                                            !uri.scheme
-                                                                .startsWith(
-                                                                  'https',
-                                                                ))) {
-                                                      return "URL must start with http:// or https://";
-                                                    }
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Consumer(
-                                          builder: (context, ref, child) {
-                                            return TextFormField(
-                                              controller:
-                                                  referralCodeController,
-                                              forceErrorText: codeErrorText,
-                                              validator: (code) {
-                                                if (code == null ||
-                                                    code.isEmpty) {
-                                                  return null;
-                                                }
-                                                if (code.length < 8) {
-                                                  return "Code must be 8 characters";
-                                                }
-                                                return null;
-                                              },
-                                              onFieldSubmitted: (code) async {
-                                                if (code.isNotEmpty) {
-                                                  ref
-                                                      .read(authServiceProvider)
-                                                      .verifyReferalCode(
-                                                        referralCode: code,
-                                                      )
-                                                      .catchError((e) {
-                                                        setState(() {
-                                                          codeErrorText =
-                                                              e.message;
-                                                        });
-                                                      });
-                                                }
-                                              },
-                                              textInputAction:
-                                                  TextInputAction.done,
-                                              decoration: InputDecoration(
-                                                labelText:
-                                                    "Invitation Code (Optional)",
-                                                hintText:
-                                                    "Enter 8-character code",
-                                              ),
-                                            );
+                                              // Check if URL has proper scheme
+                                              if (!uri.hasScheme ||
+                                                  (!uri.scheme.startsWith(
+                                                        'http',
+                                                      ) &&
+                                                      !uri.scheme.startsWith(
+                                                        'https',
+                                                      ))) {
+                                                return "URL must start with http:// or https://";
+                                              }
+                                            }
+                                            return null;
                                           },
                                         ),
-                                        Text(
-                                          "If you don’t have an invite code just skip it.",
-                                          style: AppTextStyles(context)
-                                              .captionRegular
-                                              .copyWith(
-                                                color: Theme.of(
-                                                  context,
-                                                ).colorScheme.onSurfaceVariant,
-                                              ),
+                                        TextFormField(
+                                          controller: businessController,
+                                          textInputAction: TextInputAction.next,
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return "Please enter your business name";
+                                            }
+                                            return null;
+                                          },
+                                          decoration: InputDecoration(
+                                            labelText: "Category",
+                                          ),
+                                        ),
+                                        TextFormField(
+                                          controller: businessController,
+                                          textInputAction: TextInputAction.next,
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return "Please enter your business name";
+                                            }
+                                            return null;
+                                          },
+                                          decoration: InputDecoration(
+                                            labelText:
+                                                "City of primary activity",
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -323,14 +183,9 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                               )
                                               .create(
                                                 nationality:
-                                                    nationalityController.text,
+                                                    businessController.text,
                                                 socialStatus: type,
-                                                instagram:
-                                                    instagramController.text,
-                                                facebook:
-                                                    facebookController.text,
-                                                referralCode:
-                                                    referralCodeController.text,
+                                                instagram: linkController.text,
                                               );
                                           await ref
                                               .read(authServiceProvider)
@@ -350,22 +205,8 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                                   );
                                                 }
                                               });
-                                          final currentType = ref.read(
-                                            userTypeNotifierProvider,
-                                          );
                                           if (context.mounted) {
-                                            switch (currentType) {
-                                              case Role.seeker:
-                                                context.push("/seeker");
-                                                break;
-                                              case Role.ambassador:
-                                                context.push("/seeker");
-                                                break;
-                                              case Role.owner:
-                                                context.push("/describe");
-                                                break;
-                                              default:
-                                            }
+                                            context.push("/describe");
                                           }
                                         }
                                       },

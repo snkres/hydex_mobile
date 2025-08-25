@@ -78,7 +78,7 @@ class _CountryPickerBottomSheetState extends State<CountryPickerBottomSheet> {
 
           // Title
           const Text(
-            'Select a country',
+            'Select Country',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 16),
