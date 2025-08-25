@@ -135,6 +135,25 @@ class _CreatePasswordState extends State<CreatePassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        child: Consumer(
+          builder: (context, ref, child) {
+            return PrimaryButton(
+              onTap: shouldDisableButton()
+                  ? null
+                  : () {
+                      if (formKey.currentState!.validate()) {
+                        ref
+                            .read(userNotifierProvider.notifier)
+                            .create(password: passwordConfirmController.text);
+                        context.go("/tellus");
+                      }
+                    },
+            );
+          },
+        ),
+      ),
       body: Stack(
         children: [
           Image.asset(
@@ -183,7 +202,6 @@ class _CreatePasswordState extends State<CreatePassword> {
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
                                 validator: _validatePassword,
-
                                 textInputAction: TextInputAction.next,
                                 decoration: InputDecoration(
                                   labelText: "Password",
@@ -217,13 +235,11 @@ class _CreatePasswordState extends State<CreatePassword> {
                                 controller: passwordConfirmController,
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
-
                                 obscureText: hideConfirmPassword,
                                 onChanged: (value) {
                                   bool hasError =
                                       _validatePasswordConfirmation(value) !=
                                       null;
-
                                   setState(() {
                                     dontShow = hasError;
                                   });
@@ -267,27 +283,6 @@ class _CreatePasswordState extends State<CreatePassword> {
                               ),
                             ],
                           ),
-                        ),
-                        Spacer(),
-                        Consumer(
-                          builder: (context, ref, child) {
-                            return PrimaryButton(
-                              onTap: shouldDisableButton()
-                                  ? null
-                                  : () {
-                                      if (formKey.currentState!.validate()) {
-                                        ref
-                                            .read(userNotifierProvider.notifier)
-                                            .create(
-                                              password:
-                                                  passwordConfirmController
-                                                      .text,
-                                            );
-                                        context.go("/tellus");
-                                      }
-                                    },
-                            );
-                          },
                         ),
                       ],
                     ),
