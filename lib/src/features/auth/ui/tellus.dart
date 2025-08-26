@@ -6,6 +6,7 @@ import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
+import 'package:hydex/src/features/auth/ui/verify_email.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:intl/intl.dart';
@@ -80,7 +81,6 @@ class _TellusState extends State<Tellus> {
                                   Form(
                                     key: formkey,
                                     child: Column(
-                                      spacing: 12,
                                       children: [
                                         TextFormField(
                                           controller: nameController,
@@ -98,28 +98,47 @@ class _TellusState extends State<Tellus> {
                                             labelText: "Full Name",
                                           ),
                                         ),
-                                        TextFormField(
-                                          controller: emailController,
-                                          autovalidateMode: AutovalidateMode
-                                              .onUserInteraction,
-
-                                          validator: (value) {
-                                            if (value!.isEmpty) {
-                                              return "Please enter your email";
-                                            }
-                                            final emailRegex = RegExp(
-                                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                        SizedBox(height: 10),
+                                        Consumer(
+                                          builder: (context, ref, child) {
+                                            return Visibility(
+                                              visible: !ref.watch(
+                                                isEmailVerifiedProvider,
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  TextFormField(
+                                                    controller: emailController,
+                                                    autovalidateMode:
+                                                        AutovalidateMode
+                                                            .onUserInteraction,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please enter your email";
+                                                      }
+                                                      final emailRegex = RegExp(
+                                                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                                      );
+                                                      if (!emailRegex.hasMatch(
+                                                        value,
+                                                      )) {
+                                                        return "Please enter a valid email";
+                                                      }
+                                                      return null;
+                                                    },
+                                                    textInputAction:
+                                                        TextInputAction.next,
+                                                    decoration: InputDecoration(
+                                                      labelText: "Email",
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 10),
+                                                ],
+                                              ),
                                             );
-                                            if (!emailRegex.hasMatch(value)) {
-                                              return "Please enter a valid email";
-                                            }
-                                            return null;
                                           },
-                                          textInputAction: TextInputAction.next,
-                                          decoration: InputDecoration(
-                                            labelText: "Email",
-                                          ),
                                         ),
+
                                         TextFormField(
                                           controller: birthController,
                                           readOnly: true,
@@ -245,8 +264,11 @@ class _TellusState extends State<Tellus> {
                                         userTypeNotifierProvider,
                                       );
                                       return Visibility(
-                                        visible: userType == Role.owner,
+                                        visible: true,
                                         child: Column(
+                                          spacing: 4,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             TextFormField(
                                               controller:
@@ -280,10 +302,15 @@ class _TellusState extends State<Tellus> {
                                               textInputAction:
                                                   TextInputAction.done,
                                               decoration: InputDecoration(
-                                                labelText:
-                                                    "Invitation Code (Optional)",
-                                                hintText:
-                                                    "Enter 8-character code",
+                                                label: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text("Invitation Code"),
+                                                    Text("(Optional)"),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                             Text(

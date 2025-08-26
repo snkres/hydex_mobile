@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/firebase_options.dart';
@@ -16,6 +17,7 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
   }
+  await FlutterDisplayMode.setHighRefreshRate();
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,

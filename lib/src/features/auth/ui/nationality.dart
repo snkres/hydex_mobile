@@ -20,8 +20,8 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
   String? type;
   final businessController = TextEditingController();
   final linkController = TextEditingController();
-  final facebookController = TextEditingController();
-  final referralCodeController = TextEditingController();
+  final categoryController = TextEditingController();
+  final cityPriamryController = TextEditingController();
   String? codeErrorText;
   final formKey = GlobalKey<FormState>();
 
@@ -103,6 +103,8 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                           controller: linkController,
                                           textInputAction: TextInputAction.next,
                                           keyboardType: TextInputType.url,
+                                          autovalidateMode:
+                                              AutovalidateMode.always,
                                           decoration: InputDecoration(
                                             labelText:
                                                 "Instagram or Website link",
@@ -112,38 +114,21 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                               return "Please enter instagram or website link";
                                             }
                                             if (value.isNotEmpty) {
-                                              if (!Uri.tryParse(
-                                                    value,
-                                                  )!.hasAbsolutePath ==
-                                                  true) {
-                                                return "Must be a url";
-                                              }
-
-                                              Uri? uri = Uri.tryParse(value);
-                                              if (uri == null) {
+                                              if (!value.endsWith(".com")) {
                                                 return "Must be a url";
                                               }
 
                                               // Check if URL has proper scheme
-                                              if (!uri.hasScheme ||
-                                                  (!uri.scheme.startsWith(
-                                                        'http',
-                                                      ) &&
-                                                      !uri.scheme.startsWith(
-                                                        'https',
-                                                      ))) {
-                                                return "URL must start with http:// or https://";
-                                              }
                                             }
                                             return null;
                                           },
                                         ),
                                         TextFormField(
-                                          controller: businessController,
+                                          controller: categoryController,
                                           textInputAction: TextInputAction.next,
                                           validator: (value) {
                                             if (value!.isEmpty) {
-                                              return "Please enter your business name";
+                                              return "Please enter your business category";
                                             }
                                             return null;
                                           },
@@ -152,11 +137,11 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
                                           ),
                                         ),
                                         TextFormField(
-                                          controller: businessController,
+                                          controller: cityPriamryController,
                                           textInputAction: TextInputAction.next,
                                           validator: (value) {
                                             if (value!.isEmpty) {
-                                              return "Please enter your business name";
+                                              return "Please enter your city primary";
                                             }
                                             return null;
                                           },

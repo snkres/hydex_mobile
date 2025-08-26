@@ -72,15 +72,19 @@ class AuthService {
   }
 
   // Verify user
-  Future<String> sendOTP(String phone, OTPType type) async {
+  Future<String> sendOTP(String identifier, OTPType type) async {
     try {
       final response = await DioHelper.post<Map<String, dynamic>>(
         '/auth/send-verification',
-        data: {'identifier': phone, "type": type.name},
+        data: {'identifier': identifier, "type": type.name},
       );
 
       if (response.success && response.data != null) {
-        ref.read(userNotifierProvider.notifier).create(phone: phone);
+        if (type == OTPType.email) {
+          ref.read(userNotifierProvider.notifier).create(email: identifier);
+        } else {
+          ref.read(userNotifierProvider.notifier).create(phone: identifier);
+        }
         return response.data?["message"];
       } else {
         throw ApiException(response.errorMessage ?? 'Failed to verify user');
@@ -90,12 +94,14 @@ class AuthService {
     }
   }
 
-  Future<String> verifyOTP({required String otp}) async {
+  Future<String> verifyOTP({
+    required String otp,
+    required String identifier,
+  }) async {
     try {
-      final phone = ref.read(userNotifierProvider)?.phone;
       final response = await DioHelper.post<Map<String, dynamic>>(
         '/auth/verify-identifier',
-        data: {'identifier': phone, "otp": otp},
+        data: {'identifier': identifier, "otp": otp},
       );
 
       if (response.success && response.data != null) {

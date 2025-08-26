@@ -22,6 +22,8 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
   final formKey = GlobalKey<FormState>();
   String? phoneError;
 
+  bool enableBtn = false;
+
   @override
   void dispose() {
     textController.dispose();
@@ -106,6 +108,16 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                                     data.dialCode + textController.text;
                               });
                             }
+                            if (textController.text.length == 11 ||
+                                textController.text.length == 10) {
+                              setState(() {
+                                enableBtn = true;
+                              });
+                            } else {
+                              setState(() {
+                                enableBtn = false;
+                              });
+                            }
                           },
                           validator: (v) {
                             if (v!.isEmpty) {
@@ -122,6 +134,7 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                             ),
                           ],
                           forceErrorText: phoneError,
+
                           onFieldSubmitted: (v) async {
                             if (formKey.currentState!.validate()) {
                               await ref
@@ -174,12 +187,23 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
         Padding(
           padding: const EdgeInsets.only(bottom: 24),
           child: PrimaryButton(
-            onTap: phoneNumber != null
+            onTap: enableBtn
                 ? () async {
                     if (formKey.currentState!.validate()) {
                       await ref
                           .read(authServiceProvider)
-                          .sendOTP(phoneNumber!, OTPType.phone);
+                          .sendOTP(phoneNumber!, OTPType.phone)
+                          .catchError((e) {
+                            if (e.message.contains("already exists")) {
+                              setState(() {
+                                phoneError = "Phone already exists";
+                              });
+                            } else {
+                              setState(() {
+                                phoneError = e.message;
+                              });
+                            }
+                          });
                       if (context.mounted) {
                         context.go("/otp");
                       }

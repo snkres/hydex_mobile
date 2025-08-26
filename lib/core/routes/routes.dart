@@ -9,6 +9,8 @@ import 'package:hydex/src/features/auth/ui/influencer.dart';
 import 'package:hydex/src/features/auth/ui/login.dart';
 import 'package:hydex/src/features/auth/ui/nationality.dart';
 import 'package:hydex/src/features/auth/ui/otp.dart';
+import 'package:hydex/src/features/auth/ui/otp_email.dart';
+import 'package:hydex/src/features/auth/ui/verify_email.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/features/auth/ui/ugo.dart';
 import 'package:hydex/src/features/auth/ui/waitlist.dart';
@@ -54,7 +56,20 @@ class AppRoutes {
         path: "/",
         builder: (context, state) => const BoardingScreen(),
         routes: [
-          GoRoute(path: "otp", builder: (context, state) => const OtpScreen()),
+          GoRoute(
+            path: "otp",
+            builder: (context, state) => const OtpScreen(),
+            routes: [
+              GoRoute(
+                path: "email",
+                builder: (context, state) => const OtpEmailScreen(),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: "verify_email",
+            builder: (context, state) => const VerifyEmailScreen(),
+          ),
           GoRoute(
             path: "password",
             builder: (context, state) => const CreatePassword(),

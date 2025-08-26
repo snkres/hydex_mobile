@@ -135,25 +135,6 @@ class _CreatePasswordState extends State<CreatePassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        child: Consumer(
-          builder: (context, ref, child) {
-            return PrimaryButton(
-              onTap: shouldDisableButton()
-                  ? null
-                  : () {
-                      if (formKey.currentState!.validate()) {
-                        ref
-                            .read(userNotifierProvider.notifier)
-                            .create(password: passwordConfirmController.text);
-                        context.go("/tellus");
-                      }
-                    },
-            );
-          },
-        ),
-      ),
       body: Stack(
         children: [
           Image.asset(
@@ -282,6 +263,35 @@ class _CreatePasswordState extends State<CreatePassword> {
                                 strengthColor: _strengthColor,
                               ),
                             ],
+                          ),
+                        ),
+                        Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
+                          child: Consumer(
+                            builder: (context, ref, child) {
+                              return PrimaryButton(
+                                onTap: shouldDisableButton()
+                                    ? null
+                                    : () {
+                                        if (formKey.currentState!.validate()) {
+                                          ref
+                                              .read(
+                                                userNotifierProvider.notifier,
+                                              )
+                                              .create(
+                                                password:
+                                                    passwordConfirmController
+                                                        .text,
+                                              );
+                                          context.go("/tellus");
+                                        }
+                                      },
+                              );
+                            },
                           ),
                         ),
                       ],

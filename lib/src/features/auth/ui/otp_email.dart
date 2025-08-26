@@ -9,13 +9,13 @@ import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:pinput/pinput.dart';
 
-class OtpScreen extends StatefulWidget {
-  const OtpScreen({super.key});
+class OtpEmailScreen extends StatefulWidget {
+  const OtpEmailScreen({super.key});
   @override
-  State<OtpScreen> createState() => _OtpScreenState();
+  State<OtpEmailScreen> createState() => _OtpEmailScreenState();
 }
 
-class _OtpScreenState extends State<OtpScreen> {
+class _OtpEmailScreenState extends State<OtpEmailScreen> {
   String? errorText;
   static final otpController = TextEditingController();
   static final formKey = GlobalKey<FormState>();
@@ -37,24 +37,9 @@ class _OtpScreenState extends State<OtpScreen> {
                 SliverFillRemaining(
                   hasScrollBody: false,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          CustomBackButton(),
-                          TextButton(
-                            onPressed: () => context.push("/verify_email"),
-                            child: Text(
-                              "Verify with email",
-                              style: TextStyle(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      CustomBackButton(),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
@@ -76,13 +61,13 @@ class _OtpScreenState extends State<OtpScreen> {
                                   SizedBox(height: 8),
                                   Consumer(
                                     builder: (context, ref, child) {
-                                      final phone =
+                                      final email =
                                           ref
                                               .watch(userNotifierProvider)
-                                              ?.phone ??
+                                              ?.email ??
                                           "";
                                       return Text(
-                                        "Enter the security code we sent to $phone over WhatsApp",
+                                        "Enter the security code we sent to $email",
                                         style: AppTextStyles(context)
                                             .smallRegular
                                             .copyWith(
@@ -145,7 +130,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                           package: "assets",
                                         ),
                                         label: Text(
-                                          "Change Number",
+                                          "Change Email",
                                           style: AppTextStyles(context)
                                               .smallRegular
                                               .copyWith(
@@ -164,14 +149,14 @@ class _OtpScreenState extends State<OtpScreen> {
                                                 package: "assets",
                                               ),
                                               onPressed: () async {
-                                                final phoneNumber = ref
+                                                final email = ref
                                                     .read(userNotifierProvider)
-                                                    ?.phone;
+                                                    ?.email;
                                                 await ref
                                                     .read(authServiceProvider)
                                                     .sendOTP(
-                                                      phoneNumber!,
-                                                      OTPType.phone,
+                                                      email!,
+                                                      OTPType.email,
                                                     );
 
                                                 if (context.mounted) {
@@ -213,20 +198,29 @@ class _OtpScreenState extends State<OtpScreen> {
                                         ? () async {
                                             if (formKey.currentState!
                                                 .validate()) {
-                                              final phone = ref
+                                              final email = ref
                                                   .read(userNotifierProvider)
-                                                  ?.phone;
+                                                  ?.email;
+
                                               await ref
                                                   .read(authServiceProvider)
                                                   .verifyOTP(
                                                     otp: otpController.text,
-                                                    identifier: phone!,
+                                                    identifier: email!,
                                                   )
                                                   .catchError((error) {
                                                     setState(() {
                                                       errorText = error.message;
                                                     });
                                                   });
+
+                                              ref
+                                                      .read(
+                                                        isEmailVerifiedProvider
+                                                            .notifier,
+                                                      )
+                                                      .state =
+                                                  true;
 
                                               if (!context.mounted) return;
 
