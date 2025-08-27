@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/type.dart';
@@ -22,6 +23,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final phoneController = TextEditingController();
   String? phoneNumber;
   String? phoneError;
+
+  bool hidePassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -209,6 +212,32 @@ class _LoginScreenState extends State<LoginScreen> {
                                     textInputAction: TextInputAction.next,
                                     decoration: InputDecoration(
                                       labelText: "Password",
+                                      suffixIcon: Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 8,
+                                        ),
+                                        child: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              hidePassword = !hidePassword;
+                                            });
+                                          },
+                                          icon: SvgPicture.asset(
+                                            hidePassword
+                                                ? "img/svg/eye_off.svg"
+                                                : "img/svg/eye_on.svg",
+                                            package: "assets",
+                                            colorFilter: ColorFilter.mode(
+                                              Theme.of(context).brightness ==
+                                                      Brightness.light
+                                                  ? Colors.black
+                                                  : Colors.white,
+                                              BlendMode.srcIn,
+                                            ),
+                                            width: 24,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
 

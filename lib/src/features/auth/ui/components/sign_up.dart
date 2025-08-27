@@ -108,16 +108,6 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                                     data.dialCode + textController.text;
                               });
                             }
-                            if (textController.text.length == 11 ||
-                                textController.text.length == 10) {
-                              setState(() {
-                                enableBtn = true;
-                              });
-                            } else {
-                              setState(() {
-                                enableBtn = false;
-                              });
-                            }
                           },
                           validator: (v) {
                             if (v!.isEmpty) {
@@ -187,8 +177,14 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
         Padding(
           padding: const EdgeInsets.only(bottom: 24),
           child: PrimaryButton(
-            onTap: enableBtn
+            onTap: textController.text != ''
                 ? () async {
+                    if (phoneError != null) {
+                      setState(() {
+                        phoneError = null;
+                      });
+                    }
+
                     if (formKey.currentState!.validate()) {
                       await ref
                           .read(authServiceProvider)

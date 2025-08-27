@@ -29,7 +29,7 @@ class AuthService {
     try {
       // Use the enhanced login method that handles tokens automatically
       final responseData = await DioHelper.login('/auth/login', {
-        'email': email,
+        'identifier': email,
         'password': password,
       });
 
@@ -143,7 +143,7 @@ class AuthService {
         "personalInfo": {
           "nationality": user?.personalInfo?.nationality,
           "gender": user?.personalInfo?.gender,
-          "dateOfBirth": user?.personalInfo?.dateOfBirth,
+          "dateOfbirth": user?.personalInfo?.dateOfBirth,
           "employmentStatus": user?.personalInfo?.socialStatus,
           "instagram": user?.personalInfo?.instagram ?? "",
           "facebook": user?.personalInfo?.facebook,

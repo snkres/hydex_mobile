@@ -34,11 +34,17 @@ class PasswordStrengthIndicator extends StatelessWidget {
           textBaseline: TextBaseline.alphabetic,
           children: [
             Expanded(flex: 1, child: _buildBar(strength >= 0.25)),
-            const SizedBox(width: 8),
+            Theme.brightnessOf(context) == Brightness.dark
+                ? SizedBox(width: 8)
+                : SizedBox.shrink(),
             Expanded(flex: 1, child: _buildBar(strength >= 0.5)),
-            const SizedBox(width: 8),
+            Theme.brightnessOf(context) == Brightness.dark
+                ? SizedBox(width: 8)
+                : SizedBox.shrink(),
             Expanded(flex: 1, child: _buildBar(strength >= 0.75)),
-            const SizedBox(width: 8),
+            Theme.brightnessOf(context) == Brightness.dark
+                ? SizedBox(width: 8)
+                : SizedBox.shrink(),
             Expanded(flex: 1, child: _buildBar(strength >= 1.0)),
             const SizedBox(width: 12),
 

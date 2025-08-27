@@ -131,37 +131,26 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                               ),
                               Consumer(
                                 builder: (context, ref, child) {
-                                  final userPhone = ref.watch(
-                                    forgetPhoneProvider,
-                                  );
                                   return PrimaryButton(
-                                    onTap:
-                                        userPhone.length == 12 ||
-                                            userPhone.length == 13 ||
-                                            changeToEmail
-                                        ? () async {
-                                            if (formKey.currentState!
-                                                .validate()) {
-                                              await ref
-                                                  .read(authServiceProvider)
-                                                  .forgetPassword(
-                                                    emailController.text,
-                                                  );
-                                              if (context.mounted) {
-                                                if (changeToEmail) {
-                                                  context.push(
-                                                    "/forgot-response",
-                                                  );
-                                                } else {
-                                                  context.push(
-                                                    "/forgot-response",
-                                                    extra: true,
-                                                  );
-                                                }
-                                              }
-                                            }
+                                    onTap: () async {
+                                      if (formKey.currentState!.validate()) {
+                                        await ref
+                                            .read(authServiceProvider)
+                                            .forgetPassword(
+                                              emailController.text,
+                                            );
+                                        if (context.mounted) {
+                                          if (changeToEmail) {
+                                            context.push("/forgot-response");
+                                          } else {
+                                            context.push(
+                                              "/forgot-response",
+                                              extra: true,
+                                            );
                                           }
-                                        : null,
+                                        }
+                                      }
+                                    },
                                   );
                                 },
                               ),

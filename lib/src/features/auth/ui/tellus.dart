@@ -176,47 +176,60 @@ class _TellusState extends State<Tellus> {
                                                       ),
                                                     ),
                                                     Expanded(
-                                                      child: CupertinoDatePicker(
-                                                        mode:
-                                                            CupertinoDatePickerMode
-                                                                .date,
-                                                        initialDateTime:
-                                                            DateTime.now(),
-                                                        minimumDate:
-                                                            DateTime.now()
-                                                                .subtract(
-                                                                  Duration(
-                                                                    days: 10000,
-                                                                  ),
-                                                                ),
-                                                        onDateTimeChanged: (date) {
-                                                          final DateFormat
-                                                          formatter =
-                                                              DateFormat(
-                                                                'd/M/yyyy',
-                                                              );
-                                                          final DateFormat
-                                                          requiredFormatter =
-                                                              DateFormat(
-                                                                'yyyy/MM/dd',
-                                                              );
+                                                      child: CupertinoTheme(
+                                                        data: CupertinoThemeData(
+                                                          brightness:
+                                                              Theme.brightnessOf(
+                                                                context,
+                                                              ),
+                                                        ),
+                                                        child: CupertinoDatePicker(
+                                                          mode:
+                                                              CupertinoDatePickerMode
+                                                                  .date,
+                                                          initialDateTime:
+                                                              DateTime.now(),
 
-                                                          String formatted =
-                                                              formatter.format(
-                                                                date,
-                                                              );
-                                                          String
-                                                          requiredFormat =
-                                                              requiredFormatter
-                                                                  .format(date);
-                                                          setState(() {
-                                                            birthController
-                                                                    .text =
-                                                                formatted;
-                                                            requiredBirth =
-                                                                requiredFormat;
-                                                          });
-                                                        },
+                                                          minimumDate:
+                                                              DateTime.now()
+                                                                  .subtract(
+                                                                    Duration(
+                                                                      days:
+                                                                          10000,
+                                                                    ),
+                                                                  ),
+                                                          onDateTimeChanged: (date) {
+                                                            final DateFormat
+                                                            formatter =
+                                                                DateFormat(
+                                                                  'd/M/yyyy',
+                                                                );
+                                                            final DateFormat
+                                                            requiredFormatter =
+                                                                DateFormat(
+                                                                  'yyyy/MM/dd',
+                                                                );
+
+                                                            String formatted =
+                                                                formatter
+                                                                    .format(
+                                                                      date,
+                                                                    );
+                                                            String
+                                                            requiredFormat =
+                                                                requiredFormatter
+                                                                    .format(
+                                                                      date,
+                                                                    );
+                                                            setState(() {
+                                                              birthController
+                                                                      .text =
+                                                                  formatted;
+                                                              requiredBirth =
+                                                                  requiredFormat;
+                                                            });
+                                                          },
+                                                        ),
                                                       ),
                                                     ),
                                                   ],
@@ -264,7 +277,7 @@ class _TellusState extends State<Tellus> {
                                         userTypeNotifierProvider,
                                       );
                                       return Visibility(
-                                        visible: true,
+                                        visible: userType == Role.owner,
                                         child: Column(
                                           spacing: 4,
                                           crossAxisAlignment:
@@ -363,23 +376,8 @@ class _TellusState extends State<Tellus> {
                                                 email: emailController.text,
                                                 fullName: nameController.text,
                                               );
-                                          final currentType = ref.read(
-                                            userTypeNotifierProvider,
-                                          );
-                                          if (context.mounted) {
-                                            switch (currentType) {
-                                              case Role.seeker:
-                                                context.push("/seeker");
-                                                break;
-                                              case Role.ambassador:
-                                                context.push("/seeker");
-                                                break;
-                                              case Role.owner:
-                                                context.push("/nationality");
-                                                break;
-                                              default:
-                                            }
-                                          }
+
+                                          context.push("/nationality");
                                         }
                                       },
                                     );

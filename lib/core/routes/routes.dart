@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/auth/reset_pass.dart';
 import 'package:hydex/src/features/auth/seeker.dart';
 import 'package:hydex/src/features/auth/ui/boarding.dart';
@@ -26,34 +27,36 @@ class AppRoutes {
   AppRoutes(this.ref);
   final routes = GoRouter(
     initialLocation: "/",
-    // redirect: (context, state) async {
-    //   const Set<String> publicRoutes = {
-    //     '/',
-    //     '/otp',
-    //     '/password',
-    //     '/tellus',
-    //     '/nationality',
-    //     '/describe',
-    //     '/seeker',
-    //     '/wego',
-    //     '/influencer',
-    //     '/ulike',
-    //   };
+    redirect: (context, state) async {
+      const Set<String> publicRoutes = {
+        '/',
+        '/otp',
+        '/password',
+        '/tellus',
+        '/nationality',
+        '/describe',
+        '/seeker',
+        '/wego',
+        '/influencer',
+        '/ulike',
+        '/verify_email',
+        '/otp/email',
+      };
 
-    //   final token = await DioHelper.getAccessToken();
-    //   final bool isAuthenticated = token != null;
-    //   final String currentPath = state.uri.path;
+      final token = await DioHelper.getAccessToken();
+      final bool isAuthenticated = token != null;
+      final String currentPath = state.uri.path;
 
-    //   final bool isGoingToPublicRoute = publicRoutes.contains(currentPath);
+      final bool isGoingToPublicRoute = publicRoutes.contains(currentPath);
 
-    //   if (!isAuthenticated && !isGoingToPublicRoute) {
-    //     return '/';
-    //   }
-    //   if (isAuthenticated && isGoingToPublicRoute) {
-    //     return '/waitlist';
-    //   }
-    //   return null;
-    // },
+      if (!isAuthenticated && !isGoingToPublicRoute) {
+        return '/';
+      }
+      if (isAuthenticated && isGoingToPublicRoute) {
+        return '/waitlist';
+      }
+      return null;
+    },
     routes: [
       GoRoute(
         path: "/",
@@ -98,11 +101,6 @@ class AppRoutes {
             path: "influencer",
             builder: (context, state) => const InfluencerScreen(),
           ),
-          GoRoute(
-            path: "/forgot-response",
-            builder: (context, state) =>
-                ForgetResponse(isPhone: state.extra as bool),
-          ),
         ],
       ),
       GoRoute(
@@ -120,6 +118,11 @@ class AppRoutes {
           final token = state.uri.queryParameters['token'] ?? "test_token";
           return ResetPassword(token: token);
         },
+      ),
+      GoRoute(
+        path: "/forgot-response",
+        builder: (context, state) =>
+            ForgetResponse(isPhone: state.extra as bool),
       ),
     ],
   );

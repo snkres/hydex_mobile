@@ -21,7 +21,7 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
   String? selectedSize;
   List<String> groupSizes = ["Solo", "2–3", "4–6", "Large group 7+"];
 
-  String? selectedArea;
+  Set<String> selectedArea = {};
   List<String> egyptAreas = [
     "Gouna",
     "North Coast",
@@ -300,8 +300,8 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
               .map(
                 (area) => CustomChip(
                   title: area,
-                  isSelected: area == selectedArea,
-                  onTap: () => setState(() => selectedArea = area),
+                  isSelected: selectedArea.contains(area),
+                  onTap: () => setState(() => selectedArea.add(area)),
                 ),
               )
               .toList(),
