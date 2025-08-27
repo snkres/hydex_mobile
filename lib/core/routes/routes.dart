@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/src/features/auth/reset_pass.dart';
 import 'package:hydex/src/features/auth/seeker.dart';
 import 'package:hydex/src/features/auth/ui/boarding.dart';
 import 'package:hydex/src/features/auth/ui/create_pass.dart';
 import 'package:hydex/src/features/auth/ui/describe.dart';
+import 'package:hydex/src/features/auth/ui/forget_pass.dart';
+import 'package:hydex/src/features/auth/ui/forget_response.dart';
 import 'package:hydex/src/features/auth/ui/influencer.dart';
 import 'package:hydex/src/features/auth/ui/login.dart';
 import 'package:hydex/src/features/auth/ui/nationality.dart';
@@ -95,6 +98,11 @@ class AppRoutes {
             path: "influencer",
             builder: (context, state) => const InfluencerScreen(),
           ),
+          GoRoute(
+            path: "/forgot-response",
+            builder: (context, state) =>
+                ForgetResponse(isPhone: state.extra as bool),
+          ),
         ],
       ),
       GoRoute(
@@ -103,11 +111,14 @@ class AppRoutes {
       ),
       GoRoute(path: "/login", builder: (context, state) => const LoginScreen()),
       GoRoute(
+        path: '/forget-password',
+        builder: (context, state) => ForgetPassword(),
+      ),
+      GoRoute(
         path: '/forgot-password',
         builder: (context, state) {
-          final token = state.uri.queryParameters['token'];
-
-          return SizedBox.shrink();
+          final token = state.uri.queryParameters['token'] ?? "test_token";
+          return ResetPassword(token: token);
         },
       ),
     ],

@@ -3,8 +3,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 class CustomBackButton extends StatelessWidget {
-  const CustomBackButton({super.key});
+  const CustomBackButton({super.key, this.onClick});
 
+  final VoidCallback? onClick;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -18,11 +19,13 @@ class CustomBackButton extends StatelessWidget {
             Theme.of(context).colorScheme.secondaryContainer,
           ),
         ),
-        onPressed: () {
-          if (context.canPop()) {
-            context.pop();
-          }
-        },
+        onPressed:
+            onClick ??
+            () {
+              if (context.canPop()) {
+                context.pop();
+              }
+            },
         color: Theme.of(context).colorScheme.onSurfaceVariant,
         icon: SvgPicture.asset(
           "img/svg/back.svg",

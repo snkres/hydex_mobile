@@ -161,6 +161,36 @@ class AuthService {
     }
   }
 
+  Future<String> forgetPassword(String email) async {
+    try {
+      final response = await DioHelper.post(
+        "/auth/forgot-password",
+        data: {"email": email},
+      );
+      if (response.success && response.data != null) {
+        return response.data?["message"];
+      }
+      throw ApiException(response.errorMessage ?? 'Could not forget password');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> resetPassword(String newPassword, String token) async {
+    try {
+      final response = await DioHelper.post(
+        "auth/reset-password",
+        data: {"newPassword": newPassword, "token": token},
+      );
+      if (response.success && response.data != null) {
+        return response.data?["message"];
+      }
+      throw ApiException(response.errorMessage ?? 'Could not forget password');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // Delete user
   Future<bool> deleteUser(String userId) async {
     try {
@@ -171,7 +201,6 @@ class AuthService {
     }
   }
 
-  // Logout
   Future<void> logout() async {
     try {
       await DioHelper.logout('/auth/logout');

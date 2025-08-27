@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/waitlist_provider.dart';
+import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:lottie/lottie.dart';
 
@@ -17,43 +20,54 @@ class WaitlistScreen extends StatefulWidget {
 }
 
 class _WaitlistScreenState extends State<WaitlistScreen> {
+  bool isHome = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xfff00060b),
       body: Stack(
         children: [
-          Image.asset(
-            "img/gradient_2.png",
-            width: double.infinity,
-            package: "assets",
-            fit: BoxFit.cover,
-          ),
-          LottieBuilder.asset(
-            'json/confetti.json',
-            package: "assets",
-            fit: BoxFit.cover,
-            renderCache: RenderCache.raster,
-          ),
-          SingleChildScrollView(
-            child: Consumer(
-              builder: (context, ref, child) {
-                final waitlist = ref.watch(waitlistProvider);
-                return waitlist.when(
-                  data: (data) {
-                    return WaitingWidget(
-                      position: data.originalPosition,
-                      code: data.referralCode,
-                    );
-                  },
-                  error: (e, s) {
-                    return Center(child: Text("Error"));
-                  },
-                  loading: () => Center(child: CircularProgressIndicator()),
-                );
-              },
-            ),
-          ),
+          isHome
+              ? Image.asset(
+                  "img/gradient_2.png",
+                  width: double.infinity,
+                  package: "assets",
+                  fit: BoxFit.cover,
+                )
+              : SizedBox.shrink(),
+
+          isHome
+              ? Column(
+                  children: [
+                    LottieBuilder.asset(
+                      'json/confetti.json',
+                      package: "assets",
+                      fit: BoxFit.cover,
+                      renderCache: RenderCache.raster,
+                    ),
+                    SingleChildScrollView(
+                      child: Consumer(
+                        builder: (context, ref, child) {
+                          final waitlist = ref.watch(waitlistProvider);
+                          return waitlist.when(
+                            data: (data) {
+                              return WaitingWidget(
+                                position: data.originalPosition,
+                                code: data.referralCode,
+                              );
+                            },
+                            error: (e, s) {
+                              return Center(child: Text("Error"));
+                            },
+                            loading: () =>
+                                Center(child: CircularProgressIndicator()),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              : SettingsWaitlist(),
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -77,49 +91,78 @@ class _WaitlistScreenState extends State<WaitlistScreen> {
                   alignment: Alignment.center,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 28,
+                    spacing: 28.5,
                     children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            "img/svg/home.svg",
-                            package: "assets",
-                            width: 24,
-                          ),
-                          SizedBox(height: 6),
-                          Text(
-                            "Home",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: AppTextStyles(context).accumulator * 12,
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isHome = true;
+                          });
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              "img/svg/home.svg",
+                              package: "assets",
+                              width: 19,
+                              colorFilter: ColorFilter.mode(
+                                isHome
+                                    ? Colors.white
+                                    : Colors.white.withValues(alpha: 0.5),
+                                BlendMode.srcIn,
+                              ),
                             ),
-                          ),
-                        ],
+                            SizedBox(height: 6),
+                            Text(
+                              "Home",
+                              style: TextStyle(
+                                color: isHome
+                                    ? Colors.white
+                                    : Colors.white.withValues(alpha: 0.5),
+                                fontWeight: isHome ? FontWeight.w700 : null,
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 12,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            "img/svg/settings.svg",
-                            package: "assets",
-                            width: 24,
-                            colorFilter: ColorFilter.mode(
-                              Colors.white.withValues(alpha: 0.5),
-                              BlendMode.srcIn,
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isHome = false;
+                          });
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              "img/svg/settings.svg",
+                              package: "assets",
+                              width: 19,
+                              colorFilter: ColorFilter.mode(
+                                isHome
+                                    ? Colors.white.withValues(alpha: 0.5)
+                                    : Colors.white,
+                                BlendMode.srcIn,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 6),
+                            SizedBox(height: 6),
 
-                          Text(
-                            "Settings",
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.5),
-                              fontSize: AppTextStyles(context).accumulator * 12,
+                            Text(
+                              "Settings",
+                              style: TextStyle(
+                                color: isHome
+                                    ? Colors.white.withValues(alpha: 0.5)
+                                    : Colors.white,
+                                fontWeight: isHome ? FontWeight.w700 : null,
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 12,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -128,6 +171,289 @@ class _WaitlistScreenState extends State<WaitlistScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class SettingsWaitlist extends StatelessWidget {
+  const SettingsWaitlist({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+        child: Consumer(
+          builder: (context, ref, child) {
+            final user = ref.watch(userNotifierProvider);
+            return Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Settings",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: AppTextStyles(context).accumulator * 28,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Text(
+                        "Privacy Policy",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+
+                          decoration: TextDecoration.underline,
+                          fontSize: AppTextStyles(context).accumulator * 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 32),
+                TextFormField(
+                  initialValue: user?.fullName,
+                  readOnly: true,
+                  decoration: InputDecoration(labelText: "Name"),
+                ),
+                SizedBox(height: 12),
+                TextFormField(
+                  initialValue: user?.email,
+                  readOnly: true,
+                  decoration: InputDecoration(labelText: "Email"),
+                ),
+                SizedBox(height: 12),
+                TextFormField(
+                  initialValue: user?.phone,
+                  readOnly: true,
+                  decoration: InputDecoration(labelText: "Phone Number"),
+                ),
+                SizedBox(height: 12),
+                TextFormField(
+                  initialValue: user?.password,
+                  readOnly: true,
+                  decoration: InputDecoration(labelText: "Password"),
+                ),
+                SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  spacing: 6,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return Wrap(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 20,
+                                  ),
+                                  child: Consumer(
+                                    builder: (context, ref, child) {
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Center(
+                                            child: Container(
+                                              height: 4,
+                                              width: 44,
+                                              decoration: BoxDecoration(
+                                                color: Color(0xffDEDEDE),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 16),
+                                          Text(
+                                            "Log out?",
+                                            style: AppTextStyles(context)
+                                                .primaryBold
+                                                .copyWith(
+                                                  color: Theme.of(
+                                                    context,
+                                                  ).colorScheme.onSurface,
+                                                ),
+                                          ),
+                                          SizedBox(height: 16),
+                                          Text(
+                                            "You’ll need to sign in again to access your account.",
+                                            style: AppTextStyles(context)
+                                                .smallRegular
+                                                .copyWith(
+                                                  color: Theme.of(
+                                                    context,
+                                                  ).colorScheme.onSurface,
+                                                ),
+                                          ),
+                                          SizedBox(height: 32),
+                                          PrimaryButton(
+                                            onTap: () => context.pop(),
+                                            title: "Cancel",
+                                          ),
+                                          SizedBox(height: 8),
+                                          ConstrainedBox(
+                                            constraints: BoxConstraints(
+                                              minWidth: double.infinity,
+                                              minHeight: 50,
+                                            ),
+                                            child: TextButton(
+                                              onPressed: () {
+                                                ref
+                                                    .read(authServiceProvider)
+                                                    .logout();
+                                              },
+                                              child: Text(
+                                                "Log Out",
+                                                style: AppTextStyles(context)
+                                                    .smallBold
+                                                    .copyWith(
+                                                      color: Theme.of(
+                                                        context,
+                                                      ).colorScheme.primary,
+                                                    ),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 16),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          Theme.of(context).colorScheme.secondaryContainer,
+                        ),
+                      ),
+                      child: Text(
+                        "Log out",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return Wrap(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 20,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Center(
+                                        child: Container(
+                                          height: 4,
+                                          width: 44,
+                                          decoration: BoxDecoration(
+                                            color: Color(0xffDEDEDE),
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 16),
+                                      Text(
+                                        "Delete your account?",
+                                        style: AppTextStyles(context)
+                                            .primaryBold
+                                            .copyWith(
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onSurface,
+                                            ),
+                                      ),
+                                      SizedBox(height: 16),
+                                      Text(
+                                        "This action is permanent. All your data and access will be removed.",
+                                        style: AppTextStyles(context)
+                                            .smallRegular
+                                            .copyWith(
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onSurface,
+                                            ),
+                                      ),
+                                      SizedBox(height: 32),
+                                      PrimaryButton(
+                                        onTap: () => context.pop(),
+                                        title: "Cancel",
+                                      ),
+                                      SizedBox(height: 8),
+                                      ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          minWidth: double.infinity,
+                                          minHeight: 50,
+                                        ),
+
+                                        child: TextButton(
+                                          onPressed: () {
+                                            // ref
+                                            //     .read(authServiceProvider)
+                                            //     .logout();
+                                          },
+                                          child: Text(
+                                            "Delete Account",
+                                            style: AppTextStyles(context)
+                                                .smallBold
+                                                .copyWith(
+                                                  color: Theme.of(
+                                                    context,
+                                                  ).colorScheme.primary,
+                                                ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 16),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          Theme.of(context).colorScheme.secondaryContainer,
+                        ),
+                      ),
+                      child: Text(
+                        "Delete account",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -142,10 +468,10 @@ class WaitingWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 48),
+        SizedBox(height: 104),
 
-        Image.asset("img/stars.png", package: "assets", width: 121),
-        SizedBox(height: 14),
+        Image.asset("img/stars.png", package: "assets", width: 171),
+        SizedBox(height: 15),
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 39.5),
@@ -191,79 +517,6 @@ class WaitingWidget extends StatelessWidget {
           ),
         ),
         SizedBox(height: 58),
-
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(vertical: 24, horizontal: 12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: Theme.of(context).colorScheme.surface,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 8,
-                  children: [
-                    Text(
-                      "Enjoy this offer",
-                      style: TextStyle(
-                        fontSize: AppTextStyles(context).accumulator * 12,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      "Cairo jazz Club",
-                      style: TextStyle(
-                        fontSize: AppTextStyles(context).accumulator * 20,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      "25%",
-                      style: TextStyle(
-                        fontSize: AppTextStyles(context).accumulator * 24,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Text(
-                      "Discount",
-                      style: TextStyle(
-                        fontSize: AppTextStyles(context).accumulator * 24,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: 8),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 9),
-            child: Text(
-              "Show this screen and your registered mobile number to your waiter.",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: AppTextStyles(context).accumulator * 10,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 32),
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 21),

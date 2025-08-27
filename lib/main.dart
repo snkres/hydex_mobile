@@ -17,7 +17,9 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
   }
-  await FlutterDisplayMode.setHighRefreshRate();
+  if (Platform.isAndroid) {
+    await FlutterDisplayMode.setHighRefreshRate();
+  }
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,
