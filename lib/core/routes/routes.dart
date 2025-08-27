@@ -27,36 +27,36 @@ class AppRoutes {
   AppRoutes(this.ref);
   final routes = GoRouter(
     initialLocation: "/",
-    redirect: (context, state) async {
-      const Set<String> publicRoutes = {
-        '/',
-        '/otp',
-        '/password',
-        '/tellus',
-        '/nationality',
-        '/describe',
-        '/seeker',
-        '/wego',
-        '/influencer',
-        '/ulike',
-        '/verify_email',
-        '/otp/email',
-      };
+    // redirect: (context, state) async {
+    //   const Set<String> publicRoutes = {
+    //     '/',
+    //     '/otp',
+    //     '/password',
+    //     '/tellus',
+    //     '/nationality',
+    //     '/describe',
+    //     '/seeker',
+    //     '/wego',
+    //     '/influencer',
+    //     '/ulike',
+    //     '/verify_email',
+    //     '/otp/email',
+    //   };
 
-      final token = await DioHelper.getAccessToken();
-      final bool isAuthenticated = token != null;
-      final String currentPath = state.uri.path;
+    //   final token = await DioHelper.getAccessToken();
+    //   final bool isAuthenticated = token != null;
+    //   final String currentPath = state.uri.path;
 
-      final bool isGoingToPublicRoute = publicRoutes.contains(currentPath);
+    //   final bool isGoingToPublicRoute = publicRoutes.contains(currentPath);
 
-      if (!isAuthenticated && !isGoingToPublicRoute) {
-        return '/';
-      }
-      if (isAuthenticated && isGoingToPublicRoute) {
-        return '/waitlist';
-      }
-      return null;
-    },
+    //   if (!isAuthenticated && !isGoingToPublicRoute) {
+    //     return '/';
+    //   }
+    //   if (isAuthenticated && isGoingToPublicRoute) {
+    //     return '/waitlist';
+    //   }
+    //   return null;
+    // },
     routes: [
       GoRoute(
         path: "/",
