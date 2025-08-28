@@ -32,6 +32,8 @@ class _TellusState extends State<Tellus> {
   final formkey = GlobalKey<FormState>();
   String? requiredBirth;
   String? codeErrorText;
+
+  bool isRegestered = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -199,7 +201,7 @@ class _TellusState extends State<Tellus> {
                                                                   .subtract(
                                                                     Duration(
                                                                       days:
-                                                                          10000,
+                                                                          100000,
                                                                     ),
                                                                   ),
                                                           onDateTimeChanged: (date) {
@@ -260,6 +262,8 @@ class _TellusState extends State<Tellus> {
                                               onTap: () {
                                                 showModalBottomSheet(
                                                   context: context,
+                                                  isScrollControlled: true,
+                                                  useSafeArea: true,
                                                   builder: (context) {
                                                     return NationalitiesPicker();
                                                   },
@@ -415,24 +419,30 @@ class _TellusState extends State<Tellus> {
                                                 email: emailController.text,
                                                 fullName: nameController.text,
                                               );
-                                          await ref
-                                              .read(authServiceProvider)
-                                              .register()
-                                              .catchError((error) {
-                                                if (context.mounted) {
-                                                  ScaffoldMessenger.of(
-                                                    context,
-                                                  ).showSnackBar(
-                                                    SnackBar(
-                                                      content: Center(
-                                                        child: Text(
-                                                          "❎ ${error.message}",
+                                          if (!isRegestered) {
+                                            await ref
+                                                .read(authServiceProvider)
+                                                .register()
+                                                .catchError((error) {
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(
+                                                      context,
+                                                    ).showSnackBar(
+                                                      SnackBar(
+                                                        content: Center(
+                                                          child: Text(
+                                                            "❎ ${error.message}",
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  );
-                                                }
-                                              });
+                                                    );
+                                                  }
+                                                });
+                                          }
+                                          setState(() {
+                                            isRegestered = true;
+                                          });
+
                                           if (context.mounted) {
                                             context.push("/nationality");
                                           }
@@ -562,7 +572,6 @@ class _NationalitiesPickerState extends ConsumerState<NationalitiesPicker> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.8,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -586,6 +595,7 @@ class _NationalitiesPickerState extends ConsumerState<NationalitiesPicker> {
           const SizedBox(height: 16),
           TextField(
             controller: searchController,
+            autofocus: true,
             decoration: InputDecoration(
               hint: Text(
                 "Search",

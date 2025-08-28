@@ -27,6 +27,7 @@ class AppRoutes {
   Ref ref;
   AppRoutes(this.ref);
   final routes = GoRouter(
+    initialLocation: '/',
     redirect: (context, state) async {
       final token = await DioHelper.getAccessToken();
       final waitlist = CacheHelper.getBool("waitlist") ?? false;

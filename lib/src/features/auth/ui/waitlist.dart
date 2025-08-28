@@ -32,7 +32,111 @@ class _WaitlistScreenState extends State<WaitlistScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff00060b),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: LiquidGlass(
+          glassContainsChild: false,
+
+          settings: LiquidGlassSettings(
+            ambientStrength: 0.5,
+            lightAngle: 0.5 * pi,
+            lightIntensity: 0.5,
+            blur: 20,
+          ),
+          shape: LiquidRoundedRectangle(borderRadius: Radius.circular(32)),
+          child: Container(
+            width: double.infinity,
+            height: 72,
+            padding: EdgeInsets.all(12),
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 28.5,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isHome = true;
+                    });
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        "img/svg/home.svg",
+                        package: "assets",
+                        width: 19,
+                        colorFilter: ColorFilter.mode(
+                          isHome
+                              ? Theme.of(context).colorScheme.onSurface
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.5),
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      SizedBox(height: 6),
+                      Text(
+                        "Home",
+                        style: TextStyle(
+                          color: isHome
+                              ? Theme.of(context).colorScheme.onSurface
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.5),
+                          fontWeight: isHome ? FontWeight.w700 : null,
+                          fontSize: AppTextStyles(context).accumulator * 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isHome = false;
+                    });
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        "img/svg/settings.svg",
+                        package: "assets",
+
+                        width: 19,
+                        colorFilter: ColorFilter.mode(
+                          isHome
+                              ? Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.5)
+                              : Theme.of(context).colorScheme.onSurface,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      SizedBox(height: 6),
+
+                      Text(
+                        "Settings",
+                        style: TextStyle(
+                          color: isHome
+                              ? Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.5)
+                              : Theme.of(context).colorScheme.onSurface,
+                          fontWeight: isHome ? FontWeight.w700 : null,
+                          fontSize: AppTextStyles(context).accumulator * 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
       body: Stack(
         children: [
           isHome
@@ -48,9 +152,10 @@ class _WaitlistScreenState extends State<WaitlistScreen> {
               ? LottieBuilder.asset(
                   'json/confetti.json',
                   package: "assets",
+
+                  repeat: false,
                   height: MediaQuery.heightOf(context),
                   fit: BoxFit.cover,
-                  renderCache: RenderCache.raster,
                 )
               : SizedBox.shrink(),
 
@@ -76,108 +181,6 @@ class _WaitlistScreenState extends State<WaitlistScreen> {
                   ),
                 )
               : SettingsWaitlist(),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: LiquidGlass(
-                glassContainsChild: false,
-
-                settings: LiquidGlassSettings(
-                  ambientStrength: 0.6,
-                  lightAngle: 0.2 * pi,
-                  lightIntensity: 0.5,
-                  blur: 20,
-                ),
-                shape: LiquidRoundedRectangle(
-                  borderRadius: Radius.circular(32),
-                ),
-                child: Container(
-                  width: double.infinity,
-                  height: 72,
-                  padding: EdgeInsets.all(12),
-                  alignment: Alignment.center,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 28.5,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isHome = true;
-                          });
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              "img/svg/home.svg",
-                              package: "assets",
-                              width: 19,
-                              colorFilter: ColorFilter.mode(
-                                isHome
-                                    ? Colors.white
-                                    : Colors.white.withValues(alpha: 0.5),
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            SizedBox(height: 6),
-                            Text(
-                              "Home",
-                              style: TextStyle(
-                                color: isHome
-                                    ? Colors.white
-                                    : Colors.white.withValues(alpha: 0.5),
-                                fontWeight: isHome ? FontWeight.w700 : null,
-                                fontSize:
-                                    AppTextStyles(context).accumulator * 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isHome = false;
-                          });
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              "img/svg/settings.svg",
-                              package: "assets",
-                              width: 19,
-                              colorFilter: ColorFilter.mode(
-                                isHome
-                                    ? Colors.white.withValues(alpha: 0.5)
-                                    : Colors.white,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            SizedBox(height: 6),
-
-                            Text(
-                              "Settings",
-                              style: TextStyle(
-                                color: isHome
-                                    ? Colors.white.withValues(alpha: 0.5)
-                                    : Colors.white,
-                                fontWeight: isHome ? FontWeight.w700 : null,
-                                fontSize:
-                                    AppTextStyles(context).accumulator * 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -253,7 +256,26 @@ class SettingsWaitlist extends StatelessWidget {
                   },
                   error: (e, s) {
                     print("❌ ERROR: $e | StackTrace: $s");
-                    return Text("Error");
+                    return Column(
+                      children: [
+                        TextFormField(
+                          readOnly: true,
+                          decoration: InputDecoration(labelText: "Name"),
+                        ),
+                        SizedBox(height: 12),
+                        TextFormField(
+                          readOnly: true,
+                          decoration: InputDecoration(labelText: "Email"),
+                        ),
+                        SizedBox(height: 12),
+                        TextFormField(
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            labelText: "Phone Number",
+                          ),
+                        ),
+                      ],
+                    );
                   },
                   loading: () {
                     return Column(
@@ -510,27 +532,36 @@ class WaitingWidget extends StatelessWidget {
       children: [
         SizedBox(height: 104),
 
-        Image.asset("img/stars.png", package: "assets", width: 171),
+        LottieBuilder.asset(
+          'json/stars.json',
+          package: "assets",
+          width: 100,
+
+          height: 100,
+          fit: BoxFit.cover,
+        ),
         SizedBox(height: 15),
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 39.5),
-          child: Text.rich(
-            TextSpan(
-              text: "Congrats! You’re ",
-              style: TextStyle(
-                fontSize: AppTextStyles(context).accumulator * 32,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Congrats! You’re",
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white, fontSize: 32),
               ),
-              children: [
-                TextSpan(
-                  text: "${position}th on the waitlist.",
-                  style: TextStyle(fontWeight: FontWeight.w700),
+              Text(
+                "${position}th on the waitlist.",
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 32,
                 ),
-              ],
-            ),
-
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, fontSize: 32),
+              ),
+            ],
           ),
         ),
         SizedBox(height: 12),
@@ -545,7 +576,7 @@ class WaitingWidget extends StatelessWidget {
               ),
               children: [
                 TextSpan(
-                  text: "exclusive launch party ",
+                  text: "exclusive launch event ",
                   style: TextStyle(fontWeight: FontWeight.w700),
                 ),
                 TextSpan(text: "unlocks when you’re in!"),
@@ -559,7 +590,7 @@ class WaitingWidget extends StatelessWidget {
         SizedBox(height: 58),
 
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 21),
+          padding: const EdgeInsets.symmetric(horizontal: 68.5),
           child: Text.rich(
             TextSpan(
               text:

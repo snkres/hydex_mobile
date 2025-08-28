@@ -213,69 +213,50 @@ class _CreatePasswordState extends State<CreatePassword> {
                                   ),
                                 ),
                               ),
-                              Consumer(
-                                builder: (context, ref, child) {
-                                  return TextFormField(
-                                    controller: passwordConfirmController,
-                                    autovalidateMode:
-                                        AutovalidateMode.onUserInteraction,
-                                    obscureText: hideConfirmPassword,
-                                    onChanged: (value) {
-                                      bool hasError =
-                                          _validatePasswordConfirmation(
-                                            value,
-                                          ) !=
-                                          null;
-                                      setState(() {
-                                        dontShow = hasError;
-                                      });
-                                    },
-                                    validator: _validatePasswordConfirmation,
-                                    textInputAction: TextInputAction.done,
-                                    onFieldSubmitted: (v) {
-                                      if (formKey.currentState!.validate()) {
-                                        ref
-                                            .read(userNotifierProvider.notifier)
-                                            .create(
-                                              password:
-                                                  passwordConfirmController
-                                                      .text,
-                                            );
-                                        context.go("/tellus");
-                                      }
-                                    },
-                                    decoration: InputDecoration(
-                                      labelText: "Confirm Password",
-                                      suffixIcon: Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 8,
+                              TextFormField(
+                                controller: passwordConfirmController,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                obscureText: hideConfirmPassword,
+                                onChanged: (value) {
+                                  bool hasError =
+                                      _validatePasswordConfirmation(value) !=
+                                      null;
+                                  setState(() {
+                                    dontShow = hasError;
+                                  });
+                                },
+                                validator: _validatePasswordConfirmation,
+                                textInputAction: TextInputAction.done,
+
+                                decoration: InputDecoration(
+                                  labelText: "Confirm Password",
+                                  suffixIcon: Padding(
+                                    padding: const EdgeInsets.only(right: 8),
+                                    child: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          hideConfirmPassword =
+                                              !hideConfirmPassword;
+                                        });
+                                      },
+                                      icon: SvgPicture.asset(
+                                        hideConfirmPassword
+                                            ? "img/svg/eye_off.svg"
+                                            : "img/svg/eye_on.svg",
+                                        package: "assets",
+                                        colorFilter: ColorFilter.mode(
+                                          Theme.of(context).brightness ==
+                                                  Brightness.light
+                                              ? Colors.black
+                                              : Colors.white,
+                                          BlendMode.srcIn,
                                         ),
-                                        child: IconButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              hideConfirmPassword =
-                                                  !hideConfirmPassword;
-                                            });
-                                          },
-                                          icon: SvgPicture.asset(
-                                            hideConfirmPassword
-                                                ? "img/svg/eye_off.svg"
-                                                : "img/svg/eye_on.svg",
-                                            package: "assets",
-                                            colorFilter: ColorFilter.mode(
-                                              Theme.of(context).brightness ==
-                                                      Brightness.light
-                                                  ? Colors.black
-                                                  : Colors.white,
-                                              BlendMode.srcIn,
-                                            ),
-                                            width: 24,
-                                          ),
-                                        ),
+                                        width: 24,
                                       ),
                                     ),
-                                  );
-                                },
+                                  ),
+                                ),
                               ),
                               PasswordStrengthIndicator(
                                 strength: _strength,
@@ -307,7 +288,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                                                     passwordConfirmController
                                                         .text,
                                               );
-                                          context.go("/tellus");
+                                          context.push("/tellus");
                                         }
                                       },
                               );

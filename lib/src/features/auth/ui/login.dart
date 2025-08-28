@@ -200,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                   TextFormField(
                                     controller: passwordController,
-                                    obscureText: true,
+                                    obscureText: hidePassword,
                                     autovalidateMode:
                                         AutovalidateMode.onUserInteraction,
                                     validator: (value) {
