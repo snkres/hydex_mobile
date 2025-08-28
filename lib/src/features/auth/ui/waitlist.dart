@@ -373,6 +373,7 @@ class SettingsWaitlist extends StatelessWidget {
                                                 ref
                                                     .read(authServiceProvider)
                                                     .logout();
+                                                CacheHelper.remove("waitlist");
                                               },
                                               child: Text(
                                                 "Log Out",
