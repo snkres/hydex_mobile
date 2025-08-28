@@ -14,6 +14,7 @@ import 'package:hydex/src/features/auth/ui/login.dart';
 import 'package:hydex/src/features/auth/ui/nationality.dart';
 import 'package:hydex/src/features/auth/ui/otp.dart';
 import 'package:hydex/src/features/auth/ui/otp_email.dart';
+import 'package:hydex/src/features/auth/ui/terms.dart';
 import 'package:hydex/src/features/auth/ui/verify_email.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/features/auth/ui/ugo.dart';
@@ -31,6 +32,7 @@ class AppRoutes {
     //   const Set<String> publicRoutes = {
     //     '/',
     //     '/otp',
+    //     '/otp/email',
     //     '/password',
     //     '/tellus',
     //     '/nationality',
@@ -40,73 +42,89 @@ class AppRoutes {
     //     '/influencer',
     //     '/ulike',
     //     '/verify_email',
-    //     '/otp/email',
+    //     '/login',
+    //     '/terms',
+    //     '/forget-password',
+    //     '/forgot-password',
+    //     '/forgot-response',
     //   };
 
     //   final token = await DioHelper.getAccessToken();
     //   final bool isAuthenticated = token != null;
     //   final String currentPath = state.uri.path;
-
     //   final bool isGoingToPublicRoute = publicRoutes.contains(currentPath);
+    //   final bool isGoingToWaitlist = currentPath == '/waitlist';
 
-    //   if (!isAuthenticated && !isGoingToPublicRoute) {
-    //     return '/';
+    //   // Debug: Print to see what's happening
+    //   print(
+    //     'Current path: $currentPath, isAuthenticated: $isAuthenticated, isPublicRoute: $isGoingToPublicRoute',
+    //   );
+
+    //   // If user has access token
+    //   if (isAuthenticated) {
+    //     // If trying to go to public routes (except already at waitlist), redirect to waitlist
+    //     if (isGoingToPublicRoute && !isGoingToWaitlist) {
+    //       return '/waitlist';
+    //     }
+    //     // If going to waitlist or other protected routes, allow
+    //     return null;
     //   }
-    //   if (isAuthenticated && isGoingToPublicRoute) {
-    //     return '/waitlist';
+    //   // If user doesn't have access token
+    //   else {
+    //     // If trying to access waitlist or other protected routes, redirect to home
+    //     if (!isGoingToPublicRoute || isGoingToWaitlist) {
+    //       return '/';
+    //     }
+    //     // If going to public routes, allow
+    //     return null;
     //   }
-    //   return null;
     // },
     routes: [
+      // Main boarding screen
+      GoRoute(path: "/", builder: (context, state) => const BoardingScreen()),
+
+      // OTP related routes
+      GoRoute(path: "/otp", builder: (context, state) => const OtpScreen()),
       GoRoute(
-        path: "/",
-        builder: (context, state) => const BoardingScreen(),
-        routes: [
-          GoRoute(
-            path: "otp",
-            builder: (context, state) => const OtpScreen(),
-            routes: [
-              GoRoute(
-                path: "email",
-                builder: (context, state) => const OtpEmailScreen(),
-              ),
-            ],
-          ),
-          GoRoute(
-            path: "verify_email",
-            builder: (context, state) => const VerifyEmailScreen(),
-          ),
-          GoRoute(
-            path: "password",
-            builder: (context, state) => const CreatePassword(),
-          ),
-          GoRoute(path: "tellus", builder: (context, state) => const Tellus()),
-          GoRoute(
-            path: "nationality",
-            builder: (context, state) => const NationalityTellUs(),
-          ),
-          GoRoute(
-            path: "describe",
-            builder: (context, state) => const Describe(),
-          ),
-          GoRoute(
-            path: "seeker",
-            builder: (context, state) => const SeekerScreen(),
-          ),
-          GoRoute(
-            path: "wego",
-            builder: (context, state) => const WhereWeGOScreen(),
-          ),
-          GoRoute(
-            path: "influencer",
-            builder: (context, state) => const InfluencerScreen(),
-          ),
-        ],
+        path: "/otp/email",
+        builder: (context, state) => const OtpEmailScreen(),
       ),
+
+      // Registration flow routes
+      GoRoute(
+        path: "/verify_email",
+        builder: (context, state) => const VerifyEmailScreen(),
+      ),
+      GoRoute(
+        path: "/password",
+        builder: (context, state) => const CreatePassword(),
+      ),
+      GoRoute(path: "/tellus", builder: (context, state) => const Tellus()),
+      GoRoute(
+        path: "/nationality",
+        builder: (context, state) => const NationalityTellUs(),
+      ),
+      GoRoute(path: "/describe", builder: (context, state) => const Describe()),
+      GoRoute(
+        path: "/seeker",
+        builder: (context, state) => const SeekerScreen(),
+      ),
+      GoRoute(
+        path: "/wego",
+        builder: (context, state) => const WhereWeGOScreen(),
+      ),
+      GoRoute(
+        path: "/influencer",
+        builder: (context, state) => const InfluencerScreen(),
+      ),
+
+      // Protected routes
       GoRoute(
         path: "/waitlist",
         builder: (context, state) => const WaitlistScreen(),
       ),
+
+      // Auth routes
       GoRoute(path: "/login", builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/forget-password',
@@ -123,6 +141,12 @@ class AppRoutes {
         path: "/forgot-response",
         builder: (context, state) =>
             ForgetResponse(isPhone: state.extra as bool),
+      ),
+
+      // Other routes
+      GoRoute(
+        path: "/terms",
+        builder: (context, state) => const TermsAndConditions(),
       ),
     ],
   );

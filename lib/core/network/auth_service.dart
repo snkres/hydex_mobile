@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/auth_handler.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/network/user/user.dart';
+import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auth_service.g.dart';
 
@@ -17,7 +18,7 @@ class AuthService {
     DioHelper.init(
       refreshTokenEndpoint: '/auth/refresh',
       defaultHeaders: {
-        'X-App-Version': '1.0.0',
+        'X-App-Version': '0.1.4',
         'X-Platform': Platform.isAndroid ? 'android' : 'ios',
       },
       authEventListener: AuthHandler(),
@@ -140,14 +141,9 @@ class AuthService {
         "password": user?.password,
         "fullName": user?.fullName,
         "role": user?.role,
-        "personalInfo": {
-          "nationality": user?.personalInfo?.nationality,
-          "gender": user?.personalInfo?.gender,
-          "dateOfbirth": user?.personalInfo?.dateOfBirth,
-          "employmentStatus": user?.personalInfo?.socialStatus,
-          "instagram": user?.personalInfo?.instagram ?? "",
-          "facebook": user?.personalInfo?.facebook,
-        },
+        "gender": user?.gender,
+        "nationality": user?.nationality,
+        "dateOfBirth": user?.dateOfBirth,
       };
       if (user!.referralCode!.isNotEmpty) {
         data["referralCode"] = user.referralCode;
@@ -191,6 +187,20 @@ class AuthService {
     }
   }
 
+  Future<User> currentUser() async {
+    try {
+      final response = await DioHelper.get("/auth/me");
+      if (response.success && response.data != null) {
+        print("Success Current User");
+        final user = UserMapper.fromMap(response.data['data']['user']);
+        return user;
+      }
+      throw ApiException(response.errorMessage ?? 'Could not forget password');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // Delete user
   Future<bool> deleteUser(String userId) async {
     try {
@@ -215,8 +225,12 @@ final authServiceProvider = Provider<AuthService>(AuthService.new);
 @Riverpod(keepAlive: true)
 class UserNotifier extends _$UserNotifier {
   @override
-  UserRegister? build() {
+  User? build() {
     return null;
+  }
+
+  void setUser(User user) {
+    state = user;
   }
 
   void create({
@@ -233,57 +247,43 @@ class UserNotifier extends _$UserNotifier {
     String? instagram,
     String? facebook,
   }) {
-    final currentState = state;
-
-    // If state is null, create new one
-    if (currentState == null) {
-      state = UserRegister(
+    if (state == null) {
+      state = User(
         email: email ?? "",
         phone: phone,
         fullName: fullName ?? "",
-
-        personalInfo: PersonalInfo(
-          nationality: nationality ?? "",
-          gender: gender ?? "",
-          instagram: instagram,
-          facebook: facebook,
-          dateOfBirth: dateOfBirth ?? "",
-          socialStatus: socialStatus ?? "",
-        ),
+        gender: gender ?? "",
+        nationality: nationality ?? "",
         referralCode: referralCode ?? "",
         password: password ?? "",
         role: role ?? "",
       );
     } else {
-      // Update existing state, preserving existing values
-      state = currentState.copyWith(
-        email: email ?? currentState.email,
-        phone: phone ?? currentState.phone,
-        fullName: fullName ?? currentState.fullName,
-        personalInfo:
-            currentState.personalInfo?.copyWith(
-              nationality:
-                  nationality ?? currentState.personalInfo?.nationality,
-              gender: gender ?? currentState.personalInfo?.gender,
-              instagram: instagram ?? currentState.personalInfo?.instagram,
-              facebook: facebook ?? currentState.personalInfo?.facebook,
-              dateOfBirth:
-                  dateOfBirth ?? currentState.personalInfo?.dateOfBirth,
-              socialStatus:
-                  socialStatus ?? currentState.personalInfo?.socialStatus,
-            ) ??
-            PersonalInfo(
-              nationality: nationality ?? "",
-              gender: gender ?? "",
-              dateOfBirth: dateOfBirth ?? "",
-              socialStatus: socialStatus ?? "",
-            ),
-        referralCode: referralCode ?? currentState.referralCode,
-        password: password ?? currentState.password,
-        role: role ?? currentState.role,
+      state = state?.copyWith(
+        email: email ?? state?.email,
+        phone: phone ?? state?.phone,
+        fullName: fullName ?? state?.fullName,
+        gender: gender ?? state?.gender,
+        referralCode: referralCode ?? state?.referralCode,
+        nationality: nationality ?? state?.nationality,
+        password: password ?? state?.password,
+        role: role ?? state?.role,
       );
     }
   }
 }
 
 enum OTPType { phone, email }
+
+@Riverpod(keepAlive: true)
+Future<User?> currentUser(Ref ref) async {
+  final userState = ref.watch(userNotifierProvider);
+
+  if (userState != null) {
+    return userState;
+  }
+
+  // If no user in state, fetch from auth
+  final authNotifier = ref.watch(authServiceProvider);
+  return await authNotifier.currentUser();
+}

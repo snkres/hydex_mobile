@@ -184,20 +184,7 @@ class BusinessOnlyWidget extends StatelessWidget {
                                 socialStatus: type,
                                 instagram: linkController.text,
                               );
-                          await ref
-                              .read(authServiceProvider)
-                              .register()
-                              .catchError((error) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Center(
-                                        child: Text("❎ ${error.message}"),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              });
+
                           if (context.mounted) {
                             context.push("/describe");
                           }
@@ -224,8 +211,6 @@ class TellusForOthers extends StatefulWidget {
 
 class _TellusForOthersState extends State<TellusForOthers> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-  final TextEditingController nationalityController = TextEditingController();
 
   final TextEditingController instagramController = TextEditingController();
 
@@ -276,20 +261,6 @@ class _TellusForOthersState extends State<TellusForOthers> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           spacing: 12,
                           children: [
-                            TextFormField(
-                              autofocus: true,
-                              controller: nationalityController,
-                              textInputAction: TextInputAction.next,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return "Please enter your nationality";
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                labelText: "Nationality",
-                              ),
-                            ),
                             Wrap(
                               spacing: 8,
                               runSpacing: 8,
@@ -477,26 +448,12 @@ class _TellusForOthersState extends State<TellusForOthers> {
                           widget.ref
                               .read(userNotifierProvider.notifier)
                               .create(
-                                nationality: nationalityController.text,
                                 socialStatus: type,
                                 instagram: instagramController.text,
                                 facebook: facebookController.text,
                                 referralCode: referralCodeController.text,
                               );
-                          await widget.ref
-                              .read(authServiceProvider)
-                              .register()
-                              .catchError((error) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Center(
-                                        child: Text("❎ ${error.message}"),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              });
+
                           final currentType = widget.ref.read(
                             userTypeNotifierProvider,
                           );

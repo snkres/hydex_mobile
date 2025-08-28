@@ -357,6 +357,7 @@ class DioHelper {
             final refreshToken = _extractRefreshTokenFromCookies(
               response.headers['set-cookie'],
             );
+
             if (refreshToken != null && _tokenPair != null) {
               _tokenPair = TokenPair(
                 accessToken: _tokenPair!.accessToken,
@@ -377,7 +378,6 @@ class DioHelper {
           handler.next(response);
         },
         onError: (error, handler) async {
-          // Handle 401 errors with token refresh
           if (error.response?.statusCode == 401 &&
               _tokenPair != null &&
               !error.requestOptions.path.contains(_refreshEndpoint!) &&
@@ -401,8 +401,8 @@ class DioHelper {
               if (kDebugMode) {
                 print('❌ Token refresh failed during retry: $refreshError');
               }
-              _authEventListener?.onTokenRefreshFailed();
-              await _clearTokens();
+              // _authEventListener?.onTokenRefreshFailed();
+              // await _clearTokens();
             }
           }
 
@@ -511,8 +511,7 @@ class DioHelper {
 
       if (response.statusCode == 200 && response.data != null) {
         // Extract new access token from response data
-        final newAccessToken =
-            response.data['accessToken'] ?? response.data['access_token'];
+        final newAccessToken = response.data['data']['accessToken'];
         if (newAccessToken == null) {
           throw ApiException('No access token in refresh response');
         }
@@ -544,8 +543,8 @@ class DioHelper {
         throw ApiException('Token refresh failed');
       }
     } catch (e) {
-      await _clearTokens();
-      _authEventListener?.onUnauthorized();
+      // await _clearTokens();
+      // _authEventListener?.onUnauthorized();
       throw TokenExpiredException('Token refresh failed: $e');
     } finally {
       _isRefreshing = false;

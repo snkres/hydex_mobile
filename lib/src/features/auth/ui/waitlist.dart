@@ -21,6 +21,7 @@ class WaitlistScreen extends StatefulWidget {
 
 class _WaitlistScreenState extends State<WaitlistScreen> {
   bool isHome = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,35 +38,35 @@ class _WaitlistScreenState extends State<WaitlistScreen> {
               : SizedBox.shrink(),
 
           isHome
-              ? Column(
-                  children: [
-                    LottieBuilder.asset(
-                      'json/confetti.json',
-                      package: "assets",
-                      fit: BoxFit.cover,
-                      renderCache: RenderCache.raster,
-                    ),
-                    SingleChildScrollView(
-                      child: Consumer(
-                        builder: (context, ref, child) {
-                          final waitlist = ref.watch(waitlistProvider);
-                          return waitlist.when(
-                            data: (data) {
-                              return WaitingWidget(
-                                position: data.originalPosition,
-                                code: data.referralCode,
-                              );
-                            },
-                            error: (e, s) {
-                              return Center(child: Text("Error"));
-                            },
-                            loading: () =>
-                                Center(child: CircularProgressIndicator()),
+              ? LottieBuilder.asset(
+                  'json/confetti.json',
+                  package: "assets",
+                  height: MediaQuery.heightOf(context),
+                  fit: BoxFit.cover,
+                  renderCache: RenderCache.raster,
+                )
+              : SizedBox.shrink(),
+
+          isHome
+              ? SingleChildScrollView(
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      final waitlist = ref.watch(waitlistProvider);
+                      return waitlist.when(
+                        data: (data) {
+                          return WaitingWidget(
+                            position: data.originalPosition,
+                            code: data.referralCode,
                           );
                         },
-                      ),
-                    ),
-                  ],
+                        error: (e, s) {
+                          return Center(child: Text("Error"));
+                        },
+                        loading: () =>
+                            Center(child: CircularProgressIndicator()),
+                      );
+                    },
+                  ),
                 )
               : SettingsWaitlist(),
           Align(
@@ -186,7 +187,7 @@ class SettingsWaitlist extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
         child: Consumer(
           builder: (context, ref, child) {
-            final user = ref.watch(userNotifierProvider);
+            final user = ref.watch(currentUserProvider);
             return Column(
               children: [
                 Row(
@@ -202,9 +203,9 @@ class SettingsWaitlist extends StatelessWidget {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () => context.push("/terms"),
                       child: Text(
-                        "Privacy Policy",
+                        "Terms and Conditions",
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
 
@@ -216,29 +217,61 @@ class SettingsWaitlist extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 32),
-                TextFormField(
-                  initialValue: user?.fullName,
-                  readOnly: true,
-                  decoration: InputDecoration(labelText: "Name"),
+                user.when(
+                  data: (data) {
+                    return Column(
+                      key: UniqueKey(),
+                      children: [
+                        TextFormField(
+                          initialValue: data!.fullName,
+                          readOnly: true,
+                          decoration: InputDecoration(labelText: "Name"),
+                        ),
+                        SizedBox(height: 12),
+                        TextFormField(
+                          initialValue: data.email,
+                          readOnly: true,
+                          decoration: InputDecoration(labelText: "Email"),
+                        ),
+                        SizedBox(height: 12),
+                        TextFormField(
+                          initialValue: data.phone,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            labelText: "Phone Number",
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                  error: (e, s) {
+                    print("❌ ERROR: $e | StackTrace: $s");
+                    return Text("Error");
+                  },
+                  loading: () {
+                    return Column(
+                      children: [
+                        TextFormField(
+                          readOnly: true,
+                          decoration: InputDecoration(labelText: "Name"),
+                        ),
+                        SizedBox(height: 12),
+                        TextFormField(
+                          readOnly: true,
+                          decoration: InputDecoration(labelText: "Email"),
+                        ),
+                        SizedBox(height: 12),
+                        TextFormField(
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            labelText: "Phone Number",
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
-                SizedBox(height: 12),
-                TextFormField(
-                  initialValue: user?.email,
-                  readOnly: true,
-                  decoration: InputDecoration(labelText: "Email"),
-                ),
-                SizedBox(height: 12),
-                TextFormField(
-                  initialValue: user?.phone,
-                  readOnly: true,
-                  decoration: InputDecoration(labelText: "Phone Number"),
-                ),
-                SizedBox(height: 12),
-                TextFormField(
-                  initialValue: user?.password,
-                  readOnly: true,
-                  decoration: InputDecoration(labelText: "Password"),
-                ),
+
                 SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -411,9 +444,9 @@ class SettingsWaitlist extends StatelessWidget {
 
                                         child: TextButton(
                                           onPressed: () {
-                                            // ref
-                                            //     .read(authServiceProvider)
-                                            //     .logout();
+                                            ref
+                                                .read(authServiceProvider)
+                                                .logout();
                                           },
                                           child: Text(
                                             "Delete Account",
@@ -520,41 +553,44 @@ class WaitingWidget extends StatelessWidget {
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 21),
-          child: Expanded(
-            child: Text.rich(
-              TextSpan(
-                text:
-                    "P.S. Skip the line? Refer 2 friends to move up 10 spots! with code ",
-                children: [
-                  TextSpan(
-                    text: "#$code ",
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  WidgetSpan(
-                    child: SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: IconButton(
-                        padding: EdgeInsets.zero,
-                        iconSize: 16,
-                        constraints: BoxConstraints(),
-                        alignment: Alignment.center,
-                        onPressed: () {
-                          Clipboard.setData(ClipboardData(text: "#$code"));
-                        },
-                        icon: SvgPicture.asset(
-                          "img/svg/copy.svg",
-                          package: "assets",
-                        ),
+          child: Text.rich(
+            TextSpan(
+              text:
+                  "P.S. Skip the line? Refer 2 friends to move up 10 spots! with code ",
+              children: [
+                TextSpan(
+                  text: "#$code ",
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+                WidgetSpan(
+                  child: SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      iconSize: 16,
+                      constraints: BoxConstraints(),
+                      alignment: Alignment.center,
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: "#$code"));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Center(child: Text("Code is copied")),
+                          ),
+                        );
+                      },
+                      icon: SvgPicture.asset(
+                        "img/svg/copy.svg",
+                        package: "assets",
                       ),
                     ),
                   ),
-                ],
-              ),
-
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: 14),
+                ),
+              ],
             ),
+
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, fontSize: 14),
           ),
         ),
         SizedBox(height: 100),

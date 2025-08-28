@@ -24,6 +24,7 @@ class _TellusState extends State<Tellus> {
   final emailController = TextEditingController();
   final birthController = TextEditingController();
   final referralCodeController = TextEditingController();
+  final nationalityController = TextEditingController();
 
   final formkey = GlobalKey<FormState>();
   String? requiredBirth;
@@ -242,6 +243,21 @@ class _TellusState extends State<Tellus> {
                                             labelText: "Date of Birth",
                                           ),
                                         ),
+                                        SizedBox(height: 10),
+
+                                        TextFormField(
+                                          controller: nationalityController,
+                                          textInputAction: TextInputAction.next,
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return "Please enter your nationality";
+                                            }
+                                            return null;
+                                          },
+                                          decoration: InputDecoration(
+                                            labelText: "Nationality",
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -348,7 +364,7 @@ class _TellusState extends State<Tellus> {
                                 child: Consumer(
                                   builder: (context, ref, child) {
                                     return PrimaryButton(
-                                      onTap: () {
+                                      onTap: () async {
                                         if (formkey.currentState!.validate()) {
                                           if (gender == null) {
                                             ScaffoldMessenger.of(
@@ -369,6 +385,8 @@ class _TellusState extends State<Tellus> {
                                                 userNotifierProvider.notifier,
                                               )
                                               .create(
+                                                nationality:
+                                                    nationalityController.text,
                                                 gender: gender,
                                                 dateOfBirth: requiredBirth,
                                                 referralCode:
@@ -376,8 +394,27 @@ class _TellusState extends State<Tellus> {
                                                 email: emailController.text,
                                                 fullName: nameController.text,
                                               );
-
-                                          context.push("/nationality");
+                                          await ref
+                                              .read(authServiceProvider)
+                                              .register()
+                                              .catchError((error) {
+                                                if (context.mounted) {
+                                                  ScaffoldMessenger.of(
+                                                    context,
+                                                  ).showSnackBar(
+                                                    SnackBar(
+                                                      content: Center(
+                                                        child: Text(
+                                                          "❎ ${error.message}",
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                              });
+                                          if (context.mounted) {
+                                            context.push("/nationality");
+                                          }
                                         }
                                       },
                                     );
