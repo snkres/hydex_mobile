@@ -374,6 +374,7 @@ class SettingsWaitlist extends StatelessWidget {
                                                     .read(authServiceProvider)
                                                     .logout();
                                                 CacheHelper.remove("waitlist");
+                                                context.go("/");
                                               },
                                               child: Text(
                                                 "Log Out",
@@ -477,6 +478,8 @@ class SettingsWaitlist extends StatelessWidget {
                                             ref
                                                 .read(authServiceProvider)
                                                 .logout();
+                                            CacheHelper.remove("waitlist");
+                                            context.go("/");
                                           },
                                           child: Text(
                                             "Delete Account",
