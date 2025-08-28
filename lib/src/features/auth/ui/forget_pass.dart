@@ -11,9 +11,7 @@ import 'package:hydex/src/widgets/primary_btn.dart';
 
 final isEmailVerifiedProvider = StateProvider<bool>((ref) => false);
 
-final forgetPhoneProvider = StateProvider.autoDispose<String>((ref) => '');
-
-final forgetEmailProvider = StateProvider.autoDispose<String>((ref) => '');
+final forgetPhoneProvider = StateProvider<String>((ref) => '');
 
 class ForgetPassword extends StatefulWidget {
   const ForgetPassword({super.key});
@@ -134,14 +132,25 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                   return PrimaryButton(
                                     onTap: () async {
                                       if (formKey.currentState!.validate()) {
+                                        final phone = ref.read(
+                                          forgetPhoneProvider,
+                                        );
                                         await ref
                                             .read(authServiceProvider)
                                             .forgetPassword(
-                                              emailController.text,
+                                              changeToEmail
+                                                  ? emailController.text
+                                                  : phone,
+                                              changeToEmail
+                                                  ? OTPType.email
+                                                  : OTPType.phone,
                                             );
                                         if (context.mounted) {
                                           if (changeToEmail) {
-                                            context.push("/forgot-response");
+                                            context.push(
+                                              "/forgot-response",
+                                              extra: false,
+                                            );
                                           } else {
                                             context.push(
                                               "/forgot-response",

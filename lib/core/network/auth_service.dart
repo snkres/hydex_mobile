@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/auth_handler.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/network/user/user.dart';
-import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auth_service.g.dart';
 
@@ -157,11 +156,11 @@ class AuthService {
     }
   }
 
-  Future<String> forgetPassword(String email) async {
+  Future<String> forgetPassword(String identifier, OTPType type) async {
     try {
       final response = await DioHelper.post(
         "/auth/forgot-password",
-        data: {"email": email},
+        data: {"identifier": identifier, "type": type.name},
       );
       if (response.success && response.data != null) {
         return response.data?["message"];

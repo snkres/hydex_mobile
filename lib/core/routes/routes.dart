@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/cache/cache_helper.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/auth/reset_pass.dart';
 import 'package:hydex/src/features/auth/seeker.dart';
@@ -27,58 +27,17 @@ class AppRoutes {
   Ref ref;
   AppRoutes(this.ref);
   final routes = GoRouter(
-    initialLocation: "/",
-    // redirect: (context, state) async {
-    //   const Set<String> publicRoutes = {
-    //     '/',
-    //     '/otp',
-    //     '/otp/email',
-    //     '/password',
-    //     '/tellus',
-    //     '/nationality',
-    //     '/describe',
-    //     '/seeker',
-    //     '/wego',
-    //     '/influencer',
-    //     '/ulike',
-    //     '/verify_email',
-    //     '/login',
-    //     '/terms',
-    //     '/forget-password',
-    //     '/forgot-password',
-    //     '/forgot-response',
-    //   };
-
-    //   final token = await DioHelper.getAccessToken();
-    //   final bool isAuthenticated = token != null;
-    //   final String currentPath = state.uri.path;
-    //   final bool isGoingToPublicRoute = publicRoutes.contains(currentPath);
-    //   final bool isGoingToWaitlist = currentPath == '/waitlist';
-
-    //   // Debug: Print to see what's happening
-    //   print(
-    //     'Current path: $currentPath, isAuthenticated: $isAuthenticated, isPublicRoute: $isGoingToPublicRoute',
-    //   );
-
-    //   // If user has access token
-    //   if (isAuthenticated) {
-    //     // If trying to go to public routes (except already at waitlist), redirect to waitlist
-    //     if (isGoingToPublicRoute && !isGoingToWaitlist) {
-    //       return '/waitlist';
-    //     }
-    //     // If going to waitlist or other protected routes, allow
-    //     return null;
-    //   }
-    //   // If user doesn't have access token
-    //   else {
-    //     // If trying to access waitlist or other protected routes, redirect to home
-    //     if (!isGoingToPublicRoute || isGoingToWaitlist) {
-    //       return '/';
-    //     }
-    //     // If going to public routes, allow
-    //     return null;
-    //   }
-    // },
+    redirect: (context, state) async {
+      final token = await DioHelper.getAccessToken();
+      final waitlist = CacheHelper.getBool("waitlist") ?? false;
+      if (waitlist) {
+        if (token != null) {
+          return "/waitlist";
+        }
+        return "/";
+      }
+      return null;
+    },
     routes: [
       // Main boarding screen
       GoRoute(path: "/", builder: (context, state) => const BoardingScreen()),

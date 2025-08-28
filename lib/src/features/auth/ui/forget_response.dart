@@ -22,8 +22,13 @@ class ForgetResponse extends StatelessWidget {
                 buttonText: 'Open Whatsapp',
               )
             : MessageResponse(
-                onTap: () {
-                  _launchUrl("mailto:");
+                onTap: () async {
+                  final Uri emailLaunchUri = Uri(scheme: 'mailto', path: '');
+                  if (await canLaunchUrl(emailLaunchUri)) {
+                    await launchUrl(emailLaunchUri);
+                  } else {
+                    // Show error message
+                  }
                 },
                 heading: "Check your Email",
                 description:

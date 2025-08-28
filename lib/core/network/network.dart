@@ -462,12 +462,6 @@ class DioHelper {
     return secureStorage.read(key: _accessTokenKey);
   }
 
-  // Check if user is authenticated
-  static bool get isAuthenticated => _tokenPair != null;
-
-  // Check if token is expired
-  static bool get isTokenExpired => _tokenPair?.isExpired ?? true;
-
   // Clear authentication tokens
   static Future<void> clearTokens() async {
     await _clearTokens();

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/cache/cache_helper.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/waitlist_provider.dart';
@@ -21,6 +22,12 @@ class WaitlistScreen extends StatefulWidget {
 
 class _WaitlistScreenState extends State<WaitlistScreen> {
   bool isHome = true;
+
+  @override
+  void initState() {
+    super.initState();
+    CacheHelper.setBool("waitlist", value: true);
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hydex/core/cache/cache_helper.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/firebase_options.dart';
 import 'package:hydex/src/app.dart' show MyApp;
@@ -20,6 +21,7 @@ void main() async {
   if (Platform.isAndroid) {
     await FlutterDisplayMode.setHighRefreshRate();
   }
+  await CacheHelper.init();
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,

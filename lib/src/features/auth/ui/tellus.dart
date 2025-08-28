@@ -1,13 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/auth/provider/nationality_provider.dart';
 import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
 import 'package:hydex/src/features/auth/ui/verify_email.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
+import 'package:hydex/src/widgets/custom_radio.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:intl/intl.dart';
 
@@ -245,18 +248,36 @@ class _TellusState extends State<Tellus> {
                                         ),
                                         SizedBox(height: 10),
 
-                                        TextFormField(
-                                          controller: nationalityController,
-                                          textInputAction: TextInputAction.next,
-                                          validator: (value) {
-                                            if (value!.isEmpty) {
-                                              return "Please enter your nationality";
-                                            }
-                                            return null;
+                                        Consumer(
+                                          builder: (context, ref, child) {
+                                            final nationality = ref.watch(
+                                              nationalityNotifierProvider,
+                                            );
+                                            return TextFormField(
+                                              key: UniqueKey(),
+                                              initialValue: nationality,
+                                              readOnly: true,
+                                              onTap: () {
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return NationalitiesPicker();
+                                                  },
+                                                );
+                                              },
+                                              textInputAction:
+                                                  TextInputAction.next,
+                                              validator: (value) {
+                                                if (value!.isEmpty) {
+                                                  return "Please enter your nationality";
+                                                }
+                                                return null;
+                                              },
+                                              decoration: InputDecoration(
+                                                labelText: "Nationality",
+                                              ),
+                                            );
                                           },
-                                          decoration: InputDecoration(
-                                            labelText: "Nationality",
-                                          ),
                                         ),
                                       ],
                                     ),
@@ -473,6 +494,156 @@ class CustomChip extends StatelessWidget {
                 : Theme.of(context).colorScheme.onSecondaryContainer,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class NationalitiesPicker extends ConsumerStatefulWidget {
+  const NationalitiesPicker({super.key});
+
+  @override
+  ConsumerState<NationalitiesPicker> createState() =>
+      _NationalitiesPickerState();
+}
+
+class _NationalitiesPickerState extends ConsumerState<NationalitiesPicker> {
+  List<String> allNation = [];
+  List<String> filteredNations = [];
+  final searchController = TextEditingController();
+  bool isLoading = true;
+
+  Future<void> _loadNationalities() async {
+    try {
+      final nationalities = await NationalityService.getNationalities();
+
+      // Check if widget is still mounted before calling setState
+      if (mounted) {
+        setState(() {
+          allNation = nationalities;
+          filteredNations = nationalities;
+          isLoading = false;
+        });
+      } else {}
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(_filternations);
+    _loadNationalities();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void _filternations() {
+    final query = searchController.text.toLowerCase();
+
+    if (mounted) {
+      setState(() {
+        filteredNations = allNation
+            .where((nation) => nation.toLowerCase().contains(query))
+            .toList();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.8,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Title
+          const Text(
+            'Select Nationality',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: searchController,
+            decoration: InputDecoration(
+              hint: Text(
+                "Search",
+                style: TextStyle(color: Color(0xff7A7F99), fontSize: 15),
+              ),
+              prefixIcon: Padding(
+                padding: const EdgeInsets.only(left: 16, right: 8),
+                child: SvgPicture.asset(
+                  "img/svg/search.svg",
+                  package: "assets",
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : filteredNations.isEmpty
+                ? Center(
+                    child: Text(
+                      allNation.isEmpty
+                          ? "No nationalities available"
+                          : "No results found",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  )
+                : Consumer(
+                    builder: (context, ref, child) {
+                      final selectedNationality = ref.watch(
+                        nationalityNotifierProvider,
+                      );
+                      return ListView.builder(
+                        itemCount: filteredNations.length,
+                        itemBuilder: (context, index) {
+                          final nationality = filteredNations[index];
+                          return ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              nationality,
+                              style: TextStyle(fontSize: 15),
+                            ),
+                            trailing: CustomRadio(
+                              isSelected: selectedNationality == nationality,
+                            ),
+                            onTap: () {
+                              ref
+                                  .read(nationalityNotifierProvider.notifier)
+                                  .change(nationality);
+                              context.pop();
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+          ),
+        ],
       ),
     );
   }
