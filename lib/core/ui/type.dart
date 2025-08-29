@@ -7,7 +7,7 @@ class AppTextStyles {
 
   AppTextStyles(this.context);
   String get fontFamily => Platform.isIOS ? "SF Pro" : "Roboto";
-  double get accumulator => MediaQuery.sizeOf(context).width / 375;
+  double get accumulator => MediaQuery.widthOf(context) / 375;
   // Display
   TextStyle get displayLargeLight => TextStyle(
     fontFamily: fontFamily,
@@ -67,7 +67,7 @@ class AppTextStyles {
   // Secondary Body
   TextStyle get secondaryRegular => TextStyle(
     fontFamily: fontFamily,
-    fontSize: accumulator * 16,
+    fontSize: accumulator * 14,
     fontWeight: FontWeight.w400,
     height: 1.25, // 20/16 => 1.25
     letterSpacing: 0.0,
@@ -113,9 +113,8 @@ class AppTextStyles {
 
   TextStyle get smallSemibold => TextStyle(
     fontFamily: fontFamily,
-    fontSize: accumulator * 15,
+    fontSize: accumulator * 14,
     fontWeight: FontWeight.w600,
-    height: 1.43,
   );
 
   // Caption

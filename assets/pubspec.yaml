@@ -13,5 +13,5 @@ flutter:
   assets:
     - img/svg/
     - img/
-    - json/country.json
+    - json/
     - video/

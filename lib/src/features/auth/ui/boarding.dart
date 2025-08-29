@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/type.dart';
@@ -11,8 +12,6 @@ import 'package:hydex/src/features/auth/ui/components/pick_type.dart';
 import 'package:hydex/src/features/auth/ui/components/sign_up.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:video_player/video_player.dart';
-
-final heightProvider = StateProvider<double>((ref) => 550);
 
 class BoardingScreen extends StatefulWidget {
   const BoardingScreen({super.key});
@@ -45,7 +44,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
       title: "Unlock Growth",
       userType: "For Business Owners",
       description:
-          " Grow through a community built around exclusive lifestyle experiences.",
+          "Grow through a community built around exclusive lifestyle experiences.",
     ),
   ];
 
@@ -55,11 +54,21 @@ class _BoardingScreenState extends State<BoardingScreen> {
     _videoController = VideoPlayerController.asset(
       "video/video.mp4",
       package: "assets",
-      viewType: VideoViewType.textureView,
+      videoPlayerOptions: VideoPlayerOptions(
+        mixWithOthers: true,
+        allowBackgroundPlayback: true,
+      ),
     );
     _videoController.setLooping(true);
-    _videoController.initialize().then((_) => setState(() {}));
-    _videoController.play();
+    _videoController.setVolume(0);
+    if (!Platform.isLinux) {
+      _videoController.initialize().then((_) {
+        setState(() {
+          _videoController.play();
+        });
+      });
+    }
+
     _startAutoSwipe();
   }
 
@@ -102,9 +111,116 @@ class _BoardingScreenState extends State<BoardingScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.black,
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: double.infinity,
+                  minHeight: 50,
+                ),
+                child: Consumer(
+                  builder: (context, ref, child) {
+                    return ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) {
+                            return Wrap(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: MediaQuery.of(
+                                      context,
+                                    ).viewInsets.bottom,
+                                    top: 16,
+                                    left: 16,
+                                    right: 16,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Center(
+                                        child: Container(
+                                          height: 4,
+                                          width: 44,
+                                          decoration: BoxDecoration(
+                                            color: Color(0xffDEDEDE),
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 22),
+                                      ExpandablePageView(
+                                        controller: pageController,
+                                        animationCurve: Curves.easeIn,
+                                        animationDuration: Duration(
+                                          milliseconds: 250,
+                                        ),
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        children: [
+                                          SizedBox(
+                                            child: PickUserType(
+                                              pageController: pageController,
+                                            ),
+                                          ),
+                                          SizedBox(child: SignUpComponent()),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: Text(
+                        "Create an Account",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: AppTextStyles(context).accumulator * 14,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 24),
+              Center(
+                child: Text.rich(
+                  TextSpan(
+                    text: "Already have an account? ",
+                    style: AppTextStyles(context).secondaryRegular,
+                    children: [
+                      TextSpan(
+                        text: "Sign in",
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          decorationColor: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => context.push("/login"),
+                      ),
+                    ],
+                  ),
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.black.withValues(alpha: 0.4),
         title: Padding(
           padding: const EdgeInsets.only(top: 24),
           child: Text(
@@ -133,13 +249,14 @@ class _BoardingScreenState extends State<BoardingScreen> {
           ),
           Container(color: Colors.black.withValues(alpha: 0.4)),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: MediaQuery.sizeOf(context).width / 1.7,
+                height: MediaQuery.widthOf(context) / 1.75,
                 child: PageView.builder(
                   controller: boardingPageController,
+                  itemCount: boardings.length,
                   onPageChanged: (int page) {
                     setState(() {
                       _currentPage = page;
@@ -156,7 +273,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
-                            height: 0.95,
+                            height: 0.9,
                             fontSize: AppTextStyles(context).accumulator * 55,
                             fontWeight: FontWeight.w900,
                           ),
@@ -203,124 +320,6 @@ class _BoardingScreenState extends State<BoardingScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 200),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minWidth: double.infinity,
-                    minHeight: 50,
-                  ),
-                  child: Consumer(
-                    builder: (context, ref, child) {
-                      return ElevatedButton(
-                        onPressed: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (context) {
-                              return AnimatedContainer(
-                                height: ref.watch(heightProvider),
-                                curve: Curves.easeIn,
-                                duration: Duration(milliseconds: 200),
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    bottom: MediaQuery.of(
-                                      context,
-                                    ).viewInsets.bottom,
-                                    top: 16,
-                                    left: 16,
-                                    right: 16,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Center(
-                                        child: Container(
-                                          height: 4,
-                                          width: 44,
-                                          decoration: BoxDecoration(
-                                            color: Color(0xffDEDEDE),
-                                            borderRadius: BorderRadius.circular(
-                                              4,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: 22),
-
-                                      Expanded(
-                                        child: PageView(
-                                          controller: pageController,
-                                          onPageChanged: (page) {
-                                            if (page == 0) {
-                                              ref
-                                                      .read(
-                                                        heightProvider.notifier,
-                                                      )
-                                                      .state =
-                                                  550;
-                                            } else {
-                                              ref
-                                                      .read(
-                                                        heightProvider.notifier,
-                                                      )
-                                                      .state =
-                                                  680;
-                                            }
-                                          },
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          children: [
-                                            SizedBox(
-                                              child: PickUserType(
-                                                pageController: pageController,
-                                              ),
-                                            ),
-                                            SizedBox(child: SignUpComponent()),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ).whenComplete(() {
-                            ref.read(heightProvider.notifier).state = 550;
-                          });
-                        },
-                        child: Text(
-                          "Get Started",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(height: 24),
-              Center(
-                child: Text.rich(
-                  TextSpan(
-                    text: "Already have an account? ",
-                    style: AppTextStyles(context).secondaryRegular,
-                    children: [
-                      TextSpan(
-                        text: "Sign in",
-                        style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          decorationColor: Colors.white,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () => context.push("/login"),
-                      ),
-                    ],
-                  ),
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              SizedBox(height: 24),
             ],
           ),
         ],

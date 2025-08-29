@@ -96,6 +96,7 @@ class PickUserType extends StatelessWidget {
                 },
               ),
             ),
+            SizedBox(height: 16),
           ],
         );
       },

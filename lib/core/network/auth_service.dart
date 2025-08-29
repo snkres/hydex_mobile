@@ -17,27 +17,25 @@ class AuthService {
     DioHelper.init(
       refreshTokenEndpoint: '/auth/refresh',
       defaultHeaders: {
-        'X-App-Version': '1.0.0',
+        'X-App-Version': '0.1.4',
         'X-Platform': Platform.isAndroid ? 'android' : 'ios',
       },
       authEventListener: AuthHandler(),
     );
   }
 
-  // Login and get user profile with enhanced token handling
   Future<User> login(String email, String password) async {
     try {
       // Use the enhanced login method that handles tokens automatically
-      final responseData = await DioHelper.login('/auth/login', {
-        'email': email,
+      final responseData = await DioHelper.authenticate('/auth/login', {
+        'identifier': email,
         'password': password,
       });
 
       // Parse user data from response
-      final userData =
-          responseData['user'] ?? responseData['data'] ?? responseData;
+      final userData = responseData['data']['user'] as Map<String, dynamic>;
       final user = UserMapper.fromMap(userData);
-
+      ref.read(userNotifierProvider.notifier).setUser(user);
       if (kDebugMode) {
         print('✅ Login successful for user: ${user.email}');
         print('🔐 Access token stored from response data');
@@ -72,15 +70,19 @@ class AuthService {
   }
 
   // Verify user
-  Future<String> sendOTP(String phone, OTPType type) async {
+  Future<String> sendOTP(String identifier, OTPType type) async {
     try {
       final response = await DioHelper.post<Map<String, dynamic>>(
         '/auth/send-verification',
-        data: {'identifier': phone, "type": type.name},
+        data: {'identifier': identifier, "type": type.name},
       );
 
       if (response.success && response.data != null) {
-        ref.read(userNotifierProvider.notifier).create(phone: phone);
+        if (type == OTPType.email) {
+          ref.read(userNotifierProvider.notifier).create(email: identifier);
+        } else {
+          ref.read(userNotifierProvider.notifier).create(phone: identifier);
+        }
         return response.data?["message"];
       } else {
         throw ApiException(response.errorMessage ?? 'Failed to verify user');
@@ -90,12 +92,14 @@ class AuthService {
     }
   }
 
-  Future<String> verifyOTP({required String otp}) async {
+  Future<String> verifyOTP({
+    required String otp,
+    required String identifier,
+  }) async {
     try {
-      final phone = ref.read(userNotifierProvider)?.phone;
       final response = await DioHelper.post<Map<String, dynamic>>(
         '/auth/verify-identifier',
-        data: {'identifier': phone, "otp": otp},
+        data: {'identifier': identifier, "otp": otp},
       );
 
       if (response.success && response.data != null) {
@@ -134,14 +138,9 @@ class AuthService {
         "password": user?.password,
         "fullName": user?.fullName,
         "role": user?.role,
-        "personalInfo": {
-          "nationality": user?.personalInfo?.nationality,
-          "gender": user?.personalInfo?.gender,
-          "dateOfBirth": user?.personalInfo?.dateOfBirth,
-          "employmentStatus": user?.personalInfo?.socialStatus,
-          "instagram": user?.personalInfo?.instagram ?? "",
-          "facebook": user?.personalInfo?.facebook,
-        },
+        "gender": user?.gender,
+        "nationality": user?.nationality,
+        "dateOfBirth": user?.dateOfBirth,
       };
       if (user!.referralCode!.isNotEmpty) {
         data["referralCode"] = user.referralCode;
@@ -155,20 +154,67 @@ class AuthService {
     }
   }
 
-  // Delete user
-  Future<bool> deleteUser(String userId) async {
+  Future<String> forgetPassword(String identifier, OTPType type) async {
     try {
-      final response = await DioHelper.delete('/users/$userId');
-      return response.success;
+      final response = await DioHelper.post(
+        "/auth/forgot-password",
+        data: {"identifier": identifier, "type": type.name},
+      );
+      if (response.success && response.data != null) {
+        return response.data?["message"];
+      }
+      throw ApiException(response.errorMessage ?? 'Could not forget password');
     } catch (e) {
       rethrow;
     }
   }
 
-  // Logout
+  Future<String> resetPassword(String newPassword, String token) async {
+    try {
+      final response = await DioHelper.post(
+        "auth/reset-password",
+        data: {"newPassword": newPassword, "token": token},
+      );
+      if (response.success && response.data != null) {
+        return response.data?["message"];
+      }
+      throw ApiException(response.errorMessage ?? 'Could not forget password');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<User> currentUser() async {
+    try {
+      final response = await DioHelper.get("/auth/me");
+      if (response.success && response.data != null) {
+        final user = UserMapper.fromMap(response.data['data']['user']);
+        return user;
+      }
+      throw ApiException(response.errorMessage ?? 'Could not forget password');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Delete user
+  Future<bool> deleteUser() async {
+    try {
+      final response = await DioHelper.delete('/auth/me');
+      if (response.success) {
+        DioHelper.clearTokens();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> logout() async {
     try {
       await DioHelper.logout('/auth/logout');
+      DioHelper.clearTokens();
     } catch (e) {
       rethrow;
     }
@@ -180,8 +226,12 @@ final authServiceProvider = Provider<AuthService>(AuthService.new);
 @Riverpod(keepAlive: true)
 class UserNotifier extends _$UserNotifier {
   @override
-  UserRegister? build() {
+  User? build() {
     return null;
+  }
+
+  void setUser(User user) {
+    state = user;
   }
 
   void create({
@@ -198,57 +248,43 @@ class UserNotifier extends _$UserNotifier {
     String? instagram,
     String? facebook,
   }) {
-    final currentState = state;
-
-    // If state is null, create new one
-    if (currentState == null) {
-      state = UserRegister(
+    if (state == null) {
+      state = User(
         email: email ?? "",
         phone: phone,
         fullName: fullName ?? "",
-
-        personalInfo: PersonalInfo(
-          nationality: nationality ?? "",
-          gender: gender ?? "",
-          instagram: instagram,
-          facebook: facebook,
-          dateOfBirth: dateOfBirth ?? "",
-          socialStatus: socialStatus ?? "",
-        ),
+        gender: gender ?? "",
+        nationality: nationality ?? "",
         referralCode: referralCode ?? "",
         password: password ?? "",
         role: role ?? "",
       );
     } else {
-      // Update existing state, preserving existing values
-      state = currentState.copyWith(
-        email: email ?? currentState.email,
-        phone: phone ?? currentState.phone,
-        fullName: fullName ?? currentState.fullName,
-        personalInfo:
-            currentState.personalInfo?.copyWith(
-              nationality:
-                  nationality ?? currentState.personalInfo?.nationality,
-              gender: gender ?? currentState.personalInfo?.gender,
-              instagram: instagram ?? currentState.personalInfo?.instagram,
-              facebook: facebook ?? currentState.personalInfo?.facebook,
-              dateOfBirth:
-                  dateOfBirth ?? currentState.personalInfo?.dateOfBirth,
-              socialStatus:
-                  socialStatus ?? currentState.personalInfo?.socialStatus,
-            ) ??
-            PersonalInfo(
-              nationality: nationality ?? "",
-              gender: gender ?? "",
-              dateOfBirth: dateOfBirth ?? "",
-              socialStatus: socialStatus ?? "",
-            ),
-        referralCode: referralCode ?? currentState.referralCode,
-        password: password ?? currentState.password,
-        role: role ?? currentState.role,
+      state = state?.copyWith(
+        email: email ?? state?.email,
+        phone: phone ?? state?.phone,
+        fullName: fullName ?? state?.fullName,
+        gender: gender ?? state?.gender,
+        referralCode: referralCode ?? state?.referralCode,
+        nationality: nationality ?? state?.nationality,
+        password: password ?? state?.password,
+        role: role ?? state?.role,
       );
     }
   }
 }
 
 enum OTPType { phone, email }
+
+@Riverpod(keepAlive: true)
+Future<User?> currentUser(Ref ref) async {
+  final userState = ref.watch(userNotifierProvider);
+
+  if (userState != null) {
+    return userState;
+  }
+
+  // If no user in state, fetch from auth
+  final authNotifier = ref.watch(authServiceProvider);
+  return await authNotifier.currentUser();
+}

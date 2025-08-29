@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:hydex/core/ui/type.dart';
 
 class PrimaryButton extends StatelessWidget {
-  const PrimaryButton({super.key, required this.onTap});
+  const PrimaryButton({
+    super.key,
+    required this.onTap,
+    this.title = "Continue",
+  });
 
   final VoidCallback? onTap;
+  final String title;
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
@@ -21,7 +26,7 @@ class PrimaryButton extends StatelessWidget {
             Theme.of(context).colorScheme.onPrimary,
           ),
         ),
-        child: Text("Continue", style: AppTextStyles(context).smallBold),
+        child: Text(title, style: AppTextStyles(context).smallBold),
       ),
     );
   }

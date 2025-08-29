@@ -10,7 +10,6 @@ import 'package:pinput/pinput.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});
-
   @override
   State<OtpScreen> createState() => _OtpScreenState();
 }
@@ -23,27 +22,27 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Stack(
-                children: [
-                  Image.asset(
-                    "img/gradient.png",
-                    package: "assets",
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                  Column(
+      body: Stack(
+        children: [
+          Image.asset(
+            "img/gradient.png",
+            package: "assets",
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
+          SafeArea(
+            child: CustomScrollView(
+              slivers: [
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CustomBackButton(),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () => context.push("/verify_email"),
                             child: Text(
                               "Verify with email",
                               style: TextStyle(
@@ -173,6 +172,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                                       phoneNumber!,
                                                       OTPType.phone,
                                                     );
+
                                                 if (context.mounted) {
                                                   ScaffoldMessenger.of(
                                                     context,
@@ -212,16 +212,21 @@ class _OtpScreenState extends State<OtpScreen> {
                                         ? () async {
                                             if (formKey.currentState!
                                                 .validate()) {
+                                              final phone = ref
+                                                  .read(userNotifierProvider)
+                                                  ?.phone;
                                               await ref
                                                   .read(authServiceProvider)
                                                   .verifyOTP(
                                                     otp: otpController.text,
+                                                    identifier: phone!,
                                                   )
                                                   .catchError((error) {
                                                     setState(() {
                                                       errorText = error.message;
                                                     });
                                                   });
+
                                               if (!context.mounted) return;
 
                                               context.push("/password");
@@ -237,11 +242,11 @@ class _OtpScreenState extends State<OtpScreen> {
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

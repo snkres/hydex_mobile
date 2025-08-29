@@ -16,16 +16,16 @@ class _DescribeState extends State<Describe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Image.asset(
-              "img/gradient.png",
-              package: "assets",
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-            Column(
+      body: Stack(
+        children: [
+          Image.asset(
+            "img/gradient.png",
+            package: "assets",
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
+          SafeArea(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomBackButton(),
@@ -98,7 +98,7 @@ class _DescribeState extends State<Describe> {
                           padding: const EdgeInsets.only(top: 16),
                           child: PrimaryButton(
                             onTap: describeType != null
-                                ? () => context.push("/waitlist")
+                                ? () => context.push("/")
                                 : null,
                           ),
                         ),
@@ -108,8 +108,8 @@ class _DescribeState extends State<Describe> {
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

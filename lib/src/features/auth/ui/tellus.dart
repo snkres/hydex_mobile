@@ -1,10 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
+import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/auth/provider/nationality_provider.dart';
+import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
+import 'package:hydex/src/features/auth/ui/verify_email.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
+import 'package:hydex/src/widgets/custom_radio.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:intl/intl.dart';
 
@@ -20,26 +26,31 @@ class _TellusState extends State<Tellus> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final birthController = TextEditingController();
+  final referralCodeController = TextEditingController();
+  final nationalityController = TextEditingController();
+
   final formkey = GlobalKey<FormState>();
   String? requiredBirth;
+  String? codeErrorText;
 
+  bool isRegestered = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Stack(
-                children: [
-                  Image.asset(
-                    "img/gradient.png",
-                    package: "assets",
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                  Column(
+      body: Stack(
+        children: [
+          Image.asset(
+            "img/gradient.png",
+            package: "assets",
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
+          SafeArea(
+            child: CustomScrollView(
+              slivers: [
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomBackButton(),
@@ -76,7 +87,6 @@ class _TellusState extends State<Tellus> {
                                   Form(
                                     key: formkey,
                                     child: Column(
-                                      spacing: 12,
                                       children: [
                                         TextFormField(
                                           controller: nameController,
@@ -94,28 +104,49 @@ class _TellusState extends State<Tellus> {
                                             labelText: "Full Name",
                                           ),
                                         ),
-                                        TextFormField(
-                                          controller: emailController,
-                                          autovalidateMode: AutovalidateMode
-                                              .onUserInteraction,
-
-                                          validator: (value) {
-                                            if (value!.isEmpty) {
-                                              return "Please enter your email";
-                                            }
-                                            final emailRegex = RegExp(
-                                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                        SizedBox(height: 10),
+                                        Consumer(
+                                          builder: (context, ref, child) {
+                                            return Visibility(
+                                              visible: !ref.watch(
+                                                isEmailVerifiedProvider,
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  TextFormField(
+                                                    keyboardType: TextInputType
+                                                        .emailAddress,
+                                                    controller: emailController,
+                                                    autovalidateMode:
+                                                        AutovalidateMode
+                                                            .onUserInteraction,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please enter your email";
+                                                      }
+                                                      final emailRegex = RegExp(
+                                                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                                      );
+                                                      if (!emailRegex.hasMatch(
+                                                        value,
+                                                      )) {
+                                                        return "Please enter a valid email";
+                                                      }
+                                                      return null;
+                                                    },
+                                                    textInputAction:
+                                                        TextInputAction.next,
+                                                    decoration: InputDecoration(
+                                                      labelText: "Email",
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 10),
+                                                ],
+                                              ),
                                             );
-                                            if (!emailRegex.hasMatch(value)) {
-                                              return "Please enter a valid email";
-                                            }
-                                            return null;
                                           },
-                                          textInputAction: TextInputAction.next,
-                                          decoration: InputDecoration(
-                                            labelText: "Email",
-                                          ),
                                         ),
+
                                         TextFormField(
                                           controller: birthController,
                                           readOnly: true,
@@ -153,47 +184,60 @@ class _TellusState extends State<Tellus> {
                                                       ),
                                                     ),
                                                     Expanded(
-                                                      child: CupertinoDatePicker(
-                                                        mode:
-                                                            CupertinoDatePickerMode
-                                                                .date,
-                                                        initialDateTime:
-                                                            DateTime.now(),
-                                                        minimumDate:
-                                                            DateTime.now()
-                                                                .subtract(
-                                                                  Duration(
-                                                                    days: 10000,
-                                                                  ),
-                                                                ),
-                                                        onDateTimeChanged: (date) {
-                                                          final DateFormat
-                                                          formatter =
-                                                              DateFormat(
-                                                                'd/M/yyyy',
-                                                              );
-                                                          final DateFormat
-                                                          requiredFormatter =
-                                                              DateFormat(
-                                                                'yyyy/MM/dd',
-                                                              );
+                                                      child: CupertinoTheme(
+                                                        data: CupertinoThemeData(
+                                                          brightness:
+                                                              Theme.brightnessOf(
+                                                                context,
+                                                              ),
+                                                        ),
+                                                        child: CupertinoDatePicker(
+                                                          mode:
+                                                              CupertinoDatePickerMode
+                                                                  .date,
+                                                          initialDateTime:
+                                                              DateTime.now(),
 
-                                                          String formatted =
-                                                              formatter.format(
-                                                                date,
-                                                              );
-                                                          String
-                                                          requiredFormat =
-                                                              requiredFormatter
-                                                                  .format(date);
-                                                          setState(() {
-                                                            birthController
-                                                                    .text =
-                                                                formatted;
-                                                            requiredBirth =
-                                                                requiredFormat;
-                                                          });
-                                                        },
+                                                          minimumDate:
+                                                              DateTime.now()
+                                                                  .subtract(
+                                                                    Duration(
+                                                                      days:
+                                                                          100000,
+                                                                    ),
+                                                                  ),
+                                                          onDateTimeChanged: (date) {
+                                                            final DateFormat
+                                                            formatter =
+                                                                DateFormat(
+                                                                  'd/M/yyyy',
+                                                                );
+                                                            final DateFormat
+                                                            requiredFormatter =
+                                                                DateFormat(
+                                                                  'yyyy/MM/dd',
+                                                                );
+
+                                                            String formatted =
+                                                                formatter
+                                                                    .format(
+                                                                      date,
+                                                                    );
+                                                            String
+                                                            requiredFormat =
+                                                                requiredFormatter
+                                                                    .format(
+                                                                      date,
+                                                                    );
+                                                            setState(() {
+                                                              birthController
+                                                                      .text =
+                                                                  formatted;
+                                                              requiredBirth =
+                                                                  requiredFormat;
+                                                            });
+                                                          },
+                                                        ),
                                                       ),
                                                     ),
                                                   ],
@@ -205,6 +249,41 @@ class _TellusState extends State<Tellus> {
                                           decoration: InputDecoration(
                                             labelText: "Date of Birth",
                                           ),
+                                        ),
+                                        SizedBox(height: 10),
+
+                                        Consumer(
+                                          builder: (context, ref, child) {
+                                            final nationality = ref.watch(
+                                              nationalityNotifierProvider,
+                                            );
+                                            return TextFormField(
+                                              key: UniqueKey(),
+                                              initialValue: nationality,
+                                              readOnly: true,
+                                              onTap: () {
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  isScrollControlled: true,
+                                                  useSafeArea: true,
+                                                  builder: (context) {
+                                                    return NationalitiesPicker();
+                                                  },
+                                                );
+                                              },
+                                              textInputAction:
+                                                  TextInputAction.next,
+                                              validator: (value) {
+                                                if (value!.isEmpty) {
+                                                  return "Please enter your nationality";
+                                                }
+                                                return null;
+                                              },
+                                              decoration: InputDecoration(
+                                                labelText: "Nationality",
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ],
                                     ),
@@ -233,6 +312,78 @@ class _TellusState extends State<Tellus> {
                                       ),
                                     ],
                                   ),
+                                  SizedBox(height: 12),
+
+                                  Consumer(
+                                    builder: (context, ref, child) {
+                                      final userType = ref.watch(
+                                        userTypeNotifierProvider,
+                                      );
+                                      return Visibility(
+                                        visible: userType == Role.owner,
+                                        child: Column(
+                                          spacing: 4,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            TextFormField(
+                                              controller:
+                                                  referralCodeController,
+                                              forceErrorText: codeErrorText,
+                                              validator: (code) {
+                                                if (code == null ||
+                                                    code.isEmpty) {
+                                                  return null;
+                                                }
+                                                if (code.length < 8) {
+                                                  return "Code must be 8 characters";
+                                                }
+                                                return null;
+                                              },
+                                              onFieldSubmitted: (code) async {
+                                                if (code.isNotEmpty) {
+                                                  ref
+                                                      .read(authServiceProvider)
+                                                      .verifyReferalCode(
+                                                        referralCode: code,
+                                                      )
+                                                      .catchError((e) {
+                                                        setState(() {
+                                                          codeErrorText =
+                                                              e.message;
+                                                        });
+                                                      });
+                                                }
+                                              },
+                                              textInputAction:
+                                                  TextInputAction.done,
+                                              decoration: InputDecoration(
+                                                label: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text("Invitation Code"),
+                                                    Text("(Optional)"),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            Text(
+                                              "If you don’t have an invite code just skip it.",
+                                              style: AppTextStyles(context)
+                                                  .captionRegular
+                                                  .copyWith(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurfaceVariant,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ],
                               ),
                               Padding(
@@ -240,7 +391,7 @@ class _TellusState extends State<Tellus> {
                                 child: Consumer(
                                   builder: (context, ref, child) {
                                     return PrimaryButton(
-                                      onTap: () {
+                                      onTap: () async {
                                         if (formkey.currentState!.validate()) {
                                           if (gender == null) {
                                             ScaffoldMessenger.of(
@@ -261,12 +412,42 @@ class _TellusState extends State<Tellus> {
                                                 userNotifierProvider.notifier,
                                               )
                                               .create(
+                                                nationality:
+                                                    nationalityController.text,
                                                 gender: gender,
                                                 dateOfBirth: requiredBirth,
+                                                referralCode:
+                                                    referralCodeController.text,
                                                 email: emailController.text,
                                                 fullName: nameController.text,
                                               );
-                                          context.push("/nationality");
+                                          if (!isRegestered) {
+                                            await ref
+                                                .read(authServiceProvider)
+                                                .register()
+                                                .catchError((error) {
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(
+                                                      context,
+                                                    ).showSnackBar(
+                                                      SnackBar(
+                                                        content: Center(
+                                                          child: Text(
+                                                            "❎ ${error.message}",
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
+                                                });
+                                          }
+                                          setState(() {
+                                            isRegestered = true;
+                                          });
+
+                                          if (context.mounted) {
+                                            context.push("/nationality");
+                                          }
                                         }
                                       },
                                     );
@@ -279,11 +460,11 @@ class _TellusState extends State<Tellus> {
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -318,13 +499,163 @@ class CustomChip extends StatelessWidget {
         child: Text(
           title,
           style: TextStyle(
-            fontSize: AppTextStyles(context).accumulator * 15,
+            fontSize: AppTextStyles(context).accumulator * 14,
             height: 1.7,
             color: isSelected
                 ? Theme.of(context).colorScheme.onPrimary
                 : Theme.of(context).colorScheme.onSecondaryContainer,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class NationalitiesPicker extends ConsumerStatefulWidget {
+  const NationalitiesPicker({super.key});
+
+  @override
+  ConsumerState<NationalitiesPicker> createState() =>
+      _NationalitiesPickerState();
+}
+
+class _NationalitiesPickerState extends ConsumerState<NationalitiesPicker> {
+  List<String> allNation = [];
+  List<String> filteredNations = [];
+  final searchController = TextEditingController();
+  bool isLoading = true;
+
+  Future<void> _loadNationalities() async {
+    try {
+      final nationalities = await NationalityService.getNationalities();
+
+      // Check if widget is still mounted before calling setState
+      if (mounted) {
+        setState(() {
+          allNation = nationalities;
+          filteredNations = nationalities;
+          isLoading = false;
+        });
+      } else {}
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(_filternations);
+    _loadNationalities();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void _filternations() {
+    final query = searchController.text.toLowerCase();
+
+    if (mounted) {
+      setState(() {
+        filteredNations = allNation
+            .where((nation) => nation.toLowerCase().contains(query))
+            .toList();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Title
+          const Text(
+            'Select Nationality',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: searchController,
+            autofocus: true,
+            decoration: InputDecoration(
+              hint: Text(
+                "Search",
+                style: TextStyle(color: Color(0xff7A7F99), fontSize: 15),
+              ),
+              prefixIcon: Padding(
+                padding: const EdgeInsets.only(left: 16, right: 8),
+                child: SvgPicture.asset(
+                  "img/svg/search.svg",
+                  package: "assets",
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : filteredNations.isEmpty
+                ? Center(
+                    child: Text(
+                      allNation.isEmpty
+                          ? "No nationalities available"
+                          : "No results found",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  )
+                : Consumer(
+                    builder: (context, ref, child) {
+                      final selectedNationality = ref.watch(
+                        nationalityNotifierProvider,
+                      );
+                      return ListView.builder(
+                        itemCount: filteredNations.length,
+                        itemBuilder: (context, index) {
+                          final nationality = filteredNations[index];
+                          return ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              nationality,
+                              style: TextStyle(fontSize: 15),
+                            ),
+                            trailing: CustomRadio(
+                              isSelected: selectedNationality == nationality,
+                            ),
+                            onTap: () {
+                              ref
+                                  .read(nationalityNotifierProvider.notifier)
+                                  .change(nationality);
+                              context.pop();
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+          ),
+        ],
       ),
     );
   }

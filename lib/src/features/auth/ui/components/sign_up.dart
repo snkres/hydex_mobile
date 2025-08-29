@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,10 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/country_picker_provider.dart';
-import 'package:hydex/src/features/auth/ui/boarding.dart';
 import 'package:hydex/src/features/auth/ui/components/country_picker.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
-import 'package:keyboard_actions/keyboard_actions.dart';
 
 class SignUpComponent extends ConsumerStatefulWidget {
   const SignUpComponent({super.key});
@@ -24,6 +21,8 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
   String? phoneNumber;
   final formKey = GlobalKey<FormState>();
   String? phoneError;
+
+  bool enableBtn = false;
 
   @override
   void dispose() {
@@ -46,8 +45,11 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
             ),
             SizedBox(height: 8),
             Text(
-              "Access the city’s most coveted spots, luxury deals, and curated experiences.",
-              style: TextStyle(fontSize: 14, color: Color(0xff7A7F99)),
+              "Access exclusive spots and luxury experiences.",
+              style: TextStyle(
+                fontSize: AppTextStyles(context).accumulator * 14,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             SizedBox(height: 16),
             selectedCountry.when(
@@ -91,8 +93,6 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                         key: formKey,
                         child: TextFormField(
                           controller: textController,
-                          autofocus: true,
-
                           keyboardType: TextInputType.phone,
                           textInputAction: TextInputAction.done,
                           onChanged: (v) {
@@ -111,7 +111,7 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                           },
                           validator: (v) {
                             if (v!.isEmpty) {
-                              return "Please write phone number";
+                              return "Please add your phone number";
                             }
                             if (v.length > 13) {
                               return "Phone shouldn't be more than 13 characters";
@@ -124,6 +124,7 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                             ),
                           ],
                           forceErrorText: phoneError,
+
                           onFieldSubmitted: (v) async {
                             if (formKey.currentState!.validate()) {
                               await ref
@@ -154,20 +155,18 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
               TextSpan(
                 text: "By continuing, you agree to to Hyde’x ",
                 style: TextStyle(
-                  color: Color(0xff7A7F99),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: AppTextStyles(context).accumulator * 12,
                 ),
                 children: [
                   TextSpan(
                     text: "Privacy ",
                     recognizer: TapGestureRecognizer()..onTap = () {},
-                    style: TextStyle(decoration: TextDecoration.underline),
                   ),
                   TextSpan(text: "and "),
                   TextSpan(
                     text: "Terms",
                     recognizer: TapGestureRecognizer()..onTap = () {},
-                    style: TextStyle(decoration: TextDecoration.underline),
                   ),
                 ],
               ),
@@ -178,12 +177,29 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
         Padding(
           padding: const EdgeInsets.only(bottom: 24),
           child: PrimaryButton(
-            onTap: phoneNumber != null
+            onTap: textController.text != ''
                 ? () async {
+                    if (phoneError != null) {
+                      setState(() {
+                        phoneError = null;
+                      });
+                    }
+
                     if (formKey.currentState!.validate()) {
                       await ref
                           .read(authServiceProvider)
-                          .sendOTP(phoneNumber!, OTPType.phone);
+                          .sendOTP(phoneNumber!, OTPType.phone)
+                          .catchError((e) {
+                            if (e.message.contains("already exists")) {
+                              setState(() {
+                                phoneError = "Phone already exists";
+                              });
+                            } else {
+                              setState(() {
+                                phoneError = e.message;
+                              });
+                            }
+                          });
                       if (context.mounted) {
                         context.go("/otp");
                       }
