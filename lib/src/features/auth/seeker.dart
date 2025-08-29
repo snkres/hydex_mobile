@@ -109,7 +109,7 @@ class _SeekerScreenState extends State<SeekerScreen> {
                               return PrimaryButton(
                                 onTap: selectedCategories.isEmpty
                                     ? null
-                                    : () {
+                                    : () async {
                                         if (userType == Role.seeker) {
                                           context.push("/wego");
                                         } else {

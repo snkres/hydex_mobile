@@ -172,7 +172,7 @@ class AuthService {
   Future<String> resetPassword(String newPassword, String token) async {
     try {
       final response = await DioHelper.post(
-        "auth/reset-password",
+        "/auth/reset-password",
         data: {"newPassword": newPassword, "token": token},
       );
       if (response.success && response.data != null) {

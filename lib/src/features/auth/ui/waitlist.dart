@@ -359,7 +359,7 @@ class SettingsWaitlist extends StatelessWidget {
                                           ),
                                           SizedBox(height: 32),
                                           PrimaryButton(
-                                            onTap: () => context.pop(),
+                                            onTap: () async => context.pop(),
                                             title: "Cancel",
                                           ),
                                           SizedBox(height: 8),
@@ -465,7 +465,7 @@ class SettingsWaitlist extends StatelessWidget {
                                       ),
                                       SizedBox(height: 32),
                                       PrimaryButton(
-                                        onTap: () => context.pop(),
+                                        onTap: () async => context.pop(),
                                         title: "Cancel",
                                       ),
                                       SizedBox(height: 8),
@@ -543,7 +543,7 @@ class WaitingWidget extends StatelessWidget {
           'json/stars.json',
           package: "assets",
           width: 100,
-
+          
           height: 100,
           fit: BoxFit.cover,
         ),
@@ -557,15 +557,18 @@ class WaitingWidget extends StatelessWidget {
               Text(
                 "Congrats! You’re",
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white, fontSize: 32),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: AppTextStyles(context).accumulator * 32,
+                ),
               ),
               Text(
                 "${position}th on the waitlist.",
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w700,
-                  fontSize: 32,
+                  fontSize: AppTextStyles(context).accumulator * 32,
                 ),
               ),
             ],
@@ -579,19 +582,27 @@ class WaitingWidget extends StatelessWidget {
             TextSpan(
               text: "Your ticket to our ",
               style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+
                 fontSize: AppTextStyles(context).accumulator * 14,
               ),
               children: [
                 TextSpan(
                   text: "exclusive launch event ",
-                  style: TextStyle(fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
                 TextSpan(text: "unlocks when you’re in!"),
               ],
             ),
 
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, fontSize: 14),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontSize: AppTextStyles(context).accumulator * 14,
+            ),
           ),
         ),
         SizedBox(height: 58),
@@ -605,7 +616,10 @@ class WaitingWidget extends StatelessWidget {
               children: [
                 TextSpan(
                   text: "#$code ",
-                  style: TextStyle(fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
                 WidgetSpan(
                   child: SizedBox(
@@ -627,6 +641,10 @@ class WaitingWidget extends StatelessWidget {
                       icon: SvgPicture.asset(
                         "img/svg/copy.svg",
                         package: "assets",
+                        colorFilter: ColorFilter.mode(
+                          Theme.of(context).colorScheme.onSurface,
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
                   ),
@@ -635,7 +653,10 @@ class WaitingWidget extends StatelessWidget {
             ),
 
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, fontSize: 14),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontSize: AppTextStyles(context).accumulator * 14,
+            ),
           ),
         ),
         SizedBox(height: 100),

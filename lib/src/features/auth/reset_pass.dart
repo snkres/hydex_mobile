@@ -135,6 +135,7 @@ class _CreatePasswordState extends State<ResetPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           Image.asset(
@@ -277,15 +278,17 @@ class _CreatePasswordState extends State<ResetPassword> {
                                 title: "Sign in with new password",
                                 onTap: shouldDisableButton()
                                     ? null
-                                    : () {
+                                    : () async {
                                         if (formKey.currentState!.validate()) {
-                                          ref
+                                          await ref
                                               .read(authServiceProvider)
                                               .resetPassword(
                                                 passwordConfirmController.text,
                                                 widget.token,
                                               );
-                                          context.go("/login");
+                                          if (context.mounted) {
+                                            context.go("/login");
+                                          }
                                         }
                                       },
                               );

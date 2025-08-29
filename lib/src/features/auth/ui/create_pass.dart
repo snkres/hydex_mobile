@@ -277,7 +277,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                               return PrimaryButton(
                                 onTap: shouldDisableButton()
                                     ? null
-                                    : () {
+                                    : () async{
                                         if (formKey.currentState!.validate()) {
                                           ref
                                               .read(

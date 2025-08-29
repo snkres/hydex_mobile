@@ -29,17 +29,10 @@ class AppRoutes {
   final routes = GoRouter(
     initialLocation: '/boarding',
     redirect: (context, state) async {
-      final routes = [
-        "/describe",
-        "/seeker",
-        "/tellus",
-        "/nationality",
-        "/influencer",
-        "/wego",
-      ];
       final isAuthenticated = await DioHelper.getAccessToken() != null;
+      final currentRoute = state.uri.path;
       if (isAuthenticated) {
-        if (routes.contains(state.uri.path)) {
+        if (currentRoute != "/boarding") {
           return null;
         }
         return "/";

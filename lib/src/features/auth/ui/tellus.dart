@@ -196,14 +196,22 @@ class _TellusState extends State<Tellus> {
                                                               CupertinoDatePickerMode
                                                                   .date,
                                                           initialDateTime:
-                                                              DateTime.now(),
+                                                              DateTime.now()
+                                                                  .subtract(
+                                                                    Duration(
+                                                                      days:
+                                                                          365 *
+                                                                          18,
+                                                                    ),
+                                                                  ),
 
                                                           minimumDate:
                                                               DateTime.now()
                                                                   .subtract(
                                                                     Duration(
                                                                       days:
-                                                                          100000,
+                                                                          365 *
+                                                                          100,
                                                                     ),
                                                                   ),
                                                           onDateTimeChanged: (date) {
