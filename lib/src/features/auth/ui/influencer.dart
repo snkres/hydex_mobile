@@ -152,7 +152,7 @@ class _InfluencerScreenState extends State<InfluencerScreen> {
                                   onTap:
                                       selectedContent != null &&
                                           selectedSize != null
-                                      ? () => context.go("/waitlist")
+                                      ? () => context.go("/")
                                       : null,
                                 ),
                               ),

@@ -369,12 +369,14 @@ class SettingsWaitlist extends StatelessWidget {
                                               minHeight: 50,
                                             ),
                                             child: TextButton(
-                                              onPressed: () {
-                                                ref
+                                              onPressed: () async {
+                                                await ref
                                                     .read(authServiceProvider)
                                                     .logout();
                                                 CacheHelper.remove("waitlist");
-                                                context.go("/");
+                                                if (context.mounted) {
+                                                  context.go("/boarding");
+                                                }
                                               },
                                               child: Text(
                                                 "Log Out",
@@ -474,12 +476,13 @@ class SettingsWaitlist extends StatelessWidget {
                                         ),
 
                                         child: TextButton(
-                                          onPressed: () {
-                                            ref
+                                          onPressed: () async {
+                                            await ref
                                                 .read(authServiceProvider)
-                                                .logout();
-                                            CacheHelper.remove("waitlist");
-                                            context.go("/");
+                                                .deleteUser();
+                                            if (context.mounted) {
+                                              context.go("/boarding");
+                                            }
                                           },
                                           child: Text(
                                             "Delete Account",

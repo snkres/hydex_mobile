@@ -114,6 +114,8 @@ class _TellusState extends State<Tellus> {
                                               child: Column(
                                                 children: [
                                                   TextFormField(
+                                                    keyboardType: TextInputType
+                                                        .emailAddress,
                                                     controller: emailController,
                                                     autovalidateMode:
                                                         AutovalidateMode

@@ -267,7 +267,7 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
                               Padding(
                                 padding: EdgeInsets.only(top: 16),
                                 child: PrimaryButton(
-                                  onTap: () => context.go("/waitlist"),
+                                  onTap: () => context.go("/"),
                                 ),
                               ),
                             ],

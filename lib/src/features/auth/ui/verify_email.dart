@@ -74,6 +74,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                     key: formKey,
                                     child: TextFormField(
                                       controller: emailController,
+                                      keyboardType: TextInputType.emailAddress,
                                       autovalidateMode:
                                           AutovalidateMode.onUserInteraction,
                                       onChanged: (value) {

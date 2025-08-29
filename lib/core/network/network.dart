@@ -819,9 +819,7 @@ class DioHelper {
               if (error.requestOptions.path.contains(_refreshEndpoint ?? '')) {
                 return TokenExpiredException('Refresh token expired');
               }
-              return UnauthorizedException(
-                'Unauthorized access. Please login again.',
-              );
+              return UnauthorizedException(message!);
             case 403:
               return ServerException(
                 'Access forbidden.',

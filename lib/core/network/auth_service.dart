@@ -24,20 +24,18 @@ class AuthService {
     );
   }
 
-  // Login and get user profile with enhanced token handling
   Future<User> login(String email, String password) async {
     try {
       // Use the enhanced login method that handles tokens automatically
-      final responseData = await DioHelper.login('/auth/login', {
+      final responseData = await DioHelper.authenticate('/auth/login', {
         'identifier': email,
         'password': password,
       });
 
       // Parse user data from response
-      final userData =
-          responseData['user'] ?? responseData['data'] ?? responseData;
+      final userData = responseData['data']['user'] as Map<String, dynamic>;
       final user = UserMapper.fromMap(userData);
-
+      ref.read(userNotifierProvider.notifier).setUser(user);
       if (kDebugMode) {
         print('✅ Login successful for user: ${user.email}');
         print('🔐 Access token stored from response data');
@@ -190,7 +188,6 @@ class AuthService {
     try {
       final response = await DioHelper.get("/auth/me");
       if (response.success && response.data != null) {
-        print("Success Current User");
         final user = UserMapper.fromMap(response.data['data']['user']);
         return user;
       }
@@ -201,10 +198,14 @@ class AuthService {
   }
 
   // Delete user
-  Future<bool> deleteUser(String userId) async {
+  Future<bool> deleteUser() async {
     try {
-      final response = await DioHelper.delete('/users/$userId');
-      return response.success;
+      final response = await DioHelper.delete('/auth/me');
+      if (response.success) {
+        DioHelper.clearTokens();
+        return true;
+      }
+      return false;
     } catch (e) {
       rethrow;
     }
@@ -213,6 +214,7 @@ class AuthService {
   Future<void> logout() async {
     try {
       await DioHelper.logout('/auth/logout');
+      DioHelper.clearTokens();
     } catch (e) {
       rethrow;
     }

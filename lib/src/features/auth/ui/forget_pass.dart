@@ -299,6 +299,8 @@ class ForgotPasswordEmail extends StatelessWidget {
       key: formKey,
       child: TextFormField(
         controller: emailController,
+           keyboardType: TextInputType
+                                                        .emailAddress,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: (value) {
           if (value!.isEmpty) {
