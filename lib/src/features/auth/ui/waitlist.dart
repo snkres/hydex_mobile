@@ -10,8 +10,8 @@ import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 
 class BaseScreen extends StatefulWidget {
-  const BaseScreen({super.key});
-
+  const BaseScreen({super.key, this.initialTab});
+  final int? initialTab;
   @override
   State<BaseScreen> createState() => _BaseScreenState();
 }
@@ -29,6 +29,15 @@ class _BaseScreenState extends State<BaseScreen> {
     const BookingScreen(),
     const SettingsScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialTab != null) {
+      currentIndex = widget.initialTab!;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -104,7 +104,7 @@ class _CreateBookingState extends State<CreateBooking> {
                                   brightness: Theme.brightnessOf(context),
                                 ),
                                 child: CupertinoDatePicker(
-                                  initialDateTime: DateTime.now(),
+                                  minimumDate: DateTime.now(),
                                   onDateTimeChanged: (date) {
                                     final DateFormat formatter = DateFormat(
                                       'EEE, d MMM',
@@ -196,6 +196,8 @@ class _CreateBookingState extends State<CreateBooking> {
                     return PrimaryButton(
                       onTap: () async {
                         if (formKey.currentState!.validate()) {
+                          FocusManager.instance.primaryFocus?.unfocus();
+
                           ref
                               .read(bookingProvider.notifier)
                               .state = ConfirmBooking(
@@ -203,6 +205,7 @@ class _CreateBookingState extends State<CreateBooking> {
                             people: int.parse(peopleController.text),
                             bookingDate: dateController.text,
                           );
+
                           widget.controller.nextPage(
                             duration: Duration(milliseconds: 300),
                             curve: Curves.easeIn,

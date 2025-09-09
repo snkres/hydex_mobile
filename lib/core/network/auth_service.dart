@@ -337,6 +337,7 @@ class UserNotifier extends _$UserNotifier {
       state = User(
         email: email ?? "",
         phone: phone,
+        status: UserStatus.pending,
         fullName: fullName ?? "",
         gender: gender ?? "",
         nationality: nationality ?? "",
@@ -362,6 +363,7 @@ class UserNotifier extends _$UserNotifier {
     } else {
       state = state?.copyWith(
         email: email ?? state?.email,
+        status: UserStatus.pending,
         phone: phone ?? state?.phone,
         fullName: fullName ?? state?.fullName,
         gender: gender ?? state?.gender,

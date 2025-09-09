@@ -21,8 +21,8 @@ enum UserStatus {
   pending,
   @MappableValue('ACTIVE')
   active,
-  @MappableValue('INACTIVE')
-  inactive,
+  @MappableValue('REJECTED')
+  rejected,
   @MappableValue('SUSPENDED')
   suspended,
 }
@@ -36,6 +36,7 @@ class User with UserMappable {
   final String? avatar;
   final String? gender;
   final String? nationality;
+  final UserStatus status;
   final DateTime? dateOfBirth;
   final String role;
   final String? referralCode;
@@ -55,6 +56,7 @@ class User with UserMappable {
     this.phone,
     this.fullName,
     this.avatar,
+    required this.status,
     this.gender,
     this.nationality,
     this.dateOfBirth,

@@ -401,8 +401,8 @@ class DioHelper {
               if (kDebugMode) {
                 print('❌ Token refresh failed during retry: $refreshError');
               }
-              // _authEventListener?.onTokenRefreshFailed();
-              // await _clearTokens();
+              _authEventListener?.onTokenRefreshFailed();
+              await _clearTokens();
             }
           }
 
@@ -739,41 +739,6 @@ class DioHelper {
       }
     } catch (e) {
       throw _handleError(e);
-    }
-  }
-
-  // Enhanced login method that handles tokens from response data and cookies
-  static Future<Map<String, dynamic>> login(
-    String endpoint,
-    Map<String, dynamic> credentials,
-  ) async {
-    return authenticate(endpoint, credentials);
-  }
-
-  // Enhanced logout method
-  static Future<void> logout([String? logoutEndpoint]) async {
-    try {
-      if (logoutEndpoint != null && _tokenPair != null) {
-        // Send logout request with both tokens
-        final cookieHeader = _tokenPair!.refreshToken != null
-            ? 'refreshToken=${_tokenPair!.refreshToken}'
-            : '';
-
-        await _dio.post(
-          logoutEndpoint,
-          options: Options(
-            headers: cookieHeader.isNotEmpty ? {'Cookie': cookieHeader} : null,
-          ),
-        );
-      }
-    } catch (e) {
-      // Ignore logout errors - we'll clear tokens anyway
-      if (kDebugMode) {
-        print('⚠️ Logout request failed: $e');
-      }
-    } finally {
-      await _clearTokens();
-      _authEventListener?.onUnauthorized();
     }
   }
 

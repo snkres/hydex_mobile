@@ -83,8 +83,8 @@ class UserStatusMapper extends EnumMapper<UserStatus> {
         return UserStatus.pending;
       case 'ACTIVE':
         return UserStatus.active;
-      case 'INACTIVE':
-        return UserStatus.inactive;
+      case 'REJECTED':
+        return UserStatus.rejected;
       case 'SUSPENDED':
         return UserStatus.suspended;
       default:
@@ -99,8 +99,8 @@ class UserStatusMapper extends EnumMapper<UserStatus> {
         return 'PENDING';
       case UserStatus.active:
         return 'ACTIVE';
-      case UserStatus.inactive:
-        return 'INACTIVE';
+      case UserStatus.rejected:
+        return 'REJECTED';
       case UserStatus.suspended:
         return 'SUSPENDED';
     }
@@ -121,6 +121,7 @@ class UserMapper extends ClassMapperBase<User> {
   static UserMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = UserMapper._());
+      UserStatusMapper.ensureInitialized();
       SocialLinksMapper.ensureInitialized();
     }
     return _instance!;
@@ -142,6 +143,8 @@ class UserMapper extends ClassMapperBase<User> {
   static String? _$avatar(User v) => v.avatar;
   static const Field<User, String> _f$avatar =
       Field('avatar', _$avatar, opt: true);
+  static UserStatus _$status(User v) => v.status;
+  static const Field<User, UserStatus> _f$status = Field('status', _$status);
   static String? _$gender(User v) => v.gender;
   static const Field<User, String> _f$gender =
       Field('gender', _$gender, opt: true);
@@ -191,6 +194,7 @@ class UserMapper extends ClassMapperBase<User> {
     #phone: _f$phone,
     #fullName: _f$fullName,
     #avatar: _f$avatar,
+    #status: _f$status,
     #gender: _f$gender,
     #nationality: _f$nationality,
     #dateOfBirth: _f$dateOfBirth,
@@ -214,6 +218,7 @@ class UserMapper extends ClassMapperBase<User> {
         phone: data.dec(_f$phone),
         fullName: data.dec(_f$fullName),
         avatar: data.dec(_f$avatar),
+        status: data.dec(_f$status),
         gender: data.dec(_f$gender),
         nationality: data.dec(_f$nationality),
         dateOfBirth: data.dec(_f$dateOfBirth),
@@ -287,6 +292,7 @@ abstract class UserCopyWith<$R, $In extends User, $Out>
       String? phone,
       String? fullName,
       String? avatar,
+      UserStatus? status,
       String? gender,
       String? nationality,
       DateTime? dateOfBirth,
@@ -342,6 +348,7 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
           Object? phone = $none,
           Object? fullName = $none,
           Object? avatar = $none,
+          UserStatus? status,
           Object? gender = $none,
           Object? nationality = $none,
           Object? dateOfBirth = $none,
@@ -362,6 +369,7 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
         if (phone != $none) #phone: phone,
         if (fullName != $none) #fullName: fullName,
         if (avatar != $none) #avatar: avatar,
+        if (status != null) #status: status,
         if (gender != $none) #gender: gender,
         if (nationality != $none) #nationality: nationality,
         if (dateOfBirth != $none) #dateOfBirth: dateOfBirth,
@@ -384,6 +392,7 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
       phone: data.get(#phone, or: $value.phone),
       fullName: data.get(#fullName, or: $value.fullName),
       avatar: data.get(#avatar, or: $value.avatar),
+      status: data.get(#status, or: $value.status),
       gender: data.get(#gender, or: $value.gender),
       nationality: data.get(#nationality, or: $value.nationality),
       dateOfBirth: data.get(#dateOfBirth, or: $value.dateOfBirth),

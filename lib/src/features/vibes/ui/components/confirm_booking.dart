@@ -7,10 +7,15 @@ import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 
 class ConfirmBooking extends StatelessWidget {
-  const ConfirmBooking({super.key, required this.controller, required this.eventName, required this.location});
+  const ConfirmBooking({
+    super.key,
+    required this.controller,
+    required this.eventName,
+    required this.location,
+  });
 
   final PageController controller;
-  final String eventName , location;
+  final String eventName, location;
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +151,12 @@ class ConfirmBooking extends StatelessWidget {
 
           SizedBox(height: 24),
 
-          PrimaryButton(onTap: null, title: "View My Bookings"),
+          PrimaryButton(
+            onTap: () async {
+              context.go("/", extra: 1);
+            },
+            title: "View My Bookings",
+          ),
           SizedBox(height: 18),
         ],
       ),

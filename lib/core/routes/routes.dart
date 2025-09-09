@@ -42,7 +42,11 @@ class AppRoutes {
       return null;
     },
     routes: [
-      GoRoute(path: "/", builder: (context, state) => const BaseScreen()),
+      GoRoute(
+        path: "/",
+        builder: (context, state) =>
+            BaseScreen(initialTab: state.extra as int?),
+      ),
       GoRoute(
         path: "/boarding",
         builder: (context, state) => const BoardingScreen(),
