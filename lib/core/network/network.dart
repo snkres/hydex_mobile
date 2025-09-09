@@ -403,6 +403,7 @@ class DioHelper {
               }
               _authEventListener?.onTokenRefreshFailed();
               await _clearTokens();
+              await logout();
             }
           }
 
@@ -739,6 +740,33 @@ class DioHelper {
       }
     } catch (e) {
       throw _handleError(e);
+    }
+  }
+
+  // Enhanced logout method
+  static Future<void> logout([String? logoutEndpoint]) async {
+    try {
+      if (logoutEndpoint != null && _tokenPair != null) {
+        // Send logout request with both tokens
+        final cookieHeader = _tokenPair!.refreshToken != null
+            ? 'refreshToken=${_tokenPair!.refreshToken}'
+            : '';
+
+        await _dio.post(
+          logoutEndpoint,
+          options: Options(
+            headers: cookieHeader.isNotEmpty ? {'Cookie': cookieHeader} : null,
+          ),
+        );
+      }
+    } catch (e) {
+      // Ignore logout errors - we'll clear tokens anyway
+      if (kDebugMode) {
+        print('⚠️ Logout request failed: $e');
+      }
+    } finally {
+      await _clearTokens();
+      _authEventListener?.onUnauthorized();
     }
   }
 
