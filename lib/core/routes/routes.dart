@@ -20,6 +20,7 @@ import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/features/auth/ui/ugo.dart';
 import 'package:hydex/src/features/auth/ui/waitlist.dart';
 import 'package:hydex/src/features/vibes/ui/details_screen.dart';
+import 'package:hydex/src/features/waitlist/ui/waitlist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'routes.g.dart';
@@ -28,7 +29,7 @@ class AppRoutes {
   Ref ref;
   AppRoutes(this.ref);
   final routes = GoRouter(
-    initialLocation: '/',
+    initialLocation: '/waitlist',
     redirect: (context, state) async {
       final isAuthenticated = await DioHelper.getAccessToken() != null;
       final currentRoute = state.uri.path;
@@ -100,7 +101,14 @@ class AppRoutes {
         builder: (context, state) =>
             ForgetResponse(isPhone: state.extra as bool),
       ),
-      GoRoute(path: "/details", builder: (context, state) => DetailsScreen()),
+      GoRoute(
+        path: "/details",
+        builder: (context, state) => DetailsScreen(id: state.extra as String),
+      ),
+      GoRoute(
+        path: "/waitlist",
+        builder: (context, state) => const WaitlistScreen(),
+      ),
       GoRoute(
         path: "/terms",
         builder: (context, state) => const TermsAndConditions(),

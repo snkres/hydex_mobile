@@ -23,7 +23,7 @@ final currentUserProvider = FutureProvider<User?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CurrentUserRef = FutureProviderRef<User?>;
-String _$userNotifierHash() => r'0d956878cfa577fabbad56978ddc29d934f6437a';
+String _$userNotifierHash() => r'6d193fb53bf4cbdd3ab8a4d74a02ab829ce26824';
 
 /// See also [UserNotifier].
 @ProviderFor(UserNotifier)

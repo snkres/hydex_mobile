@@ -1,12 +1,22 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/vibes/data/heading.dart';
+import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class VibesScreen extends StatelessWidget {
-  VibesScreen({super.key});
+class VibesScreen extends ConsumerStatefulWidget {
+  const VibesScreen({super.key});
 
+  @override
+  ConsumerState<VibesScreen> createState() => _VibesScreenState();
+}
+
+class _VibesScreenState extends ConsumerState<VibesScreen> {
   final headings = [
     Heading(
       text: "Anyma",
@@ -19,7 +29,21 @@ class VibesScreen extends StatelessWidget {
       image: "img/gatsby_bar.jpg",
     ),
   ];
+
   final headingPageController = PageController();
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(authServiceProvider).sendFCMNotification();
+  }
+
+  @override
+  void dispose() {
+    headingPageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -154,9 +178,43 @@ class VibesScreen extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: 20),
-                        EventContainer(onView: () {}),
-                        SizedBox(height: 20),
-                        EventContainer(onView: () {}),
+
+                        Consumer(
+                          builder: (context, ref, child) {
+                            final bookings = ref.watch(getEventsProvider);
+                            return bookings.when(
+                              data: (data) {
+                                return ListView.separated(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  separatorBuilder: (context, index) =>
+                                      SizedBox(height: 20),
+                                  shrinkWrap: true,
+                                  itemCount: data.length,
+                                  itemBuilder: (context, index) {
+                                    return EventContainer(
+                                      isNotDetail: true,
+                                      onView: () => context.push(
+                                        "/details",
+                                        extra: data[index].id,
+                                      ),
+                                      heading: data[index].title,
+                                      image: data[index].imageUrl,
+                                      description: data[index].description,
+                                    );
+                                  },
+                                );
+                              },
+                              error: (e, s) => Center(child: Text("Error")),
+                              loading: () => Center(
+                                child: CircularProgressIndicator.adaptive(),
+                              ),
+                            );
+                          },
+                        ),
+                        // EventContainer(onView: () {}),
+                        // SizedBox(height: 20),
+                        // EventContainer(onView: () {}),
+                        SizedBox(height: 100),
                       ],
                     ),
                   ),
@@ -171,8 +229,17 @@ class VibesScreen extends StatelessWidget {
 }
 
 class EventContainer extends StatelessWidget {
-  const EventContainer({super.key, this.onView});
+  const EventContainer({
+    super.key,
+    this.onView,
+    required this.heading,
+    required this.description,
+    required this.image,
+    this.isNotDetail = false,
+  });
   final VoidCallback? onView;
+  final String heading, description, image;
+  final bool isNotDetail;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -187,7 +254,10 @@ class EventContainer extends StatelessWidget {
               Container(
                 height: 150,
                 decoration: BoxDecoration(
-                  color: Colors.grey[400]!,
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: CachedNetworkImageProvider(image),
+                  ),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
@@ -215,21 +285,32 @@ class EventContainer extends StatelessWidget {
                   spacing: 8,
                   children: [
                     CircleAvatar(),
-                    Text(
-                      "Cairo Jazz Club",
-                      style: TextStyle(
-                        fontSize: AppTextStyles(context).accumulator * 18,
-                        fontWeight: FontWeight.w700,
+                    Expanded(
+                      child: Text(
+                        heading,
+                        style: TextStyle(
+                          fontSize: AppTextStyles(context).accumulator * 18,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ],
                 ),
                 SizedBox(height: 8),
 
-                Text("An iconic nightlife hub since 2001."),
+                Text(
+                  description,
+                  maxLines: isNotDetail ? 1 : null,
+                  overflow: isNotDetail ? TextOverflow.clip : null,
+                ),
                 SizedBox(height: 19),
                 onView != null
-                    ? PrimaryButton(onTap: () async {}, title: "View")
+                    ? PrimaryButton(
+                        onTap: () async {
+                          onView!();
+                        },
+                        title: "View",
+                      )
                     : SizedBox.shrink(),
               ],
             ),

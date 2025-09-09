@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
@@ -21,7 +23,7 @@ class _InfluencerScreenState extends State<InfluencerScreen> {
     'Yoga & Wellness',
     'Fashion',
   ];
-  String? selectedContent;
+  Set<String> selectedContent = {};
 
   List<String> audienceSizeRange = [
     '1K – 5K',
@@ -32,6 +34,8 @@ class _InfluencerScreenState extends State<InfluencerScreen> {
     '1M+',
   ];
   String? selectedSize;
+
+  final countryActivityController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -101,10 +105,17 @@ class _InfluencerScreenState extends State<InfluencerScreen> {
                                         .map(
                                           (e) => CustomChip(
                                             title: e,
-                                            isSelected: e == selectedContent,
+                                            isSelected: selectedContent
+                                                .contains(e),
                                             onTap: () {
                                               setState(() {
-                                                selectedContent = e;
+                                                if (selectedContent.contains(
+                                                  e,
+                                                )) {
+                                                  selectedContent.remove(e);
+                                                } else {
+                                                  selectedContent.add(e);
+                                                }
                                               });
                                             },
                                           ),
@@ -140,6 +151,7 @@ class _InfluencerScreenState extends State<InfluencerScreen> {
                                   ),
                                   SizedBox(height: 24),
                                   TextFormField(
+                                    controller: countryActivityController,
                                     decoration: InputDecoration(
                                       labelText: "City of primary activity",
                                     ),
@@ -148,12 +160,36 @@ class _InfluencerScreenState extends State<InfluencerScreen> {
                               ),
                               Padding(
                                 padding: EdgeInsets.only(top: 16),
-                                child: PrimaryButton(
-                                  onTap:
-                                      selectedContent != null &&
-                                          selectedSize != null
-                                      ? () async => context.go("/")
-                                      : null,
+                                child: Consumer(
+                                  builder: (context, ref, child) {
+                                    return PrimaryButton(
+                                      onTap: selectedSize != null
+                                          ? () async {
+                                              ref
+                                                  .read(
+                                                    userNotifierProvider
+                                                        .notifier,
+                                                  )
+                                                  .create(
+                                                    preferredCountry:
+                                                        countryActivityController
+                                                            .text,
+                                                    contentNiches:
+                                                        selectedContent
+                                                            .toList(),
+                                                    audienceSizeRange:
+                                                        selectedSize,
+                                                  );
+                                              await ref
+                                                  .read(authServiceProvider)
+                                                  .createProfile();
+                                              if (!context.mounted) return;
+
+                                              context.go("/");
+                                            }
+                                          : null,
+                                    );
+                                  },
                                 ),
                               ),
                             ],

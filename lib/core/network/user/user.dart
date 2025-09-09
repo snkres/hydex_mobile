@@ -40,6 +40,14 @@ class User with UserMappable {
   final String role;
   final String? referralCode;
   final String? password;
+  final List<String>? interests;
+  final List<String>? contentNiches;
+  final String? businessName;
+  final List<String>? areas;
+  final String? audienceSizeRange;
+  final String? groupSize;
+  final String? preferredCountry;
+  final SocialLinks? socialLinks;
 
   User({
     this.id,
@@ -50,8 +58,25 @@ class User with UserMappable {
     this.gender,
     this.nationality,
     this.dateOfBirth,
+    this.audienceSizeRange,
     required this.role,
     this.referralCode,
+    this.interests,
+    this.contentNiches,
+    this.businessName,
+    this.areas,
+    this.groupSize,
+    this.preferredCountry,
+    this.socialLinks,
     this.password,
   });
+}
+
+@MappableClass()
+class SocialLinks with SocialLinksMappable {
+  final String? facebook;
+  final String? instagram;
+  final String? website;
+
+  SocialLinks({this.facebook, this.instagram, this.website});
 }

@@ -1,18 +1,28 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/booking/data/booking.dart';
+import 'package:hydex/src/features/vibes/data/confirm_booking.dart';
+import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 
-class ReviewBooking extends StatelessWidget {
-  const ReviewBooking({super.key, required this.controller});
+final bookingProvider = StateProvider<ConfirmBooking?>((ref) => null);
+
+class ReviewBooking extends ConsumerWidget {
+  const ReviewBooking({
+    super.key,
+    required this.controller,
+    required this.location,
+    required this.eventName,
+  });
 
   final PageController controller;
+  final String location, eventName;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final booking = ref.watch(bookingProvider);
     return Padding(
       padding: EdgeInsets.only(
         top: 16,
@@ -42,7 +52,7 @@ class ReviewBooking extends StatelessWidget {
           ),
           SizedBox(height: 8),
           Text(
-            "Cairo Jazz Club — Live Music Night",
+            eventName,
             style: AppTextStyles(context).captionRegular.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -62,7 +72,7 @@ class ReviewBooking extends StatelessWidget {
               ),
             ),
             trailing: Text(
-              "Fri, 13 Sept",
+              booking!.bookingDate,
               style: AppTextStyles(context).smallMedium.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
               ),
@@ -82,7 +92,7 @@ class ReviewBooking extends StatelessWidget {
               ),
             ),
             trailing: Text(
-              "4 people",
+              "${booking.people} people",
               style: AppTextStyles(context).smallMedium.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
               ),
@@ -111,7 +121,7 @@ class ReviewBooking extends StatelessWidget {
                       ),
                       SizedBox(height: 14),
                       Text(
-                        "197, 26th of July St, Agouza, Giza",
+                        location,
                         style: AppTextStyles(context).captionMedium,
                       ),
                     ],
@@ -165,6 +175,13 @@ class ReviewBooking extends StatelessWidget {
             children: [
               PrimaryButton(
                 onTap: () async {
+                  await ref
+                      .read(vibesProvider)
+                      .createBooking(
+                        booking.eventID,
+                        booking.bookingDate,
+                        booking.people,
+                      );
                   controller.nextPage(
                     duration: Duration(milliseconds: 300),
                     curve: Curves.easeIn,

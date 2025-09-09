@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/auth/provider/nationality_provider.dart';
 import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
@@ -123,7 +124,7 @@ class BusinessOnlyWidget extends StatelessWidget {
                               controller: linkController,
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.url,
-                              autovalidateMode: AutovalidateMode.always,
+                              autovalidateMode: AutovalidateMode.onUnfocus,
                               decoration: InputDecoration(
                                 labelText: "Instagram or Website link",
                               ),
@@ -135,8 +136,6 @@ class BusinessOnlyWidget extends StatelessWidget {
                                   if (!value.endsWith(".com")) {
                                     return "Must be a url";
                                   }
-
-                                  // Check if URL has proper scheme
                                 }
                                 return null;
                               },
@@ -180,8 +179,7 @@ class BusinessOnlyWidget extends StatelessWidget {
                           ref
                               .read(userNotifierProvider.notifier)
                               .create(
-                                nationality: businessController.text,
-                                socialStatus: type,
+                                businessName: businessController.text,
                                 instagram: linkController.text,
                               );
 
@@ -213,6 +211,8 @@ class _TellusForOthersState extends State<TellusForOthers> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final TextEditingController instagramController = TextEditingController();
+
+  final nationalityController = TextEditingController();
 
   final TextEditingController facebookController = TextEditingController();
 
@@ -294,6 +294,7 @@ class _TellusForOthersState extends State<TellusForOthers> {
                                 ),
                               ],
                             ),
+
                             Row(
                               spacing: 12,
                               children: [
@@ -451,6 +452,7 @@ class _TellusForOthersState extends State<TellusForOthers> {
                                 socialStatus: type,
                                 instagram: instagramController.text,
                                 facebook: facebookController.text,
+                                
                                 referralCode: referralCodeController.text,
                               );
 

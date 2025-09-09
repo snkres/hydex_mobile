@@ -102,31 +102,35 @@ class NavBar extends StatelessWidget {
           children: [
             isBooking ? SizedBox(height: 2) : SizedBox.shrink(),
 
-            SvgPicture.asset(
-              svgPath,
-              package: "assets",
-              width: isBooking ? 24 : 19,
-              colorFilter: ColorFilter.mode(
-                selectedIndex == index
-                    ? Theme.of(context).colorScheme.onSurface
-                    : Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.5),
-                BlendMode.srcIn,
+            SizedBox(
+              width: isBooking ? 20 : 19,
+              child: SvgPicture.asset(
+                svgPath,
+                package: "assets",
+                colorFilter: ColorFilter.mode(
+                  selectedIndex == index
+                      ? Theme.of(context).colorScheme.onSurface
+                      : Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.5),
+                  BlendMode.srcIn,
+                ),
               ),
             ),
             SizedBox(height: 6),
 
-            Text(
-              title,
-              style: TextStyle(
-                color: selectedIndex == index
-                    ? Theme.of(context).colorScheme.onSurface
-                    : Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.5),
-                fontWeight: selectedIndex == index ? FontWeight.w700 : null,
-                fontSize: AppTextStyles(context).accumulator * 12,
+            FittedBox(
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: selectedIndex == index
+                      ? Theme.of(context).colorScheme.onSurface
+                      : Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.5),
+                  fontWeight: selectedIndex == index ? FontWeight.w700 : null,
+                  fontSize: AppTextStyles(context).accumulator * 12,
+                ),
               ),
             ),
           ],

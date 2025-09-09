@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
@@ -266,8 +268,25 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
                               ),
                               Padding(
                                 padding: EdgeInsets.only(top: 16),
-                                child: PrimaryButton(
-                                  onTap: () async => context.go("/"),
+                                child: Consumer(
+                                  builder: (context, ref, child) {
+                                    return PrimaryButton(
+                                      onTap: () async {
+                                        ref
+                                            .read(userNotifierProvider.notifier)
+                                            .create(
+                                              preferredCountry: selectedCountry,
+                                              areas: selectedArea.toList(),
+                                              groupSize: selectedSize,
+                                            );
+                                        await ref
+                                            .read(authServiceProvider)
+                                            .createProfile();
+                                        if (!context.mounted) return;
+                                        context.go("/");
+                                      },
+                                    );
+                                  },
                                 ),
                               ),
                             ],

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/auth_handler.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/network/user/user.dart';
+import 'package:hydex/core/notification/notification.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auth_service.g.dart';
 
@@ -110,6 +111,17 @@ class AuthService {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<bool> createProfile() async {
+    final user = ref.read(userNotifierProvider);
+    final data = _getOnboardingData(user!);
+    final response = await DioHelper.post<Map<String, dynamic>>(
+      '/onboarding',
+      data: data,
+    );
+
+    return response.success;
   }
 
   Future<String> verifyReferalCode({required String referralCode}) async {
@@ -219,6 +231,72 @@ class AuthService {
       rethrow;
     }
   }
+
+  Future<void> sendFCMNotification() async {
+    try {
+      final deviceToken = await FirebaseNotifications().getToken();
+      final data = {
+        "token": deviceToken,
+        "platform": Platform.isAndroid ? "ANDROID" : "IOS",
+      };
+      await DioHelper.post('/notifications/register-device', data: data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Map<String, dynamic> _getOnboardingData(User user) {
+    final socialLinks = user.socialLinks != null
+        ? {
+            "facebook": user.socialLinks!.facebook,
+            "instagram": user.socialLinks!.instagram,
+            "website": user.socialLinks!.website,
+          }
+        : null;
+    switch (user.role) {
+      case "SEEKER":
+        return {
+          "preferences": {
+            "interests": user.interests,
+            "preferredCountry": user.preferredCountry,
+
+            "preferredAreas": user.areas,
+
+            "groupSize": user.groupSize,
+          },
+
+          "socialLinks": socialLinks,
+        };
+      case "AMBASSADOR":
+        return {
+          "preferences": {
+            "contentNiches": user.contentNiches,
+
+            "audienceSizeRange": user.audienceSizeRange,
+
+            "cityOfPrimaryActivity": user.preferredCountry,
+
+            "contentTypes": ["videos", "photos", "stories"],
+
+            "collaborationPreferences": {
+              "preferredBrands": ["luxury", "fashion", "food"],
+
+              "minimumEngagement": 3.5,
+            },
+          },
+
+          "socialLinks": socialLinks,
+        };
+      case "OWNER":
+        return {
+          "businessName": user.businessName,
+
+          "website": user.socialLinks?.website,
+        };
+      default:
+        return {};
+    }
+  }
 }
 
 final authServiceProvider = Provider<AuthService>(AuthService.new);
@@ -247,6 +325,13 @@ class UserNotifier extends _$UserNotifier {
     String? socialStatus,
     String? instagram,
     String? facebook,
+    List<String>? interests,
+    List<String>? contentNiches,
+    String? audienceSizeRange,
+    String? groupSize,
+    String? preferredCountry,
+    String? businessName,
+    List<String>? areas,
   }) {
     if (state == null) {
       state = User(
@@ -258,6 +343,21 @@ class UserNotifier extends _$UserNotifier {
         referralCode: referralCode ?? "",
         password: password ?? "",
         role: role ?? "",
+        interests: interests,
+        contentNiches: contentNiches,
+        audienceSizeRange: audienceSizeRange,
+        groupSize: groupSize,
+        preferredCountry: preferredCountry,
+        businessName: businessName,
+        areas: areas,
+        dateOfBirth: dateOfBirth != null
+            ? DateTime.tryParse(dateOfBirth)
+            : null,
+        socialLinks: SocialLinks(
+          instagram: instagram,
+          facebook: facebook,
+          website: instagram,
+        ),
       );
     } else {
       state = state?.copyWith(
@@ -265,6 +365,22 @@ class UserNotifier extends _$UserNotifier {
         phone: phone ?? state?.phone,
         fullName: fullName ?? state?.fullName,
         gender: gender ?? state?.gender,
+        dateOfBirth: dateOfBirth != null
+            ? DateTime.tryParse(dateOfBirth)
+            : state?.dateOfBirth,
+        interests: interests ?? state?.interests,
+        contentNiches: contentNiches ?? state?.contentNiches,
+        audienceSizeRange: audienceSizeRange ?? state?.audienceSizeRange,
+        groupSize: groupSize ?? state?.groupSize,
+        preferredCountry: preferredCountry ?? state?.preferredCountry,
+        businessName: businessName ?? state?.businessName,
+        areas: areas ?? state?.areas,
+
+        socialLinks: SocialLinks(
+          instagram: instagram ?? state?.socialLinks?.instagram,
+          facebook: facebook ?? state?.socialLinks?.facebook,
+          website: instagram ?? state?.socialLinks?.website,
+        ),
         referralCode: referralCode ?? state?.referralCode,
         nationality: nationality ?? state?.nationality,
         password: password ?? state?.password,

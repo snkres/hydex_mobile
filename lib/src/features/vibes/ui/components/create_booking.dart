@@ -1,14 +1,36 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/vibes/data/confirm_booking.dart';
+import 'package:hydex/src/features/vibes/ui/components/review_booking.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
+import 'package:intl/intl.dart';
 
-class CreateBooking extends StatelessWidget {
-  const CreateBooking({super.key, required this.controller});
+class CreateBooking extends StatefulWidget {
+  const CreateBooking({
+    super.key,
+    required this.controller,
+    required this.eventName,
+    required this.description,
+    required this.id,
+  });
   final PageController controller;
+  final String eventName, description, id;
+
+  @override
+  State<CreateBooking> createState() => _CreateBookingState();
+}
+
+class _CreateBookingState extends State<CreateBooking> {
+  final dateController = TextEditingController();
+
+  final peopleController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -35,23 +57,25 @@ class CreateBooking extends StatelessWidget {
           ),
           SizedBox(height: 22),
           Text(
-            "Booking Cairo Jazz Club",
+            "Booking ${widget.eventName}",
             style: AppTextStyles(context).primaryBold,
           ),
           SizedBox(height: 8),
           Text(
-            "An iconic nightlife spot in the heart of Cairo, known for its vibrant atmosphere, top DJs, and live performances.",
+            widget.description,
             style: AppTextStyles(context).captionRegular.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           SizedBox(height: 16),
           Form(
+            key: formKey,
             child: Column(
               spacing: 16,
               children: [
                 TextFormField(
                   readOnly: true,
+                  controller: dateController,
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
@@ -80,7 +104,16 @@ class CreateBooking extends StatelessWidget {
                                   brightness: Theme.brightnessOf(context),
                                 ),
                                 child: CupertinoDatePicker(
-                                  onDateTimeChanged: (date) {},
+                                  initialDateTime: DateTime.now(),
+                                  onDateTimeChanged: (date) {
+                                    final DateFormat formatter = DateFormat(
+                                      'EEE, d MMM',
+                                    );
+                                    String formatted = formatter.format(date);
+                                    setState(() {
+                                      dateController.text = formatted;
+                                    });
+                                  },
                                 ),
                               ),
                             ),
@@ -89,9 +122,22 @@ class CreateBooking extends StatelessWidget {
                       },
                     );
                   },
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Please enter booking date";
+                    }
+                    return null;
+                  },
                   decoration: InputDecoration(labelText: "Choose Date & Time"),
                 ),
                 TextFormField(
+                  controller: peopleController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Please enter people count";
+                    }
+                    return null;
+                  },
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   keyboardType: TextInputType.numberWithOptions(
                     decimal: false,
@@ -145,14 +191,27 @@ class CreateBooking extends StatelessWidget {
                     ],
                   ),
                 ),
-                PrimaryButton(
-                  onTap: () async {
-                    controller.nextPage(
-                      duration: Duration(milliseconds: 300),
-                      curve: Curves.easeIn,
+                Consumer(
+                  builder: (context, ref, child) {
+                    return PrimaryButton(
+                      onTap: () async {
+                        if (formKey.currentState!.validate()) {
+                          ref
+                              .read(bookingProvider.notifier)
+                              .state = ConfirmBooking(
+                            eventID: widget.id,
+                            people: int.parse(peopleController.text),
+                            bookingDate: dateController.text,
+                          );
+                          widget.controller.nextPage(
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.easeIn,
+                          );
+                        }
+                      },
+                      title: "Next",
                     );
                   },
-                  title: "Next",
                 ),
               ],
             ),

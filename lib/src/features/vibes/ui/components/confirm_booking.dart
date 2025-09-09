@@ -7,9 +7,10 @@ import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 
 class ConfirmBooking extends StatelessWidget {
-  const ConfirmBooking({super.key, required this.controller});
+  const ConfirmBooking({super.key, required this.controller, required this.eventName, required this.location});
 
   final PageController controller;
+  final String eventName , location;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,7 @@ class ConfirmBooking extends StatelessWidget {
           ),
           SizedBox(height: 8),
           Text(
-            "Cairo Jazz Club — Live Music Night",
+            eventName,
             style: AppTextStyles(context).smallMedium.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -78,7 +79,7 @@ class ConfirmBooking extends StatelessWidget {
                       ),
                       SizedBox(height: 14),
                       Text(
-                        "197, 26th of July St, Agouza, Giza",
+                        location,
                         style: AppTextStyles(context).captionMedium,
                       ),
                     ],
