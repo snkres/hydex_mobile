@@ -234,7 +234,7 @@ class BookingContainer extends StatelessWidget {
                                     title: "Cancel",
                                     onTap: () async {
                                       await BookingRepository().cancelBooking(
-                                        id: booking.id,
+                                        id: booking.id!,
                                       );
                                       ref.invalidate(getBookingsProvider);
                                     },

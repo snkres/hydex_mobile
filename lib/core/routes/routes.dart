@@ -44,8 +44,7 @@ class AppRoutes {
     routes: [
       GoRoute(
         path: "/",
-        builder: (context, state) =>
-            BaseScreen(initialTab: state.extra as int?),
+        builder: (context, state) => BaseScreen(initialTab: state.extra as int?),
       ),
       GoRoute(
         path: "/boarding",

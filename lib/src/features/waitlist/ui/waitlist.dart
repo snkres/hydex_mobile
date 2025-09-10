@@ -45,7 +45,20 @@ class _WaitlistScreenState extends ConsumerState<WaitlistScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 66),
+                SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await ref.read(authServiceProvider).logout();
+                      if (context.mounted) {
+                        context.go("/boarding");
+                      }
+                    },
+                    child: Text("Logout"),
+                  ),
+                ),
+                SizedBox(height: 33),
 
                 LottieBuilder.asset(loadingPath, package: "assets", width: 134),
                 Text(

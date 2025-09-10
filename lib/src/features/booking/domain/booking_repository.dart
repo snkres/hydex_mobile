@@ -24,6 +24,11 @@ Future<List<Booking>> getBookings(Ref ref) async {
   try {
     final response = await DioHelper.get("/bookings");
     final responseData = response.data['data'] as List<dynamic>;
+    if (responseData.isEmpty ||
+        responseData.every((item) => item is Map && item.isEmpty)) {
+      return [];
+    }
+
     return responseData.map((e) => BookingMapper.fromMap(e)).toList();
   } catch (e) {
     throw Exception('Failed to load bookings: $e');

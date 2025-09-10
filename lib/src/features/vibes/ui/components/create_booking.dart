@@ -90,7 +90,20 @@ class _CreateBookingState extends State<CreateBooking> {
                               child: Align(
                                 alignment: Alignment.topRight,
                                 child: TextButton(
-                                  onPressed: () => context.pop(),
+                                  onPressed: () {
+                                    if (dateController.text.isEmpty) {
+                                      final DateFormat formatter = DateFormat(
+                                        'EEE, d MMM',
+                                      );
+                                      String formatted = formatter.format(
+                                        DateTime.now(),
+                                      );
+                                      setState(() {
+                                        dateController.text = formatted;
+                                      });
+                                    }
+                                    context.pop();
+                                  },
                                   child: Text(
                                     "Done",
                                     style: TextStyle(fontSize: 16),

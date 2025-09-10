@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +7,9 @@ import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/vibes/data/heading.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
+import 'package:hydex/src/features/vibes/ui/components/confirm_booking.dart';
+import 'package:hydex/src/features/vibes/ui/components/create_booking.dart';
+import 'package:hydex/src/features/vibes/ui/components/review_booking.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -31,6 +35,8 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
   ];
 
   final headingPageController = PageController();
+  final bookigPageController = PageController();
+  int currentIndex = 0;
 
   @override
   void initState() {
@@ -41,6 +47,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
   @override
   void dispose() {
     headingPageController.dispose();
+    bookigPageController.dispose();
     super.dispose();
   }
 
@@ -54,6 +61,11 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
             child: PageView.builder(
               itemCount: headings.length,
               controller: headingPageController,
+              onPageChanged: (value) {
+                setState(() {
+                  currentIndex = value;
+                });
+              },
               itemBuilder: (context, index) {
                 return Container(
                   alignment: Alignment.center,
@@ -93,7 +105,42 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                       ),
                       SizedBox(height: 16),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            useSafeArea: true,
+                            builder: (context) {
+                              return Consumer(
+                                builder: (context, ref, child) {
+                                  final data = headings[currentIndex];
+                                  return ExpandablePageView(
+                                    controller: bookigPageController,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    children: [
+                                      CreateBooking(
+                                        controller: bookigPageController,
+                                        eventName: data.text,
+                                        id: data.text,
+                                        description: data.description,
+                                      ),
+                                      ReviewBooking(
+                                        controller: bookigPageController,
+                                        eventName: data.text,
+                                        location: data.text,
+                                      ),
+                                      ConfirmBooking(
+                                        controller: bookigPageController,
+                                        eventName: data.text,
+                                        location: data.text,
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.black,
@@ -103,7 +150,6 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                           children: [
                             Icon(Icons.add),
                             SizedBox(width: 4),
-
                             Text(
                               "Book",
                               style: AppTextStyles(context).smallSemibold,

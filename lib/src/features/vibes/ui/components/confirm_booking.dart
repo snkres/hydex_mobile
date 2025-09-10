@@ -69,7 +69,9 @@ class ConfirmBooking extends StatelessWidget {
             children: [
               Expanded(
                 child: Container(
+                  height: 90,
                   padding: EdgeInsets.all(12),
+                  alignment: Alignment.bottomLeft,
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.secondaryContainer,
                     borderRadius: BorderRadius.circular(8),
@@ -153,7 +155,7 @@ class ConfirmBooking extends StatelessWidget {
 
           PrimaryButton(
             onTap: () async {
-              context.go("/", extra: 1);
+              context.push("/", extra: 1);
             },
             title: "View My Bookings",
           ),

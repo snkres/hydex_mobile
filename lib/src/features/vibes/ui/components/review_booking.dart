@@ -106,7 +106,9 @@ class ReviewBooking extends ConsumerWidget {
             children: [
               Expanded(
                 child: Container(
+                  height: 90,
                   padding: EdgeInsets.all(12),
+                  alignment: Alignment.bottomLeft,
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.secondaryContainer,
                     borderRadius: BorderRadius.circular(8),
@@ -119,7 +121,7 @@ class ReviewBooking extends ConsumerWidget {
                         package: "assets",
                         width: 20,
                       ),
-                      SizedBox(height: 14),
+                      Spacer(),
                       Text(
                         location,
                         style: AppTextStyles(context).captionMedium,
@@ -130,7 +132,9 @@ class ReviewBooking extends ConsumerWidget {
               ),
               Expanded(
                 child: Container(
+                  height: 90,
                   padding: EdgeInsets.all(12),
+                  alignment: Alignment.bottomLeft,
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.secondaryContainer,
                     borderRadius: BorderRadius.circular(8),
@@ -143,7 +147,7 @@ class ReviewBooking extends ConsumerWidget {
                         package: "assets",
                         width: 20,
                       ),
-                      SizedBox(height: 20),
+                      Spacer(),
                       Text.rich(
                         TextSpan(
                           text: "400",
@@ -182,6 +186,7 @@ class ReviewBooking extends ConsumerWidget {
                         booking.bookingDate,
                         booking.people,
                       );
+                  await Future.delayed(Duration(milliseconds: 250));
                   controller.nextPage(
                     duration: Duration(milliseconds: 300),
                     curve: Curves.easeIn,

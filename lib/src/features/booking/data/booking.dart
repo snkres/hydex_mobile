@@ -5,16 +5,14 @@ part 'booking.mapper.dart';
 
 @MappableClass()
 class Booking with BookingMappable {
-  final String id;
-  final String userId;
+  final String? id;
   final String eventId;
   final DateTime bookingDate;
   final BookingStatus status;
   final String? notes;
 
   Booking({
-    required this.id,
-    required this.userId,
+    this.id,
     required this.eventId,
     required this.bookingDate,
     required this.status,

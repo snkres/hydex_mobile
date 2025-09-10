@@ -21,10 +21,8 @@ class BookingMapper extends ClassMapperBase<Booking> {
   @override
   final String id = 'Booking';
 
-  static String _$id(Booking v) => v.id;
-  static const Field<Booking, String> _f$id = Field('id', _$id);
-  static String _$userId(Booking v) => v.userId;
-  static const Field<Booking, String> _f$userId = Field('userId', _$userId);
+  static String? _$id(Booking v) => v.id;
+  static const Field<Booking, String> _f$id = Field('id', _$id, opt: true);
   static String _$eventId(Booking v) => v.eventId;
   static const Field<Booking, String> _f$eventId = Field('eventId', _$eventId);
   static DateTime _$bookingDate(Booking v) => v.bookingDate;
@@ -40,7 +38,6 @@ class BookingMapper extends ClassMapperBase<Booking> {
   @override
   final MappableFields<Booking> fields = const {
     #id: _f$id,
-    #userId: _f$userId,
     #eventId: _f$eventId,
     #bookingDate: _f$bookingDate,
     #status: _f$status,
@@ -50,7 +47,6 @@ class BookingMapper extends ClassMapperBase<Booking> {
   static Booking _instantiate(DecodingData data) {
     return Booking(
         id: data.dec(_f$id),
-        userId: data.dec(_f$userId),
         eventId: data.dec(_f$eventId),
         bookingDate: data.dec(_f$bookingDate),
         status: data.dec(_f$status),
@@ -109,7 +105,6 @@ abstract class BookingCopyWith<$R, $In extends Booking, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   $R call(
       {String? id,
-      String? userId,
       String? eventId,
       DateTime? bookingDate,
       BookingStatus? status,
@@ -127,15 +122,13 @@ class _BookingCopyWithImpl<$R, $Out>
       BookingMapper.ensureInitialized();
   @override
   $R call(
-          {String? id,
-          String? userId,
+          {Object? id = $none,
           String? eventId,
           DateTime? bookingDate,
           BookingStatus? status,
           Object? notes = $none}) =>
       $apply(FieldCopyWithData({
-        if (id != null) #id: id,
-        if (userId != null) #userId: userId,
+        if (id != $none) #id: id,
         if (eventId != null) #eventId: eventId,
         if (bookingDate != null) #bookingDate: bookingDate,
         if (status != null) #status: status,
@@ -144,7 +137,6 @@ class _BookingCopyWithImpl<$R, $Out>
   @override
   Booking $make(CopyWithData data) => Booking(
       id: data.get(#id, or: $value.id),
-      userId: data.get(#userId, or: $value.userId),
       eventId: data.get(#eventId, or: $value.eventId),
       bookingDate: data.get(#bookingDate, or: $value.bookingDate),
       status: data.get(#status, or: $value.status),
