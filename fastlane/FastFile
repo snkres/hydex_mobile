@@ -7,8 +7,16 @@ platform :ios do
   desc "Sync certificates and provisioning profiles"
   lane :certificates do
     setup_ci if ENV['CI']
-    match(type: "appstore", readonly: is_ci)
-    match(type: "development", readonly: is_ci) if !is_ci
+    match(
+      type: "appstore", 
+      readonly: is_ci,
+      git_url: "git@github.com:snkres/ios-certs-hydex.git"
+    )
+    match(
+      type: "development", 
+      readonly: is_ci,
+      git_url: "git@github.com:snkres/ios-certs-hydex.git"
+    ) if !is_ci
   end
 
   desc "Push a new beta build to TestFlight"
@@ -23,7 +31,7 @@ platform :ios do
     
     # Build the app
     build_app(
-      scheme: "Hydex", # Replace with your actual scheme name
+      scheme: "Runner", # Replace with your actual scheme name
       workspace: "ios/Runner.xcworkspace", # Replace with your workspace name
       configuration: "Release",
       export_options: {
@@ -49,7 +57,7 @@ platform :ios do
     
     # Build the app
     build_app(
-      scheme: "Hydex", # Replace with your actual scheme name
+      scheme: "Runner", # Replace with your actual scheme name
       workspace: "ios/Runner.xcworkspace", # Replace with your workspace name
       configuration: "Release",
       export_options: {
@@ -111,23 +119,14 @@ platform :android do
 
   desc "Build and deploy to Google Play Store"
   lane :release do
-    # Clean and build
-    gradle(
-      task: "clean bundleRelease",
-      project_dir: "android/",
-      properties: {
-        "android.injected.signing.store.file" => ENV['ANDROID_KEYSTORE_PATH'],
-        "android.injected.signing.store.password" => ENV['ANDROID_KEYSTORE_PASSWORD'],
-        "android.injected.signing.key.alias" => ENV['ANDROID_KEY_ALIAS'],
-        "android.injected.signing.key.password" => ENV['ANDROID_KEY_PASSWORD']
-      }
-    )
+    # Build Flutter Android app
+    sh("cd .. && flutter build appbundle --release")
     
     # Upload to Google Play Production
     upload_to_play_store(
       json_key: ENV['GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH'],
       track: 'production',
-      aab: 'android/app/build/outputs/bundle/release/app-release.aab',
+      aab: '../build/app/outputs/bundle/release/app-release.aab',
       skip_upload_apk: true,
       skip_upload_metadata: false,
       skip_upload_changelogs: false,
