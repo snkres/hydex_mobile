@@ -1,0 +1,138 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Sync certificates and provisioning profiles"
+  lane :certificates do
+    setup_ci if ENV['CI']
+    match(type: "appstore", readonly: is_ci)
+    match(type: "development", readonly: is_ci) if !is_ci
+  end
+
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    # Increment build number
+    increment_build_number(
+      build_number: ENV['BUILD_NUMBER'] || latest_testflight_build_number + 1
+    )
+    
+    # Sync certificates
+    certificates
+    
+    # Build the app
+    build_app(
+      scheme: "Hydex", # Replace with your actual scheme name
+      workspace: "ios/Runner.xcworkspace", # Replace with your workspace name
+      configuration: "Release",
+      export_options: {
+        method: "app-store",
+        provisioningProfiles: {
+          "com.hyde-x.hydex" => "match AppStore com.hyde-x.hydex" # Replace with your bundle ID
+        }
+      }
+    )
+    
+    # Upload to TestFlight
+    upload_to_testflight(
+      api_key_path: ENV['APP_STORE_CONNECT_API_KEY_PATH'],
+      skip_waiting_for_build_processing: true,
+      changelog: "Automated build from development branch"
+    )
+  end
+
+  desc "Push a new release build to the App Store"
+  lane :release do
+    # Sync certificates
+    certificates
+    
+    # Build the app
+    build_app(
+      scheme: "Hydex", # Replace with your actual scheme name
+      workspace: "ios/Runner.xcworkspace", # Replace with your workspace name
+      configuration: "Release",
+      export_options: {
+        method: "app-store",
+        provisioningProfiles: {
+          "com.hyde-x.hydex" => "match AppStore com.hyde-x.hydex" # Replace with your bundle ID
+        }
+      }
+    )
+    
+    # Upload to App Store
+    upload_to_app_store(
+      api_key_path: ENV['APP_STORE_CONNECT_API_KEY_PATH'],
+      force: true,
+      reject_if_possible: true,
+      skip_metadata: false,
+      skip_screenshots: false,
+      submit_for_review: true,
+      automatic_release: false,
+      submission_information: {
+        add_id_info_uses_idfa: false,
+        add_id_info_serves_ads: false,
+        add_id_info_tracks_install: false,
+        add_id_info_tracks_action: false,
+        add_id_info_limits_tracking: true
+      }
+    )
+  end
+end
+
+platform :android do
+  desc "Build and deploy to Google Play Internal Testing"
+  lane :beta do
+    # Clean and build
+    gradle(
+      task: "clean bundleRelease",
+      project_dir: "android/",
+      properties: {
+        "android.injected.signing.store.file" => ENV['ANDROID_KEYSTORE_PATH'],
+        "android.injected.signing.store.password" => ENV['ANDROID_KEYSTORE_PASSWORD'],
+        "android.injected.signing.key.alias" => ENV['ANDROID_KEY_ALIAS'],
+        "android.injected.signing.key.password" => ENV['ANDROID_KEY_PASSWORD'],
+        "versionCode" => ENV['BUILD_NUMBER'] || google_play_track_version_codes(track: "internal").max + 1
+      }
+    )
+    
+    # Upload to Google Play Internal Testing
+    upload_to_play_store(
+      json_key: ENV['GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH'],
+      track: 'internal',
+      aab: 'android/app/build/outputs/bundle/release/app-release.aab',
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: false,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  desc "Build and deploy to Google Play Store"
+  lane :release do
+    # Clean and build
+    gradle(
+      task: "clean bundleRelease",
+      project_dir: "android/",
+      properties: {
+        "android.injected.signing.store.file" => ENV['ANDROID_KEYSTORE_PATH'],
+        "android.injected.signing.store.password" => ENV['ANDROID_KEYSTORE_PASSWORD'],
+        "android.injected.signing.key.alias" => ENV['ANDROID_KEY_ALIAS'],
+        "android.injected.signing.key.password" => ENV['ANDROID_KEY_PASSWORD']
+      }
+    )
+    
+    # Upload to Google Play Production
+    upload_to_play_store(
+      json_key: ENV['GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH'],
+      track: 'production',
+      aab: 'android/app/build/outputs/bundle/release/app-release.aab',
+      skip_upload_apk: true,
+      skip_upload_metadata: false,
+      skip_upload_changelogs: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: false
+    )
+  end
+end
