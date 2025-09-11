@@ -41,7 +41,6 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
   @override
   void initState() {
     super.initState();
-    ref.read(authServiceProvider).sendFCMNotification();
   }
 
   @override

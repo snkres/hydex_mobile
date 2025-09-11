@@ -19,6 +19,7 @@ class _WaitlistScreenState extends ConsumerState<WaitlistScreen> {
   void initState() {
     super.initState();
     _checkUserStatus();
+    ref.read(authServiceProvider).sendFCMNotification();
   }
 
   Future<void> _checkUserStatus() async {
