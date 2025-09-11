@@ -15,14 +15,7 @@ class AuthService {
   Ref ref;
   AuthService(this.ref);
   static void initialize() {
-    DioHelper.init(
-      refreshTokenEndpoint: '/auth/refresh',
-      defaultHeaders: {
-        'X-App-Version': '0.1.4',
-        'X-Platform': Platform.isAndroid ? 'android' : 'ios',
-      },
-      authEventListener: AuthHandler(),
-    );
+    DioHelper().init(defaultHeaders: {});
   }
 
   Future<User> login(String email, String password) async {

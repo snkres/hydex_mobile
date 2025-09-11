@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hydex/core/routes/routes.dart';
 
 // Custom exception classes for better error handling
 class ApiException implements Exception {
@@ -161,25 +163,21 @@ class DioHelper {
   static const String _tokenExpiryKey = 'token_expiry';
 
   // Initialize Dio with base configuration
-  static void init({
-    String? refreshTokenEndpoint,
-    int sendTimeout = 30000,
-    Map<String, dynamic>? defaultHeaders,
-    AuthEventListener? authEventListener,
-  }) {
-    _refreshEndpoint = refreshTokenEndpoint ?? '/auth/refresh';
-    _authEventListener = authEventListener;
+  void init({Map<String, dynamic>? defaultHeaders}) {
+    _refreshEndpoint = '/auth/refresh';
 
     BaseOptions options = BaseOptions(
       baseUrl: 'https://dev.api.hyde-x.com',
       connectTimeout: Duration(milliseconds: 30000),
       receiveTimeout: Duration(milliseconds: 30000),
-      sendTimeout: Duration(milliseconds: sendTimeout),
+      sendTimeout: Duration(milliseconds: 30000),
       contentType: 'application/json',
       responseType: ResponseType.json,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'X-App-Version': '0.1.4',
+        'X-Platform': Platform.isAndroid ? 'android' : 'ios',
         ...?defaultHeaders,
       },
     );
@@ -294,7 +292,7 @@ class DioHelper {
   }
 
   // Setup interceptors with token management
-  static void _setupInterceptors() {
+  void _setupInterceptors() {
     // Request interceptor for token management
     _dio.interceptors.add(
       InterceptorsWrapper(
@@ -403,7 +401,7 @@ class DioHelper {
               }
               _authEventListener?.onTokenRefreshFailed();
               await _clearTokens();
-              await logout();
+              
             }
           }
 

@@ -47,7 +47,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
           bookings.when(
             data: (data) {
               final books = data.where((e) => e.top).toList();
-              return Column(
+              return Stack(
                 children: [
                   SizedBox(
                     height: 354,

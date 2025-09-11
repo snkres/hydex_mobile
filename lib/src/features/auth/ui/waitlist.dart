@@ -103,49 +103,54 @@ class NavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isBooking = index == 1;
-    return GestureDetector(
-      onTap: onTap,
-      child: SizedBox(
-        width: 56,
-        height: 45,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            isBooking ? SizedBox(height: 2) : SizedBox.shrink(),
+    return Semantics(
+      button: true,
+      label: title,
+      selected: selectedIndex == index,
+      child: InkWell(
+        onTap: onTap,
+        child: SizedBox(
+          width: 56,
+          height: 45,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              isBooking ? SizedBox(height: 2) : SizedBox.shrink(),
 
-            SizedBox(
-              width: isBooking ? 20 : 19,
-              child: SvgPicture.asset(
-                svgPath,
-                package: "assets",
-                colorFilter: ColorFilter.mode(
-                  selectedIndex == index
-                      ? Theme.of(context).colorScheme.onSurface
-                      : Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.5),
-                  BlendMode.srcIn,
+              SizedBox(
+                width: isBooking ? 20 : 19,
+                child: SvgPicture.asset(
+                  svgPath,
+                  package: "assets",
+                  colorFilter: ColorFilter.mode(
+                    selectedIndex == index
+                        ? Theme.of(context).colorScheme.onSurface
+                        : Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.5),
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 6),
+              SizedBox(height: 6),
 
-            FittedBox(
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: selectedIndex == index
-                      ? Theme.of(context).colorScheme.onSurface
-                      : Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.5),
-                  fontWeight: selectedIndex == index ? FontWeight.w700 : null,
-                  fontSize: AppTextStyles(context).accumulator * 12,
+              FittedBox(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: selectedIndex == index
+                        ? Theme.of(context).colorScheme.onSurface
+                        : Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.5),
+                    fontWeight: selectedIndex == index ? FontWeight.w700 : null,
+                    fontSize: AppTextStyles(context).accumulator * 12,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
