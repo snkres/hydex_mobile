@@ -92,6 +92,8 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                         children: [
                           Text(
                             books[index].title,
+                            textAlign: TextAlign.center,
+
                             style: TextStyle(
                               fontSize: AppTextStyles(context).accumulator * 28,
                               color: Colors.white,
@@ -101,6 +103,9 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                           SizedBox(height: 16),
                           Text(
                             books[index].description,
+                            maxLines: 1,
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.clip,
                             style: TextStyle(
                               fontSize: AppTextStyles(context).accumulator * 14,
                               color: Colors.white,
