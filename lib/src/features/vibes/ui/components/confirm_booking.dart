@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/vibes/ui/components/review_booking.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 
 class ConfirmBooking extends StatelessWidget {
@@ -12,10 +14,12 @@ class ConfirmBooking extends StatelessWidget {
     required this.controller,
     required this.eventName,
     required this.location,
+    required this.fees,
   });
 
   final PageController controller;
   final String eventName, location;
+  final double fees;
 
   @override
   Widget build(BuildContext context) {
@@ -109,24 +113,28 @@ class ConfirmBooking extends StatelessWidget {
                         width: 20,
                       ),
                       SizedBox(height: 20),
-                      Text.rich(
-                        TextSpan(
-                          text: "400",
-                          style: AppTextStyles(
-                            context,
-                          ).primaryMedium.copyWith(fontWeight: FontWeight.w500),
-                          children: [
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final book = ref.watch(bookingProvider);
+                          return Text.rich(
                             TextSpan(
-                              text: " EGP",
-                              style: AppTextStyles(context).captionMedium,
+                              text: (book!.people * fees).toString(),
+                              style: AppTextStyles(context).primaryMedium
+                                  .copyWith(fontWeight: FontWeight.w500),
+                              children: [
+                                TextSpan(
+                                  text: " EGP",
+                                  style: AppTextStyles(context).captionMedium,
+                                ),
+                                TextSpan(
+                                  text: " / per person",
+                                  style: AppTextStyles(context).captionRegular,
+                                ),
+                              ],
                             ),
-                            TextSpan(
-                              text: " / per person",
-                              style: AppTextStyles(context).captionRegular,
-                            ),
-                          ],
-                        ),
-                        style: AppTextStyles(context).primaryMedium,
+                            style: AppTextStyles(context).primaryMedium,
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -153,13 +161,14 @@ class ConfirmBooking extends StatelessWidget {
 
           SizedBox(height: 24),
 
-          PrimaryButton(
-            onTap: () async {
-              context.push("/", extra: 1);
-            },
-            title: "View My Bookings",
+          SafeArea(
+            child: PrimaryButton(
+              onTap: () async {
+                context.push("/", extra: 1);
+              },
+              title: "View My Bookings",
+            ),
           ),
-          SizedBox(height: 18),
         ],
       ),
     );

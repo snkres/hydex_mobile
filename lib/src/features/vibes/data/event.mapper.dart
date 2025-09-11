@@ -36,6 +36,10 @@ class EventMapper extends ClassMapperBase<Event> {
   static const Field<Event, String> _f$location = Field('location', _$location);
   static String _$imageUrl(Event v) => v.imageUrl;
   static const Field<Event, String> _f$imageUrl = Field('imageUrl', _$imageUrl);
+  static double _$fees(Event v) => v.fees;
+  static const Field<Event, double> _f$fees = Field('fees', _$fees);
+  static bool _$top(Event v) => v.top;
+  static const Field<Event, bool> _f$top = Field('top', _$top);
 
   @override
   final MappableFields<Event> fields = const {
@@ -46,6 +50,8 @@ class EventMapper extends ClassMapperBase<Event> {
     #endDate: _f$endDate,
     #location: _f$location,
     #imageUrl: _f$imageUrl,
+    #fees: _f$fees,
+    #top: _f$top,
   };
 
   static Event _instantiate(DecodingData data) {
@@ -56,7 +62,9 @@ class EventMapper extends ClassMapperBase<Event> {
         startDate: data.dec(_f$startDate),
         endDate: data.dec(_f$endDate),
         location: data.dec(_f$location),
-        imageUrl: data.dec(_f$imageUrl));
+        imageUrl: data.dec(_f$imageUrl),
+        fees: data.dec(_f$fees),
+        top: data.dec(_f$top));
   }
 
   @override
@@ -112,7 +120,9 @@ abstract class EventCopyWith<$R, $In extends Event, $Out>
       DateTime? startDate,
       DateTime? endDate,
       String? location,
-      String? imageUrl});
+      String? imageUrl,
+      double? fees,
+      bool? top});
   EventCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -130,7 +140,9 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
           DateTime? startDate,
           DateTime? endDate,
           String? location,
-          String? imageUrl}) =>
+          String? imageUrl,
+          double? fees,
+          bool? top}) =>
       $apply(FieldCopyWithData({
         if (id != $none) #id: id,
         if (title != null) #title: title,
@@ -138,7 +150,9 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
         if (startDate != null) #startDate: startDate,
         if (endDate != null) #endDate: endDate,
         if (location != null) #location: location,
-        if (imageUrl != null) #imageUrl: imageUrl
+        if (imageUrl != null) #imageUrl: imageUrl,
+        if (fees != null) #fees: fees,
+        if (top != null) #top: top
       }));
   @override
   Event $make(CopyWithData data) => Event(
@@ -148,7 +162,9 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
       startDate: data.get(#startDate, or: $value.startDate),
       endDate: data.get(#endDate, or: $value.endDate),
       location: data.get(#location, or: $value.location),
-      imageUrl: data.get(#imageUrl, or: $value.imageUrl));
+      imageUrl: data.get(#imageUrl, or: $value.imageUrl),
+      fees: data.get(#fees, or: $value.fees),
+      top: data.get(#top, or: $value.top));
 
   @override
   EventCopyWith<$R2, Event, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>

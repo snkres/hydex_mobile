@@ -53,116 +53,129 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bookings = ref.watch(getEventsProvider);
+
     return Scaffold(
       body: Stack(
         children: [
-          SizedBox(
-            height: 354,
-            child: PageView.builder(
-              itemCount: headings.length,
-              controller: headingPageController,
-              onPageChanged: (value) {
-                setState(() {
-                  currentIndex = value;
-                });
-              },
-              itemBuilder: (context, index) {
-                return Container(
-                  alignment: Alignment.center,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      colorFilter: ColorFilter.mode(
-                        Colors.black.withValues(alpha: 0.4),
-                        BlendMode.darken,
-                      ),
-                      image: AssetImage(
-                        headings[index].image,
-                        package: "assets",
-                      ),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  padding: const EdgeInsets.only(top: 32),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        headings[index].text,
-                        style: TextStyle(
-                          fontSize: AppTextStyles(context).accumulator * 28,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
+          bookings.when(
+            data: (data) {
+              final books = data.where((e) => e.top).toList();
+              return SizedBox(
+                height: 354,
+                child: PageView.builder(
+                  itemCount: books.length,
+                  controller: headingPageController,
+                  onPageChanged: (value) {
+                    setState(() {
+                      currentIndex = value;
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    return Container(
+                      alignment: Alignment.center,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          colorFilter: ColorFilter.mode(
+                            Colors.black.withValues(alpha: 0.4),
+                            BlendMode.darken,
+                          ),
+                          image: CachedNetworkImageProvider(
+                            books[index].imageUrl,
+                          ),
+                          fit: BoxFit.cover,
                         ),
                       ),
-                      SizedBox(height: 16),
-                      Text(
-                        headings[index].description,
-                        style: TextStyle(
-                          fontSize: AppTextStyles(context).accumulator * 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            useSafeArea: true,
-                            builder: (context) {
-                              return Consumer(
-                                builder: (context, ref, child) {
-                                  final data = headings[currentIndex];
-                                  return ExpandablePageView(
-                                    controller: bookigPageController,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    children: [
-                                      CreateBooking(
+                      padding: const EdgeInsets.only(top: 32),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            books[index].title,
+                            style: TextStyle(
+                              fontSize: AppTextStyles(context).accumulator * 28,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            books[index].description,
+                            style: TextStyle(
+                              fontSize: AppTextStyles(context).accumulator * 14,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                useSafeArea: true,
+                                builder: (context) {
+                                  return Consumer(
+                                    builder: (context, ref, child) {
+                                      return ExpandablePageView(
                                         controller: bookigPageController,
-                                        eventName: data.text,
-                                        id: data.text,
-                                        description: data.description,
-                                      ),
-                                      ReviewBooking(
-                                        controller: bookigPageController,
-                                        eventName: data.text,
-                                        location: data.text,
-                                      ),
-                                      ConfirmBooking(
-                                        controller: bookigPageController,
-                                        eventName: data.text,
-                                        location: data.text,
-                                      ),
-                                    ],
+                                        physics: NeverScrollableScrollPhysics(),
+                                        children: [
+                                          CreateBooking(
+                                            controller: bookigPageController,
+                                            eventName: books[index].title,
+                                            id: books[index].id!,
+                                            fees: books[index].fees,
+
+                                            description:
+                                                books[index].description,
+                                          ),
+                                          ReviewBooking(
+                                            controller: bookigPageController,
+                                            eventName: books[index].title,
+                                            location: books[index].location,
+                                            fees: books[index].fees,
+                                          ),
+                                          ConfirmBooking(
+                                            controller: bookigPageController,
+                                            eventName: books[index].title,
+                                            location: books[index].location,
+                                            fees: books[index].fees,
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   );
                                 },
                               );
                             },
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.add),
-                            SizedBox(width: 4),
-                            Text(
-                              "Book",
-                              style: AppTextStyles(context).smallSemibold,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.black,
                             ),
-                          ],
-                        ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.add),
+                                SizedBox(width: 4),
+                                Text(
+                                  "Book",
+                                  style: AppTextStyles(context).smallSemibold,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                    );
+                  },
+                ),
+              );
+            },
+            error: (e, s) => Center(child: Text("Error")),
+            loading: () => Center(child: CircularProgressIndicator.adaptive()),
           ),
+
           Positioned(
             top: 43,
             left: 0,
@@ -225,41 +238,34 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                         ),
                         SizedBox(height: 20),
 
-                        Consumer(
-                          builder: (context, ref, child) {
-                            final bookings = ref.watch(getEventsProvider);
-                            return bookings.when(
-                              data: (data) {
-                                return ListView.separated(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  separatorBuilder: (context, index) =>
-                                      SizedBox(height: 20),
-                                  shrinkWrap: true,
-                                  itemCount: data.length,
-                                  itemBuilder: (context, index) {
-                                    return EventContainer(
-                                      isNotDetail: true,
-                                      onView: () => context.push(
-                                        "/details",
-                                        extra: data[index].id,
-                                      ),
-                                      heading: data[index].title,
-                                      image: data[index].imageUrl,
-                                      description: data[index].description,
-                                    );
-                                  },
+                        bookings.when(
+                          data: (data) {
+                            final books = data.where((e) => !e.top).toList();
+                            return ListView.separated(
+                              physics: NeverScrollableScrollPhysics(),
+                              separatorBuilder: (context, index) =>
+                                  SizedBox(height: 20),
+                              shrinkWrap: true,
+                              itemCount: books.length,
+                              itemBuilder: (context, index) {
+                                return EventContainer(
+                                  isNotDetail: true,
+                                  onView: () => context.push(
+                                    "/details",
+                                    extra: books[index].id,
+                                  ),
+                                  heading: books[index].title,
+                                  image: books[index].imageUrl,
+                                  description: books[index].description,
                                 );
                               },
-                              error: (e, s) => Center(child: Text("Error")),
-                              loading: () => Center(
-                                child: CircularProgressIndicator.adaptive(),
-                              ),
                             );
                           },
+                          error: (e, s) => Center(child: Text("Error")),
+                          loading: () => Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          ),
                         ),
-                        // EventContainer(onView: () {}),
-                        // SizedBox(height: 20),
-                        // EventContainer(onView: () {}),
                         SizedBox(height: 100),
                       ],
                     ),

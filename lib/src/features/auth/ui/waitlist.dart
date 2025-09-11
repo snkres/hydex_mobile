@@ -49,6 +49,9 @@ class _BaseScreenState extends State<BaseScreen> {
           settings: LiquidGlassSettings(
             ambientStrength: 0.5,
             lightAngle: 0.5 * pi,
+            glassColor: Theme.of(
+              context,
+            ).colorScheme.surface.withValues(alpha: 0.4),
             lightIntensity: 0.5,
             blur: 20,
           ),

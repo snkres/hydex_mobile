@@ -13,6 +13,8 @@ class Event with EventMappable {
   final DateTime endDate;
   final String location;
   final String imageUrl;
+  final double fees;
+  final bool top;
 
 
   Event({
@@ -23,5 +25,7 @@ class Event with EventMappable {
     required this.endDate,
     required this.location,
     required this.imageUrl,
+    required this.fees,
+    required this.top
   });
 }

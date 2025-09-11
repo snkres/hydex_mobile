@@ -46,16 +46,19 @@ class DetailsScreen extends StatelessWidget {
                               eventName: data.title,
                               id: data.id!,
                               description: data.description,
+                              fees: data.fees,
                             ),
                             ReviewBooking(
                               controller: pageController,
                               eventName: data.title,
                               location: data.location,
+                              fees: data.fees,
                             ),
                             ConfirmBooking(
                               controller: pageController,
                               eventName: data.title,
                               location: data.location,
+                              fees: data.fees,
                             ),
                           ],
                         );
@@ -223,7 +226,7 @@ class EventContainerDetail extends StatelessWidget {
                 ),
                 Text.rich(
                   TextSpan(
-                    text: "400",
+                    text: data.fees.toString(),
                     style: AppTextStyles(
                       context,
                     ).primaryMedium.copyWith(fontWeight: FontWeight.w500),

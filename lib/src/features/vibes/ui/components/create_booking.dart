@@ -17,9 +17,11 @@ class CreateBooking extends StatefulWidget {
     required this.eventName,
     required this.description,
     required this.id,
+    required this.fees,
   });
   final PageController controller;
   final String eventName, description, id;
+  final double fees;
 
   @override
   State<CreateBooking> createState() => _CreateBookingState();
@@ -184,7 +186,11 @@ class _CreateBookingState extends State<CreateBooking> {
                       ),
                       Text.rich(
                         TextSpan(
-                          text: "400",
+                          text:
+                              (widget.fees *
+                                      (double.tryParse(peopleController.text) ??
+                                          1))
+                                  .toString(),
                           style: AppTextStyles(
                             context,
                           ).primaryMedium.copyWith(fontWeight: FontWeight.w500),
@@ -193,10 +199,6 @@ class _CreateBookingState extends State<CreateBooking> {
                               text: " EGP",
                               style: AppTextStyles(context).captionMedium,
                             ),
-                            TextSpan(
-                              text: " / per person",
-                              style: AppTextStyles(context).captionRegular,
-                            ),
                           ],
                         ),
                         style: AppTextStyles(context).primaryMedium,
@@ -204,30 +206,32 @@ class _CreateBookingState extends State<CreateBooking> {
                     ],
                   ),
                 ),
-                Consumer(
-                  builder: (context, ref, child) {
-                    return PrimaryButton(
-                      onTap: () async {
-                        if (formKey.currentState!.validate()) {
-                          FocusManager.instance.primaryFocus?.unfocus();
+                SafeArea(
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      return PrimaryButton(
+                        onTap: () async {
+                          if (formKey.currentState!.validate()) {
+                            FocusManager.instance.primaryFocus?.unfocus();
 
-                          ref
-                              .read(bookingProvider.notifier)
-                              .state = ConfirmBooking(
-                            eventID: widget.id,
-                            people: int.parse(peopleController.text),
-                            bookingDate: dateController.text,
-                          );
+                            ref
+                                .read(bookingProvider.notifier)
+                                .state = ConfirmBooking(
+                              eventID: widget.id,
+                              people: int.parse(peopleController.text),
+                              bookingDate: dateController.text,
+                            );
 
-                          widget.controller.nextPage(
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.easeIn,
-                          );
-                        }
-                      },
-                      title: "Next",
-                    );
-                  },
+                            widget.controller.nextPage(
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.easeIn,
+                            );
+                          }
+                        },
+                        title: "Next",
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

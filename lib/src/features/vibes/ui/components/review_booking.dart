@@ -15,10 +15,12 @@ class ReviewBooking extends ConsumerWidget {
     required this.controller,
     required this.location,
     required this.eventName,
+    required this.fees,
   });
 
   final PageController controller;
   final String location, eventName;
+  final double fees;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -150,7 +152,7 @@ class ReviewBooking extends ConsumerWidget {
                       Spacer(),
                       Text.rich(
                         TextSpan(
-                          text: "400",
+                          text: (booking.people * fees).toString(),
                           style: AppTextStyles(
                             context,
                           ).primaryMedium.copyWith(fontWeight: FontWeight.w500),
@@ -158,10 +160,6 @@ class ReviewBooking extends ConsumerWidget {
                             TextSpan(
                               text: " EGP",
                               style: AppTextStyles(context).captionMedium,
-                            ),
-                            TextSpan(
-                              text: " / per person",
-                              style: AppTextStyles(context).captionRegular,
                             ),
                           ],
                         ),
@@ -175,42 +173,43 @@ class ReviewBooking extends ConsumerWidget {
           ),
           SizedBox(height: 24),
 
-          Column(
-            children: [
-              PrimaryButton(
-                onTap: () async {
-                  await ref
-                      .read(vibesProvider)
-                      .createBooking(
-                        booking.eventID,
-                        booking.bookingDate,
-                        booking.people,
-                      );
-                  await Future.delayed(Duration(milliseconds: 250));
-                  controller.nextPage(
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeIn,
-                  );
-                },
-                title: "Confirm Booking",
-              ),
-              TextButton(
-                onPressed: () {
-                  controller.previousPage(
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeIn,
-                  );
-                },
-                child: Text(
-                  "Edit Booking",
-                  style: AppTextStyles(context).smallBold.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
+          SafeArea(
+            child: Column(
+              children: [
+                PrimaryButton(
+                  onTap: () async {
+                    await ref
+                        .read(vibesProvider)
+                        .createBooking(
+                          booking.eventID,
+                          booking.bookingDate,
+                          booking.people,
+                        );
+                    await Future.delayed(Duration(milliseconds: 250));
+                    controller.nextPage(
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.easeIn,
+                    );
+                  },
+                  title: "Confirm Booking",
+                ),
+                TextButton(
+                  onPressed: () {
+                    controller.previousPage(
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.easeIn,
+                    );
+                  },
+                  child: Text(
+                    "Edit Booking",
+                    style: AppTextStyles(context).smallBold.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          SizedBox(height: 18),
         ],
       ),
     );

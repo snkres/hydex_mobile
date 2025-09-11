@@ -122,7 +122,7 @@ class BookingContainer extends StatelessWidget {
               const SizedBox(width: 16.0),
               Expanded(
                 child: Text(
-                  "Cairo Jazz Club",
+                  booking.event.title,
                   style: TextStyle(
                     fontSize: AppTextStyles(context).accumulator * 18,
                     fontWeight: FontWeight.bold,
@@ -178,7 +178,7 @@ class BookingContainer extends StatelessWidget {
             children: [
               Text("Guests:", style: AppTextStyles(context).captionRegular),
               Text(
-                "4 people",
+                "${booking.numberOfGuests} people",
                 style: AppTextStyles(context).captionRegular.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w500,
@@ -200,47 +200,60 @@ class BookingContainer extends StatelessWidget {
                       onTap: () async {
                         showModalBottomSheet(
                           context: context,
+                          isScrollControlled: true,
                           builder: (context) {
-                            return Container(
-                              padding: EdgeInsets.all(16),
-                              child: Column(
-                                children: [
-                                  Center(
-                                    child: Container(
-                                      height: 4,
-                                      width: 44,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xffDEDEDE),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 22),
-                                  Text(
-                                    "Cancel booking?",
-                                    style: AppTextStyles(context).primaryBold,
-                                  ),
-                                  SizedBox(height: 8),
-                                  Text(
-                                    "Are you sure you want to cancel this booking? This action cannot be undone.",
-                                    style: AppTextStyles(context).smallRegular
-                                        .copyWith(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onSurface,
+                            return Wrap(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Center(
+                                        child: Container(
+                                          height: 4,
+                                          width: 44,
+                                          decoration: BoxDecoration(
+                                            color: Color(0xffDEDEDE),
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                          ),
                                         ),
+                                      ),
+                                      SizedBox(height: 22),
+                                      Text(
+                                        "Cancel booking?",
+                                        style: AppTextStyles(
+                                          context,
+                                        ).primaryBold,
+                                      ),
+                                      SizedBox(height: 16),
+                                      Text(
+                                        "Are you sure you want to cancel this booking? This action cannot be undone.",
+                                        style: AppTextStyles(context)
+                                            .smallRegular
+                                            .copyWith(
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onSurface,
+                                            ),
+                                      ),
+                                      SizedBox(height: 32),
+
+                                      PrimaryButton(
+                                        title: "Cancel",
+                                        onTap: () async {
+                                          await BookingRepository()
+                                              .cancelBooking(id: booking.id!);
+                                          ref.invalidate(getBookingsProvider);
+                                        },
+                                      ),
+                                    ],
                                   ),
-                                  PrimaryButton(
-                                    title: "Cancel",
-                                    onTap: () async {
-                                      await BookingRepository().cancelBooking(
-                                        id: booking.id!,
-                                      );
-                                      ref.invalidate(getBookingsProvider);
-                                    },
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             );
                           },
                         );

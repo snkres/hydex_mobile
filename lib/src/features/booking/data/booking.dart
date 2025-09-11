@@ -1,5 +1,6 @@
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:hydex/src/features/booking/data/booking_status.dart';
+import 'package:hydex/src/features/vibes/data/event.dart';
 
 part 'booking.mapper.dart';
 
@@ -10,13 +11,21 @@ class Booking with BookingMappable {
   final DateTime bookingDate;
   final BookingStatus status;
   final String? notes;
+  final double? fees;
+  final bool top;
+  final Event event;
+  final int numberOfGuests;
 
   Booking({
     this.id,
+    this.fees,
+    this.top = false,
     required this.eventId,
     required this.bookingDate,
     required this.status,
     this.notes,
+    required this.event,
+    required this.numberOfGuests,
   });
 }
 
