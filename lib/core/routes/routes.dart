@@ -19,6 +19,8 @@ import 'package:hydex/src/features/auth/ui/verify_email.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/features/auth/ui/ugo.dart';
 import 'package:hydex/src/features/auth/ui/waitlist.dart';
+import 'package:hydex/src/features/vibes/ui/details_screen.dart';
+import 'package:hydex/src/features/waitlist/ui/waitlist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'routes.g.dart';
@@ -29,25 +31,21 @@ class AppRoutes {
   final routes = GoRouter(
     initialLocation: '/boarding',
     redirect: (context, state) async {
-      final routes = [
-        "/describe",
-        "/seeker",
-        "/tellus",
-        "/nationality",
-        "/influencer",
-        "/wego",
-      ];
       final isAuthenticated = await DioHelper.getAccessToken() != null;
+      final currentRoute = state.uri.path;
       if (isAuthenticated) {
-        if (routes.contains(state.uri.path)) {
+        if (currentRoute != "/boarding") {
           return null;
         }
-        return "/";
+        return "/waitlist";
       }
       return null;
     },
     routes: [
-      GoRoute(path: "/", builder: (context, state) => const WaitlistScreen()),
+      GoRoute(
+        path: "/",
+        builder: (context, state) => BaseScreen(initialTab: state.extra as int?),
+      ),
       GoRoute(
         path: "/boarding",
         builder: (context, state) => const BoardingScreen(),
@@ -106,7 +104,14 @@ class AppRoutes {
         builder: (context, state) =>
             ForgetResponse(isPhone: state.extra as bool),
       ),
-
+      GoRoute(
+        path: "/details",
+        builder: (context, state) => DetailsScreen(id: state.extra as String),
+      ),
+      GoRoute(
+        path: "/waitlist",
+        builder: (context, state) => const WaitlistScreen(),
+      ),
       GoRoute(
         path: "/terms",
         builder: (context, state) => const TermsAndConditions(),

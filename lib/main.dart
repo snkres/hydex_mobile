@@ -7,17 +7,14 @@ import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/cache/cache_helper.dart';
 import 'package:hydex/core/network/auth_service.dart';
+import 'package:hydex/core/notification/notification.dart';
 import 'package:hydex/firebase_options.dart';
 import 'package:hydex/src/app.dart' show MyApp;
 import 'package:device_preview/device_preview.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (!Platform.isLinux) {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  }
+
   if (Platform.isAndroid) {
     await FlutterDisplayMode.setHighRefreshRate();
   }
@@ -31,4 +28,10 @@ void main() async {
     ),
   );
   AuthService.initialize();
+  if (!Platform.isLinux) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
+  await FirebaseNotifications().init();
 }

@@ -79,7 +79,7 @@ class MessageResponse extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         Spacer(),
-        PrimaryButton(onTap: onTap, title: buttonText),
+        PrimaryButton(onTap: () async => onTap(), title: buttonText),
       ],
     );
   }

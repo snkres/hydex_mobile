@@ -83,8 +83,8 @@ class UserStatusMapper extends EnumMapper<UserStatus> {
         return UserStatus.pending;
       case 'ACTIVE':
         return UserStatus.active;
-      case 'INACTIVE':
-        return UserStatus.inactive;
+      case 'REJECTED':
+        return UserStatus.rejected;
       case 'SUSPENDED':
         return UserStatus.suspended;
       default:
@@ -99,8 +99,8 @@ class UserStatusMapper extends EnumMapper<UserStatus> {
         return 'PENDING';
       case UserStatus.active:
         return 'ACTIVE';
-      case UserStatus.inactive:
-        return 'INACTIVE';
+      case UserStatus.rejected:
+        return 'REJECTED';
       case UserStatus.suspended:
         return 'SUSPENDED';
     }
@@ -121,6 +121,8 @@ class UserMapper extends ClassMapperBase<User> {
   static UserMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = UserMapper._());
+      UserStatusMapper.ensureInitialized();
+      SocialLinksMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -141,6 +143,8 @@ class UserMapper extends ClassMapperBase<User> {
   static String? _$avatar(User v) => v.avatar;
   static const Field<User, String> _f$avatar =
       Field('avatar', _$avatar, opt: true);
+  static UserStatus _$status(User v) => v.status;
+  static const Field<User, UserStatus> _f$status = Field('status', _$status);
   static String? _$gender(User v) => v.gender;
   static const Field<User, String> _f$gender =
       Field('gender', _$gender, opt: true);
@@ -150,11 +154,35 @@ class UserMapper extends ClassMapperBase<User> {
   static DateTime? _$dateOfBirth(User v) => v.dateOfBirth;
   static const Field<User, DateTime> _f$dateOfBirth =
       Field('dateOfBirth', _$dateOfBirth, opt: true);
+  static String? _$audienceSizeRange(User v) => v.audienceSizeRange;
+  static const Field<User, String> _f$audienceSizeRange =
+      Field('audienceSizeRange', _$audienceSizeRange, opt: true);
   static String _$role(User v) => v.role;
   static const Field<User, String> _f$role = Field('role', _$role);
   static String? _$referralCode(User v) => v.referralCode;
   static const Field<User, String> _f$referralCode =
       Field('referralCode', _$referralCode, opt: true);
+  static List<String>? _$interests(User v) => v.interests;
+  static const Field<User, List<String>> _f$interests =
+      Field('interests', _$interests, opt: true);
+  static List<String>? _$contentNiches(User v) => v.contentNiches;
+  static const Field<User, List<String>> _f$contentNiches =
+      Field('contentNiches', _$contentNiches, opt: true);
+  static String? _$businessName(User v) => v.businessName;
+  static const Field<User, String> _f$businessName =
+      Field('businessName', _$businessName, opt: true);
+  static List<String>? _$areas(User v) => v.areas;
+  static const Field<User, List<String>> _f$areas =
+      Field('areas', _$areas, opt: true);
+  static String? _$groupSize(User v) => v.groupSize;
+  static const Field<User, String> _f$groupSize =
+      Field('groupSize', _$groupSize, opt: true);
+  static String? _$preferredCountry(User v) => v.preferredCountry;
+  static const Field<User, String> _f$preferredCountry =
+      Field('preferredCountry', _$preferredCountry, opt: true);
+  static SocialLinks? _$socialLinks(User v) => v.socialLinks;
+  static const Field<User, SocialLinks> _f$socialLinks =
+      Field('socialLinks', _$socialLinks, opt: true);
   static String? _$password(User v) => v.password;
   static const Field<User, String> _f$password =
       Field('password', _$password, opt: true);
@@ -166,11 +194,20 @@ class UserMapper extends ClassMapperBase<User> {
     #phone: _f$phone,
     #fullName: _f$fullName,
     #avatar: _f$avatar,
+    #status: _f$status,
     #gender: _f$gender,
     #nationality: _f$nationality,
     #dateOfBirth: _f$dateOfBirth,
+    #audienceSizeRange: _f$audienceSizeRange,
     #role: _f$role,
     #referralCode: _f$referralCode,
+    #interests: _f$interests,
+    #contentNiches: _f$contentNiches,
+    #businessName: _f$businessName,
+    #areas: _f$areas,
+    #groupSize: _f$groupSize,
+    #preferredCountry: _f$preferredCountry,
+    #socialLinks: _f$socialLinks,
     #password: _f$password,
   };
 
@@ -181,11 +218,20 @@ class UserMapper extends ClassMapperBase<User> {
         phone: data.dec(_f$phone),
         fullName: data.dec(_f$fullName),
         avatar: data.dec(_f$avatar),
+        status: data.dec(_f$status),
         gender: data.dec(_f$gender),
         nationality: data.dec(_f$nationality),
         dateOfBirth: data.dec(_f$dateOfBirth),
+        audienceSizeRange: data.dec(_f$audienceSizeRange),
         role: data.dec(_f$role),
         referralCode: data.dec(_f$referralCode),
+        interests: data.dec(_f$interests),
+        contentNiches: data.dec(_f$contentNiches),
+        businessName: data.dec(_f$businessName),
+        areas: data.dec(_f$areas),
+        groupSize: data.dec(_f$groupSize),
+        preferredCountry: data.dec(_f$preferredCountry),
+        socialLinks: data.dec(_f$socialLinks),
         password: data.dec(_f$password));
   }
 
@@ -235,17 +281,31 @@ extension UserValueCopy<$R, $Out> on ObjectCopyWith<$R, User, $Out> {
 
 abstract class UserCopyWith<$R, $In extends User, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get interests;
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>?
+      get contentNiches;
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get areas;
+  SocialLinksCopyWith<$R, SocialLinks, SocialLinks>? get socialLinks;
   $R call(
       {String? id,
       String? email,
       String? phone,
       String? fullName,
       String? avatar,
+      UserStatus? status,
       String? gender,
       String? nationality,
       DateTime? dateOfBirth,
+      String? audienceSizeRange,
       String? role,
       String? referralCode,
+      List<String>? interests,
+      List<String>? contentNiches,
+      String? businessName,
+      List<String>? areas,
+      String? groupSize,
+      String? preferredCountry,
+      SocialLinks? socialLinks,
       String? password});
   UserCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -257,17 +317,51 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
   @override
   late final ClassMapperBase<User> $mapper = UserMapper.ensureInitialized();
   @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get interests =>
+      $value.interests != null
+          ? ListCopyWith(
+              $value.interests!,
+              (v, t) => ObjectCopyWith(v, $identity, t),
+              (v) => call(interests: v))
+          : null;
+  @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>?
+      get contentNiches => $value.contentNiches != null
+          ? ListCopyWith(
+              $value.contentNiches!,
+              (v, t) => ObjectCopyWith(v, $identity, t),
+              (v) => call(contentNiches: v))
+          : null;
+  @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get areas =>
+      $value.areas != null
+          ? ListCopyWith($value.areas!,
+              (v, t) => ObjectCopyWith(v, $identity, t), (v) => call(areas: v))
+          : null;
+  @override
+  SocialLinksCopyWith<$R, SocialLinks, SocialLinks>? get socialLinks =>
+      $value.socialLinks?.copyWith.$chain((v) => call(socialLinks: v));
+  @override
   $R call(
           {Object? id = $none,
           String? email,
           Object? phone = $none,
           Object? fullName = $none,
           Object? avatar = $none,
+          UserStatus? status,
           Object? gender = $none,
           Object? nationality = $none,
           Object? dateOfBirth = $none,
+          Object? audienceSizeRange = $none,
           String? role,
           Object? referralCode = $none,
+          Object? interests = $none,
+          Object? contentNiches = $none,
+          Object? businessName = $none,
+          Object? areas = $none,
+          Object? groupSize = $none,
+          Object? preferredCountry = $none,
+          Object? socialLinks = $none,
           Object? password = $none}) =>
       $apply(FieldCopyWithData({
         if (id != $none) #id: id,
@@ -275,11 +369,20 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
         if (phone != $none) #phone: phone,
         if (fullName != $none) #fullName: fullName,
         if (avatar != $none) #avatar: avatar,
+        if (status != null) #status: status,
         if (gender != $none) #gender: gender,
         if (nationality != $none) #nationality: nationality,
         if (dateOfBirth != $none) #dateOfBirth: dateOfBirth,
+        if (audienceSizeRange != $none) #audienceSizeRange: audienceSizeRange,
         if (role != null) #role: role,
         if (referralCode != $none) #referralCode: referralCode,
+        if (interests != $none) #interests: interests,
+        if (contentNiches != $none) #contentNiches: contentNiches,
+        if (businessName != $none) #businessName: businessName,
+        if (areas != $none) #areas: areas,
+        if (groupSize != $none) #groupSize: groupSize,
+        if (preferredCountry != $none) #preferredCountry: preferredCountry,
+        if (socialLinks != $none) #socialLinks: socialLinks,
         if (password != $none) #password: password
       }));
   @override
@@ -289,14 +392,149 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
       phone: data.get(#phone, or: $value.phone),
       fullName: data.get(#fullName, or: $value.fullName),
       avatar: data.get(#avatar, or: $value.avatar),
+      status: data.get(#status, or: $value.status),
       gender: data.get(#gender, or: $value.gender),
       nationality: data.get(#nationality, or: $value.nationality),
       dateOfBirth: data.get(#dateOfBirth, or: $value.dateOfBirth),
+      audienceSizeRange:
+          data.get(#audienceSizeRange, or: $value.audienceSizeRange),
       role: data.get(#role, or: $value.role),
       referralCode: data.get(#referralCode, or: $value.referralCode),
+      interests: data.get(#interests, or: $value.interests),
+      contentNiches: data.get(#contentNiches, or: $value.contentNiches),
+      businessName: data.get(#businessName, or: $value.businessName),
+      areas: data.get(#areas, or: $value.areas),
+      groupSize: data.get(#groupSize, or: $value.groupSize),
+      preferredCountry:
+          data.get(#preferredCountry, or: $value.preferredCountry),
+      socialLinks: data.get(#socialLinks, or: $value.socialLinks),
       password: data.get(#password, or: $value.password));
 
   @override
   UserCopyWith<$R2, User, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
       _UserCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class SocialLinksMapper extends ClassMapperBase<SocialLinks> {
+  SocialLinksMapper._();
+
+  static SocialLinksMapper? _instance;
+  static SocialLinksMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = SocialLinksMapper._());
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'SocialLinks';
+
+  static String? _$facebook(SocialLinks v) => v.facebook;
+  static const Field<SocialLinks, String> _f$facebook =
+      Field('facebook', _$facebook, opt: true);
+  static String? _$instagram(SocialLinks v) => v.instagram;
+  static const Field<SocialLinks, String> _f$instagram =
+      Field('instagram', _$instagram, opt: true);
+  static String? _$website(SocialLinks v) => v.website;
+  static const Field<SocialLinks, String> _f$website =
+      Field('website', _$website, opt: true);
+
+  @override
+  final MappableFields<SocialLinks> fields = const {
+    #facebook: _f$facebook,
+    #instagram: _f$instagram,
+    #website: _f$website,
+  };
+
+  static SocialLinks _instantiate(DecodingData data) {
+    return SocialLinks(
+        facebook: data.dec(_f$facebook),
+        instagram: data.dec(_f$instagram),
+        website: data.dec(_f$website));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static SocialLinks fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<SocialLinks>(map);
+  }
+
+  static SocialLinks fromJson(String json) {
+    return ensureInitialized().decodeJson<SocialLinks>(json);
+  }
+}
+
+mixin SocialLinksMappable {
+  String toJson() {
+    return SocialLinksMapper.ensureInitialized()
+        .encodeJson<SocialLinks>(this as SocialLinks);
+  }
+
+  Map<String, dynamic> toMap() {
+    return SocialLinksMapper.ensureInitialized()
+        .encodeMap<SocialLinks>(this as SocialLinks);
+  }
+
+  SocialLinksCopyWith<SocialLinks, SocialLinks, SocialLinks> get copyWith =>
+      _SocialLinksCopyWithImpl<SocialLinks, SocialLinks>(
+          this as SocialLinks, $identity, $identity);
+  @override
+  String toString() {
+    return SocialLinksMapper.ensureInitialized()
+        .stringifyValue(this as SocialLinks);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return SocialLinksMapper.ensureInitialized()
+        .equalsValue(this as SocialLinks, other);
+  }
+
+  @override
+  int get hashCode {
+    return SocialLinksMapper.ensureInitialized().hashValue(this as SocialLinks);
+  }
+}
+
+extension SocialLinksValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, SocialLinks, $Out> {
+  SocialLinksCopyWith<$R, SocialLinks, $Out> get $asSocialLinks =>
+      $base.as((v, t, t2) => _SocialLinksCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class SocialLinksCopyWith<$R, $In extends SocialLinks, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  $R call({String? facebook, String? instagram, String? website});
+  SocialLinksCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+}
+
+class _SocialLinksCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, SocialLinks, $Out>
+    implements SocialLinksCopyWith<$R, SocialLinks, $Out> {
+  _SocialLinksCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<SocialLinks> $mapper =
+      SocialLinksMapper.ensureInitialized();
+  @override
+  $R call(
+          {Object? facebook = $none,
+          Object? instagram = $none,
+          Object? website = $none}) =>
+      $apply(FieldCopyWithData({
+        if (facebook != $none) #facebook: facebook,
+        if (instagram != $none) #instagram: instagram,
+        if (website != $none) #website: website
+      }));
+  @override
+  SocialLinks $make(CopyWithData data) => SocialLinks(
+      facebook: data.get(#facebook, or: $value.facebook),
+      instagram: data.get(#instagram, or: $value.instagram),
+      website: data.get(#website, or: $value.website));
+
+  @override
+  SocialLinksCopyWith<$R2, SocialLinks, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _SocialLinksCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }

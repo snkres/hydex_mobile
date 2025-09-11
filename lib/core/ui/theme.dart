@@ -38,6 +38,8 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
+          elevation: WidgetStatePropertyAll(0),
+
           backgroundColor: WidgetStatePropertyAll(Colors.white),
           foregroundColor: WidgetStatePropertyAll(Colors.black),
         ),
@@ -97,6 +99,7 @@ class AppTheme {
 
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
+          elevation: WidgetStatePropertyAll(0),
           backgroundColor: WidgetStatePropertyAll(darkColorScheme.primary),
           foregroundColor: WidgetStatePropertyAll(darkColorScheme.onPrimary),
         ),

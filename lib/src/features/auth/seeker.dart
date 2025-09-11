@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
@@ -109,7 +110,13 @@ class _SeekerScreenState extends State<SeekerScreen> {
                               return PrimaryButton(
                                 onTap: selectedCategories.isEmpty
                                     ? null
-                                    : () {
+                                    : () async {
+                                        ref
+                                            .read(userNotifierProvider.notifier)
+                                            .create(
+                                              interests: selectedCategories
+                                                  .toList(),
+                                            );
                                         if (userType == Role.seeker) {
                                           context.push("/wego");
                                         } else {

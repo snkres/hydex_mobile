@@ -82,7 +82,7 @@ class PickUserType extends StatelessWidget {
                 builder: (context, ref, child) {
                   return PrimaryButton(
                     onTap: currentType != Role.none
-                        ? () {
+                        ? () async{
                             pageController.nextPage(
                               duration: Duration(milliseconds: 300),
                               curve: Curves.easeInOut,

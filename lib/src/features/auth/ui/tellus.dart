@@ -196,14 +196,22 @@ class _TellusState extends State<Tellus> {
                                                               CupertinoDatePickerMode
                                                                   .date,
                                                           initialDateTime:
-                                                              DateTime.now(),
+                                                              DateTime.now()
+                                                                  .subtract(
+                                                                    Duration(
+                                                                      days:
+                                                                          365 *
+                                                                          18,
+                                                                    ),
+                                                                  ),
 
                                                           minimumDate:
                                                               DateTime.now()
                                                                   .subtract(
                                                                     Duration(
                                                                       days:
-                                                                          100000,
+                                                                          365 *
+                                                                          100,
                                                                     ),
                                                                   ),
                                                           onDateTimeChanged: (date) {
@@ -254,13 +262,23 @@ class _TellusState extends State<Tellus> {
 
                                         Consumer(
                                           builder: (context, ref, child) {
-                                            final nationality = ref.watch(
+                                            ref.listen<String?>(
                                               nationalityNotifierProvider,
+                                              (previous, next) {
+                                                if (next != null) {
+                                                  setState(() {
+                                                    nationalityController.text =
+                                                        next;
+                                                  });
+                                                }
+                                              },
                                             );
+
                                             return TextFormField(
                                               key: UniqueKey(),
-                                              initialValue: nationality,
+                                              controller: nationalityController,
                                               readOnly: true,
+
                                               onTap: () {
                                                 showModalBottomSheet(
                                                   context: context,
