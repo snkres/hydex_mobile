@@ -21,19 +21,6 @@ class VibesScreen extends ConsumerStatefulWidget {
 }
 
 class _VibesScreenState extends ConsumerState<VibesScreen> {
-  final headings = [
-    Heading(
-      text: "Anyma",
-      description: "Pyramids of Giza - 10th, october",
-      image: "img/pyramids.jpg",
-    ),
-    Heading(
-      text: "The Gatsby Bar",
-      description: "1920s-style luxury experience",
-      image: "img/gatsby_bar.jpg",
-    ),
-  ];
-
   final headingPageController = PageController();
   final bookigPageController = PageController();
   int currentIndex = 0;
@@ -60,145 +47,157 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
           bookings.when(
             data: (data) {
               final books = data.where((e) => e.top).toList();
-              return SizedBox(
-                height: 354,
-                child: PageView.builder(
-                  itemCount: books.length,
-                  controller: headingPageController,
-                  onPageChanged: (value) {
-                    setState(() {
-                      currentIndex = value;
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    return Container(
-                      alignment: Alignment.center,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          colorFilter: ColorFilter.mode(
-                            Colors.black.withValues(alpha: 0.4),
-                            BlendMode.darken,
-                          ),
-                          image: CachedNetworkImageProvider(
-                            books[index].imageUrl,
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      padding: const EdgeInsets.only(top: 32),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            books[index].title,
-                            textAlign: TextAlign.center,
-
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 28,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
+              return Column(
+                children: [
+                  SizedBox(
+                    height: 354,
+                    child: PageView.builder(
+                      itemCount: books.length,
+                      controller: headingPageController,
+                      onPageChanged: (value) {
+                        setState(() {
+                          currentIndex = value;
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        return Container(
+                          alignment: Alignment.center,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              colorFilter: ColorFilter.mode(
+                                Colors.black.withValues(alpha: 0.4),
+                                BlendMode.darken,
+                              ),
+                              image: CachedNetworkImageProvider(
+                                books[index].imageUrl,
+                              ),
+                              fit: BoxFit.cover,
                             ),
                           ),
-                          SizedBox(height: 16),
-                          Text(
-                            books[index].description,
-                            maxLines: 1,
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.clip,
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 14,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                useSafeArea: true,
-                                builder: (context) {
-                                  return Consumer(
-                                    builder: (context, ref, child) {
-                                      return ExpandablePageView(
-                                        controller: bookigPageController,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        children: [
-                                          CreateBooking(
-                                            controller: bookigPageController,
-                                            eventName: books[index].title,
-                                            id: books[index].id!,
-                                            fees: books[index].fees,
+                          padding: const EdgeInsets.only(top: 32),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                books[index].title,
+                                textAlign: TextAlign.center,
 
-                                            description:
-                                                books[index].description,
-                                          ),
-                                          ReviewBooking(
+                                style: TextStyle(
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 28,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                books[index].description,
+                                maxLines: 1,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    useSafeArea: true,
+                                    builder: (context) {
+                                      return Consumer(
+                                        builder: (context, ref, child) {
+                                          return ExpandablePageView(
                                             controller: bookigPageController,
-                                            eventName: books[index].title,
-                                            location: books[index].location,
-                                            fees: books[index].fees,
-                                          ),
-                                          ConfirmBooking(
-                                            controller: bookigPageController,
-                                            eventName: books[index].title,
-                                            location: books[index].location,
-                                            fees: books[index].fees,
-                                          ),
-                                        ],
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            children: [
+                                              CreateBooking(
+                                                controller:
+                                                    bookigPageController,
+                                                eventName: books[index].title,
+                                                id: books[index].id!,
+                                                fees: books[index].fees,
+
+                                                description:
+                                                    books[index].description,
+                                              ),
+                                              ReviewBooking(
+                                                controller:
+                                                    bookigPageController,
+                                                eventName: books[index].title,
+                                                location: books[index].location,
+                                                fees: books[index].fees,
+                                              ),
+                                              ConfirmBooking(
+                                                controller:
+                                                    bookigPageController,
+                                                eventName: books[index].title,
+                                                location: books[index].location,
+                                                fees: books[index].fees,
+                                              ),
+                                            ],
+                                          );
+                                        },
                                       );
                                     },
                                   );
                                 },
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.black,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.add),
-                                SizedBox(width: 4),
-                                Text(
-                                  "Book",
-                                  style: AppTextStyles(context).smallSemibold,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.black,
                                 ),
-                              ],
-                            ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.add),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      "Book",
+                                      style: AppTextStyles(
+                                        context,
+                                      ).smallSemibold,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        );
+                      },
+                    ),
+                  ),
+                  Positioned(
+                    top: 43,
+                    left: 0,
+                    right: 0,
+                    child: SafeArea(
+                      child: Center(
+                        child: SmoothPageIndicator(
+                          controller: headingPageController,
+                          count: books.length,
+                          effect: ExpandingDotsEffect(
+                            activeDotColor: Colors.white,
+                            dotColor: Colors.white.withValues(alpha: 0.2),
+                            dotHeight: 10,
+                            dotWidth: 6,
+                          ),
+                        ),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
               );
             },
             error: (e, s) => Center(child: Text("Error")),
             loading: () => Center(child: CircularProgressIndicator.adaptive()),
           ),
 
-          Positioned(
-            top: 43,
-            left: 0,
-            right: 0,
-            child: SafeArea(
-              child: Center(
-                child: SmoothPageIndicator(
-                  controller: headingPageController,
-                  count: headings.length,
-                  effect: ExpandingDotsEffect(
-                    activeDotColor: Colors.white,
-                    dotColor: Colors.white.withValues(alpha: 0.2),
-                    dotHeight: 10,
-                    dotWidth: 6,
-                  ),
-                ),
-              ),
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.only(top: 250),
             child: SafeArea(
@@ -340,7 +339,9 @@ class EventContainer extends StatelessWidget {
                 Row(
                   spacing: 8,
                   children: [
-                    CircleAvatar(),
+                    CircleAvatar(
+                      backgroundImage: CachedNetworkImageProvider(image),
+                    ),
                     Expanded(
                       child: Text(
                         heading,

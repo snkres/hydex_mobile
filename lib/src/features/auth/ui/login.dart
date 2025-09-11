@@ -294,7 +294,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             }
                                           });
                                       if (context.mounted) {
-                                        context.go("/");
+                                        context.go("/waitlist");
                                       }
                                     }
                                   },

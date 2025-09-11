@@ -185,7 +185,7 @@ class _InfluencerScreenState extends State<InfluencerScreen> {
                                                   .createProfile();
                                               if (!context.mounted) return;
 
-                                              context.go("/");
+                                              context.go("/waitlist");
                                             }
                                           : null,
                                     );

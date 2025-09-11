@@ -283,7 +283,7 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
                                             .read(authServiceProvider)
                                             .createProfile();
                                         if (!context.mounted) return;
-                                        context.go("/");
+                                        context.go("/waitlist");
                                       },
                                     );
                                   },

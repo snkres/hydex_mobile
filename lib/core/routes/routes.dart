@@ -29,7 +29,7 @@ class AppRoutes {
   Ref ref;
   AppRoutes(this.ref);
   final routes = GoRouter(
-    initialLocation: '/waitlist',
+    initialLocation: '/boarding',
     redirect: (context, state) async {
       final isAuthenticated = await DioHelper.getAccessToken() != null;
       final currentRoute = state.uri.path;
@@ -37,7 +37,7 @@ class AppRoutes {
         if (currentRoute != "/boarding") {
           return null;
         }
-        return "/";
+        return "/waitlist";
       }
       return null;
     },
