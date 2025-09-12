@@ -30,15 +30,14 @@ platform :ios do
 
   desc "Push a new beta build to TestFlight"
   lane :beta do
-    # Increment build number
-    increment_build_number(
-      build_number: ENV['BUILD_NUMBER'] || latest_testflight_build_number + 1
-    )
-    
     # Sync certificates
     certificates
     
-    # Build the app
+    # Build Flutter iOS app with build number
+    build_number = ENV['BUILD_NUMBER'] || '1'
+    sh("cd .. && flutter build ios --release --build-number=#{build_number}")
+    
+    # Build and archive the app
     build_app(
       scheme: "Runner",
       workspace: "ios/Runner.xcworkspace",
