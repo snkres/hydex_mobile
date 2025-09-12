@@ -32,7 +32,6 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: 'stable' # Use latest stable instead of specific version
         channel: 'stable'
         
     - name: Install Flutter dependencies
@@ -101,7 +100,6 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: 'stable' # Use latest stable instead of specific version
         channel: 'stable'
           
     - name: Install Flutter dependencies
