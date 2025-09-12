@@ -7,15 +7,19 @@ platform :ios do
   desc "Sync certificates and provisioning profiles"
   lane :certificates do
     setup_ci if ENV['CI']
+    
+    # Use different git URLs for CI vs local development
+    git_url = ENV['CI'] ? "https://github.com/snkres/ios-certs-hydex.git" : "git@github.com:snkres/ios-certs-hydex.git"
+    
     match(
       type: "appstore", 
       readonly: is_ci,
-      git_url: "git@github.com:snkres/ios-certs-hydex.git"
+      git_url: git_url
     )
     match(
       type: "development", 
       readonly: is_ci,
-      git_url: "git@github.com:snkres/ios-certs-hydex.git"
+      git_url: git_url
     ) if !is_ci
   end
 
@@ -31,13 +35,13 @@ platform :ios do
     
     # Build the app
     build_app(
-      scheme: "Runner", # Replace with your actual scheme name
-      workspace: "ios/Runner.xcworkspace", # Replace with your workspace name
+      scheme: "YourAppName", # Replace with your actual scheme name
+      workspace: "ios/YourAppName.xcworkspace", # Replace with your workspace name
       configuration: "Release",
       export_options: {
         method: "app-store",
         provisioningProfiles: {
-          "com.hyde-x.hydex" => "match AppStore com.hyde-x.hydex" # Replace with your bundle ID
+          "com.yourcompany.yourapp" => "match AppStore com.yourcompany.yourapp" # Replace with your bundle ID
         }
       }
     )
@@ -57,13 +61,13 @@ platform :ios do
     
     # Build the app
     build_app(
-      scheme: "Runner", # Replace with your actual scheme name
-      workspace: "ios/Runner.xcworkspace", # Replace with your workspace name
+      scheme: "YourAppName", # Replace with your actual scheme name
+      workspace: "ios/YourAppName.xcworkspace", # Replace with your workspace name
       configuration: "Release",
       export_options: {
         method: "app-store",
         provisioningProfiles: {
-          "com.hyde-x.hydex" => "match AppStore com.hyde-x.hydex" # Replace with your bundle ID
+          "com.yourcompany.yourapp" => "match AppStore com.yourcompany.yourapp" # Replace with your bundle ID
         }
       }
     )

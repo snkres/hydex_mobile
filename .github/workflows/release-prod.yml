@@ -32,6 +32,7 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
+        flutter-version: 'stable' # Use latest stable instead of specific version
         channel: 'stable'
         
     - name: Install Flutter dependencies
@@ -72,7 +73,6 @@ jobs:
     - name: Build and Deploy iOS to App Store
       env:
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-        MATCH_GIT_URL: "https://github.com/snkres/ios-certs-hydex.git"
         APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
         APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         APP_STORE_CONNECT_API_KEY_PATH: "./AuthKey.p8"
@@ -100,6 +100,7 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
+        flutter-version: 'stable' # Use latest stable instead of specific version
         channel: 'stable'
           
     - name: Install Flutter dependencies
