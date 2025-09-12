@@ -18,13 +18,16 @@ platform :ios do
       type: "appstore", 
       app_identifier: "com.hyde-x.hydex",
       readonly: is_ci,
-      git_url: git_url
+      git_url: git_url,
+      # Use Basic Auth for HTTPS in CI (expects env MATCH_GIT_BASIC_AUTHORIZATION)
+      git_basic_authorization: ENV['MATCH_GIT_BASIC_AUTHORIZATION']
     )
     match(
       type: "development", 
       app_identifier: "com.hyde-x.hydex",
       readonly: is_ci,
-      git_url: git_url
+      git_url: git_url,
+      git_basic_authorization: ENV['MATCH_GIT_BASIC_AUTHORIZATION']
     ) if !is_ci
   end
 
