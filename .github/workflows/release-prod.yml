@@ -97,14 +97,13 @@ jobs:
         ruby-version: '3.1'
         bundler-cache: true
         
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
       with:
-        node-version: '18'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
+        channel: 'stable'
+          
+    - name: Install Flutter dependencies
+      run: flutter pub get
       
     - name: Setup Java
       uses: actions/setup-java@v3
