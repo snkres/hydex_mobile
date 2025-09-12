@@ -1,4 +1,6 @@
 storage_mode("git")
 
+app_identifier("com.hyde-x.hydex")
+
 type("development") # The default type, can be: appstore, adhoc, development, enterprise
 type("appstore")

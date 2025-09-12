@@ -1,6 +1,9 @@
 # This file contains the fastlane.tools configuration
 # You can find the documentation at https://docs.fastlane.tools
 
+# Disable interactive prompts for CI
+opt_out_usage if ENV['CI']
+
 default_platform(:ios)
 
 platform :ios do
@@ -13,11 +16,13 @@ platform :ios do
     
     match(
       type: "appstore", 
+      app_identifier: "com.hyde-x.hydex",
       readonly: is_ci,
       git_url: git_url
     )
     match(
       type: "development", 
+      app_identifier: "com.hyde-x.hydex",
       readonly: is_ci,
       git_url: git_url
     ) if !is_ci
@@ -35,13 +40,13 @@ platform :ios do
     
     # Build the app
     build_app(
-      scheme: "YourAppName", # Replace with your actual scheme name
-      workspace: "ios/YourAppName.xcworkspace", # Replace with your workspace name
+      scheme: "Runner",
+      workspace: "ios/Runner.xcworkspace",
       configuration: "Release",
       export_options: {
         method: "app-store",
         provisioningProfiles: {
-          "com.yourcompany.yourapp" => "match AppStore com.yourcompany.yourapp" # Replace with your bundle ID
+          "com.hyde-x.hydex" => "match AppStore com.hyde-x.hydex"
         }
       }
     )
@@ -61,13 +66,13 @@ platform :ios do
     
     # Build the app
     build_app(
-      scheme: "YourAppName", # Replace with your actual scheme name
-      workspace: "ios/YourAppName.xcworkspace", # Replace with your workspace name
+      scheme: "Runner",
+      workspace: "ios/Runner.xcworkspace",
       configuration: "Release",
       export_options: {
         method: "app-store",
         provisioningProfiles: {
-          "com.yourcompany.yourapp" => "match AppStore com.yourcompany.yourapp" # Replace with your bundle ID
+          "com.hyde-x.hydex" => "match AppStore com.hyde-x.hydex"
         }
       }
     )
@@ -95,24 +100,14 @@ end
 platform :android do
   desc "Build and deploy to Google Play Internal Testing"
   lane :beta do
-    # Clean and build
-    gradle(
-      task: "clean bundleRelease",
-      project_dir: "android/",
-      properties: {
-        "android.injected.signing.store.file" => ENV['ANDROID_KEYSTORE_PATH'],
-        "android.injected.signing.store.password" => ENV['ANDROID_KEYSTORE_PASSWORD'],
-        "android.injected.signing.key.alias" => ENV['ANDROID_KEY_ALIAS'],
-        "android.injected.signing.key.password" => ENV['ANDROID_KEY_PASSWORD'],
-        "versionCode" => ENV['BUILD_NUMBER'] || google_play_track_version_codes(track: "internal").max + 1
-      }
-    )
+    # Build Flutter Android app
+    sh("cd .. && flutter build appbundle --release --build-number=#{ENV['BUILD_NUMBER'] || '1'}")
     
     # Upload to Google Play Internal Testing
     upload_to_play_store(
       json_key: ENV['GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH'],
       track: 'internal',
-      aab: 'android/app/build/outputs/bundle/release/app-release.aab',
+      aab: '../build/app/outputs/bundle/release/app-release.aab',
       skip_upload_apk: true,
       skip_upload_metadata: true,
       skip_upload_changelogs: false,
