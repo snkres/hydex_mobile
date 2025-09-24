@@ -55,15 +55,15 @@ class _BaseScreenState extends State<BaseScreen> {
             lightIntensity: 0.5,
             blur: 20,
           ),
-          shape: LiquidRoundedRectangle(borderRadius: Radius.circular(32)),
+          shape: LiquidRoundedRectangle(borderRadius: Radius.circular(100)),
           child: Container(
-            width: double.infinity,
-            height: 72,
-            padding: EdgeInsets.all(12),
+            width: (270 * MediaQuery.sizeOf(context).width) / 375,
+            height: 70,
             alignment: Alignment.center,
+            padding: EdgeInsets.all(4),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 28.5,
+              spacing: 8,
               children: [
                 for (var item in navItems)
                   NavBar(
@@ -102,54 +102,67 @@ class NavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isBooking = index == 1;
-    return Semantics(
-      button: true,
-      label: title,
-      selected: selectedIndex == index,
-      child: InkWell(
-        onTap: onTap,
-        child: SizedBox(
-          width: 56,
-          height: 45,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              isBooking ? SizedBox(height: 2) : SizedBox.shrink(),
+    return ClipRRect(
+      borderRadius: BorderRadius.all(Radius.circular(100)),
 
-              SizedBox(
-                width: isBooking ? 20 : 19,
-                child: SvgPicture.asset(
-                  svgPath,
-                  package: "assets",
-                  colorFilter: ColorFilter.mode(
-                    selectedIndex == index
-                        ? Theme.of(context).colorScheme.onSurface
-                        : Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.5),
-                    BlendMode.srcIn,
+      child: Semantics(
+        button: true,
+        label: title,
+        selected: selectedIndex == index,
+        child: InkWell(
+          onTap: onTap,
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+            alignment: Alignment.center,
+            padding: EdgeInsets.all(5),
+            width: 78,
+            decoration: BoxDecoration(
+              color: selectedIndex == index
+                  ? Color.fromRGBO(125, 125, 125, 0.35)
+                  : null,
+            ),
+            child: SizedBox(
+              height: 45,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    child: SvgPicture.asset(
+                      svgPath,
+                      package: "assets",
+                      colorFilter: ColorFilter.mode(
+                        selectedIndex == index
+                            ? Theme.of(context).colorScheme.onSurface
+                            : Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.5),
+                        BlendMode.srcIn,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              SizedBox(height: 6),
+                  SizedBox(height: 6),
 
-              FittedBox(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: selectedIndex == index
-                        ? Theme.of(context).colorScheme.onSurface
-                        : Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.5),
-                    fontWeight: selectedIndex == index ? FontWeight.w700 : null,
-                    fontSize: AppTextStyles(context).accumulator * 12,
+                  FittedBox(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        color: selectedIndex == index
+                            ? Theme.of(context).colorScheme.onSurface
+                            : Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.5),
+                        fontWeight: selectedIndex == index
+                            ? FontWeight.w700
+                            : null,
+                        fontSize: AppTextStyles(context).accumulator * 12,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

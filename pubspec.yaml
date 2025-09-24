@@ -55,6 +55,7 @@ dependencies:
   riverpod_annotation: ^2.6.1
   sentry_flutter: ^9.6.0
   shared_preferences: ^2.5.3
+  smooth_corner: ^1.1.1
   smooth_page_indicator: ^1.2.1
   url_launcher: ^6.3.2
   video_player: ^2.10.0
