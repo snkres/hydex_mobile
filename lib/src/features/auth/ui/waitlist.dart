@@ -116,7 +116,7 @@ class NavBar extends StatelessWidget {
             curve: Curves.easeInOut,
             alignment: Alignment.center,
             padding: EdgeInsets.all(5),
-            width: 78,
+            width: MediaQuery.widthOf(context) / 4.6,
             decoration: BoxDecoration(
               color: selectedIndex == index
                   ? Color.fromRGBO(125, 125, 125, 0.35)

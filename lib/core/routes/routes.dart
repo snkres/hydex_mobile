@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hydex/core/cache/cache_helper.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/auth/reset_pass.dart';
 import 'package:hydex/src/features/auth/seeker.dart';
@@ -37,7 +36,7 @@ class AppRoutes {
         if (currentRoute != "/boarding") {
           return null;
         }
-        return "/waitlist";
+        return "/";
       }
       return null;
     },

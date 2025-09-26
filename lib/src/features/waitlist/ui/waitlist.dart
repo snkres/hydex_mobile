@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,19 +18,23 @@ class _WaitlistScreenState extends ConsumerState<WaitlistScreen> {
   @override
   void initState() {
     super.initState();
+
     _checkUserStatus();
-    ref.read(authServiceProvider).sendFCMNotification();
   }
 
   Future<void> _checkUserStatus() async {
-    try {
+    if (kReleaseMode) {
+      ref.read(authServiceProvider).sendFCMNotification();
+
       final user = await ref.read(currentUserProvider.future);
       final status = user?.status;
 
       if (status != null && status == UserStatus.active) {
         if (mounted) context.go("/");
       }
-    } catch (e) {}
+    } else {
+      context.go("/");
+    }
   }
 
   @override

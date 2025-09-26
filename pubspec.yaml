@@ -33,6 +33,7 @@ dependencies:
   auto_size_text: ^3.0.0
   cached_network_image: ^3.4.1
   calendar_date_picker2: ^2.0.1
+  carousel_slider: ^5.1.1
   cupertino_icons: ^1.0.8
   dart_mappable: ^4.5.0
   dio: ^5.9.0
