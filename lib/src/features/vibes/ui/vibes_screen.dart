@@ -51,9 +51,9 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
   @override
   Widget build(BuildContext context) {
     final bookings = ref.watch(getEventsProvider);
-
     return Scaffold(
-      body: Stack(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           bookings.when(
             data: (data) {
@@ -61,178 +61,102 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
               return Stack(
                 children: [
                   SizedBox(
-                    height: MediaQuery.heightOf(context) / 2.4,
-                    child: PageView.builder(
-                      itemCount: books.length,
-                      controller: headingPageController,
-                      onPageChanged: (value) {
-                        setState(() {
-                          currentIndex = value;
-                        });
-                      },
-                      itemBuilder: (context, index) {
-                        return Stack(
-                          children: [
-                            VideoPlayer(_videoController),
-                            Container(
-                              color: Colors.black.withValues(alpha: 0.3),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 60,
+                    height: 350,
+                    child: SizedBox(
+                      height: 350,
+                      child: PageView.builder(
+                        itemCount: books.length,
+                        controller: headingPageController,
+                        onPageChanged: (value) {
+                          setState(() {
+                            currentIndex = value;
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          return Stack(
+                            children: [
+                              VideoPlayer(_videoController),
+                              Container(
+                                color: Colors.black.withValues(alpha: 0.3),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    "Popular".toUpperCase(),
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      fontSize:
-                                          AppTextStyles(context).accumulator *
-                                          14,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w300,
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    books[index].title,
-                                    style: TextStyle(
-                                      fontSize:
-                                          AppTextStyles(context).accumulator *
-                                          28,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "10 October 2025 05:00 PM",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize:
-                                              AppTextStyles(
-                                                context,
-                                              ).accumulator *
-                                              12,
-                                        ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 60,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      "Popular".toUpperCase(),
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        fontSize:
+                                            AppTextStyles(context).accumulator *
+                                            14,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w300,
                                       ),
-                                      ElevatedButton(
-                                        onPressed: () {},
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.white,
-                                          foregroundColor: Colors.black,
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.add),
-                                            SizedBox(width: 4),
-                                            Text(
-                                              "Reserve",
-                                              style: AppTextStyles(
-                                                context,
-                                              ).smallSemibold,
-                                            ),
-                                          ],
-                                        ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      books[index].title,
+                                      style: TextStyle(
+                                        fontSize:
+                                            AppTextStyles(context).accumulator *
+                                            28,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
                                       ),
-                                    ],
-                                  ),
-                                ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "10 October 2025 05:00 PM",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize:
+                                                AppTextStyles(
+                                                  context,
+                                                ).accumulator *
+                                                12,
+                                          ),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {},
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.white,
+                                            foregroundColor: Colors.black,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.add),
+                                              SizedBox(width: 4),
+                                              Text(
+                                                "Reserve",
+                                                style: AppTextStyles(
+                                                  context,
+                                                ).smallSemibold,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        );
-                        // return Container(
-                        //   width: double.infinity,
-                        //   decoration: BoxDecoration(
-                        //     image: DecorationImage(
-                        //       colorFilter: ColorFilter.mode(
-                        //         Colors.black.withValues(alpha: 0.4),
-                        //         BlendMode.darken,
-                        //       ),
-                        //       image: CachedNetworkImageProvider(
-                        //         books[index].imageUrl,
-                        //       ),
-                        //       fit: BoxFit.cover,
-                        //     ),
-                        //   ),
-                        //   padding: const EdgeInsets.only(top: 32),
-                        //   child:
-                        // Padding(
-                        //     padding: const EdgeInsets.symmetric(
-                        //       horizontal: 16,
-                        //       vertical: 20,
-                        //     ),
-                        //     child: Column(
-                        //       crossAxisAlignment: CrossAxisAlignment.start,
-                        //       mainAxisAlignment: MainAxisAlignment.end,
-                        //       children: [
-                        //         Text(
-                        //           "Popular".toUpperCase(),
-                        //           textAlign: TextAlign.start,
-                        //           style: TextStyle(
-                        //             fontSize:
-                        //                 AppTextStyles(context).accumulator * 14,
-                        //             color: Colors.white,
-                        //             fontWeight: FontWeight.w300,
-                        //           ),
-                        //         ),
-                        //         SizedBox(height: 10),
-                        //         Text(
-                        //           books[index].title,
-
-                        //           style: TextStyle(
-                        //             fontSize:
-                        //                 AppTextStyles(context).accumulator * 28,
-                        //             color: Colors.white,
-                        //             fontWeight: FontWeight.w700,
-                        //           ),
-                        //         ),
-
-                        //         Row(
-                        //           mainAxisAlignment:
-                        //               MainAxisAlignment.spaceBetween,
-                        //           crossAxisAlignment: CrossAxisAlignment.center,
-                        //           children: [
-                        //             Text("Date"),
-                        //             ElevatedButton(
-                        //               onPressed: () {},
-                        //               style: ElevatedButton.styleFrom(
-                        //                 backgroundColor: Colors.white,
-                        //                 foregroundColor: Colors.black,
-                        //               ),
-                        //               child: Row(
-                        //                 children: [
-                        //                   Icon(Icons.add),
-                        //                   SizedBox(width: 4),
-                        //                   Text(
-                        //                     "Reserve",
-                        //                     style: AppTextStyles(
-                        //                       context,
-                        //                     ).smallSemibold,
-                        //                   ),
-                        //                 ],
-                        //               ),
-                        //             ),
-                        //           ],
-                        //         ),
-                        //         SizedBox(height: 60),
-                        //       ],
-                        //     ),
-                        //   ),
-                        // );
-                      },
+                            ],
+                          );
+                        },
+                      ),
                     ),
                   ),
                   Positioned(
-                    top: 130,
+                    top: 145,
                     left: 16,
                     child: Center(
                       child: SmoothPageIndicator(
@@ -248,60 +172,62 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                     ),
                   ),
                   Positioned(
-                    top: 50,
+                    top: 10,
                     left: 16,
                     right: 16,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "HYDEX",
-                          style: TextStyle(
-                            fontSize: AppTextStyles(context).accumulator * 22,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
+                    child: SafeArea(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "HYDEX",
+                            style: TextStyle(
+                              fontSize: AppTextStyles(context).accumulator * 22,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                            ),
                           ),
-                        ),
 
-                        Row(
-                          spacing: 12,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 8,
-                                horizontal: 12,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.keyboard_arrow_down, size: 20),
-                                  Text(
-                                    "Egypt",
-                                    style: TextStyle(
-                                      fontSize:
-                                          AppTextStyles(context).accumulator *
-                                          14,
-                                      fontWeight: FontWeight.w500,
+                          Row(
+                            spacing: 12,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 8,
+                                  horizontal: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.keyboard_arrow_down, size: 20),
+                                    Text(
+                                      "Egypt",
+                                      style: TextStyle(
+                                        fontSize:
+                                            AppTextStyles(context).accumulator *
+                                            14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            CircleAvatar(
-                              backgroundColor: Colors.white.withValues(
-                                alpha: 0.2,
+                              CircleAvatar(
+                                backgroundColor: Colors.white.withValues(
+                                  alpha: 0.2,
+                                ),
+                                child: SvgPicture.asset(
+                                  "img/svg/notification.svg",
+                                  package: "assets",
+                                ),
                               ),
-                              child: SvgPicture.asset(
-                                "img/svg/notification.svg",
-                                package: "assets",
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -310,10 +236,9 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
             error: (e, s) => Center(child: Text("Error")),
             loading: () => Center(child: CircularProgressIndicator.adaptive()),
           ),
-
-          Padding(
-            padding: const EdgeInsets.only(top: 250),
-            child: SafeArea(
+          Expanded(
+            child: Transform.translate(
+              offset: Offset(0, -45),
               child: Container(
                 width: MediaQuery.widthOf(context),
                 decoration: BoxDecoration(
@@ -515,7 +440,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                           data: (data) {
                             final books = data.where((e) => !e.top).toList();
                             return SizedBox(
-                              height: 224,
+                              height: MediaQuery.heightOf(context) * 0.28,
                               child: ListView.separated(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
@@ -591,31 +516,6 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                           ),
                         ),
 
-                        // SizedBox(
-                        //   height: 107,
-                        //   child: PageView.builder(
-                        //     itemCount: 2,
-                        //     controller: adPageController,
-                        //     scrollDirection: Axis.horizontal,
-                        //     itemBuilder: (context, index) {
-                        //       return Padding(
-                        //         padding: const EdgeInsets.symmetric(
-                        //           horizontal: 16,
-                        //         ),
-                        //         child: SmoothClipRRect(
-                        //           borderRadius: BorderRadius.circular(24),
-                        //           smoothness: 1,
-                        //           child: Container(
-                        //             width: 320,
-                        //             decoration: BoxDecoration(
-                        //               color: Colors.red,
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       );
-                        //     },
-                        //   ),
-                        // ),
                         SizedBox(height: 17),
                         Center(
                           child: AnimatedSmoothIndicator(
@@ -982,6 +882,7 @@ class VendorContainer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Flexible(
@@ -1054,7 +955,7 @@ class EventContainer extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             children: [
               Container(
-                height: 224,
+                height: MediaQuery.heightOf(context) * 0.28,
                 width: 322,
                 decoration: BoxDecoration(
                   image: DecorationImage(
@@ -1119,7 +1020,7 @@ class EventContainer extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(height: 28),
+                Spacer(),
                 Text(
                   heading,
                   style: TextStyle(
@@ -1170,6 +1071,7 @@ class EventContainer extends StatelessWidget {
                     ),
                   ],
                 ),
+                SizedBox(height: 15),
               ],
             ),
           ),

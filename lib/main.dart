@@ -20,23 +20,25 @@ void main() async {
     await FlutterDisplayMode.setHighRefreshRate();
   }
   await CacheHelper.init();
-  await SentryFlutter.init(
-    (options) {
+
+  if (kDebugMode) {
+    runApp(
+      DevicePreview(
+        builder: (context) {
+          return ProviderScope(child: const MyApp());
+        },
+      ),
+    );
+  } else {
+    await SentryFlutter.init((options) {
       options.dsn =
           'https://32c622c74f363e4bb9e092dd8263ad6b@o4510022729269248.ingest.de.sentry.io/4510022730711120';
       // Adds request headers and IP for users,
       // visit: https://docs.sentry.io/platforms/dart/data-management/data-collected/ for more info
       options.sendDefaultPii = true;
-    },
-    appRunner: () => runApp(
-      DevicePreview(
-        enabled: !kReleaseMode,
-        builder: (context) {
-          return ProviderScope(child: const MyApp());
-        },
-      ),
-    ),
-  );
+    }, appRunner: () => runApp(ProviderScope(child: const MyApp())));
+  }
+
   AuthService.initialize();
   if (!Platform.isLinux) {
     await Firebase.initializeApp(
