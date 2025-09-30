@@ -104,12 +104,11 @@ class NavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.all(Radius.circular(100)),
-
       child: Semantics(
         button: true,
         label: title,
         selected: selectedIndex == index,
-        child: InkWell(
+        child: GestureDetector(
           onTap: onTap,
           child: AnimatedContainer(
             duration: Duration(milliseconds: 400),

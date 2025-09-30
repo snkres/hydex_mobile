@@ -34,8 +34,8 @@ class AppColors {
   static const Color onSurfaceDark = Color(0xFFFFFFFF);
 
   // OnSurface/On Surface Var
-  static const Color onSurfaceVarLight = Color(0xfff7a7f99);
-  static const Color onSurfaceVarDark = Color(0xfffa0a0b0);
+  static const Color onSurfaceVarLight = Color(0xff7a7f99);
+  static const Color onSurfaceVarDark = Color(0xffa0a0b0);
 
   // OnSurface/On Surface Var 2
   static const Color onSurfaceVar2Light = Color(0xFF6e6e6e);
