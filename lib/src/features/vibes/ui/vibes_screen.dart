@@ -52,613 +52,549 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
   Widget build(BuildContext context) {
     final bookings = ref.watch(getEventsProvider);
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          bookings.when(
-            data: (data) {
-              final books = data.where((e) => e.top).toList();
-              return Stack(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            clipBehavior: Clip.none, // Add this line
+            actionsPadding: EdgeInsets.only(right: 16),
+            expandedHeight: 300,
+            elevation: 40,
+            leadingWidth: 300,
+            leading: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                "HYDEX",
+                style: TextStyle(
+                  fontSize: AppTextStyles(context).accumulator * 22,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            actions: [
+              Row(
                 children: [
-                  SizedBox(
-                    height: 350,
-                    child: SizedBox(
-                      height: 350,
-                      child: PageView.builder(
-                        itemCount: books.length,
-                        controller: headingPageController,
-                        onPageChanged: (value) {
-                          setState(() {
-                            currentIndex = value;
-                          });
-                        },
-                        itemBuilder: (context, index) {
-                          return Stack(
-                            children: [
-                              VideoPlayer(_videoController),
-                              Container(
-                                color: Colors.black.withValues(alpha: 0.3),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 60,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      "Popular".toUpperCase(),
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            14,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w300,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      books[index].title,
-                                      style: TextStyle(
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            28,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "10 October 2025 05:00 PM",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize:
-                                                AppTextStyles(
-                                                  context,
-                                                ).accumulator *
-                                                12,
-                                          ),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () {},
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.white,
-                                            foregroundColor: Colors.black,
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.add),
-                                              SizedBox(width: 4),
-                                              Text(
-                                                "Reserve",
-                                                style: AppTextStyles(
-                                                  context,
-                                                ).smallSemibold,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(100),
                     ),
-                  ),
-                  Positioned(
-                    top: 145,
-                    left: 16,
-                    child: Center(
-                      child: SmoothPageIndicator(
-                        controller: headingPageController,
-                        count: books.length,
-                        effect: ExpandingDotsEffect(
-                          activeDotColor: Colors.white,
-                          dotColor: Colors.white.withValues(alpha: 0.2),
-                          dotHeight: 10,
-                          dotWidth: 6,
+                    child: Row(
+                      children: [
+                        Icon(Icons.keyboard_arrow_down, size: 20),
+                        Text(
+                          "Egypt",
+                          style: TextStyle(
+                            fontSize: AppTextStyles(context).accumulator * 14,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
-                  Positioned(
-                    top: 10,
-                    left: 16,
-                    right: 16,
-                    child: SafeArea(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "HYDEX",
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 22,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
+                  SizedBox(width: 8),
 
-                          Row(
-                            spacing: 12,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 8,
-                                  horizontal: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(100),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.keyboard_arrow_down, size: 20),
-                                    Text(
-                                      "Egypt",
-                                      style: TextStyle(
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              CircleAvatar(
-                                backgroundColor: Colors.white.withValues(
-                                  alpha: 0.2,
-                                ),
-                                child: SvgPicture.asset(
-                                  "img/svg/notification.svg",
-                                  package: "assets",
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                  CircleAvatar(
+                    backgroundColor: Colors.white.withValues(alpha: 0.2),
+                    child: SvgPicture.asset(
+                      "img/svg/notification.svg",
+                      package: "assets",
                     ),
                   ),
                 ],
-              );
-            },
-            error: (e, s) => Center(child: Text("Error")),
-            loading: () => Center(child: CircularProgressIndicator.adaptive()),
-          ),
-          Expanded(
-            child: Transform.translate(
-              offset: Offset(0, -45),
-              child: Container(
-                width: MediaQuery.widthOf(context),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  boxShadow: [
-                    BoxShadow(color: Color(0xff232325), offset: Offset(0, -3)),
-                  ],
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(32),
-                    topRight: Radius.circular(32),
-                  ),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(top: 16),
+              ),
+            ],
+            flexibleSpace: FlexibleSpaceBar(
+              background: Stack(
+                children: [
+                  VideoPlayer(_videoController),
+                  Container(color: Colors.black.withValues(alpha: 0.3)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 60,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        SizedBox(
-                          height: 130,
-                          child: ListView(
-                            physics: BouncingScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            children: [
-                              SmoothContainer(
-                                width: 150,
-                                height: 130,
-                                color: Color.fromRGBO(24, 24, 24, 1),
-                                smoothness: 1,
-                                padding: EdgeInsets.all(12),
-                                borderRadius: BorderRadius.circular(24),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SvgPicture.asset(
-                                      height: 24,
-                                      "img/svg/fire.svg",
-                                      package: "assets",
-                                    ),
-                                    Spacer(),
-                                    Text(
-                                      "Happening",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w100,
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            14,
-                                      ),
-                                    ),
-                                    Text(
-                                      "Tonight",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            24,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(width: 6),
-                              SmoothContainer(
-                                width: 150,
-                                height: 130,
-                                color: Color.fromRGBO(24, 24, 24, 1),
-
-                                smoothness: 1,
-                                padding: EdgeInsets.all(12),
-                                borderRadius: BorderRadius.circular(24),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SvgPicture.asset(
-                                      height: 24,
-                                      "img/svg/location_pin.svg",
-                                      package: "assets",
-                                    ),
-                                    Spacer(),
-                                    Text(
-                                      "Happening",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w100,
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            14,
-                                      ),
-                                    ),
-                                    Text(
-                                      "Near me",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            24,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(width: 6),
-                              SmoothContainer(
-                                width: 150,
-                                height: 130,
-                                color: Color.fromRGBO(24, 24, 24, 1),
-
-                                smoothness: 1,
-                                padding: EdgeInsets.all(12),
-                                borderRadius: BorderRadius.circular(24),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Spacer(),
-                                    Text(
-                                      "Search &",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w100,
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            14,
-                                      ),
-                                    ),
-                                    Text(
-                                      "Explore",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            24,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                        Text(
+                          "Popular".toUpperCase(),
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            fontSize: AppTextStyles(context).accumulator * 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w300,
                           ),
                         ),
-                        SizedBox(height: 32),
-
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
+                        SizedBox(height: 4),
+                        Text(
+                          "Events",
+                          style: TextStyle(
+                            fontSize: AppTextStyles(context).accumulator * 28,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "10 October 2025 05:00 PM",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 12,
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.black,
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.add),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    "Reserve",
+                                    style: AppTextStyles(context).smallSemibold,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: EdgeInsets.only(top: 0),
+            sliver: SliverToBoxAdapter(
+              child: Transform.translate(
+                offset: Offset(0, -16), // This creates the overlap effect
+                child: Container(
+                  width: MediaQuery.widthOf(context),
+                  constraints: BoxConstraints(
+                    minHeight:
+                        MediaQuery.of(context).size.height -
+                        284, // Adjust based on your collapsed app bar height
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xff232325),
+                        offset: Offset(0, -3),
+                      ),
+                    ],
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 130,
+                        child: ListView(
+                          physics: BouncingScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          children: [
+                            SmoothContainer(
+                              width: 150,
+                              height: 130,
+                              color: Color.fromRGBO(24, 24, 24, 1),
+                              smoothness: 1,
+                              padding: EdgeInsets.all(12),
+                              borderRadius: BorderRadius.circular(24),
+                              child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text.rich(
-                                    TextSpan(
-                                      text: "For You, ",
-                                      style: TextStyle(
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            18,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      children: [
-                                        TextSpan(
-                                          text: "Hady",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w300,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                  SvgPicture.asset(
+                                    height: 24,
+                                    "img/svg/fire.svg",
+                                    package: "assets",
                                   ),
+                                  Spacer(),
                                   Text(
-                                    "Personalized plans just for you",
+                                    "Happening",
                                     style: TextStyle(
+                                      fontWeight: FontWeight.w100,
                                       fontSize:
                                           AppTextStyles(context).accumulator *
                                           14,
-                                      color: Color.fromRGBO(160, 160, 176, 1),
+                                    ),
+                                  ),
+                                  Text(
+                                    "Tonight",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize:
+                                          AppTextStyles(context).accumulator *
+                                          24,
                                     ),
                                   ),
                                 ],
                               ),
-                              TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                  "Explore all",
-                                  style: TextStyle(
-                                    fontSize:
-                                        AppTextStyles(context).accumulator * 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 16),
-                        bookings.when(
-                          data: (data) {
-                            final books = data.where((e) => !e.top).toList();
-                            return SizedBox(
-                              height: MediaQuery.heightOf(context) * 0.28,
-                              child: ListView.separated(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
+                            ),
+                            SizedBox(width: 6),
+                            SmoothContainer(
+                              width: 150,
+                              height: 130,
+                              color: Color.fromRGBO(24, 24, 24, 1),
 
-                                scrollDirection: Axis.horizontal,
-                                separatorBuilder: (context, index) =>
-                                    SizedBox(width: 20),
-                                itemCount: books.length,
-                                itemBuilder: (context, index) {
-                                  return EventContainer(
-                                    isNotDetail: true,
-                                    avatarImage: books[index].imageUrl,
-                                    date: books[index].startDate.toString(),
-                                    onView: () => context.push(
-                                      "/details",
-                                      extra: books[index].id,
-                                    ),
-                                    heading: books[index].title,
-                                    image: books[index].imageUrl,
-                                    description: books[index].description,
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                          error: (e, s) => Center(child: Text("Error")),
-                          loading: () => Center(
-                            child: CircularProgressIndicator.adaptive(),
-                          ),
-                        ),
-                        SizedBox(height: 24),
-
-                        CarouselSlider(
-                          items: [
-                            SmoothClipRRect(
-                              borderRadius: BorderRadius.circular(24),
                               smoothness: 1,
-                              child: Container(
-                                width: 320,
-                                decoration: BoxDecoration(color: Colors.red),
+                              padding: EdgeInsets.all(12),
+                              borderRadius: BorderRadius.circular(24),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SvgPicture.asset(
+                                    height: 24,
+                                    "img/svg/location_pin.svg",
+                                    package: "assets",
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    "Happening",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w100,
+                                      fontSize:
+                                          AppTextStyles(context).accumulator *
+                                          14,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Near me",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize:
+                                          AppTextStyles(context).accumulator *
+                                          24,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            SmoothClipRRect(
-                              borderRadius: BorderRadius.circular(24),
+                            SizedBox(width: 6),
+                            SmoothContainer(
+                              width: 150,
+                              height: 130,
+                              color: Color.fromRGBO(24, 24, 24, 1),
+
                               smoothness: 1,
-                              child: Container(
-                                width: 320,
-                                decoration: BoxDecoration(color: Colors.red),
+                              padding: EdgeInsets.all(12),
+                              borderRadius: BorderRadius.circular(24),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Spacer(),
+                                  Text(
+                                    "Search &",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w100,
+                                      fontSize:
+                                          AppTextStyles(context).accumulator *
+                                          14,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Explore",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize:
+                                          AppTextStyles(context).accumulator *
+                                          24,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
-
-                          options: CarouselOptions(
-                            height: 107,
-                            initialPage: 0,
-                            enableInfiniteScroll: true,
-                            reverse: false,
-                            autoPlay: true,
-                            autoPlayInterval: Duration(seconds: 3),
-                            autoPlayAnimationDuration: Duration(
-                              milliseconds: 800,
-                            ),
-                            autoPlayCurve: Curves.fastOutSlowIn,
-                            enlargeCenterPage: true,
-                            onPageChanged: (index, reason) {
-                              setState(() {
-                                adIndex = index;
-                              });
-                            },
-                            enlargeFactor: 0.3,
-                            scrollDirection: Axis.horizontal,
-                          ),
                         ),
+                      ),
+                      SizedBox(height: 32),
 
-                        SizedBox(height: 17),
-                        Center(
-                          child: AnimatedSmoothIndicator(
-                            count: 2,
-                            activeIndex: adIndex,
-                            effect: ExpandingDotsEffect(
-                              activeDotColor: Colors.white,
-                              dotColor: Colors.white.withValues(alpha: 0.2),
-                              dotHeight: 10,
-                              dotWidth: 8,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 42),
-
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Explore our vendors",
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text.rich(
+                                  TextSpan(
+                                    text: "For You, ",
                                     style: TextStyle(
                                       fontSize:
                                           AppTextStyles(context).accumulator *
                                           18,
                                       fontWeight: FontWeight.w700,
                                     ),
+                                    children: [
+                                      TextSpan(
+                                        text: "Hady",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    "Tailored for you",
-                                    style: TextStyle(
-                                      fontSize:
-                                          AppTextStyles(context).accumulator *
-                                          14,
-                                      color: Color.fromRGBO(160, 160, 176, 1),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                  "Explore all",
+                                ),
+                                Text(
+                                  "Personalized plans just for you",
                                   style: TextStyle(
                                     fontSize:
-                                        AppTextStyles(context).accumulator * 12,
-                                    fontWeight: FontWeight.w600,
+                                        AppTextStyles(context).accumulator * 14,
+                                    color: Color.fromRGBO(160, 160, 176, 1),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 16),
-
-                        AspectRatio(
-                          aspectRatio: 16 / 11.3,
-                          child: ListView.builder(
-                            itemCount: 3,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              return VendorContainer();
-                            },
-                          ),
-                        ),
-                        SizedBox(height: 41),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "HydeX Curated",
+                              ],
+                            ),
+                            TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                "Explore all",
                                 style: TextStyle(
                                   fontSize:
-                                      AppTextStyles(context).accumulator * 24,
-                                  fontWeight: FontWeight.w700,
+                                      AppTextStyles(context).accumulator * 12,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              Text(
-                                "The finest venues and events in one place.",
-                                style: TextStyle(
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 14,
-                                  color: Color(0xff858585),
-                                ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      bookings.when(
+                        data: (data) {
+                          final books = data.where((e) => !e.top).toList();
+                          return SizedBox(
+                            height: MediaQuery.heightOf(context) * 0.28,
+                            child: ListView.separated(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
                               ),
-                              SizedBox(height: 15),
-                              CuratedContainer(
-                                text: "Own the",
-                                heading: "Night",
-                                endText: "Unique experiences",
-                                image:
-                                    "https://missjonesgroup.com/wp-content/uploads/2025/05/music-1-500x500.jpg",
-                              ),
-                              SizedBox(height: 12),
 
-                              CuratedContainer(
-                                reverse: true,
-                                text: "Discover",
-                                heading: "Sports",
-                                endText: "Book courts, arenas, and more.",
-                                image:
-                                    "https://prested.co.uk/wp-content/webp-express/webp-images/uploads/elementor/thumbs/What-is-padel-tennis-qlo9qaexnbnge339ahpspu1ayl02ndcajnsxp4abr4.png.webp",
-                              ),
-                              SizedBox(height: 12),
+                              scrollDirection: Axis.horizontal,
+                              separatorBuilder: (context, index) =>
+                                  SizedBox(width: 20),
+                              itemCount: books.length,
+                              itemBuilder: (context, index) {
+                                return EventContainer(
+                                  isNotDetail: true,
+                                  avatarImage: books[index].imageUrl,
+                                  date: books[index].startDate.toString(),
+                                  onView: () => context.push(
+                                    "/details",
+                                    extra: books[index].id,
+                                  ),
+                                  heading: books[index].title,
+                                  image: books[index].imageUrl,
+                                  description: books[index].description,
+                                );
+                              },
+                            ),
+                          );
+                        },
+                        error: (e, s) => Center(child: Text("Error")),
+                        loading: () =>
+                            Center(child: CircularProgressIndicator.adaptive()),
+                      ),
+                      SizedBox(height: 24),
 
-                              CuratedContainer(
-                                text: "Find an",
-                                heading: "Adventure",
-                                endText: "Unique experiences",
-                                image:
-                                    "https://prested.co.uk/wp-content/webp-express/webp-images/uploads/elementor/thumbs/What-is-padel-tennis-qlo9qaexnbnge339ahpspu1ayl02ndcajnsxp4abr4.png.webp",
-                              ),
-                              SizedBox(height: 12),
+                      CarouselSlider(
+                        items: [
+                          SmoothClipRRect(
+                            borderRadius: BorderRadius.circular(24),
+                            smoothness: 1,
+                            child: Container(
+                              width: 320,
+                              decoration: BoxDecoration(color: Colors.red),
+                            ),
+                          ),
+                          SmoothClipRRect(
+                            borderRadius: BorderRadius.circular(24),
+                            smoothness: 1,
+                            child: Container(
+                              width: 320,
+                              decoration: BoxDecoration(color: Colors.red),
+                            ),
+                          ),
+                        ],
 
-                              CuratedContainer(
-                                reverse: true,
-                                text: "Discover",
-                                heading: "Shows",
-                                endText: "Unique experiences",
-                                image:
-                                    "https://miro.medium.com/v2/resize:fit:1200/1*82jErQ16QNKRXv7PArPkag.jpeg",
-                              ),
-                              SizedBox(height: 12),
+                        options: CarouselOptions(
+                          height: 107,
+                          initialPage: 0,
+                          enableInfiniteScroll: true,
+                          reverse: false,
+                          autoPlay: true,
+                          autoPlayInterval: Duration(seconds: 3),
+                          autoPlayAnimationDuration: Duration(
+                            milliseconds: 800,
+                          ),
+                          autoPlayCurve: Curves.fastOutSlowIn,
+                          enlargeCenterPage: true,
+                          onPageChanged: (index, reason) {
+                            setState(() {
+                              adIndex = index;
+                            });
+                          },
+                          enlargeFactor: 0.3,
+                          scrollDirection: Axis.horizontal,
+                        ),
+                      ),
 
-                              CuratedContainer(
-                                text: "Taste",
-                                heading: "Luxury",
-                                endText: "Unique experiences",
-                                image:
-                                    "https://images.pexels.com/photos/6869485/pexels-photo-6869485.jpeg",
-                              ),
-                            ],
+                      SizedBox(height: 17),
+                      Center(
+                        child: AnimatedSmoothIndicator(
+                          count: 2,
+                          activeIndex: adIndex,
+                          effect: ExpandingDotsEffect(
+                            activeDotColor: Colors.white,
+                            dotColor: Colors.white.withValues(alpha: 0.2),
+                            dotHeight: 10,
+                            dotWidth: 8,
                           ),
                         ),
-                        SizedBox(height: 120),
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: 42),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Explore our vendors",
+                                  style: TextStyle(
+                                    fontSize:
+                                        AppTextStyles(context).accumulator * 18,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  "Tailored for you",
+                                  style: TextStyle(
+                                    fontSize:
+                                        AppTextStyles(context).accumulator * 14,
+                                    color: Color.fromRGBO(160, 160, 176, 1),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                "Explore all",
+                                style: TextStyle(
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 16),
+
+                      AspectRatio(
+                        aspectRatio: 16 / 11.3,
+                        child: ListView.builder(
+                          itemCount: 3,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return VendorContainer();
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 41),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "HydeX Curated",
+                              style: TextStyle(
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 24,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              "The finest venues and events in one place.",
+                              style: TextStyle(
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 14,
+                                color: Color(0xff858585),
+                              ),
+                            ),
+                            SizedBox(height: 15),
+                            CuratedContainer(
+                              text: "Own the",
+                              heading: "Night",
+                              endText: "Unique experiences",
+                              image:
+                                  "https://missjonesgroup.com/wp-content/uploads/2025/05/music-1-500x500.jpg",
+                            ),
+                            SizedBox(height: 12),
+
+                            CuratedContainer(
+                              reverse: true,
+                              text: "Discover",
+                              heading: "Sports",
+                              endText: "Book courts, arenas, and more.",
+                              image:
+                                  "https://prested.co.uk/wp-content/webp-express/webp-images/uploads/elementor/thumbs/What-is-padel-tennis-qlo9qaexnbnge339ahpspu1ayl02ndcajnsxp4abr4.png.webp",
+                            ),
+                            SizedBox(height: 12),
+
+                            CuratedContainer(
+                              text: "Find an",
+                              heading: "Adventure",
+                              endText: "Unique experiences",
+                              image:
+                                  "https://prested.co.uk/wp-content/webp-express/webp-images/uploads/elementor/thumbs/What-is-padel-tennis-qlo9qaexnbnge339ahpspu1ayl02ndcajnsxp4abr4.png.webp",
+                            ),
+                            SizedBox(height: 12),
+
+                            CuratedContainer(
+                              reverse: true,
+                              text: "Discover",
+                              heading: "Shows",
+                              endText: "Unique experiences",
+                              image:
+                                  "https://miro.medium.com/v2/resize:fit:1200/1*82jErQ16QNKRXv7PArPkag.jpeg",
+                            ),
+                            SizedBox(height: 12),
+
+                            CuratedContainer(
+                              text: "Taste",
+                              heading: "Luxury",
+                              endText: "Unique experiences",
+                              image:
+                                  "https://images.pexels.com/photos/6869485/pexels-photo-6869485.jpeg",
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 120),
+                    ],
                   ),
                 ),
               ),
