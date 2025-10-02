@@ -6,6 +6,52 @@
 
 part of 'event.dart';
 
+class EventTypeMapper extends EnumMapper<EventType> {
+  EventTypeMapper._();
+
+  static EventTypeMapper? _instance;
+  static EventTypeMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = EventTypeMapper._());
+    }
+    return _instance!;
+  }
+
+  static EventType fromValue(dynamic value) {
+    ensureInitialized();
+    return MapperContainer.globals.fromValue(value);
+  }
+
+  @override
+  EventType decode(dynamic value) {
+    switch (value) {
+      case 'FEATURED':
+        return EventType.featured;
+      case 'PROMOTIONAL':
+        return EventType.promotional;
+      default:
+        throw MapperException.unknownEnumValue(value);
+    }
+  }
+
+  @override
+  dynamic encode(EventType self) {
+    switch (self) {
+      case EventType.featured:
+        return 'FEATURED';
+      case EventType.promotional:
+        return 'PROMOTIONAL';
+    }
+  }
+}
+
+extension EventTypeMapperExtension on EventType {
+  dynamic toValue() {
+    EventTypeMapper.ensureInitialized();
+    return MapperContainer.globals.toValue<EventType>(this);
+  }
+}
+
 class EventMapper extends ClassMapperBase<Event> {
   EventMapper._();
 
@@ -13,6 +59,7 @@ class EventMapper extends ClassMapperBase<Event> {
   static EventMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = EventMapper._());
+      EventTypeMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -20,51 +67,52 @@ class EventMapper extends ClassMapperBase<Event> {
   @override
   final String id = 'Event';
 
-  static String? _$id(Event v) => v.id;
-  static const Field<Event, String> _f$id = Field('id', _$id, opt: true);
-  static String _$title(Event v) => v.title;
-  static const Field<Event, String> _f$title = Field('title', _$title);
-  static String _$description(Event v) => v.description;
-  static const Field<Event, String> _f$description =
-      Field('description', _$description);
-  static DateTime _$startDate(Event v) => v.startDate;
-  static const Field<Event, DateTime> _f$startDate =
-      Field('startDate', _$startDate);
-  static DateTime _$endDate(Event v) => v.endDate;
-  static const Field<Event, DateTime> _f$endDate = Field('endDate', _$endDate);
-  static String _$location(Event v) => v.location;
-  static const Field<Event, String> _f$location = Field('location', _$location);
-  static String _$imageUrl(Event v) => v.imageUrl;
-  static const Field<Event, String> _f$imageUrl = Field('imageUrl', _$imageUrl);
-  static double _$fees(Event v) => v.fees;
-  static const Field<Event, double> _f$fees = Field('fees', _$fees);
-  static bool _$top(Event v) => v.top;
-  static const Field<Event, bool> _f$top = Field('top', _$top);
+  static String _$id(Event v) => v.id;
+  static const Field<Event, String> _f$id = Field('id', _$id);
+  static EventType _$type(Event v) => v.type;
+  static const Field<Event, EventType> _f$type = Field('type', _$type);
+  static String _$headline(Event v) => v.headline;
+  static const Field<Event, String> _f$headline = Field('headline', _$headline);
+  static String _$subtitle(Event v) => v.subtitle;
+  static const Field<Event, String> _f$subtitle = Field('subtitle', _$subtitle);
+  static String _$image(Event v) => v.image;
+  static const Field<Event, String> _f$image = Field('image', _$image);
+  static String _$video(Event v) => v.video;
+  static const Field<Event, String> _f$video = Field('video', _$video);
+  static DateTime _$campaignStartDate(Event v) => v.campaignStartDate;
+  static const Field<Event, DateTime> _f$campaignStartDate =
+      Field('campaignStartDate', _$campaignStartDate);
+  static DateTime _$campaignEndDate(Event v) => v.campaignEndDate;
+  static const Field<Event, DateTime> _f$campaignEndDate =
+      Field('campaignEndDate', _$campaignEndDate);
+  static String _$categoryId(Event v) => v.categoryId;
+  static const Field<Event, String> _f$categoryId =
+      Field('categoryId', _$categoryId);
 
   @override
   final MappableFields<Event> fields = const {
     #id: _f$id,
-    #title: _f$title,
-    #description: _f$description,
-    #startDate: _f$startDate,
-    #endDate: _f$endDate,
-    #location: _f$location,
-    #imageUrl: _f$imageUrl,
-    #fees: _f$fees,
-    #top: _f$top,
+    #type: _f$type,
+    #headline: _f$headline,
+    #subtitle: _f$subtitle,
+    #image: _f$image,
+    #video: _f$video,
+    #campaignStartDate: _f$campaignStartDate,
+    #campaignEndDate: _f$campaignEndDate,
+    #categoryId: _f$categoryId,
   };
 
   static Event _instantiate(DecodingData data) {
     return Event(
         id: data.dec(_f$id),
-        title: data.dec(_f$title),
-        description: data.dec(_f$description),
-        startDate: data.dec(_f$startDate),
-        endDate: data.dec(_f$endDate),
-        location: data.dec(_f$location),
-        imageUrl: data.dec(_f$imageUrl),
-        fees: data.dec(_f$fees),
-        top: data.dec(_f$top));
+        type: data.dec(_f$type),
+        headline: data.dec(_f$headline),
+        subtitle: data.dec(_f$subtitle),
+        image: data.dec(_f$image),
+        video: data.dec(_f$video),
+        campaignStartDate: data.dec(_f$campaignStartDate),
+        campaignEndDate: data.dec(_f$campaignEndDate),
+        categoryId: data.dec(_f$categoryId));
   }
 
   @override
@@ -115,14 +163,14 @@ abstract class EventCopyWith<$R, $In extends Event, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   $R call(
       {String? id,
-      String? title,
-      String? description,
-      DateTime? startDate,
-      DateTime? endDate,
-      String? location,
-      String? imageUrl,
-      double? fees,
-      bool? top});
+      EventType? type,
+      String? headline,
+      String? subtitle,
+      String? image,
+      String? video,
+      DateTime? campaignStartDate,
+      DateTime? campaignEndDate,
+      String? categoryId});
   EventCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -134,37 +182,38 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
   late final ClassMapperBase<Event> $mapper = EventMapper.ensureInitialized();
   @override
   $R call(
-          {Object? id = $none,
-          String? title,
-          String? description,
-          DateTime? startDate,
-          DateTime? endDate,
-          String? location,
-          String? imageUrl,
-          double? fees,
-          bool? top}) =>
+          {String? id,
+          EventType? type,
+          String? headline,
+          String? subtitle,
+          String? image,
+          String? video,
+          DateTime? campaignStartDate,
+          DateTime? campaignEndDate,
+          String? categoryId}) =>
       $apply(FieldCopyWithData({
-        if (id != $none) #id: id,
-        if (title != null) #title: title,
-        if (description != null) #description: description,
-        if (startDate != null) #startDate: startDate,
-        if (endDate != null) #endDate: endDate,
-        if (location != null) #location: location,
-        if (imageUrl != null) #imageUrl: imageUrl,
-        if (fees != null) #fees: fees,
-        if (top != null) #top: top
+        if (id != null) #id: id,
+        if (type != null) #type: type,
+        if (headline != null) #headline: headline,
+        if (subtitle != null) #subtitle: subtitle,
+        if (image != null) #image: image,
+        if (video != null) #video: video,
+        if (campaignStartDate != null) #campaignStartDate: campaignStartDate,
+        if (campaignEndDate != null) #campaignEndDate: campaignEndDate,
+        if (categoryId != null) #categoryId: categoryId
       }));
   @override
   Event $make(CopyWithData data) => Event(
       id: data.get(#id, or: $value.id),
-      title: data.get(#title, or: $value.title),
-      description: data.get(#description, or: $value.description),
-      startDate: data.get(#startDate, or: $value.startDate),
-      endDate: data.get(#endDate, or: $value.endDate),
-      location: data.get(#location, or: $value.location),
-      imageUrl: data.get(#imageUrl, or: $value.imageUrl),
-      fees: data.get(#fees, or: $value.fees),
-      top: data.get(#top, or: $value.top));
+      type: data.get(#type, or: $value.type),
+      headline: data.get(#headline, or: $value.headline),
+      subtitle: data.get(#subtitle, or: $value.subtitle),
+      image: data.get(#image, or: $value.image),
+      video: data.get(#video, or: $value.video),
+      campaignStartDate:
+          data.get(#campaignStartDate, or: $value.campaignStartDate),
+      campaignEndDate: data.get(#campaignEndDate, or: $value.campaignEndDate),
+      categoryId: data.get(#categoryId, or: $value.categoryId));
 
   @override
   EventCopyWith<$R2, Event, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>

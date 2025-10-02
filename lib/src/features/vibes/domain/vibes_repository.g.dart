@@ -6,24 +6,7 @@ part of 'vibes_repository.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getEventsHash() => r'b4664593cbcc80729be59b6c25aef9817f8948b2';
-
-/// See also [getEvents].
-@ProviderFor(getEvents)
-final getEventsProvider = AutoDisposeFutureProvider<List<Event>>.internal(
-  getEvents,
-  name: r'getEventsProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$getEventsHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef GetEventsRef = AutoDisposeFutureProviderRef<List<Event>>;
-String _$getEventByIDHash() => r'1e30921a2af9ea5408a72b6f26479f161a64a119';
+String _$getEventsHash() => r'04bf597a844dd609af0d4f196ecf7fc8a9babd4f';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -45,6 +28,123 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
+
+/// See also [getEvents].
+@ProviderFor(getEvents)
+const getEventsProvider = GetEventsFamily();
+
+/// See also [getEvents].
+class GetEventsFamily extends Family<AsyncValue<List<Event>>> {
+  /// See also [getEvents].
+  const GetEventsFamily();
+
+  /// See also [getEvents].
+  GetEventsProvider call({required EventType type}) {
+    return GetEventsProvider(type: type);
+  }
+
+  @override
+  GetEventsProvider getProviderOverride(covariant GetEventsProvider provider) {
+    return call(type: provider.type);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'getEventsProvider';
+}
+
+/// See also [getEvents].
+class GetEventsProvider extends AutoDisposeFutureProvider<List<Event>> {
+  /// See also [getEvents].
+  GetEventsProvider({required EventType type})
+    : this._internal(
+        (ref) => getEvents(ref as GetEventsRef, type: type),
+        from: getEventsProvider,
+        name: r'getEventsProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$getEventsHash,
+        dependencies: GetEventsFamily._dependencies,
+        allTransitiveDependencies: GetEventsFamily._allTransitiveDependencies,
+        type: type,
+      );
+
+  GetEventsProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.type,
+  }) : super.internal();
+
+  final EventType type;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<Event>> Function(GetEventsRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetEventsProvider._internal(
+        (ref) => create(ref as GetEventsRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        type: type,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<Event>> createElement() {
+    return _GetEventsProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetEventsProvider && other.type == type;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, type.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin GetEventsRef on AutoDisposeFutureProviderRef<List<Event>> {
+  /// The parameter `type` of this provider.
+  EventType get type;
+}
+
+class _GetEventsProviderElement
+    extends AutoDisposeFutureProviderElement<List<Event>>
+    with GetEventsRef {
+  _GetEventsProviderElement(super.provider);
+
+  @override
+  EventType get type => (origin as GetEventsProvider).type;
+}
+
+String _$getEventByIDHash() => r'1e30921a2af9ea5408a72b6f26479f161a64a119';
 
 /// See also [getEventByID].
 @ProviderFor(getEventByID)
@@ -165,7 +265,7 @@ class _GetEventByIDProviderElement
 }
 
 String _$getEventCategoriesHash() =>
-    r'2840796914d453c9d12b9ee24fea62a590f3dae0';
+    r'd272d6434ad7b55a31a0b3c89e1f2fd2334de188';
 
 /// See also [getEventCategories].
 @ProviderFor(getEventCategories)

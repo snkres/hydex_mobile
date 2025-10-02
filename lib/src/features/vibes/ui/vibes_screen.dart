@@ -8,8 +8,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/features/vibes/ui/components/experience.dart';
+import 'package:intl/intl.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:video_player/video_player.dart';
@@ -24,26 +26,7 @@ class VibesScreen extends ConsumerStatefulWidget {
 class _VibesScreenState extends ConsumerState<VibesScreen> {
   final headingPageController = PageController();
   int currentIndex = 0;
-  late final VideoPlayerController _videoController;
-
   int adIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _videoController = VideoPlayerController.networkUrl(
-      Uri.parse(
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-      ),
-    );
-    _videoController.setLooping(true);
-    _videoController.setVolume(0);
-    _videoController.initialize().then((_) {
-      setState(() {
-        _videoController.play();
-      });
-    });
-  }
 
   @override
   void dispose() {
@@ -51,18 +34,33 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
     super.dispose();
   }
 
+  String formatDateTime(DateTime dateTime) {
+    return DateFormat('d MMMM y hh:mm a').format(dateTime);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final bookings = ref.watch(getEventsProvider);
+    final featuredEvents = ref.watch(
+      getEventsProvider(type: EventType.featured),
+    );
+    final promotionalEvents = ref.watch(
+      getEventsProvider(type: EventType.promotional),
+    );
+
     final categories = ref.watch(getEventCategoriesProvider);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            bookings.when(
+            featuredEvents.when(
               data: (data) {
-                final books = data.where((e) => e.top).toList();
+                if (data.isEmpty) {
+                  return SizedBox(
+                    height: 300,
+                    child: Center(child: Text("No Featured Events Yet")),
+                  );
+                }
                 return Stack(
                   children: [
                     SizedBox(
@@ -70,7 +68,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                       child: SizedBox(
                         height: 350,
                         child: PageView.builder(
-                          itemCount: books.length,
+                          itemCount: data.length,
                           controller: headingPageController,
                           onPageChanged: (value) {
                             setState(() {
@@ -80,7 +78,12 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                           itemBuilder: (context, index) {
                             return Stack(
                               children: [
-                                VideoPlayer(_videoController),
+                                ImageOrVideoWidget(
+                                  videoURL: data[index].video.isNotEmpty
+                                      ? data[index].video
+                                      : null,
+                                  imageURL: data[index].image,
+                                ),
                                 Container(
                                   color: Colors.black.withValues(alpha: 0.3),
                                 ),
@@ -109,7 +112,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                       ),
                                       SizedBox(height: 4),
                                       Text(
-                                        books[index].title,
+                                        data[index].headline,
                                         style: TextStyle(
                                           fontSize:
                                               AppTextStyles(
@@ -125,7 +128,9 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            "10 October 2025 05:00 PM",
+                                            formatDateTime(
+                                              data[index].campaignStartDate,
+                                            ),
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontSize:
@@ -171,7 +176,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                       child: Center(
                         child: SmoothPageIndicator(
                           controller: headingPageController,
-                          count: books.length,
+                          count: data.length,
                           effect: ExpandingDotsEffect(
                             activeDotColor: Colors.white,
                             dotColor: Colors.white.withValues(alpha: 0.2),
@@ -457,99 +462,105 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                           ),
                         ),
                         SizedBox(height: 16),
-                        bookings.when(
-                          data: (data) {
-                            final books = data.where((e) => !e.top).toList();
-                            return SizedBox(
-                              height: MediaQuery.heightOf(context) * 0.28,
-                              child: ListView.separated(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
-
-                                scrollDirection: Axis.horizontal,
-                                separatorBuilder: (context, index) =>
-                                    SizedBox(width: 20),
-                                itemCount: books.length,
-                                itemBuilder: (context, index) {
-                                  return EventContainer(
-                                    isNotDetail: true,
-                                    avatarImage: books[index].imageUrl,
-                                    date: books[index].startDate.toString(),
-                                    onView: () => context.push(
-                                      "/details",
-                                      extra: books[index].id,
-                                    ),
-                                    heading: books[index].title,
-                                    image: books[index].imageUrl,
-                                    description: books[index].description,
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                          error: (e, s) => Center(child: Text("Error")),
-                          loading: () => Center(
-                            child: CircularProgressIndicator.adaptive(),
+                        SizedBox(
+                          height: MediaQuery.heightOf(context) * 0.28,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: 3,
+                            padding: EdgeInsets.only(left: 16),
+                            separatorBuilder: (context, index) =>
+                                SizedBox(width: 16),
+                            itemBuilder: (context, index) => EventContainer(
+                              isNotDetail: true,
+                              avatarImage:
+                                  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
+                              date: "Date Test",
+                              onView: () {},
+                              heading: "Test Heading",
+                              image:
+                                  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
+                              description: "Description",
+                            ),
                           ),
                         ),
                         SizedBox(height: 24),
+                        promotionalEvents.when(
+                          data: (data) {
+                            if (data.isEmpty) {
+                              return Center(child: Text("No Promotional Ad"));
+                            }
+                            return Column(
+                              children: [
+                                CarouselSlider(
+                                  items: data
+                                      .map(
+                                        (e) => SmoothClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            24,
+                                          ),
+                                          smoothness: 1,
+                                          child: Container(
+                                            width: 320,
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                image:
+                                                    CachedNetworkImageProvider(
+                                                      e.image,
+                                                    ),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
 
-                        CarouselSlider(
-                          items: [
-                            SmoothClipRRect(
-                              borderRadius: BorderRadius.circular(24),
-                              smoothness: 1,
-                              child: Container(
-                                width: 320,
-                                decoration: BoxDecoration(color: Colors.red),
-                              ),
-                            ),
-                            SmoothClipRRect(
-                              borderRadius: BorderRadius.circular(24),
-                              smoothness: 1,
-                              child: Container(
-                                width: 320,
-                                decoration: BoxDecoration(color: Colors.red),
-                              ),
-                            ),
-                          ],
-
-                          options: CarouselOptions(
-                            height: 107,
-                            initialPage: 0,
-                            enableInfiniteScroll: true,
-                            reverse: false,
-                            autoPlay: true,
-                            autoPlayInterval: Duration(seconds: 3),
-                            autoPlayAnimationDuration: Duration(
-                              milliseconds: 800,
-                            ),
-                            autoPlayCurve: Curves.fastOutSlowIn,
-                            enlargeCenterPage: true,
-                            onPageChanged: (index, reason) {
-                              setState(() {
-                                adIndex = index;
-                              });
-                            },
-                            enlargeFactor: 0.3,
-                            scrollDirection: Axis.horizontal,
-                          ),
+                                  options: CarouselOptions(
+                                    height: 107,
+                                    initialPage: 0,
+                                    enableInfiniteScroll: true,
+                                    reverse: false,
+                                    autoPlay: true,
+                                    autoPlayInterval: Duration(seconds: 3),
+                                    autoPlayAnimationDuration: Duration(
+                                      milliseconds: 800,
+                                    ),
+                                    autoPlayCurve: Curves.fastOutSlowIn,
+                                    enlargeCenterPage: true,
+                                    onPageChanged: (index, reason) {
+                                      setState(() {
+                                        adIndex = index;
+                                      });
+                                    },
+                                    enlargeFactor: 0.3,
+                                    scrollDirection: Axis.horizontal,
+                                  ),
+                                ),
+                                SizedBox(height: 17),
+                                Center(
+                                  child: AnimatedSmoothIndicator(
+                                    count: 2,
+                                    activeIndex: adIndex,
+                                    effect: ExpandingDotsEffect(
+                                      activeDotColor: Colors.white,
+                                      dotColor: Colors.white.withValues(
+                                        alpha: 0.2,
+                                      ),
+                                      dotHeight: 10,
+                                      dotWidth: 8,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                          error: (e, s) {
+                            return Center(child: Text("Error"));
+                          },
+                          loading: () =>
+                              Center(child: CircularProgressIndicator()),
                         ),
 
-                        SizedBox(height: 17),
-                        Center(
-                          child: AnimatedSmoothIndicator(
-                            count: 2,
-                            activeIndex: adIndex,
-                            effect: ExpandingDotsEffect(
-                              activeDotColor: Colors.white,
-                              dotColor: Colors.white.withValues(alpha: 0.2),
-                              dotHeight: 10,
-                              dotWidth: 8,
-                            ),
-                          ),
-                        ),
                         SizedBox(height: 42),
 
                         Padding(
@@ -682,6 +693,70 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
         ),
       ),
     );
+  }
+}
+
+class ImageOrVideoWidget extends StatefulWidget {
+  const ImageOrVideoWidget({super.key, this.videoURL, this.imageURL});
+  final String? videoURL;
+  final String? imageURL;
+
+  @override
+  State<ImageOrVideoWidget> createState() => _ImageOrVideoWidgetState();
+}
+
+class _ImageOrVideoWidgetState extends State<ImageOrVideoWidget> {
+  late final VideoPlayerController _videoController;
+  bool _isVideoInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.videoURL != null) {
+      _videoController = VideoPlayerController.networkUrl(
+        Uri.parse(widget.videoURL!),
+      );
+      _videoController.setLooping(true);
+      _videoController.setVolume(0);
+      _videoController.initialize().then((_) {
+        setState(() {
+          _isVideoInitialized = true;
+          _videoController.play();
+        });
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    if (widget.videoURL != null) {
+      _videoController.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Display video if videoURL is not null
+    if (widget.videoURL != null) {
+      return _isVideoInitialized
+          ? VideoPlayer(_videoController)
+          : const Center(child: CircularProgressIndicator());
+    }
+
+    // Display image if imageURL is not null
+    if (widget.imageURL != null) {
+      return CachedNetworkImage(
+        imageUrl: widget.imageURL!,
+        placeholder: (context, url) =>
+            const Center(child: CircularProgressIndicator()),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+        fit: BoxFit.cover,
+      );
+    }
+
+    // Display nothing if both are null
+    return const SizedBox.shrink();
   }
 }
 

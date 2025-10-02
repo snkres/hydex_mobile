@@ -76,13 +76,13 @@ const darkColorScheme = ColorScheme(
 
   // Brand / Primary
   primary: AppColors.signalBrandSolid,
-  onPrimary: AppColors.textInverse,
+  onPrimary: AppColors.textPrimary,
   primaryContainer: AppColors.signalBrandTint,
   onPrimaryContainer: AppColors.textBrand,
 
   // Secondary / Accent
   secondary: AppColors.signalPopColor,
-  onSecondary: AppColors.textPrimary,
+  onSecondary: AppColors.textInverse,
   secondaryContainer: AppColors.surfaceContainer,
   onSecondaryContainer: AppColors.textSecondary,
 

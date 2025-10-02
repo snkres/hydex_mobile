@@ -33,9 +33,12 @@ class VibesRepository {
 final vibesProvider = Provider<VibesRepository>((ref) => VibesRepository());
 
 @riverpod
-Future<List<Event>> getEvents(Ref ref) async {
+Future<List<Event>> getEvents(Ref ref, {required EventType type}) async {
   try {
-    final response = await DioHelper.get('/events');
+    final response = await DioHelper.get(
+      '/banners',
+      queryParameters: {"type": type.toValue()},
+    );
     final eventsData = response.data['data'] as List<dynamic>;
     return eventsData.map((e) => EventMapper.fromMap(e)).toList();
   } catch (e) {
@@ -52,7 +55,6 @@ Future<Event> getEventByID(Ref ref, {required String id}) async {
     throw Exception('Failed to load event: $e');
   }
 }
-
 
 @riverpod
 Future<List<EventCategory>> getEventCategories(Ref ref) async {

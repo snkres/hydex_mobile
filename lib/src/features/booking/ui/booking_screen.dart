@@ -122,7 +122,7 @@ class BookingContainer extends StatelessWidget {
               const SizedBox(width: 16.0),
               Expanded(
                 child: Text(
-                  booking.event.title,
+                  booking.event.headline,
                   style: TextStyle(
                     fontSize: AppTextStyles(context).accumulator * 18,
                     fontWeight: FontWeight.bold,

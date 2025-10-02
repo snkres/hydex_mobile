@@ -25,53 +25,53 @@ class DetailsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: PrimaryButton(
           onTap: () async {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              useSafeArea: true,
-              builder: (context) {
-                return Consumer(
-                  builder: (context, ref, child) {
-                    final event = ref.watch(getEventByIDProvider(id: id));
+            // showModalBottomSheet(
+            //   context: context,
+            //   isScrollControlled: true,
+            //   useSafeArea: true,
+            //   builder: (context) {
+            //     return Consumer(
+            //       builder: (context, ref, child) {
+            //         final event = ref.watch(getEventByIDProvider(id: id));
 
-                    return event.when(
-                      data: (data) {
-                        return ExpandablePageView(
-                          controller: pageController,
+            //         return event.when(
+            //           data: (data) {
+            //             return ExpandablePageView(
+            //               controller: pageController,
 
-                          physics: NeverScrollableScrollPhysics(),
-                          children: [
-                            CreateBooking(
-                              controller: pageController,
-                              eventName: data.title,
-                              id: data.id!,
-                              description: data.description,
-                              fees: data.fees,
-                            ),
-                            ReviewBooking(
-                              controller: pageController,
-                              eventName: data.title,
-                              location: data.location,
-                              fees: data.fees,
-                            ),
-                            ConfirmBooking(
-                              controller: pageController,
-                              eventName: data.title,
-                              location: data.location,
-                              fees: data.fees,
-                            ),
-                          ],
-                        );
-                      },
-                      error: (e, s) {
-                        return Center(child: Text("Error"));
-                      },
-                      loading: () => CircularProgressIndicator(),
-                    );
-                  },
-                );
-              },
-            );
+            //               physics: NeverScrollableScrollPhysics(),
+            //               children: [
+            //                 CreateBooking(
+            //                   controller: pageController,
+            //                   eventName: data.title,
+            //                   id: data.id!,
+            //                   description: data.description,
+            //                   fees: data.fees,
+            //                 ),
+            //                 ReviewBooking(
+            //                   controller: pageController,
+            //                   eventName: data.title,
+            //                   location: data.location,
+            //                   fees: data.fees,
+            //                 ),
+            //                 ConfirmBooking(
+            //                   controller: pageController,
+            //                   eventName: data.title,
+            //                   location: data.location,
+            //                   fees: data.fees,
+            //                 ),
+            //               ],
+            //             );
+            //           },
+            //           error: (e, s) {
+            //             return Center(child: Text("Error"));
+            //           },
+            //           loading: () => CircularProgressIndicator(),
+            //         );
+            //       },
+            //     );
+            //   },
+            // );
           },
           title: "Book",
         ),
@@ -134,12 +134,12 @@ class EventContainerDetail extends StatelessWidget {
       child: Column(
         children: [
           EventContainer(
-            heading: data.title,
-            image: data.imageUrl,
+            heading: data.headline,
+            image: data.image,
             date: "",
             avatarImage: "",
 
-            description: data.description,
+            description: data.subtitle,
           ),
           SizedBox(height: 12),
           Row(
@@ -165,7 +165,7 @@ class EventContainerDetail extends StatelessWidget {
                       ),
                       Spacer(),
                       Text(
-                        data.location,
+                        data.headline,
                         style: AppTextStyles(context).captionMedium,
                       ),
                     ],
@@ -192,7 +192,7 @@ class EventContainerDetail extends StatelessWidget {
                       ),
                       Spacer(),
                       Text(
-                        "Daily, ${formatTime(data.startDate)} – ${formatTime(data.endDate)}",
+                        "Daily, ${formatTime(data.campaignStartDate)} – ${formatTime(data.campaignEndDate)}",
                         style: AppTextStyles(context).captionMedium,
                       ),
                     ],
@@ -229,7 +229,7 @@ class EventContainerDetail extends StatelessWidget {
                 ),
                 Text.rich(
                   TextSpan(
-                    text: data.fees.toString(),
+                    text: data.campaignEndDate.toString(),
                     style: AppTextStyles(
                       context,
                     ).primaryMedium.copyWith(fontWeight: FontWeight.w500),
