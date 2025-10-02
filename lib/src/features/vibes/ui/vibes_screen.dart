@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/features/vibes/ui/components/experience.dart';
@@ -251,7 +252,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
               child: Container(
                 width: MediaQuery.widthOf(context),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
+                  color: AppColors.backgroundBase,
                   boxShadow: [
                     BoxShadow(color: Color(0xff232325), offset: Offset(0, -3)),
                   ],
@@ -280,7 +281,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                               SmoothContainer(
                                 width: 150,
                                 height: 130,
-                                color: Color.fromRGBO(24, 24, 24, 1),
+                                color: AppColors.surfaceContainer,
                                 smoothness: 1,
                                 padding: EdgeInsets.all(12),
                                 borderRadius: BorderRadius.circular(24),
@@ -291,6 +292,10 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                       height: 24,
                                       "img/svg/fire.svg",
                                       package: "assets",
+                                      colorFilter: ColorFilter.mode(
+                                        AppColors.buttonPrimary,
+                                        BlendMode.srcIn,
+                                      ),
                                     ),
                                     Spacer(),
                                     Text(
@@ -318,7 +323,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                               SmoothContainer(
                                 width: 150,
                                 height: 130,
-                                color: Color.fromRGBO(24, 24, 24, 1),
+                                color: AppColors.surfaceContainer,
 
                                 smoothness: 1,
                                 padding: EdgeInsets.all(12),
@@ -330,6 +335,10 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                       height: 24,
                                       "img/svg/location_pin.svg",
                                       package: "assets",
+                                      colorFilter: ColorFilter.mode(
+                                        AppColors.buttonPrimary,
+                                        BlendMode.srcIn,
+                                      ),
                                     ),
                                     Spacer(),
                                     Text(
@@ -357,7 +366,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                               SmoothContainer(
                                 width: 150,
                                 height: 130,
-                                color: Color.fromRGBO(24, 24, 24, 1),
+                                color: AppColors.surfaceContainer,
 
                                 smoothness: 1,
                                 padding: EdgeInsets.all(12),
@@ -425,7 +434,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                       fontSize:
                                           AppTextStyles(context).accumulator *
                                           14,
-                                      color: Color.fromRGBO(160, 160, 176, 1),
+                                      color: AppColors.textSecondary,
                                     ),
                                   ),
                                 ],
@@ -563,7 +572,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                       fontSize:
                                           AppTextStyles(context).accumulator *
                                           14,
-                                      color: Color.fromRGBO(160, 160, 176, 1),
+                                      color: AppColors.textSecondary,
                                     ),
                                   ),
                                 ],
