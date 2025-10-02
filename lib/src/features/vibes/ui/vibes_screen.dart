@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +54,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
   @override
   Widget build(BuildContext context) {
     final bookings = ref.watch(getEventsProvider);
+    final categories = ref.watch(getEventCategoriesProvider);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -626,50 +629,44 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                 ),
                               ),
                               SizedBox(height: 15),
-                              CuratedContainer(
-                                text: "Own the",
-                                heading: "Night",
-                                endText: "Unique experiences",
-                                image:
-                                    "https://missjonesgroup.com/wp-content/uploads/2025/05/music-1-500x500.jpg",
-                              ),
-                              SizedBox(height: 12),
-
-                              CuratedContainer(
-                                reverse: true,
-                                text: "Discover",
-                                heading: "Sports",
-                                endText: "Book courts, arenas, and more.",
-                                image:
-                                    "https://prested.co.uk/wp-content/webp-express/webp-images/uploads/elementor/thumbs/What-is-padel-tennis-qlo9qaexnbnge339ahpspu1ayl02ndcajnsxp4abr4.png.webp",
-                              ),
-                              SizedBox(height: 12),
-
-                              CuratedContainer(
-                                text: "Find an",
-                                heading: "Adventure",
-                                endText: "Unique experiences",
-                                image:
-                                    "https://prested.co.uk/wp-content/webp-express/webp-images/uploads/elementor/thumbs/What-is-padel-tennis-qlo9qaexnbnge339ahpspu1ayl02ndcajnsxp4abr4.png.webp",
-                              ),
-                              SizedBox(height: 12),
-
-                              CuratedContainer(
-                                reverse: true,
-                                text: "Discover",
-                                heading: "Shows",
-                                endText: "Unique experiences",
-                                image:
-                                    "https://miro.medium.com/v2/resize:fit:1200/1*82jErQ16QNKRXv7PArPkag.jpeg",
-                              ),
-                              SizedBox(height: 12),
-
-                              CuratedContainer(
-                                text: "Taste",
-                                heading: "Luxury",
-                                endText: "Unique experiences",
-                                image:
-                                    "https://images.pexels.com/photos/6869485/pexels-photo-6869485.jpeg",
+                              categories.when(
+                                data: (data) {
+                                  if (data.isEmpty) {
+                                    return Center(
+                                      child: Text("No Categories Yet"),
+                                    );
+                                  }
+                                  return SizedBox(
+                                    height: MediaQuery.heightOf(context),
+                                    child: ListView.separated(
+                                      itemCount: data.length,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      separatorBuilder: (context, index) =>
+                                          SizedBox(height: 16),
+                                      itemBuilder: (context, index) {
+                                        return CuratedContainer(
+                                          reverse: index % 2 == 0,
+                                          heading: data[index].name,
+                                          endText: data[index].description,
+                                          image: data[index].image,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                                error: (e, s) {
+                                  log(
+                                    "[Event Categories]",
+                                    error: e,
+                                    stackTrace: s,
+                                  );
+                                  return Text("Error");
+                                },
+                                loading: () {
+                                  return Center(
+                                    child: CircularProgressIndicator.adaptive(),
+                                  );
+                                },
                               ),
                             ],
                           ),
@@ -692,157 +689,163 @@ class CuratedContainer extends StatelessWidget {
   const CuratedContainer({
     super.key,
     this.reverse = false,
-    required this.text,
     required this.heading,
     required this.endText,
     required this.image,
   });
   final bool reverse;
-  final String text, heading, endText, image;
+  final String heading, endText, image;
   @override
   Widget build(BuildContext context) {
     return SmoothClipRRect(
       smoothness: 1,
       borderRadius: BorderRadius.circular(24),
       child: Container(
-        height: 120,
         decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 20, 1)),
-        child: reverse
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Stack(
-                    alignment: Alignment.centerLeft,
-                    children: [
-                      Container(
-                        width: 134,
-
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: CachedNetworkImageProvider(image),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: 134,
-
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.transparent,
-                              Color.fromRGBO(20, 20, 20, 0.5),
-                              Color.fromRGBO(20, 20, 20, 1),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Flexible(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            text,
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 14,
-                              fontWeight: FontWeight.w100,
-                            ),
-                          ),
-                          Text(
-                            heading,
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 30,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          SizedBox(height: 12),
-                          Text(
-                            endText,
-                            maxLines: 1,
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 14,
-                              fontWeight: FontWeight.w100,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 50),
-                ],
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
+        child: IntrinsicHeight(
+          child: reverse
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Stack(
+                      alignment: Alignment.centerLeft,
                       children: [
-                        Text(
-                          text,
-                          style: TextStyle(
-                            fontSize: AppTextStyles(context).accumulator * 14,
-                            fontWeight: FontWeight.w100,
+                        Container(
+                          width: 134,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: CachedNetworkImageProvider(image),
+                            ),
                           ),
                         ),
-                        Text(
-                          heading,
-                          style: TextStyle(
-                            fontSize: AppTextStyles(context).accumulator * 30,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        SizedBox(height: 12),
-
-                        Text(
-                          endText,
-                          style: TextStyle(
-                            fontSize: AppTextStyles(context).accumulator * 14,
-                            fontWeight: FontWeight.w100,
+                        Container(
+                          width: 134,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.transparent,
+                                Color.fromRGBO(20, 20, 20, 0.5),
+                                Color.fromRGBO(20, 20, 20, 1),
+                              ],
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  Stack(
-                    alignment: Alignment.centerLeft,
-                    children: [
-                      Container(
-                        width: 134,
-
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: CachedNetworkImageProvider(image),
-                          ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Text(
+                            //   text,
+                            //   style: TextStyle(
+                            //     fontSize: AppTextStyles(context).accumulator * 14,
+                            //     fontWeight: FontWeight.w100,
+                            //   ),
+                            // ),
+                            Text(
+                              heading,
+                              style: TextStyle(
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 30,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            SizedBox(height: 12),
+                            Text(
+                              endText,
+                              maxLines: 1,
+                              style: TextStyle(
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 14,
+                                fontWeight: FontWeight.w100,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Container(
-                        width: 134,
+                    ),
+                    SizedBox(width: 50),
+                  ],
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Text(
+                            //   text,
+                            //   style: TextStyle(
+                            //     fontSize: AppTextStyles(context).accumulator * 14,
+                            //     fontWeight: FontWeight.w100,
+                            //   ),
+                            // ),
+                            Expanded(
+                              child: Text(
+                                heading,
+                                style: TextStyle(
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 30,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 12),
 
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerRight,
-                            end: Alignment.centerLeft,
-                            colors: [
-                              Colors.transparent,
-                              Color.fromRGBO(20, 20, 20, 0.5),
-                              Color.fromRGBO(20, 20, 20, 1),
-                            ],
-                          ),
+                            Text(
+                              endText,
+                              style: TextStyle(
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 14,
+                                fontWeight: FontWeight.w100,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                    Stack(
+                      alignment: Alignment.centerLeft,
+                      children: [
+                        Container(
+                          width: 134,
+
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: CachedNetworkImageProvider(image),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 134,
+
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerRight,
+                              end: Alignment.centerLeft,
+                              colors: [
+                                Colors.transparent,
+                                Color.fromRGBO(20, 20, 20, 0.5),
+                                Color.fromRGBO(20, 20, 20, 1),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+        ),
       ),
     );
   }

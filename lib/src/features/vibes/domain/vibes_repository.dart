@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/network.dart';
+import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -49,5 +50,17 @@ Future<Event> getEventByID(Ref ref, {required String id}) async {
     return EventMapper.fromMap(response.data['data']);
   } catch (e) {
     throw Exception('Failed to load event: $e');
+  }
+}
+
+
+@riverpod
+Future<List<EventCategory>> getEventCategories(Ref ref) async {
+  try {
+    final response = await DioHelper.get('/categories');
+    final eventsData = response.data['data'] as List<dynamic>;
+    return eventsData.map((e) => EventCategoryMapper.fromMap(e)).toList();
+  } catch (e) {
+    throw Exception('Failed to load event categories: $e');
   }
 }

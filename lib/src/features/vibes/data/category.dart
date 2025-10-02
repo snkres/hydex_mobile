@@ -1,3 +1,7 @@
+import 'package:dart_mappable/dart_mappable.dart';
+
+part 'category.mapper.dart';
+
 class ExperienceCategory {
   final String heading;
   final String description;
@@ -10,5 +14,20 @@ class ExperienceCategory {
     required this.description,
     required this.imagePath,
     this.actionText,
+  });
+}
+
+@MappableClass()
+class EventCategory with EventCategoryMappable {
+  final String id;
+  final String name;
+  final String description;
+  final String image;
+
+  EventCategory({
+    required this.id,
+    required this.description,
+    required this.image,
+    required this.name,
   });
 }
