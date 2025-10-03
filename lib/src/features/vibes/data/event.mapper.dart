@@ -75,19 +75,18 @@ class EventMapper extends ClassMapperBase<Event> {
   static const Field<Event, String> _f$headline = Field('headline', _$headline);
   static String _$subtitle(Event v) => v.subtitle;
   static const Field<Event, String> _f$subtitle = Field('subtitle', _$subtitle);
-  static String _$image(Event v) => v.image;
-  static const Field<Event, String> _f$image = Field('image', _$image);
-  static String _$video(Event v) => v.video;
-  static const Field<Event, String> _f$video = Field('video', _$video);
+  static String? _$image(Event v) => v.image;
+  static const Field<Event, String> _f$image =
+      Field('image', _$image, opt: true);
+  static String? _$video(Event v) => v.video;
+  static const Field<Event, String> _f$video =
+      Field('video', _$video, opt: true);
   static DateTime _$campaignStartDate(Event v) => v.campaignStartDate;
   static const Field<Event, DateTime> _f$campaignStartDate =
       Field('campaignStartDate', _$campaignStartDate);
   static DateTime _$campaignEndDate(Event v) => v.campaignEndDate;
   static const Field<Event, DateTime> _f$campaignEndDate =
       Field('campaignEndDate', _$campaignEndDate);
-  static String _$categoryId(Event v) => v.categoryId;
-  static const Field<Event, String> _f$categoryId =
-      Field('categoryId', _$categoryId);
 
   @override
   final MappableFields<Event> fields = const {
@@ -99,7 +98,6 @@ class EventMapper extends ClassMapperBase<Event> {
     #video: _f$video,
     #campaignStartDate: _f$campaignStartDate,
     #campaignEndDate: _f$campaignEndDate,
-    #categoryId: _f$categoryId,
   };
 
   static Event _instantiate(DecodingData data) {
@@ -111,8 +109,7 @@ class EventMapper extends ClassMapperBase<Event> {
         image: data.dec(_f$image),
         video: data.dec(_f$video),
         campaignStartDate: data.dec(_f$campaignStartDate),
-        campaignEndDate: data.dec(_f$campaignEndDate),
-        categoryId: data.dec(_f$categoryId));
+        campaignEndDate: data.dec(_f$campaignEndDate));
   }
 
   @override
@@ -169,8 +166,7 @@ abstract class EventCopyWith<$R, $In extends Event, $Out>
       String? image,
       String? video,
       DateTime? campaignStartDate,
-      DateTime? campaignEndDate,
-      String? categoryId});
+      DateTime? campaignEndDate});
   EventCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -186,21 +182,19 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
           EventType? type,
           String? headline,
           String? subtitle,
-          String? image,
-          String? video,
+          Object? image = $none,
+          Object? video = $none,
           DateTime? campaignStartDate,
-          DateTime? campaignEndDate,
-          String? categoryId}) =>
+          DateTime? campaignEndDate}) =>
       $apply(FieldCopyWithData({
         if (id != null) #id: id,
         if (type != null) #type: type,
         if (headline != null) #headline: headline,
         if (subtitle != null) #subtitle: subtitle,
-        if (image != null) #image: image,
-        if (video != null) #video: video,
+        if (image != $none) #image: image,
+        if (video != $none) #video: video,
         if (campaignStartDate != null) #campaignStartDate: campaignStartDate,
-        if (campaignEndDate != null) #campaignEndDate: campaignEndDate,
-        if (categoryId != null) #categoryId: categoryId
+        if (campaignEndDate != null) #campaignEndDate: campaignEndDate
       }));
   @override
   Event $make(CopyWithData data) => Event(
@@ -212,8 +206,7 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
       video: data.get(#video, or: $value.video),
       campaignStartDate:
           data.get(#campaignStartDate, or: $value.campaignStartDate),
-      campaignEndDate: data.get(#campaignEndDate, or: $value.campaignEndDate),
-      categoryId: data.get(#categoryId, or: $value.categoryId));
+      campaignEndDate: data.get(#campaignEndDate, or: $value.campaignEndDate));
 
   @override
   EventCopyWith<$R2, Event, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>

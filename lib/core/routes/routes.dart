@@ -36,7 +36,7 @@ class AppRoutes {
         if (currentRoute != "/boarding") {
           return null;
         }
-        return "/";
+        return "/waitlist";
       }
       return null;
     },

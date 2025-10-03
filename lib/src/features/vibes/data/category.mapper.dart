@@ -25,8 +25,9 @@ class EventCategoryMapper extends ClassMapperBase<EventCategory> {
   static String _$description(EventCategory v) => v.description;
   static const Field<EventCategory, String> _f$description =
       Field('description', _$description);
-  static String _$image(EventCategory v) => v.image;
-  static const Field<EventCategory, String> _f$image = Field('image', _$image);
+  static String? _$image(EventCategory v) => v.image;
+  static const Field<EventCategory, String> _f$image =
+      Field('image', _$image, opt: true);
   static String _$name(EventCategory v) => v.name;
   static const Field<EventCategory, String> _f$name = Field('name', _$name);
 
@@ -112,11 +113,15 @@ class _EventCategoryCopyWithImpl<$R, $Out>
   late final ClassMapperBase<EventCategory> $mapper =
       EventCategoryMapper.ensureInitialized();
   @override
-  $R call({String? id, String? description, String? image, String? name}) =>
+  $R call(
+          {String? id,
+          String? description,
+          Object? image = $none,
+          String? name}) =>
       $apply(FieldCopyWithData({
         if (id != null) #id: id,
         if (description != null) #description: description,
-        if (image != null) #image: image,
+        if (image != $none) #image: image,
         if (name != null) #name: name
       }));
   @override

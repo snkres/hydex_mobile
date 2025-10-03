@@ -79,9 +79,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                             return Stack(
                               children: [
                                 ImageOrVideoWidget(
-                                  videoURL: data[index].video.isNotEmpty
-                                      ? data[index].video
-                                      : null,
+                                  videoURL: data[index].video,
                                   imageURL: data[index].image,
                                 ),
                                 Container(
@@ -483,14 +481,15 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 24),
                         promotionalEvents.when(
                           data: (data) {
                             if (data.isEmpty) {
-                              return Center(child: Text("No Promotional Ad"));
+                              return Center(child: Text("No Promotional Ads"));
                             }
                             return Column(
                               children: [
+                                SizedBox(height: 24),
+
                                 CarouselSlider(
                                   items: data
                                       .map(
@@ -499,18 +498,26 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                             24,
                                           ),
                                           smoothness: 1,
-                                          child: Container(
-                                            width: 320,
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image:
-                                                    CachedNetworkImageProvider(
-                                                      e.image,
+                                          child: e.image != null
+                                              ? Container(
+                                                  width: 320,
+                                                  decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image:
+                                                          CachedNetworkImageProvider(
+                                                            e.image!,
+                                                          ),
+                                                      fit: BoxFit.cover,
                                                     ),
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ),
+                                                  ),
+                                                )
+                                              : Container(
+                                                  width: 320,
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors
+                                                        .surfaceContainer,
+                                                  ),
+                                                ),
                                         ),
                                       )
                                       .toList(),
@@ -539,7 +546,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                 SizedBox(height: 17),
                                 Center(
                                   child: AnimatedSmoothIndicator(
-                                    count: 2,
+                                    count: data.length,
                                     activeIndex: adIndex,
                                     effect: ExpandingDotsEffect(
                                       activeDotColor: Colors.white,
@@ -555,6 +562,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                             );
                           },
                           error: (e, s) {
+                            log("[Error Promotional]", error: e, stackTrace: s);
                             return Center(child: Text("Error"));
                           },
                           loading: () =>
@@ -647,22 +655,24 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                       child: Text("No Categories Yet"),
                                     );
                                   }
-                                  return SizedBox(
-                                    height: MediaQuery.heightOf(context),
-                                    child: ListView.separated(
-                                      itemCount: data.length,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      separatorBuilder: (context, index) =>
-                                          SizedBox(height: 16),
-                                      itemBuilder: (context, index) {
-                                        return CuratedContainer(
+                                  return Column(
+                                    spacing: 16,
+                                    children: [
+                                      for (
+                                        int index = 0;
+                                        index < data.length;
+                                        index++
+                                      ) ...[
+                                        CuratedContainer(
                                           reverse: index % 2 == 0,
                                           heading: data[index].name,
                                           endText: data[index].description,
                                           image: data[index].image,
-                                        );
-                                      },
-                                    ),
+                                        ),
+                                        if (index < data.length - 1)
+                                          const SizedBox(height: 16),
+                                      ],
+                                    ],
                                   );
                                 },
                                 error: (e, s) {
@@ -766,10 +776,11 @@ class CuratedContainer extends StatelessWidget {
     this.reverse = false,
     required this.heading,
     required this.endText,
-    required this.image,
+    this.image,
   });
   final bool reverse;
-  final String heading, endText, image;
+  final String heading, endText;
+  final String? image;
   @override
   Widget build(BuildContext context) {
     return SmoothClipRRect(
@@ -787,12 +798,14 @@ class CuratedContainer extends StatelessWidget {
                       children: [
                         Container(
                           width: 134,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: CachedNetworkImageProvider(image),
-                            ),
-                          ),
+                          decoration: image != null
+                              ? BoxDecoration(
+                                  image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: CachedNetworkImageProvider(image!),
+                                  ),
+                                )
+                              : null,
                         ),
                         Container(
                           width: 134,
@@ -893,13 +906,14 @@ class CuratedContainer extends StatelessWidget {
                       children: [
                         Container(
                           width: 134,
-
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: CachedNetworkImageProvider(image),
-                            ),
-                          ),
+                          decoration: image != null
+                              ? BoxDecoration(
+                                  image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: CachedNetworkImageProvider(image!),
+                                  ),
+                                )
+                              : null,
                         ),
                         Container(
                           width: 134,
@@ -1037,8 +1051,9 @@ class EventContainer extends StatelessWidget {
     this.isNotDetail = false,
   });
   final VoidCallback? onView;
-  final String heading, description, image, date, avatarImage;
+  final String heading, description, date, avatarImage;
   final bool isNotDetail;
+  final String? image;
   @override
   Widget build(BuildContext context) {
     return SmoothClipRRect(
@@ -1055,7 +1070,7 @@ class EventContainer extends StatelessWidget {
                 width: 322,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: CachedNetworkImageProvider(image),
+                    image: CachedNetworkImageProvider(image!),
                     fit: BoxFit.cover,
                     colorFilter: ColorFilter.mode(
                       Colors.black.withValues(alpha: 0.4),
