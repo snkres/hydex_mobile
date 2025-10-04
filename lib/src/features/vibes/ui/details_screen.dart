@@ -138,7 +138,7 @@ class EventContainerDetail extends StatelessWidget {
             image: data.image,
             date: "",
             avatarImage: "",
-
+            tag: "Night Life",
             description: data.subtitle,
           ),
           SizedBox(height: 12),

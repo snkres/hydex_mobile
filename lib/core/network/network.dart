@@ -312,9 +312,14 @@ class DioHelper {
 
           // Check and refresh token if needed
           if (_tokenPair != null) {
-            if (_tokenPair!.isExpired && !_isRefreshing) {
+            if (_tokenPair!.isExpired) {
               try {
-                await _refreshToken();
+                // Wait for refresh if already in progress
+                if (_isRefreshing) {
+                  await _waitForRefresh();
+                } else {
+                  await _refreshToken();
+                }
               } catch (e) {
                 if (kDebugMode) {
                   print('❌ Token refresh failed: $e');
@@ -330,8 +335,6 @@ class DioHelper {
                 return;
               }
             }
-
-            // Add current access token
             options.headers['Authorization'] =
                 'Bearer ${_tokenPair!.accessToken}';
           }
@@ -399,7 +402,6 @@ class DioHelper {
               }
               _authEventListener?.onTokenRefreshFailed();
               await _clearTokens();
-              
             }
           }
 
@@ -545,7 +547,7 @@ class DioHelper {
   // Wait for ongoing refresh to complete
   static Future<void> _waitForRefresh() async {
     while (_isRefreshing) {
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(Duration(milliseconds: 300));
     }
   }
 

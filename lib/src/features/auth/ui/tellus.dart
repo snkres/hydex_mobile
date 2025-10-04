@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/user/user.dart';
+import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/nationality_provider.dart';
 import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
@@ -510,19 +511,16 @@ class CustomChip extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
           color: isSelected
-              ? Theme.of(context).colorScheme.primary
+              ? AppColors.signalBrandTint
               : Theme.of(context).colorScheme.secondaryContainer,
           borderRadius: BorderRadius.circular(99),
+          border: isSelected
+              ? Border.all(color: AppColors.borderBrand, width: 1)
+              : null,
         ),
         child: Text(
           title,
-          style: TextStyle(
-            fontSize: AppTextStyles(context).accumulator * 14,
-            height: 1.7,
-            color: isSelected
-                ? Theme.of(context).colorScheme.onPrimary
-                : Theme.of(context).colorScheme.onSecondaryContainer,
-          ),
+          style: TextStyle(fontSize: AppTextStyles(context).accumulator * 13),
         ),
       ),
     );

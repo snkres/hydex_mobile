@@ -18,6 +18,8 @@ import 'package:hydex/src/features/auth/ui/verify_email.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/features/auth/ui/ugo.dart';
 import 'package:hydex/src/features/auth/ui/waitlist.dart';
+import 'package:hydex/src/features/location/ui/location_screen.dart';
+import 'package:hydex/src/features/notifications/ui/notifications_screen.dart';
 import 'package:hydex/src/features/vibes/ui/details_screen.dart';
 import 'package:hydex/src/features/waitlist/ui/waitlist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -115,6 +117,11 @@ class AppRoutes {
       GoRoute(
         path: "/terms",
         builder: (context, state) => const TermsAndConditions(),
+      ),
+      GoRoute(path: "/location", builder: (context, state) => LocationScreen()),
+      GoRoute(
+        path: "/notifications",
+        builder: (context, state) => const NotificationsScreen(),
       ),
     ],
   );

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
@@ -48,6 +49,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
     );
 
     final categories = ref.watch(getEventCategoriesProvider);
+    final user = ref.watch(currentUserProvider);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -103,7 +105,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                               AppTextStyles(
                                                 context,
                                               ).accumulator *
-                                              14,
+                                              12,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w300,
                                         ),
@@ -116,7 +118,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                               AppTextStyles(
                                                 context,
                                               ).accumulator *
-                                              28,
+                                              20,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w700,
                                         ),
@@ -143,16 +145,25 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.white,
                                               foregroundColor: Colors.black,
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 16,
+                                              ),
                                             ),
                                             child: Row(
                                               children: [
-                                                Icon(Icons.add),
+                                                Icon(
+                                                  Icons.add,
+                                                  color: AppColors.textInverse,
+                                                ),
                                                 SizedBox(width: 4),
                                                 Text(
                                                   "Reserve",
-                                                  style: AppTextStyles(
-                                                    context,
-                                                  ).smallSemibold,
+                                                  style: AppTextStyles(context)
+                                                      .smallSemibold
+                                                      .copyWith(
+                                                        color: AppColors
+                                                            .textInverse,
+                                                      ),
                                                 ),
                                               ],
                                             ),
@@ -205,39 +216,52 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                             Row(
                               spacing: 12,
                               children: [
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 8,
-                                    horizontal: 12,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.2),
-                                    borderRadius: BorderRadius.circular(100),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.keyboard_arrow_down, size: 20),
-                                      Text(
-                                        "Egypt",
-                                        style: TextStyle(
-                                          fontSize:
-                                              AppTextStyles(
-                                                context,
-                                              ).accumulator *
-                                              14,
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                GestureDetector(
+                                  onTap: () {
+                                    context.push("/location");
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 8,
+                                      horizontal: 12,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.2,
                                       ),
-                                    ],
+                                      borderRadius: BorderRadius.circular(100),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.keyboard_arrow_down,
+                                          size: 20,
+                                        ),
+                                        Text(
+                                          "Egypt",
+                                          style: TextStyle(
+                                            fontSize:
+                                                AppTextStyles(
+                                                  context,
+                                                ).accumulator *
+                                                14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                CircleAvatar(
-                                  backgroundColor: Colors.white.withValues(
-                                    alpha: 0.2,
-                                  ),
-                                  child: SvgPicture.asset(
-                                    "img/svg/notification.svg",
-                                    package: "assets",
+                                GestureDetector(
+                                  onTap: () => context.push("/notifications"),
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white.withValues(
+                                      alpha: 0.2,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      "img/svg/notification.svg",
+                                      package: "assets",
+                                    ),
                                   ),
                                 ),
                               ],
@@ -307,10 +331,11 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                     Text(
                                       "Happening",
                                       style: TextStyle(
+                                        color: AppColors.textSecondary,
                                         fontWeight: FontWeight.w100,
                                         fontSize:
                                             AppTextStyles(context).accumulator *
-                                            14,
+                                            12,
                                       ),
                                     ),
                                     Text(
@@ -319,7 +344,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                         fontWeight: FontWeight.w700,
                                         fontSize:
                                             AppTextStyles(context).accumulator *
-                                            24,
+                                            18,
                                       ),
                                     ),
                                   ],
@@ -328,7 +353,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                               SizedBox(width: 6),
                               SmoothContainer(
                                 width: 150,
-                                height: 130,
+                                height: 110,
                                 color: AppColors.surfaceContainer,
 
                                 smoothness: 1,
@@ -341,19 +366,17 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                       height: 24,
                                       "img/svg/location_pin.svg",
                                       package: "assets",
-                                      colorFilter: ColorFilter.mode(
-                                        AppColors.buttonPrimary,
-                                        BlendMode.srcIn,
-                                      ),
                                     ),
                                     Spacer(),
                                     Text(
                                       "Happening",
                                       style: TextStyle(
+                                        color: AppColors.textSecondary,
+
                                         fontWeight: FontWeight.w100,
                                         fontSize:
                                             AppTextStyles(context).accumulator *
-                                            14,
+                                            12,
                                       ),
                                     ),
                                     Text(
@@ -362,7 +385,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                         fontWeight: FontWeight.w700,
                                         fontSize:
                                             AppTextStyles(context).accumulator *
-                                            24,
+                                            18,
                                       ),
                                     ),
                                   ],
@@ -384,10 +407,12 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                     Text(
                                       "Search &",
                                       style: TextStyle(
+                                        color: AppColors.textSecondary,
+
                                         fontWeight: FontWeight.w100,
                                         fontSize:
                                             AppTextStyles(context).accumulator *
-                                            14,
+                                            12,
                                       ),
                                     ),
                                     Text(
@@ -396,7 +421,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                         fontWeight: FontWeight.w700,
                                         fontSize:
                                             AppTextStyles(context).accumulator *
-                                            24,
+                                            18,
                                       ),
                                     ),
                                   ],
@@ -415,23 +440,32 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text.rich(
-                                    TextSpan(
-                                      text: "For You, ",
-                                      style: TextStyle(
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            18,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      children: [
-                                        TextSpan(
-                                          text: "Hady",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w300,
-                                          ),
+                                  user.when(
+                                    skipError: true,
+                                    error: (error, stackTrace) =>
+                                        Text("Error Name"),
+                                    loading: () => Container(),
+                                    data: (data) => Text.rich(
+                                      TextSpan(
+                                        text: "${data?.fullName}, ",
+                                        style: TextStyle(
+                                          fontSize:
+                                              AppTextStyles(
+                                                context,
+                                              ).accumulator *
+                                              18,
+                                          fontWeight: FontWeight.w700,
                                         ),
-                                      ],
+                                        children: [
+                                          TextSpan(
+                                            text: "Your Picks",
+                                            style: TextStyle(
+                                              color: AppColors.textSecondary,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   Text(
@@ -446,9 +480,14 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                 ],
                               ),
                               TextButton(
+                                style: ButtonStyle(
+                                  foregroundColor: WidgetStatePropertyAll(
+                                    AppColors.textPrimary,
+                                  ),
+                                ),
                                 onPressed: () {},
                                 child: Text(
-                                  "Explore all",
+                                  "Discover all",
                                   style: TextStyle(
                                     fontSize:
                                         AppTextStyles(context).accumulator * 12,
@@ -469,7 +508,8 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                             separatorBuilder: (context, index) =>
                                 SizedBox(width: 16),
                             itemBuilder: (context, index) => EventContainer(
-                              isNotDetail: true,
+                              tag: "Night Life",
+                              discount: 50,
                               avatarImage:
                                   "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
                               date: "Date Test",
@@ -501,14 +541,31 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                           child: e.image != null
                                               ? Container(
                                                   width: 320,
-                                                  decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                      image:
-                                                          CachedNetworkImageProvider(
-                                                            e.image!,
+                                                  color: AppColors
+                                                      .surfaceContainer,
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: e.image!,
+                                                    fit: BoxFit.cover,
+                                                    placeholder:
+                                                        (
+                                                          context,
+                                                          url,
+                                                        ) => Center(
+                                                          child:
+                                                              CircularProgressIndicator(),
+                                                        ),
+                                                    errorWidget:
+                                                        (
+                                                          context,
+                                                          url,
+                                                          error,
+                                                        ) => Center(
+                                                          child: Icon(
+                                                            Icons.broken_image,
+                                                            size: 50,
+                                                            color: Colors.grey,
                                                           ),
-                                                      fit: BoxFit.cover,
-                                                    ),
+                                                        ),
                                                   ),
                                                 )
                                               : Container(
@@ -589,7 +646,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                     ),
                                   ),
                                   Text(
-                                    "Tailored for you",
+                                    "Unforgettable places. Trusted hosts.",
                                     style: TextStyle(
                                       fontSize:
                                           AppTextStyles(context).accumulator *
@@ -600,6 +657,11 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                 ],
                               ),
                               TextButton(
+                                style: ButtonStyle(
+                                  foregroundColor: WidgetStatePropertyAll(
+                                    AppColors.textPrimary,
+                                  ),
+                                ),
                                 onPressed: () {},
                                 child: Text(
                                   "Explore all",
@@ -615,13 +677,28 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                         ),
                         SizedBox(height: 16),
 
-                        AspectRatio(
-                          aspectRatio: 16 / 11.3,
-                          child: ListView.builder(
+                        SizedBox(
+                          height: 200,
+                          child: ListView.separated(
                             itemCount: 3,
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                             scrollDirection: Axis.horizontal,
+                            separatorBuilder: (context, index) =>
+                                SizedBox(width: 12),
                             itemBuilder: (context, index) {
-                              return VendorContainer();
+                              return SizedBox(
+                                width: 240,
+                                child: EventContainer(
+                                  heading: "Heading Test",
+                                  description: "description",
+                                  image:
+                                      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
+                                  tag: "Sports",
+                                  avatarImage:
+                                      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
+                                  date: "date",
+                                ),
+                              );
                             },
                           ),
                         ),
@@ -656,7 +733,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                     );
                                   }
                                   return Column(
-                                    spacing: 16,
+                                    spacing: 12,
                                     children: [
                                       for (
                                         int index = 0;
@@ -667,10 +744,8 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                           reverse: index % 2 == 0,
                                           heading: data[index].name,
                                           endText: data[index].description,
-                                          image: data[index].image,
+                                          image: data[index].image ?? "",
                                         ),
-                                        if (index < data.length - 1)
-                                          const SizedBox(height: 16),
                                       ],
                                     ],
                                   );
@@ -760,7 +835,9 @@ class _ImageOrVideoWidgetState extends State<ImageOrVideoWidget> {
         imageUrl: widget.imageURL!,
         placeholder: (context, url) =>
             const Center(child: CircularProgressIndicator()),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
+        errorWidget: (context, url, error) => Center(
+          child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+        ),
         fit: BoxFit.cover,
       );
     }
@@ -776,18 +853,19 @@ class CuratedContainer extends StatelessWidget {
     this.reverse = false,
     required this.heading,
     required this.endText,
-    this.image,
+    required this.image,
   });
   final bool reverse;
   final String heading, endText;
-  final String? image;
+  final String image;
+  final Color containerColor = AppColors.surfaceContainer;
   @override
   Widget build(BuildContext context) {
     return SmoothClipRRect(
       smoothness: 1,
       borderRadius: BorderRadius.circular(24),
       child: Container(
-        decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 20, 1)),
+        decoration: BoxDecoration(color: containerColor),
         child: IntrinsicHeight(
           child: reverse
               ? Row(
@@ -796,16 +874,22 @@ class CuratedContainer extends StatelessWidget {
                     Stack(
                       alignment: Alignment.centerLeft,
                       children: [
-                        Container(
+                        SizedBox(
                           width: 134,
-                          decoration: image != null
-                              ? BoxDecoration(
-                                  image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: CachedNetworkImageProvider(image!),
-                                  ),
-                                )
-                              : null,
+                          height: double.infinity,
+                          child: CachedNetworkImage(
+                            imageUrl: image ?? "",
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) =>
+                                Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) => Center(
+                              child: Icon(
+                                Icons.broken_image,
+                                size: 50,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
                         ),
                         Container(
                           width: 134,
@@ -813,8 +897,8 @@ class CuratedContainer extends StatelessWidget {
                             gradient: LinearGradient(
                               colors: [
                                 Colors.transparent,
-                                Color.fromRGBO(20, 20, 20, 0.5),
-                                Color.fromRGBO(20, 20, 20, 1),
+                                containerColor.withValues(alpha: 0.5),
+                                containerColor,
                               ],
                             ),
                           ),
@@ -823,7 +907,10 @@ class CuratedContainer extends StatelessWidget {
                     ),
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 20,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -865,7 +952,10 @@ class CuratedContainer extends StatelessWidget {
                   children: [
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 20,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -904,16 +994,23 @@ class CuratedContainer extends StatelessWidget {
                     Stack(
                       alignment: Alignment.centerLeft,
                       children: [
-                        Container(
+                        SizedBox(
                           width: 134,
-                          decoration: image != null
-                              ? BoxDecoration(
-                                  image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: CachedNetworkImageProvider(image!),
-                                  ),
-                                )
-                              : null,
+                          height: double.infinity,
+
+                          child: CachedNetworkImage(
+                            imageUrl: image ?? "",
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) =>
+                                Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) => Center(
+                              child: Icon(
+                                Icons.broken_image,
+                                size: 50,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
                         ),
                         Container(
                           width: 134,
@@ -924,8 +1021,8 @@ class CuratedContainer extends StatelessWidget {
                               end: Alignment.centerLeft,
                               colors: [
                                 Colors.transparent,
-                                Color.fromRGBO(20, 20, 20, 0.5),
-                                Color.fromRGBO(20, 20, 20, 1),
+                                containerColor.withValues(alpha: 0.5),
+                                containerColor,
                               ],
                             ),
                           ),
@@ -940,104 +1037,6 @@ class CuratedContainer extends StatelessWidget {
   }
 }
 
-class VendorContainer extends StatelessWidget {
-  const VendorContainer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SmoothClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        smoothness: 1,
-        child: Container(
-          width: 201,
-          decoration: BoxDecoration(color: Color(0xff141414)),
-          child: Column(
-            children: [
-              Stack(
-                children: [
-                  Container(
-                    height: 80,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: CachedNetworkImageProvider(
-                          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.black.withOpacity(0.6),
-
-                            Color(0xff141414),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            "Cairo Jazz Club",
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 18,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                        CircleAvatar(),
-                      ],
-                    ),
-                    SizedBox(height: 10.5),
-
-                    Text(
-                      "Enjoy a smooth dining experience at the best lounge in Egypt",
-                      style: TextStyle(
-                        fontSize: AppTextStyles(context).accumulator * 11,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Text(
-                        "Learn More",
-                        style: TextStyle(
-                          fontSize: AppTextStyles(context).accumulator * 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class EventContainer extends StatelessWidget {
   const EventContainer({
     super.key,
@@ -1045,144 +1044,172 @@ class EventContainer extends StatelessWidget {
     required this.heading,
     required this.description,
     required this.image,
+    required this.tag,
     required this.avatarImage,
+    this.discount,
 
     required this.date,
-    this.isNotDetail = false,
   });
   final VoidCallback? onView;
-  final String heading, description, date, avatarImage;
-  final bool isNotDetail;
+  final String heading, description, date, avatarImage, tag;
   final String? image;
+  final int? discount;
   @override
   Widget build(BuildContext context) {
     return SmoothClipRRect(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(24),
       smoothness: 1,
       child: Stack(
         alignment: Alignment.topLeft,
         children: [
-          Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              Container(
-                height: MediaQuery.heightOf(context) * 0.28,
-                width: 322,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: CachedNetworkImageProvider(image!),
-                    fit: BoxFit.cover,
-                    colorFilter: ColorFilter.mode(
-                      Colors.black.withValues(alpha: 0.4),
-                      BlendMode.darken,
-                    ),
-                  ),
+          Container(
+            height: MediaQuery.heightOf(context) * 0.28,
+            width: 330,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: CachedNetworkImageProvider(image!),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                  Colors.black.withValues(alpha: 0.4),
+                  BlendMode.darken,
                 ),
               ),
-              Container(
-                height: 90,
-                width: 322,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.9),
-                      Colors.black, // stronger at bottom
-
-                      Colors.black, // stronger at bottom
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: 300,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: CachedNetworkImageProvider(
-                          avatarImage,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: CachedNetworkImageProvider(
+                            avatarImage,
+                          ),
                         ),
-                      ),
-                      SmoothClipRRect(
-                        borderRadius: BorderRadius.circular(11),
-                        smoothness: 1,
-                        child: Container(
+                        Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 6,
                           ),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: Color.fromRGBO(0, 0, 0, 0.50),
+                            color: Color.fromRGBO(0, 0, 0, 0.72),
+                            borderRadius: BorderRadius.circular(100),
                           ),
-                          child: Text("Night Life"),
+                          child: Center(
+                            child: Text(
+                              tag,
+                              style: TextStyle(
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 11,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 Spacer(),
-                Text(
-                  heading,
-                  style: TextStyle(
-                    fontSize: AppTextStyles(context).accumulator * 18,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 6),
-                SizedBox(
-                  width: 250,
-                  child: Text(
-                    description,
-                    maxLines: 1,
-                    overflow: TextOverflow.clip,
-                    style: TextStyle(
-                      fontSize: AppTextStyles(context).accumulator * 12,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xffFF0073),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 6),
-
-                Text(
-                  date,
-                  style: TextStyle(
-                    fontSize: AppTextStyles(context).accumulator * 12,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                SizedBox(height: 12),
-                Row(
-                  spacing: 12,
+                Stack(
+                  alignment: Alignment.bottomLeft,
                   children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: SvgPicture.asset(
-                        "img/svg/favorite.svg",
-                        package: "assets",
+                    Visibility(
+                      visible: discount != null,
+                      child: SmoothClipRRect(
+                        smoothness: 1,
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          height: 120,
+
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Color(0xff201233),
+                                AppColors.buttonPrimary,
+                              ],
+                            ),
+                          ),
+                          child: Text(
+                            "$discount% OFF Entry Fees",
+                            style: TextStyle(
+                              fontSize: AppTextStyles(context).accumulator * 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        fixedSize: WidgetStatePropertyAll(Size(159, 32)),
+
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceContainer,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16),
+                        ),
                       ),
-                      onPressed: () {},
-                      child: Text("Learn More", textAlign: TextAlign.center),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          spacing: 4,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  date,
+                                  style: TextStyle(
+                                    color: AppColors.textBrand,
+                                    fontSize:
+                                        AppTextStyles(context).accumulator * 11,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {},
+                                  child: SvgPicture.asset(
+                                    "img/svg/favorite.svg",
+                                    package: "assets",
+                                    width: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              heading,
+                              style: TextStyle(
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 18,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 250,
+                              child: Text(
+                                description,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 12,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                SizedBox(height: 15),
               ],
             ),
           ),
