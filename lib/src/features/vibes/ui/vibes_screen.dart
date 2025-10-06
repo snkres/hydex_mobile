@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -98,7 +100,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Text(
-                                        "Popular".toUpperCase(),
+                                        data[index].subtitle,
                                         textAlign: TextAlign.start,
                                         style: TextStyle(
                                           fontSize:
@@ -529,7 +531,6 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                             return Column(
                               children: [
                                 SizedBox(height: 24),
-
                                 CarouselSlider(
                                   items: data
                                       .map(
@@ -543,30 +544,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                                   width: 320,
                                                   color: AppColors
                                                       .surfaceContainer,
-                                                  child: CachedNetworkImage(
-                                                    imageUrl: e.image!,
-                                                    fit: BoxFit.cover,
-                                                    placeholder:
-                                                        (
-                                                          context,
-                                                          url,
-                                                        ) => Center(
-                                                          child:
-                                                              CircularProgressIndicator(),
-                                                        ),
-                                                    errorWidget:
-                                                        (
-                                                          context,
-                                                          url,
-                                                          error,
-                                                        ) => Center(
-                                                          child: Icon(
-                                                            Icons.broken_image,
-                                                            size: 50,
-                                                            color: Colors.grey,
-                                                          ),
-                                                        ),
-                                                  ),
+                                                  child: _buildImage(e.image!),
                                                 )
                                               : Container(
                                                   width: 320,
@@ -822,28 +800,17 @@ class _ImageOrVideoWidgetState extends State<ImageOrVideoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // Display video if videoURL is not null
     if (widget.videoURL != null) {
       return _isVideoInitialized
           ? VideoPlayer(_videoController)
           : const Center(child: CircularProgressIndicator());
     }
 
-    // Display image if imageURL is not null
     if (widget.imageURL != null) {
-      return CachedNetworkImage(
-        imageUrl: widget.imageURL!,
-        placeholder: (context, url) =>
-            const Center(child: CircularProgressIndicator()),
-        errorWidget: (context, url, error) => Center(
-          child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-        ),
-        fit: BoxFit.cover,
-      );
+      return _buildImage(widget.imageURL!);
     }
 
-    // Display nothing if both are null
-    return const SizedBox.shrink();
+    return SizedBox.shrink();
   }
 }
 
@@ -1214,6 +1181,53 @@ class EventContainer extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+final Map<String, Uint8List> _imageCache = {};
+Widget _buildImage(String imageData) {
+  if (imageData.startsWith('data:image') ||
+      (!imageData.startsWith('http://') && !imageData.startsWith('https://'))) {
+    // Base64 image - decode once and cache
+    try {
+      // Check cache first
+      if (!_imageCache.containsKey(imageData)) {
+        String base64String = imageData;
+        if (imageData.contains(',')) {
+          base64String = imageData.split(',')[1];
+        }
+        _imageCache[imageData] = base64Decode(base64String);
+      }
+
+      return Image.memory(
+        _imageCache[imageData]!,
+        height: double.infinity,
+
+        fit: BoxFit.cover,
+        gaplessPlayback: true, // Prevents flickering during rebuilds
+        errorBuilder: (context, error, stackTrace) => Center(
+          child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+        ),
+      );
+    } catch (e) {
+      return Center(
+        child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+      );
+    }
+  } else {
+    // URL image
+    return SizedBox(
+      height: double.infinity,
+      child: CachedNetworkImage(
+        imageUrl: imageData,
+        fit: BoxFit.cover,
+        placeholder: (context, url) =>
+            Center(child: CircularProgressIndicator()),
+        errorWidget: (context, url, error) => Center(
+          child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+        ),
       ),
     );
   }

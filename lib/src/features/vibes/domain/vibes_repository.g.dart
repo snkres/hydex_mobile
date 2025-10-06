@@ -6,7 +6,7 @@ part of 'vibes_repository.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getEventsHash() => r'04bf597a844dd609af0d4f196ecf7fc8a9babd4f';
+String _$getEventsHash() => r'c00ecf47d326c7d5adb2b2e0bb5932427eb35556';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -64,7 +64,7 @@ class GetEventsFamily extends Family<AsyncValue<List<Event>>> {
 }
 
 /// See also [getEvents].
-class GetEventsProvider extends AutoDisposeFutureProvider<List<Event>> {
+class GetEventsProvider extends FutureProvider<List<Event>> {
   /// See also [getEvents].
   GetEventsProvider({required EventType type})
     : this._internal(
@@ -110,7 +110,7 @@ class GetEventsProvider extends AutoDisposeFutureProvider<List<Event>> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<Event>> createElement() {
+  FutureProviderElement<List<Event>> createElement() {
     return _GetEventsProviderElement(this);
   }
 
@@ -130,13 +130,12 @@ class GetEventsProvider extends AutoDisposeFutureProvider<List<Event>> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin GetEventsRef on AutoDisposeFutureProviderRef<List<Event>> {
+mixin GetEventsRef on FutureProviderRef<List<Event>> {
   /// The parameter `type` of this provider.
   EventType get type;
 }
 
-class _GetEventsProviderElement
-    extends AutoDisposeFutureProviderElement<List<Event>>
+class _GetEventsProviderElement extends FutureProviderElement<List<Event>>
     with GetEventsRef {
   _GetEventsProviderElement(super.provider);
 

@@ -32,7 +32,7 @@ class VibesRepository {
 
 final vibesProvider = Provider<VibesRepository>((ref) => VibesRepository());
 
-@riverpod
+@Riverpod(keepAlive: true)
 Future<List<Event>> getEvents(Ref ref, {required EventType type}) async {
   try {
     final response = await DioHelper.get(

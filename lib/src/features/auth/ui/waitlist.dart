@@ -58,26 +58,17 @@ class _BaseScreenState extends State<BaseScreen> {
           shape: LiquidRoundedRectangle(borderRadius: Radius.circular(100)),
           child: Container(
             width: (270 * MediaQuery.sizeOf(context).width) / 375,
-            height: 70,
+            height: (70 * MediaQuery.sizeOf(context).width) / 375,
             alignment: Alignment.center,
             padding: EdgeInsets.all(4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 8,
-              children: [
-                for (var item in navItems)
-                  NavBar(
-                    svgPath: item.svgPath,
-                    title: item.title,
-                    index: item.index,
-                    selectedIndex: currentIndex,
-                    onTap: () {
-                      setState(() {
-                        currentIndex = item.index;
-                      });
-                    },
-                  ),
-              ],
+            child: NavBar(
+              items: navItems,
+              selectedIndex: currentIndex,
+              onTap: (index) {
+                setState(() {
+                  currentIndex = index;
+                });
+              },
             ),
           ),
         ),
@@ -87,83 +78,129 @@ class _BaseScreenState extends State<BaseScreen> {
   }
 }
 
-class NavBar extends StatelessWidget {
+class NavBar extends StatefulWidget {
   const NavBar({
     super.key,
-    required this.svgPath,
-    required this.title,
-    required this.onTap,
+    required this.items,
     required this.selectedIndex,
-    required this.index,
+    required this.onTap,
   });
-  final String svgPath, title;
-  final VoidCallback onTap;
-  final int selectedIndex, index;
+
+  final List<NavItem> items;
+  final int selectedIndex;
+  final ValueChanged<int> onTap;
+
+  @override
+  State<NavBar> createState() => _NavBarState();
+}
+
+class _NavBarState extends State<NavBar> {
+  double _scale = 1.0;
+
+  void _animateScale() async {
+    setState(() => _scale = 0.5);
+    await Future.delayed(const Duration(milliseconds: 150));
+    setState(() => _scale = 1.0);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(100)),
-      child: Semantics(
-        button: true,
-        label: title,
-        selected: selectedIndex == index,
-        child: GestureDetector(
-          onTap: onTap,
-          child: AnimatedContainer(
-            duration: Duration(milliseconds: 400),
-            curve: Curves.easeInOut,
-            alignment: Alignment.center,
-            padding: EdgeInsets.all(5),
-            width: MediaQuery.widthOf(context) / 4.6,
-            decoration: BoxDecoration(
-              color: selectedIndex == index
-                  ? Color.fromRGBO(125, 125, 125, 0.35)
-                  : null,
-            ),
-            child: SizedBox(
-              height: 45,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    child: SvgPicture.asset(
-                      svgPath,
-                      package: "assets",
-                      colorFilter: ColorFilter.mode(
-                        selectedIndex == index
-                            ? Theme.of(context).colorScheme.onSurface
-                            : Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.5),
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 6),
+    return Container(
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(100)),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final itemWidth = constraints.maxWidth / widget.items.length;
 
-                  FittedBox(
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        color: selectedIndex == index
-                            ? Theme.of(context).colorScheme.onSurface
-                            : Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.5),
-                        fontWeight: selectedIndex == index
-                            ? FontWeight.w700
-                            : null,
-                        fontSize: AppTextStyles(context).accumulator * 12,
-                      ),
+          return Stack(
+            alignment: Alignment.center,
+            children: [
+              // 🔹 Animated highlight that moves & scales
+              AnimatedAlign(
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.fastOutSlowIn,
+                alignment: Alignment(
+                  (widget.selectedIndex / (widget.items.length - 1)) * 2 - 1,
+                  0,
+                ),
+                child: AnimatedScale(
+                  scale: _scale,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeOutBack,
+                  child: Container(
+                    width: itemWidth,
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(125, 125, 125, 0.15),
+                      borderRadius: BorderRadius.circular(100),
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
+
+              // 🔹 Nav items row
+              SizedBox(
+                height: 60,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(widget.items.length, (i) {
+                    final item = widget.items[i];
+                    final isSelected = i == widget.selectedIndex;
+
+                    return GestureDetector(
+                      onTap: () {
+                        _animateScale(); // trigger bounce
+                        widget.onTap(i);
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: itemWidth,
+                        padding: const EdgeInsets.all(5),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // SVG icon
+                            SizedBox(
+                              child: SvgPicture.asset(
+                                item.svgPath,
+                                package: "assets",
+                                colorFilter: ColorFilter.mode(
+                                  isSelected
+                                      ? Theme.of(context).colorScheme.onSurface
+                                      : Theme.of(context).colorScheme.onSurface
+                                            .withOpacity(0.5),
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 6),
+
+                            // Label
+                            FittedBox(
+                              child: Text(
+                                item.title,
+                                style: TextStyle(
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.onSurface
+                                      : Theme.of(context).colorScheme.onSurface
+                                            .withOpacity(0.5),
+                                  fontWeight: isSelected
+                                      ? FontWeight.w700
+                                      : null,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
