@@ -123,38 +123,44 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 autofocus: true,
 
                                                 keyboardType:
-                                                    TextInputType.phone,
+                                                    TextInputType.number,
                                                 textInputAction:
                                                     TextInputAction.done,
                                                 onChanged: (v) {
-                                                  if (phoneController.text
-                                                      .startsWith("0")) {
-                                                    setState(() {
-                                                      phoneNumber =
-                                                          data.dialCode +
-                                                          phoneController.text
-                                                              .substring(1);
-                                                    });
-                                                  } else {
-                                                    setState(() {
-                                                      phoneNumber =
-                                                          data.dialCode +
-                                                          phoneController.text;
-                                                    });
-                                                  }
+                                                  setState(() {
+                                                    phoneNumber =
+                                                        data.dialCode +
+                                                        phoneController.text;
+                                                  });
                                                 },
                                                 validator: (v) {
                                                   if (v!.isEmpty) {
                                                     return "Please add your phone number";
                                                   }
+
                                                   if (v.length > 13) {
                                                     return "Phone shouldn't be more than 13 characters";
                                                   }
                                                   return null;
                                                 },
                                                 inputFormatters: [
-                                                  FilteringTextInputFormatter.allow(
-                                                    RegExp(r'[0-9+]+'),
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly,
+                                                  // Prevent user from typing 0 as the first digit
+                                                  TextInputFormatter.withFunction(
+                                                    (oldValue, newValue) {
+                                                      if (data.code == "EG" &&
+                                                          newValue.text
+                                                              .startsWith(
+                                                                '0',
+                                                              )) {
+                                                        return oldValue;
+                                                      }
+                                                      return newValue;
+                                                    },
+                                                  ),
+                                                  LengthLimitingTextInputFormatter(
+                                                    data.code == "EG" ? 10 : 13,
                                                   ),
                                                 ],
                                                 forceErrorText: phoneError,

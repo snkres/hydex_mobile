@@ -199,17 +199,25 @@ class _TellusState extends State<Tellus> {
                                                           initialDateTime:
                                                               DateTime.now()
                                                                   .subtract(
-                                                                    Duration(
+                                                                    const Duration(
                                                                       days:
                                                                           365 *
                                                                           18,
                                                                     ),
                                                                   ),
-
+                                                          maximumDate:
+                                                              DateTime.now()
+                                                                  .subtract(
+                                                                    const Duration(
+                                                                      days:
+                                                                          365 *
+                                                                          18,
+                                                                    ),
+                                                                  ),
                                                           minimumDate:
                                                               DateTime.now()
                                                                   .subtract(
-                                                                    Duration(
+                                                                    const Duration(
                                                                       days:
                                                                           365 *
                                                                           100,

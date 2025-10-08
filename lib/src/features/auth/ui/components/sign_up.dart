@@ -96,18 +96,9 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                           keyboardType: TextInputType.phone,
                           textInputAction: TextInputAction.done,
                           onChanged: (v) {
-                            if (textController.text.startsWith("0")) {
-                              setState(() {
-                                phoneNumber =
-                                    data.dialCode +
-                                    textController.text.substring(1);
-                              });
-                            } else {
-                              setState(() {
-                                phoneNumber =
-                                    data.dialCode + textController.text;
-                              });
-                            }
+                            setState(() {
+                              phoneNumber = data.dialCode + textController.text;
+                            });
                           },
                           validator: (v) {
                             if (v!.isEmpty) {
@@ -119,10 +110,22 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                             return null;
                           },
                           inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'[0-9+]+'),
+                            FilteringTextInputFormatter.digitsOnly,
+                            TextInputFormatter.withFunction((
+                              oldValue,
+                              newValue,
+                            ) {
+                              if (data.code == "EG" &&
+                                  newValue.text.startsWith('0')) {
+                                return oldValue;
+                              }
+                              return newValue;
+                            }),
+                            LengthLimitingTextInputFormatter(
+                              data.code == "EG" ? 10 : 13,
                             ),
                           ],
+
                           forceErrorText: phoneError,
 
                           onFieldSubmitted: (v) async {

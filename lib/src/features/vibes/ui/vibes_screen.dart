@@ -807,7 +807,10 @@ class _ImageOrVideoWidgetState extends State<ImageOrVideoWidget> {
     }
 
     if (widget.imageURL != null) {
-      return _buildImage(widget.imageURL!);
+      return SizedBox(
+        height: double.infinity,
+        child: _buildImage(widget.imageURL!),
+      );
     }
 
     return SizedBox.shrink();
@@ -842,21 +845,9 @@ class CuratedContainer extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       children: [
                         SizedBox(
-                          width: 134,
                           height: double.infinity,
-                          child: CachedNetworkImage(
-                            imageUrl: image ?? "",
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) =>
-                                Center(child: CircularProgressIndicator()),
-                            errorWidget: (context, url, error) => Center(
-                              child: Icon(
-                                Icons.broken_image,
-                                size: 50,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
+                          width: 134,
+                          child: _buildImage(image),
                         ),
                         Container(
                           width: 134,
@@ -962,22 +953,9 @@ class CuratedContainer extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       children: [
                         SizedBox(
-                          width: 134,
                           height: double.infinity,
-
-                          child: CachedNetworkImage(
-                            imageUrl: image ?? "",
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) =>
-                                Center(child: CircularProgressIndicator()),
-                            errorWidget: (context, url, error) => Center(
-                              child: Icon(
-                                Icons.broken_image,
-                                size: 50,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
+                          width: 134,
+                          child: _buildImage(image),
                         ),
                         Container(
                           width: 134,
@@ -1203,7 +1181,6 @@ Widget _buildImage(String imageData) {
 
       return Image.memory(
         _imageCache[imageData]!,
-        height: double.infinity,
 
         fit: BoxFit.cover,
         gaplessPlayback: true, // Prevents flickering during rebuilds
@@ -1219,7 +1196,6 @@ Widget _buildImage(String imageData) {
   } else {
     // URL image
     return SizedBox(
-      height: double.infinity,
       child: CachedNetworkImage(
         imageUrl: imageData,
         fit: BoxFit.cover,

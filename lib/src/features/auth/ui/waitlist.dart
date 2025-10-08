@@ -145,53 +145,65 @@ class _NavBarState extends State<NavBar> {
                     final item = widget.items[i];
                     final isSelected = i == widget.selectedIndex;
 
-                    return GestureDetector(
-                      onTap: () {
-                        _animateScale(); // trigger bounce
-                        widget.onTap(i);
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: itemWidth,
-                        padding: const EdgeInsets.all(5),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // SVG icon
-                            SizedBox(
-                              child: SvgPicture.asset(
-                                item.svgPath,
-                                package: "assets",
-                                colorFilter: ColorFilter.mode(
-                                  isSelected
-                                      ? Theme.of(context).colorScheme.onSurface
-                                      : Theme.of(context).colorScheme.onSurface
-                                            .withOpacity(0.5),
-                                  BlendMode.srcIn,
+                    return Expanded(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior
+                            .opaque, // 👈 ensures full area is tappable
+                        onTap: () {
+                          _animateScale(); // trigger bounce
+                          widget.onTap(i);
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          width: itemWidth,
+                          padding: const EdgeInsets.all(5),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // SVG icon
+                              SizedBox(
+                                child: SvgPicture.asset(
+                                  item.svgPath,
+                                  package: "assets",
+                                  colorFilter: ColorFilter.mode(
+                                    isSelected
+                                        ? Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface
+                                        : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withOpacity(0.5),
+                                    BlendMode.srcIn,
+                                  ),
                                 ),
                               ),
-                            ),
 
-                            const SizedBox(height: 6),
+                              const SizedBox(height: 6),
 
-                            // Label
-                            FittedBox(
-                              child: Text(
-                                item.title,
-                                style: TextStyle(
-                                  color: isSelected
-                                      ? Theme.of(context).colorScheme.onSurface
-                                      : Theme.of(context).colorScheme.onSurface
-                                            .withOpacity(0.5),
-                                  fontWeight: isSelected
-                                      ? FontWeight.w700
-                                      : null,
-                                  fontSize: 12,
+                              // Label
+                              FittedBox(
+                                child: Text(
+                                  item.title,
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface
+                                        : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withOpacity(0.5),
+                                    fontWeight: isSelected
+                                        ? FontWeight.w700
+                                        : null,
+                                    fontSize: 12,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     );

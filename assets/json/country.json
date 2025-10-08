@@ -776,12 +776,12 @@
         "dial_code": "+353"
     },
     {
-        "name": "Israel",
-        "code": "IL",
-        "emoji": "🇮🇱",
-        "unicode": "U+1F1EE U+1F1F1",
-        "image": "IL.svg",
-        "dial_code": "+972"
+        "name": "Palestine",
+        "code": "PS",
+        "emoji": "🇵🇸",
+        "unicode": "U+1F1F5 U+1F1F8",
+        "image": "PS.svg",
+        "dial_code": "+970"
     },
     {
         "name": "Isle of Man",

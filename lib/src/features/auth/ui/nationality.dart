@@ -355,10 +355,7 @@ class _TellusForOthersState extends State<TellusForOthers> {
                                       hintText: "https://facebook.com/username",
                                     ),
                                     validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return "Please enter facebook link";
-                                      }
-                                      if (value.isNotEmpty) {
+                                      if (value!.isNotEmpty) {
                                         // Basic URL validation
                                         if (!Uri.tryParse(
                                               value,
