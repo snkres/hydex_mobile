@@ -664,17 +664,22 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                             separatorBuilder: (context, index) =>
                                 SizedBox(width: 12),
                             itemBuilder: (context, index) {
-                              return SizedBox(
-                                width: 240,
-                                child: EventContainer(
-                                  heading: "Heading Test",
-                                  description: "description",
-                                  image:
-                                      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
-                                  tag: "Sports",
-                                  avatarImage:
-                                      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
-                                  date: "date",
+                              return GestureDetector(
+                                onTap: () {
+                                  context.push("/details");
+                                },
+                                child: SizedBox(
+                                  width: 240,
+                                  child: EventContainer(
+                                    heading: "Heading Test",
+                                    description: "description",
+                                    image:
+                                        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
+                                    tag: "Sports",
+                                    avatarImage:
+                                        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
+                                    date: "date",
+                                  ),
                                 ),
                               );
                             },
@@ -987,17 +992,17 @@ class EventContainer extends StatelessWidget {
     super.key,
     this.onView,
     required this.heading,
-    required this.description,
+    this.description,
     required this.image,
-    required this.tag,
+    this.tag,
     required this.avatarImage,
     this.discount,
 
     required this.date,
   });
   final VoidCallback? onView;
-  final String heading, description, date, avatarImage, tag;
-  final String? image;
+  final String heading, date, avatarImage;
+  final String? image, tag, description;
   final int? discount;
   @override
   Widget build(BuildContext context) {
@@ -1023,41 +1028,44 @@ class EventContainer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: CachedNetworkImageProvider(
-                            avatarImage,
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Color.fromRGBO(0, 0, 0, 0.72),
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Center(
-                            child: Text(
-                              tag,
-                              style: TextStyle(
-                                fontSize:
-                                    AppTextStyles(context).accumulator * 11,
+                tag != null
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CircleAvatar(
+                                backgroundImage: CachedNetworkImageProvider(
+                                  avatarImage,
+                                ),
                               ),
-                            ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Color.fromRGBO(0, 0, 0, 0.72),
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    tag!,
+                                    style: TextStyle(
+                                      fontSize:
+                                          AppTextStyles(context).accumulator *
+                                          11,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
+                      )
+                    : SizedBox.shrink(),
                 Spacer(),
                 Stack(
                   alignment: Alignment.bottomLeft,
@@ -1136,19 +1144,22 @@ class EventContainer extends StatelessWidget {
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            SizedBox(
-                              width: 250,
-                              child: Text(
-                                description,
-                                maxLines: 1,
-                                overflow: TextOverflow.clip,
-                                style: TextStyle(
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 12,
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
-                            ),
+                            description != null
+                                ? SizedBox(
+                                    width: 250,
+                                    child: Text(
+                                      description!,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.clip,
+                                      style: TextStyle(
+                                        fontSize:
+                                            AppTextStyles(context).accumulator *
+                                            12,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox.shrink(),
                           ],
                         ),
                       ),

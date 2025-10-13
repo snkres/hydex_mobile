@@ -22,6 +22,7 @@ class AppColors {
     0xFFFFFFFF,
   ); // before: Surface.Light
 
+  static const Color surfaceContainerLighter = Color(0xff2C2C2E);
   // ------------------
   // 3. Signals
   // ------------------

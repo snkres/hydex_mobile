@@ -32,9 +32,7 @@ void main() async {
   } else {
     await SentryFlutter.init((options) {
       options.dsn =
-          'https://32c622c74f363e4bb9e092dd8263ad6b@o4510022729269248.ingest.de.sentry.io/4510022730711120';
-      // Adds request headers and IP for users,
-      // visit: https://docs.sentry.io/platforms/dart/data-management/data-collected/ for more info
+          'https://fa54dbd5e75020b3a743a3b127cdccb9@o4510173263036416.ingest.de.sentry.io/4510181346705488';
       options.sendDefaultPii = true;
     }, appRunner: () => runApp(ProviderScope(child: const MyApp())));
   }

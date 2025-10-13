@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/network.dart';
@@ -108,7 +109,53 @@ class AppRoutes {
       ),
       GoRoute(
         path: "/details",
-        builder: (context, state) => DetailsScreen(id: state.extra as String),
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: DetailsScreen(),
+            transitionDuration: Duration(milliseconds: 400),
+            reverseTransitionDuration: Duration(milliseconds: 400),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  // Luxury curved animation
+                  final curvedAnimation = CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOutCubicEmphasized,
+                    reverseCurve: Curves.easeOutCubic,
+                  );
+
+                  // Fade transition
+                  final fadeAnimation = Tween<double>(
+                    begin: 0.0,
+                    end: 1.0,
+                  ).animate(curvedAnimation);
+
+                  // Scale transition (slight zoom)
+                  final scaleAnimation = Tween<double>(
+                    begin: 0.92,
+                    end: 1.0,
+                  ).animate(curvedAnimation);
+
+                  // Slide transition (subtle upward movement)
+                  final slideAnimation = Tween<Offset>(
+                    begin: Offset(0, 0.08),
+                    end: Offset.zero,
+                  ).animate(curvedAnimation);
+
+                  return SlideTransition(
+                    position: slideAnimation,
+                    child: ScaleTransition(
+                      scale: scaleAnimation,
+                      child: FadeTransition(
+                        opacity: fadeAnimation,
+                        child: child,
+                      ),
+                    ),
+                  );
+                },
+          );
+        },
+        builder: (context, state) => DetailsScreen(),
       ),
       GoRoute(
         path: "/waitlist",

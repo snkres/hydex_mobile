@@ -28,7 +28,13 @@ class AppTheme {
           ),
         ),
       ),
-
+      iconButtonTheme: IconButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(
+            Color.fromRGBO(23, 23, 23, 0.80),
+          ),
+        ),
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           elevation: WidgetStatePropertyAll(0),
