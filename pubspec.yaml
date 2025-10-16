@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.2.0+56
+version: 0.2.0+57
 
 environment:
   sdk: ^3.9.0
@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  animations: ^2.1.0
   assets:
     path: assets
   auto_size_text: ^3.0.0
@@ -52,6 +53,7 @@ dependencies:
   liquid_glass_renderer: ^0.1.1-dev.10
   lottie: ^3.3.1
   pinput: ^5.0.1
+  readmore: ^3.0.0
   riverpod_annotation: ^2.6.1
   sentry_flutter: ^9.6.0
   shared_preferences: ^2.5.3

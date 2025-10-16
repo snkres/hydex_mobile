@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/ui/type.dart';
 
 class CustomBackButton extends StatelessWidget {
   const CustomBackButton({super.key, this.onClick});
@@ -11,7 +12,7 @@ class CustomBackButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: IconButton(
-        iconSize: 24,
+        iconSize: AppTextStyles(context).accumulator * 24,
         alignment: Alignment.center,
         padding: EdgeInsets.zero,
         style: ButtonStyle(

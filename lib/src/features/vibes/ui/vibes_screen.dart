@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
 
+import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,8 @@ import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
-import 'package:hydex/src/features/vibes/ui/components/experience.dart';
+import 'package:hydex/src/features/vibes/ui/components/event_details.dart';
+import 'package:hydex/src/features/vibes/ui/details_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -80,102 +82,107 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                             });
                           },
                           itemBuilder: (context, index) {
-                            return Stack(
-                              children: [
-                                ImageOrVideoWidget(
-                                  videoURL: data[index].video,
-                                  imageURL: data[index].image,
-                                ),
-                                Container(
-                                  color: Colors.black.withValues(alpha: 0.3),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 60,
+                            return GestureDetector(
+                              onTap: () => context.push("/event/details"),
+                              child: Stack(
+                                children: [
+                                  ImageOrVideoWidget(
+                                    videoURL: data[index].video,
+                                    imageURL: data[index].image,
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        data[index].subtitle,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                          fontSize:
-                                              AppTextStyles(
-                                                context,
-                                              ).accumulator *
-                                              12,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        data[index].headline,
-                                        style: TextStyle(
-                                          fontSize:
-                                              AppTextStyles(
-                                                context,
-                                              ).accumulator *
-                                              20,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            formatDateTime(
-                                              data[index].campaignStartDate,
-                                            ),
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize:
-                                                  AppTextStyles(
-                                                    context,
-                                                  ).accumulator *
-                                                  12,
-                                            ),
+                                  Container(
+                                    color: Colors.black.withValues(alpha: 0.3),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 60,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          data[index].subtitle,
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                            fontSize:
+                                                AppTextStyles(
+                                                  context,
+                                                ).accumulator *
+                                                12,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w300,
                                           ),
-                                          ElevatedButton(
-                                            onPressed: () {},
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.white,
-                                              foregroundColor: Colors.black,
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 16,
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          data[index].headline,
+                                          style: TextStyle(
+                                            fontSize:
+                                                AppTextStyles(
+                                                  context,
+                                                ).accumulator *
+                                                20,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              formatDateTime(
+                                                data[index].campaignStartDate,
+                                              ),
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize:
+                                                    AppTextStyles(
+                                                      context,
+                                                    ).accumulator *
+                                                    12,
                                               ),
                                             ),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.add,
-                                                  color: AppColors.textInverse,
+                                            ElevatedButton(
+                                              onPressed: () {},
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.white,
+                                                foregroundColor: Colors.black,
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 16,
                                                 ),
-                                                SizedBox(width: 4),
-                                                Text(
-                                                  "Reserve",
-                                                  style: AppTextStyles(context)
-                                                      .smallSemibold
-                                                      .copyWith(
-                                                        color: AppColors
-                                                            .textInverse,
-                                                      ),
-                                                ),
-                                              ],
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.add,
+                                                    color:
+                                                        AppColors.textInverse,
+                                                  ),
+                                                  SizedBox(width: 4),
+                                                  Text(
+                                                    "Reserve",
+                                                    style:
+                                                        AppTextStyles(context)
+                                                            .smallSemibold
+                                                            .copyWith(
+                                                              color: AppColors
+                                                                  .textInverse,
+                                                            ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             );
                           },
                         ),
@@ -534,25 +541,33 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                 CarouselSlider(
                                   items: data
                                       .map(
-                                        (e) => SmoothClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            24,
-                                          ),
-                                          smoothness: 1,
-                                          child: e.image != null
-                                              ? Container(
-                                                  width: 320,
-                                                  color: AppColors
-                                                      .surfaceContainer,
-                                                  child: _buildImage(e.image!),
-                                                )
-                                              : Container(
-                                                  width: 320,
-                                                  decoration: BoxDecoration(
-                                                    color: AppColors
-                                                        .surfaceContainer,
-                                                  ),
-                                                ),
+                                        (e) => OpenContainer(
+                                          closedColor: Colors.transparent,
+                                          closedBuilder: (context, _) {
+                                            return SmoothClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(24),
+                                              smoothness: 1,
+                                              child: e.image != null
+                                                  ? Container(
+                                                      width: 320,
+                                                      color: AppColors
+                                                          .surfaceContainer,
+                                                      child: _buildImage(
+                                                        e.image!,
+                                                      ),
+                                                    )
+                                                  : Container(
+                                                      width: 320,
+                                                      decoration: BoxDecoration(
+                                                        color: AppColors
+                                                            .surfaceContainer,
+                                                      ),
+                                                    ),
+                                            );
+                                          },
+                                          openBuilder: (context, _) =>
+                                              EventDetailScreen(),
                                         ),
                                       )
                                       .toList(),
@@ -664,23 +679,25 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                             separatorBuilder: (context, index) =>
                                 SizedBox(width: 12),
                             itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  context.push("/details");
+                              return OpenContainer(
+                                closedColor: Colors.transparent,
+                                closedBuilder: (context, _) {
+                                  return SizedBox(
+                                    width: 240,
+                                    child: EventContainer(
+                                      heading: "Heading Test",
+                                      description: "description",
+                                      image:
+                                          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
+                                      tag: "Sports",
+                                      avatarImage:
+                                          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
+                                      date: "date",
+                                    ),
+                                  );
                                 },
-                                child: SizedBox(
-                                  width: 240,
-                                  child: EventContainer(
-                                    heading: "Heading Test",
-                                    description: "description",
-                                    image:
-                                        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
-                                    tag: "Sports",
-                                    avatarImage:
-                                        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
-                                    date: "date",
-                                  ),
-                                ),
+                                openBuilder: (context, _) =>
+                                    VendorDetailsScreen(),
                               );
                             },
                           ),

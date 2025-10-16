@@ -60,7 +60,10 @@ class _TicketWidgetState extends State<TicketWidget> {
           child: CustomPaint(painter: DashedLinePainter()),
         ),
         Positioned(
-          right: 2,
+          right: (MediaQuery.widthOf(context) / 375) * -90,
+          bottom: 0,
+          top: 0,
+          left: 0,
           child: SvgPicture.asset("img/svg/ticket_logo.svg", package: "assets"),
         ),
       ],

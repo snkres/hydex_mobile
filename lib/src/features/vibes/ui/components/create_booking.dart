@@ -6,7 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/vibes/data/confirm_booking.dart';
-import 'package:hydex/src/features/vibes/ui/components/review_booking.dart';
+import 'package:hydex/src/features/vibes/ui/review_booking.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:intl/intl.dart';
 

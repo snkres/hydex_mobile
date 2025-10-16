@@ -21,6 +21,8 @@ import 'package:hydex/src/features/auth/ui/ugo.dart';
 import 'package:hydex/src/features/auth/ui/waitlist.dart';
 import 'package:hydex/src/features/location/ui/location_screen.dart';
 import 'package:hydex/src/features/notifications/ui/notifications_screen.dart';
+import 'package:hydex/src/features/vibes/ui/components/event_details.dart';
+import 'package:hydex/src/features/vibes/ui/components/gallery.dart';
 import 'package:hydex/src/features/vibes/ui/details_screen.dart';
 import 'package:hydex/src/features/waitlist/ui/waitlist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -113,6 +115,55 @@ class AppRoutes {
           return CustomTransitionPage(
             key: state.pageKey,
             child: VendorDetailsScreen(),
+            transitionDuration: Duration(milliseconds: 600),
+            reverseTransitionDuration: Duration(milliseconds: 400),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  // Luxury curved animation
+                  final curvedAnimation = CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOutCubicEmphasized,
+                    reverseCurve: Curves.easeOutCubic,
+                  );
+
+                  // Fade transition
+                  final fadeAnimation = Tween<double>(
+                    begin: 0.0,
+                    end: 1.0,
+                  ).animate(curvedAnimation);
+
+                  // Scale transition (slight zoom)
+                  final scaleAnimation = Tween<double>(
+                    begin: 0.92,
+                    end: 1.0,
+                  ).animate(curvedAnimation);
+
+                  // Slide transition (subtle upward movement)
+                  final slideAnimation = Tween<Offset>(
+                    begin: Offset(0, 0.08),
+                    end: Offset.zero,
+                  ).animate(curvedAnimation);
+
+                  return SlideTransition(
+                    position: slideAnimation,
+                    child: ScaleTransition(
+                      scale: scaleAnimation,
+                      child: FadeTransition(
+                        opacity: fadeAnimation,
+                        child: child,
+                      ),
+                    ),
+                  );
+                },
+          );
+        },
+      ),
+      GoRoute(
+        path: "/event/details",
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: EventDetailScreen(),
             transitionDuration: Duration(milliseconds: 600),
             reverseTransitionDuration: Duration(milliseconds: 400),
             transitionsBuilder:
