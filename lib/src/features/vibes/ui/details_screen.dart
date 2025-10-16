@@ -1,31 +1,23 @@
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
-import 'package:hydex/src/features/vibes/data/event.dart';
-import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
-import 'package:hydex/src/features/vibes/ui/components/confirm_booking.dart';
-import 'package:hydex/src/features/vibes/ui/components/create_booking.dart';
-import 'package:hydex/src/features/vibes/ui/components/review_booking.dart';
+import 'package:hydex/src/features/vibes/ui/components/ticket_widget.dart';
 import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
-import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class DetailsScreen extends StatelessWidget {
-  DetailsScreen({super.key});
+class VendorDetailsScreen extends StatelessWidget {
+  VendorDetailsScreen({super.key});
 
   final pageController = PageController();
   final data = [
-    "🔥 Resident DJs",
-    "🍾 Full Bar Service",
-    "🥂 VIP Tables",
-    "🥂 Bottle Service",
-    "💃 Themed Nights",
-    "🔥 Dance Floor",
+    "🍸 Full Bar",
+    "🕺 Dance Floor",
+    "🌃 Rooftop",
+    "👔 Smart Casual",
+    "🎧 DJ Set",
   ];
   @override
   Widget build(BuildContext context) {
@@ -205,7 +197,30 @@ class DetailsScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                CircleAvatar(),
+                                SmoothContainer(
+                                  padding: EdgeInsets.all(6),
+                                  color: AppColors.signalFunSuccess,
+                                  borderRadius: BorderRadius.circular(6),
+                                  smoothness: 1,
+                                  child: Row(
+                                    spacing: 6,
+                                    children: [
+                                      Text(
+                                        "4.5",
+                                        style: AppTextStyles(context)
+                                            .captionBold
+                                            .copyWith(
+                                              color: AppColors.textSuccess,
+                                            ),
+                                      ),
+                                      Icon(
+                                        Icons.star,
+                                        size: 11,
+                                        color: AppColors.textSuccess,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -225,7 +240,7 @@ class DetailsScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  "Luxury (400)",
+                                  "Casual Premium (400)",
                                   style: TextStyle(
                                     fontSize:
                                         AppTextStyles(context).accumulator * 11,
@@ -273,55 +288,184 @@ class DetailsScreen extends StatelessWidget {
                                     color: AppColors.surfaceContainerLighter,
                                     borderRadius: BorderRadius.circular(100),
                                   ),
-                                  child: Text(
-                                    "🔥 Directions",
-                                    style: TextStyle(
-                                      fontSize:
-                                          AppTextStyles(context).accumulator *
-                                          12,
-                                    ),
+                                  child: Row(
+                                    spacing: 5,
+                                    children: [
+                                      SvgPicture.asset(
+                                        "img/svg/directions.svg",
+                                        package: "assets",
+                                        width: 13,
+                                      ),
+                                      Text(
+                                        "Directions",
+                                        style: TextStyle(
+                                          fontSize:
+                                              AppTextStyles(
+                                                context,
+                                              ).accumulator *
+                                              12,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          SizedBox(height: 14),
+                          SizedBox(height: 16),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              "HYDEX PERKS",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textSecondary,
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 16,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 8),
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: TicketWidget(
+                              width: (MediaQuery.widthOf(context) / 375) * 282,
+                              height:
+                                  (MediaQuery.heightOf(context) / 710) * 137,
+                              color: Colors.red,
+                              isCornerRounded: true,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 12),
+
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: Text(
+                                      "Complimentary",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize:
+                                            AppTextStyles(context).accumulator *
+                                            10,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: Text(
+                                      "Drinks",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize:
+                                            AppTextStyles(context).accumulator *
+                                            20,
+                                      ),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: Text(
+                                      "7:30pm to 10:00pm today",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize:
+                                            AppTextStyles(context).accumulator *
+                                            11,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                          ),
+                                          child: Text(
+                                            "Lorem ipsum dolor sit amet,Lorem",
+                                            style: TextStyle(
+                                              fontSize:
+                                                  AppTextStyles(
+                                                    context,
+                                                  ).accumulator *
+                                                  11,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "Book",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w700,
+                                              fontSize:
+                                                  AppTextStyles(
+                                                    context,
+                                                  ).accumulator *
+                                                  11,
+                                            ),
+                                          ),
+                                          SizedBox(width: 4),
+                                          SvgPicture.asset(
+                                            "img/svg/book_ticket.svg",
+                                            package: "assets",
+                                            width: 10,
+                                            height: 10,
+                                          ),
+                                          SizedBox(width: 11),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 12),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 16),
+
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: SmoothClipRRect(
                               borderRadius: BorderRadius.circular(16),
                               smoothness: 1,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.surfaceContainer,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "About",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            14,
-                                      ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                spacing: 8,
+                                children: [
+                                  Text(
+                                    "About".toUpperCase(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.textSecondary,
+                                      fontSize:
+                                          AppTextStyles(context).accumulator *
+                                          16,
                                     ),
-                                    Text(
-                                      "Enjoy a smooth nightlife experience at one of Egypt’s most iconic clubs, vibrant music, crafted cocktails, and unforgettable evenings.",
-                                      style: TextStyle(
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            12,
-                                        color: AppColors.textSecondary,
-                                      ),
+                                  ),
+                                  Text(
+                                    "Enjoy a smooth nightlife experience at one of Egypt’s most iconic clubs, vibrant music, crafted cocktails, and unforgettable evenings.",
+                                    style: TextStyle(
+                                      fontSize:
+                                          AppTextStyles(context).accumulator *
+                                          14,
+                                      color: AppColors.textPrimary,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -331,55 +475,50 @@ class DetailsScreen extends StatelessWidget {
                             child: SmoothClipRRect(
                               borderRadius: BorderRadius.circular(16),
                               smoothness: 1,
-                              child: Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.surfaceContainer,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Available facilities",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            14,
-                                      ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Experiences".toUpperCase(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.textSecondary,
+                                      fontSize:
+                                          AppTextStyles(context).accumulator *
+                                          16,
                                     ),
-                                    GridView.builder(
-                                      shrinkWrap: true,
-                                      padding: EdgeInsets.only(top: 8),
-                                      physics: NeverScrollableScrollPhysics(),
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2,
-                                            childAspectRatio: 5,
-                                            crossAxisSpacing: 10,
-                                            mainAxisSpacing: 4,
+                                  ),
+                                  SizedBox(height: 8),
+                                  Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: data
+                                        .map(
+                                          (e) => Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 6,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.surfaceContainer,
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                            ),
+                                            child: Text(
+                                              e,
+                                              style: TextStyle(
+                                                fontSize:
+                                                    AppTextStyles(
+                                                      context,
+                                                    ).accumulator *
+                                                    12,
+                                              ),
+                                            ),
                                           ),
-                                      itemCount: data.length,
-                                      itemBuilder: (context, index) {
-                                        return Text(
-                                          data[index],
-                                          style: TextStyle(
-                                            fontSize:
-                                                AppTextStyles(
-                                                  context,
-                                                ).accumulator *
-                                                14,
-                                            color: AppColors.textSecondary,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
+                                        )
+                                        .toList(),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -387,11 +526,12 @@ class DetailsScreen extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(
-                              "Upcoming Events",
+                              "Upcoming Events".toUpperCase(),
                               style: TextStyle(
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textSecondary,
                                 fontSize:
-                                    AppTextStyles(context).accumulator * 14,
+                                    AppTextStyles(context).accumulator * 16,
                               ),
                             ),
                           ),
@@ -428,11 +568,12 @@ class DetailsScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Menu & Cusines",
+                                  "Menu & Cuisines".toUpperCase(),
                                   style: TextStyle(
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.textSecondary,
                                     fontSize:
-                                        AppTextStyles(context).accumulator * 14,
+                                        AppTextStyles(context).accumulator * 16,
                                   ),
                                 ),
                                 SizedBox(height: 12),

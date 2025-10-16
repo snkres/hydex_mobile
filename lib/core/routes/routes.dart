@@ -112,8 +112,8 @@ class AppRoutes {
         pageBuilder: (context, state) {
           return CustomTransitionPage(
             key: state.pageKey,
-            child: DetailsScreen(),
-            transitionDuration: Duration(milliseconds: 400),
+            child: VendorDetailsScreen(),
+            transitionDuration: Duration(milliseconds: 600),
             reverseTransitionDuration: Duration(milliseconds: 400),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
@@ -155,7 +155,6 @@ class AppRoutes {
                 },
           );
         },
-        builder: (context, state) => DetailsScreen(),
       ),
       GoRoute(
         path: "/waitlist",

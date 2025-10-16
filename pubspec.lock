@@ -461,6 +461,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.0"
+  flutter_hooks:
+    dependency: transitive
+    description:
+      name: flutter_hooks
+      sha256: "8ae1f090e5f4ef5cfa6670ce1ab5dddadd33f3533a7f9ba19d9f958aa2a89f42"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.21.3+1"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -1089,6 +1097,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  sliver_snap:
+    dependency: "direct main"
+    description:
+      name: sliver_snap
+      sha256: c021c6f60a9cf00a09a04b29b8e8e1b1de9302e46033ec4e3b7309e1d876bea2
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.1"
   smooth_corner:
     dependency: "direct main"
     description:
