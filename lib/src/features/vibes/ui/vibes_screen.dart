@@ -542,7 +542,8 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                   items: data
                                       .map(
                                         (e) => OpenContainer(
-                                          closedColor: Colors.transparent,
+                                          closedColor: AppColors.backgroundBase,
+                                          closedElevation: 0,
                                           closedBuilder: (context, _) {
                                             return SmoothClipRRect(
                                               borderRadius:
@@ -680,7 +681,8 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                 SizedBox(width: 12),
                             itemBuilder: (context, index) {
                               return OpenContainer(
-                                closedColor: Colors.transparent,
+                                closedColor: AppColors.backgroundBase,
+                                closedElevation: 0,
                                 closedBuilder: (context, _) {
                                   return SizedBox(
                                     width: 240,

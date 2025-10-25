@@ -22,7 +22,6 @@ import 'package:hydex/src/features/auth/ui/waitlist.dart';
 import 'package:hydex/src/features/location/ui/location_screen.dart';
 import 'package:hydex/src/features/notifications/ui/notifications_screen.dart';
 import 'package:hydex/src/features/vibes/ui/components/event_details.dart';
-import 'package:hydex/src/features/vibes/ui/components/gallery.dart';
 import 'package:hydex/src/features/vibes/ui/details_screen.dart';
 import 'package:hydex/src/features/waitlist/ui/waitlist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

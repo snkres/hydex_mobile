@@ -4,8 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/vibes/ui/components/adventures.dart';
+import 'package:hydex/src/features/vibes/ui/components/nightlife.dart';
+import 'package:hydex/src/features/vibes/ui/components/show.dart';
+import 'package:hydex/src/features/vibes/ui/components/sports_section.dart';
 import 'package:hydex/src/features/vibes/ui/components/ticket_widget.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
+import 'package:readmore/readmore.dart';
 import 'package:sliver_snap/widgets/sliver_snap.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -21,13 +26,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   // <-- track if pinned
   final pageController = PageController();
   bool isBarCollapsed = false;
-  final data = [
-    "🍸 Full Bar",
-    "🕺 Dance Floor",
-    "🌃 Rooftop",
-    "👔 Smart Casual",
-    "🎧 DJ Set",
-  ];
 
   @override
   void dispose() {
@@ -431,8 +429,16 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                     AppTextStyles(context).accumulator * 16,
                               ),
                             ),
-                            Text(
+                            ReadMoreText(
                               "A high-energy night of deep house and live performances A high-energy night of deep house and live performances.",
+                              trimMode: TrimMode.Line,
+                              trimLines: 3,
+                              delimiter: "....",
+                              colorClickableText: AppColors.textPrimary,
+                              trimCollapsedText: 'Read more',
+                              moreStyle: AppTextStyles(context).captionBold,
+                              lessStyle: AppTextStyles(context).captionBold,
+                              trimExpandedText: 'Read less',
                               style: TextStyle(
                                 fontSize:
                                     AppTextStyles(context).accumulator * 14,
@@ -634,145 +640,11 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       ),
                     ),
                     SizedBox(height: 24),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: SmoothClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        smoothness: 1,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Experiences".toUpperCase(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.textSecondary,
-                                fontSize:
-                                    AppTextStyles(context).accumulator * 16,
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: data
-                                  .map(
-                                    (e) => Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.surfaceContainer,
-                                        borderRadius: BorderRadius.circular(
-                                          100,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        e,
-                                        style: TextStyle(
-                                          fontSize:
-                                              AppTextStyles(
-                                                context,
-                                              ).accumulator *
-                                              12,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 24),
 
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        "Line-UP".toUpperCase(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textSecondary,
-                          fontSize: AppTextStyles(context).accumulator * 16,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 12),
-                    CarouselSlider(
-                      items: [
-                        Column(
-                          spacing: 13,
-                          children: [
-                            SmoothClipRRect(
-                              borderRadius: BorderRadius.circular(24),
-                              smoothness: 1,
-                              child: Container(
-                                width: 200,
-                                height: 200,
-                                decoration: BoxDecoration(color: Colors.red),
-                              ),
-                            ),
-                            Text(
-                              "DJ ToTo",
-                              style: AppTextStyles(context).smallBold,
-                            ),
-                          ],
-                        ),
-                        Column(
-                          spacing: 13,
-                          children: [
-                            SmoothClipRRect(
-                              borderRadius: BorderRadius.circular(24),
-                              smoothness: 1,
-                              child: Container(
-                                width: 200,
-                                height: 200,
-                                decoration: BoxDecoration(color: Colors.blue),
-                              ),
-                            ),
-                            Text(
-                              "DJ ToTo",
-                              style: AppTextStyles(context).smallBold,
-                            ),
-                          ],
-                        ),
-                        Column(
-                          spacing: 13,
-                          children: [
-                            SmoothClipRRect(
-                              borderRadius: BorderRadius.circular(24),
-                              smoothness: 1,
-                              child: Container(
-                                width: 200,
-                                height: 200,
-                                decoration: BoxDecoration(color: Colors.amber),
-                              ),
-                            ),
-                            Text(
-                              "DJ ToTo",
-                              style: AppTextStyles(context).smallBold,
-                            ),
-                          ],
-                        ),
-                      ],
-
-                      options: CarouselOptions(
-                        height: 245,
-                        enableInfiniteScroll: true,
-                        reverse: false,
-                        autoPlay: true,
-                        autoPlayInterval: Duration(seconds: 3),
-                        autoPlayAnimationDuration: Duration(milliseconds: 800),
-                        autoPlayCurve: Curves.fastOutSlowIn,
-                        enlargeCenterPage: true,
-
-                        enlargeFactor: 0.3,
-                        scrollDirection: Axis.horizontal,
-                      ),
-                    ),
-                    SizedBox(height: 24),
+                    // NightLifeSection(),
+                    // SportsSection(),
+                    // AdventureScreen(),
+                    ShowSection(),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -883,6 +755,30 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                               ),
                               SizedBox(height: 12),
                               ListTile(
+                                leading: SvgPicture.asset(
+                                  "img/svg/ar_.svg",
+                                  width: 15,
+                                  height: 15,
+                                  package: "assets",
+                                ),
+                                title: Text(
+                                  "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
+                                  style: AppTextStyles(context).smallRegular,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                child: Divider(color: AppColors.borderDefault),
+                              ),
+                              ListTile(
+                                leading: SvgPicture.asset(
+                                  "img/svg/ar_.svg",
+                                  width: 15,
+                                  height: 15,
+                                  package: "assets",
+                                ),
                                 title: Text(
                                   "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
                                   style: AppTextStyles(context).smallRegular,
