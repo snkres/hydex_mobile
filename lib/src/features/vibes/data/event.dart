@@ -1,9 +1,12 @@
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:hydex/src/features/vibes/data/coordinates.dart';
+import 'package:hydex/src/features/vibes/data/location.dart';
+import 'package:hydex/src/features/vibes/data/vendor.dart';
 
 part 'event.mapper.dart';
 
 @MappableEnum()
-enum EventType {
+enum BannerType {
   @MappableValue('FEATURED')
   featured,
   @MappableValue('PROMOTIONAL')
@@ -11,9 +14,9 @@ enum EventType {
 }
 
 @MappableClass()
-class Event with EventMappable {
+class Banner with BannerMappable {
   final String id;
-  final EventType type;
+  final BannerType type;
   final String headline;
   final String subtitle;
   String? image;
@@ -21,7 +24,7 @@ class Event with EventMappable {
   final DateTime campaignStartDate;
   final DateTime campaignEndDate;
 
-  Event({
+  Banner({
     required this.id,
     required this.type,
     required this.headline,
@@ -30,5 +33,54 @@ class Event with EventMappable {
     this.video,
     required this.campaignStartDate,
     required this.campaignEndDate,
+  });
+}
+
+@MappableClass()
+class Detail with DetailMappable {
+  final String image;
+  final String title;
+
+  Detail({required this.image, required this.title});
+}
+
+@MappableClass()
+class OperatingHours with OperatingHoursMappable {
+  final String open;
+  final String close;
+
+  OperatingHours({required this.open, required this.close});
+}
+
+@MappableClass()
+class Event with EventMappable {
+  final String id;
+  final String name;
+  final String description;
+  final DateTime startTime;
+  final DateTime endTime;
+  final List<String> media;
+  final Location location;
+  final List<Detail> details;
+  final String priceType;
+  final List<String> tags;
+  final List<String> experiences;
+  final Vendor vendor;
+  final DateTime createdAt;
+
+  Event({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.startTime,
+    required this.endTime,
+    required this.media,
+    required this.location,
+    required this.details,
+    required this.priceType,
+    required this.tags,
+    required this.experiences,
+    required this.vendor,
+    required this.createdAt,
   });
 }

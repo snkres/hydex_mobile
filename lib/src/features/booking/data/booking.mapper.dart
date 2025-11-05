@@ -14,7 +14,7 @@ class BookingMapper extends ClassMapperBase<Booking> {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = BookingMapper._());
       BookingStatusMapper.ensureInitialized();
-      EventMapper.ensureInitialized();
+      BannerMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -41,8 +41,8 @@ class BookingMapper extends ClassMapperBase<Booking> {
   static String? _$notes(Booking v) => v.notes;
   static const Field<Booking, String> _f$notes =
       Field('notes', _$notes, opt: true);
-  static Event _$event(Booking v) => v.event;
-  static const Field<Booking, Event> _f$event = Field('event', _$event);
+  static Banner _$event(Booking v) => v.event;
+  static const Field<Booking, Banner> _f$event = Field('event', _$event);
   static int _$numberOfGuests(Booking v) => v.numberOfGuests;
   static const Field<Booking, int> _f$numberOfGuests =
       Field('numberOfGuests', _$numberOfGuests);
@@ -123,7 +123,7 @@ extension BookingValueCopy<$R, $Out> on ObjectCopyWith<$R, Booking, $Out> {
 
 abstract class BookingCopyWith<$R, $In extends Booking, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  EventCopyWith<$R, Event, Event> get event;
+  BannerCopyWith<$R, Banner, Banner> get event;
   $R call(
       {String? id,
       double? fees,
@@ -132,7 +132,7 @@ abstract class BookingCopyWith<$R, $In extends Booking, $Out>
       DateTime? bookingDate,
       BookingStatus? status,
       String? notes,
-      Event? event,
+      Banner? event,
       int? numberOfGuests});
   BookingCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -146,7 +146,7 @@ class _BookingCopyWithImpl<$R, $Out>
   late final ClassMapperBase<Booking> $mapper =
       BookingMapper.ensureInitialized();
   @override
-  EventCopyWith<$R, Event, Event> get event =>
+  BannerCopyWith<$R, Banner, Banner> get event =>
       $value.event.copyWith.$chain((v) => call(event: v));
   @override
   $R call(
@@ -157,7 +157,7 @@ class _BookingCopyWithImpl<$R, $Out>
           DateTime? bookingDate,
           BookingStatus? status,
           Object? notes = $none,
-          Event? event,
+          Banner? event,
           int? numberOfGuests}) =>
       $apply(FieldCopyWithData({
         if (id != $none) #id: id,

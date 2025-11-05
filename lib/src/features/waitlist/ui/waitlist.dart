@@ -16,26 +16,7 @@ class WaitlistScreen extends ConsumerStatefulWidget {
 
 class _WaitlistScreenState extends ConsumerState<WaitlistScreen> {
   @override
-  void initState() {
-    super.initState();
 
-    _checkUserStatus();
-  }
-
-  Future<void> _checkUserStatus() async {
-    if (kReleaseMode) {
-      ref.read(authServiceProvider).sendFCMNotification();
-
-      final user = await ref.read(currentUserProvider.future);
-      final status = user?.status;
-
-      if (status != null && status == UserStatus.active) {
-        if (mounted) context.go("/");
-      }
-    } else {
-      context.go("/");
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

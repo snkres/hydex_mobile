@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:flutter/widgets.dart' hide Banner;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
@@ -33,28 +36,28 @@ class VibesRepository {
 final vibesProvider = Provider<VibesRepository>((ref) => VibesRepository());
 
 @Riverpod(keepAlive: true)
-Future<List<Event>> getEvents(Ref ref, {required EventType type}) async {
+Future<List<Banner>> getBanners(Ref ref, {required BannerType type}) async {
   try {
     final response = await DioHelper.get(
       '/banners',
       queryParameters: {"type": type.toValue()},
     );
     final eventsData = response.data['data'] as List<dynamic>;
-    return eventsData.map((e) => EventMapper.fromMap(e)).toList();
+    return eventsData.map((e) => BannerMapper.fromMap(e)).toList();
   } catch (e) {
     throw Exception('Failed to load events: $e');
   }
 }
 
-@riverpod
-Future<Event> getEventByID(Ref ref, {required String id}) async {
-  try {
-    final response = await DioHelper.get('/events/$id');
-    return EventMapper.fromMap(response.data['data']);
-  } catch (e) {
-    throw Exception('Failed to load event: $e');
-  }
-}
+// @riverpod
+// Future<Event> getEventByID(Ref ref, {required String id}) async {
+//   try {
+//     final response = await DioHelper.get('/events/$id');
+//     return EventMapper.fromMap(response.data['data']);
+//   } catch (e) {
+//     throw Exception('Failed to load event: $e');
+//   }
+// }
 
 @riverpod
 Future<List<EventCategory>> getEventCategories(Ref ref) async {
@@ -64,5 +67,38 @@ Future<List<EventCategory>> getEventCategories(Ref ref) async {
     return eventsData.map((e) => EventCategoryMapper.fromMap(e)).toList();
   } catch (e) {
     throw Exception('Failed to load event categories: $e');
+  }
+}
+
+@riverpod
+Future<void> getVendors(Ref ref, {int page = 1}) async {
+  try {
+    final response = await DioHelper.get(
+      '/vendors',
+      queryParameters: {"page": page, "limit": 10},
+    );
+    final eventsData = response.data['data'] as List<dynamic>;
+
+    // return eventsData.map((e) => EventCategoryMapper.fromMap(e)).toList();
+  } catch (e) {
+    throw Exception('Failed to load vendors: $e');
+  }
+}
+
+@riverpod
+Future<List<Event>> getEvents(Ref ref, {int page = 1}) async {
+  try {
+    final response = await DioHelper.get(
+      '/events',
+      queryParameters: {"page": page, "limit": 10},
+    );
+    final answer = response.data['data'] as List<dynamic>;
+
+    final eventsData = answer.first as List<dynamic>;
+
+    return eventsData.map((e) => EventMapper.fromMap(e)).toList();
+  } catch (e) {
+    log("Events Error:", error: e, stackTrace: StackTrace.current);
+    throw Exception('Failed to load events: $e');
   }
 }

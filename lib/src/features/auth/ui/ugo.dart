@@ -305,7 +305,13 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
                 (area) => CustomChip(
                   title: area,
                   isSelected: selectedArea.contains(area),
-                  onTap: () => setState(() => selectedArea.add(area)),
+                  onTap: () => setState(() {
+                    if (selectedArea.contains(area)) {
+                      selectedArea.remove(area);
+                    } else {
+                      selectedArea.add(area);
+                    }
+                  }),
                 ),
               )
               .toList(),

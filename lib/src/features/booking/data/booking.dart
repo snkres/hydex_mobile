@@ -13,7 +13,7 @@ class Booking with BookingMappable {
   final String? notes;
   final double? fees;
   final bool top;
-  final Event event;
+  final Banner event;
   final int numberOfGuests;
 
   Booking({

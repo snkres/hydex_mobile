@@ -5,6 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/data/navitems.dart';
 import 'package:hydex/src/features/booking/ui/booking_screen.dart';
+import 'package:hydex/src/features/location/ui/location_required.dart';
+import 'package:hydex/src/features/location/ui/location_screen.dart';
 import 'package:hydex/src/features/settings/ui/settings.dart';
 import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
