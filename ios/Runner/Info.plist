@@ -38,11 +38,11 @@
 	<key>NSUserNotificationUsageDescription</key>
 	<string>This app uses notification to update you with important events and notify you whether your membership is accepted or not</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This app may access your location while it is in use to give you the close events based on your location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app may access your location while it is in use to give you the close events based on your location</string>
-	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
