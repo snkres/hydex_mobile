@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   flutter_secure_storage_linux
+  maps_launcher
   sentry_flutter
   url_launcher_linux
 )

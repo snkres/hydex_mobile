@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +12,13 @@ import 'package:hydex/src/features/booking/data/format_time.dart';
 import 'package:hydex/src/features/location/domain/location_service.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/data/location.dart';
+import 'package:hydex/src/features/vibes/data/vendor.dart';
 import 'package:hydex/src/features/vibes/ui/components/nightlife.dart';
 import 'package:hydex/src/features/vibes/ui/components/ticket_widget.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:readmore/readmore.dart';
 import 'package:smooth_corner/smooth_corner.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EventDetailScreen extends StatefulWidget {
   const EventDetailScreen({super.key, required this.event});
@@ -68,6 +72,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           ),
 
           NestedScrollView(
+            physics: NeverScrollableScrollPhysics(),
             headerSliverBuilder: (context, _) => [
               SliverAppBar(
                 backgroundColor: Colors.transparent,
@@ -127,6 +132,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         startTime: widget.event.startTime,
                         tags: widget.event.tags,
                         location: widget.event.location,
+                        pricing: widget.event.priceType,
+                        owner: widget.event.vendor,
                       ),
                     ),
                   ),
@@ -149,12 +156,15 @@ class CollapsedEventContainer extends ConsumerWidget {
     required this.description,
     required this.startTime,
     required this.endTime,
+    required this.pricing,
+    required this.owner,
   });
-  final String name, description;
+  final String name, description, pricing;
   final Location location;
   final List<String> tags;
   final DateTime startTime, endTime;
   final locationService = LocationService();
+  final Vendor owner;
 
   String getDurationString(DateTime start, DateTime end) {
     final duration = end.difference(start);
@@ -167,6 +177,37 @@ class CollapsedEventContainer extends ConsumerWidget {
       return "$hours hours";
     } else {
       return "$minutes mins";
+    }
+  }
+
+  // Source - https://stackoverflow.com/a
+  // Posted by Bhargav Sejpal, modified by community. See post 'Timeline' for change history
+  // Retrieved 2025-11-07, License - CC BY-SA 4.0
+
+  static Future<void> openMap(
+    BuildContext context,
+    double lat,
+    double lng,
+  ) async {
+    String url = '';
+    String urlAppleMaps = '';
+    if (Platform.isAndroid) {
+      url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+      if (await canLaunchUrl(Uri.parse(url))) {
+        await launchUrl(Uri.parse(url));
+      } else {
+        throw 'Could not launch $url';
+      }
+    } else {
+      urlAppleMaps = 'https://maps.apple.com/?q=$lat,$lng';
+      url = 'comgooglemaps://?saddr=&daddr=$lat,$lng&directionsmode=driving';
+      if (await canLaunchUrl(Uri.parse(url))) {
+        await launchUrl(Uri.parse(url));
+      } else if (await canLaunchUrl(Uri.parse(urlAppleMaps))) {
+        await launchUrl(Uri.parse(urlAppleMaps));
+      } else {
+        throw 'Could not launch $url';
+      }
     }
   }
 
@@ -276,7 +317,7 @@ class CollapsedEventContainer extends ConsumerWidget {
                         },
                       ),
                       Text(
-                        "Casual Premium (400)",
+                        "Casual ${pricing.capitalize()} (\$\$\$)",
                         style: TextStyle(
                           fontSize: AppTextStyles(context).accumulator * 11,
                           color: AppColors.textBrand,
@@ -311,31 +352,39 @@ class CollapsedEventContainer extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceContainerLighter,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Row(
-                          spacing: 5,
-                          children: [
-                            SvgPicture.asset(
-                              "img/svg/directions.svg",
-                              package: "assets",
-                              width: 13,
-                            ),
-                            Text(
-                              "Directions",
-                              style: TextStyle(
-                                fontSize:
-                                    AppTextStyles(context).accumulator * 12,
+                      GestureDetector(
+                        onTap: () {
+                          MapsLauncher.launchCoordinates(
+                            location.coordinates.lat,
+                            location.coordinates.lng,
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceContainerLighter,
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Row(
+                            spacing: 5,
+                            children: [
+                              SvgPicture.asset(
+                                "img/svg/directions.svg",
+                                package: "assets",
+                                width: 13,
                               ),
-                            ),
-                          ],
+                              Text(
+                                "Directions",
+                                style: TextStyle(
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 12,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -521,7 +570,7 @@ class CollapsedEventContainer extends ConsumerWidget {
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     Text(
-                                      "Hady El Mawkoos",
+                                      owner.name,
                                       style: AppTextStyles(context).smallMedium,
                                     ),
                                   ],
@@ -978,31 +1027,34 @@ class TestWeSheet extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceContainerLighter,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Row(
-                          spacing: 5,
-                          children: [
-                            SvgPicture.asset(
-                              "img/svg/directions.svg",
-                              package: "assets",
-                              width: 13,
-                            ),
-                            Text(
-                              "Directions",
-                              style: TextStyle(
-                                fontSize:
-                                    AppTextStyles(context).accumulator * 12,
+                      GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceContainerLighter,
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Row(
+                            spacing: 5,
+                            children: [
+                              SvgPicture.asset(
+                                "img/svg/directions.svg",
+                                package: "assets",
+                                width: 13,
                               ),
-                            ),
-                          ],
+                              Text(
+                                "Directions",
+                                style: TextStyle(
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 12,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
