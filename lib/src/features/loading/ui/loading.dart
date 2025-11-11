@@ -30,11 +30,12 @@ class _LoadingScreenState extends ConsumerState<LoadingScreen> {
 
       if (status != null && status == UserStatus.active) {
         if (mounted) context.go("/");
-      }
-      else {
+      } else {
         if (mounted) context.go("/waitlist");
       }
     } else {
+      ref.read(authServiceProvider).sendFCMNotification();
+
       context.go("/");
     }
   }

@@ -1,0 +1,14 @@
+
+
+
+POST https://dev.api.hyde-x.com/notifications/send-push 
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZhOXVqa2swMDAwYTI5c2U1N2plOXdvIiwiZW1haWwiOiJhZG1pbkBoeWRlLXguY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzYyNjI2MTE1LCJleHAiOjE3NjMyMzA5MTV9.Yx-l97fbSR3qp8Dxn5v3PtNIbZCAU0_7rn1LYu0jNuA
+
+{
+  "userId": "cmfkt0g8p000mpj47u8xydx77",
+  "title": "Test Title",
+  "body": "This is a test notification body.",
+  "type": "system"
+
+}

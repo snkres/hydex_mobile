@@ -19,6 +19,7 @@ import 'package:hydex/src/features/auth/ui/verify_email.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/features/auth/ui/ugo.dart';
 import 'package:hydex/src/features/auth/ui/waitlist.dart';
+import 'package:hydex/src/features/booking/ui/create_booking.dart';
 import 'package:hydex/src/features/loading/ui/loading.dart';
 import 'package:hydex/src/features/location/ui/location_screen.dart';
 import 'package:hydex/src/features/notifications/ui/notifications_screen.dart';
@@ -41,7 +42,7 @@ class AppRoutes {
         if (currentRoute != "/boarding") {
           return null;
         }
-        return "/loading";
+        return "/create-booking"; //TODO: Change to home route
       }
       return null;
     },
@@ -108,6 +109,10 @@ class AppRoutes {
         path: "/forgot-response",
         builder: (context, state) =>
             ForgetResponse(isPhone: state.extra as bool),
+      ),
+      GoRoute(
+        path: "/create-booking",
+        builder: (context, state) => CreateBooking(),
       ),
       GoRoute(
         path: "/details",

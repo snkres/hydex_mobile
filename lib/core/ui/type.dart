@@ -8,6 +8,8 @@ class AppTextStyles {
   AppTextStyles(this.context);
   String get fontFamily => Platform.isIOS ? "SF Pro" : "Roboto";
   double get accumulator => MediaQuery.widthOf(context) / 375;
+  double get heightAccumulator => MediaQuery.heightOf(context) / 844;
+
   // Display
   TextStyle get displayLargeLight => TextStyle(
     fontFamily: fontFamily,

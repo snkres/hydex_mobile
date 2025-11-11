@@ -55,7 +55,6 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
     );
 
     final categories = ref.watch(getEventCategoriesProvider);
-    final user = ref.watch(currentUserProvider);
 
     return Scaffold(
       body: LocationRequired(
@@ -621,76 +620,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                               );
                             },
                           ),
-                          SizedBox(height: 32),
 
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    user.when(
-                                      skipError: true,
-                                      error: (error, stackTrace) =>
-                                          Text("Error Name"),
-                                      loading: () => Container(),
-                                      data: (data) => Text.rich(
-                                        TextSpan(
-                                          text: "${data?.fullName}, ",
-                                          style: TextStyle(
-                                            fontSize:
-                                                AppTextStyles(
-                                                  context,
-                                                ).accumulator *
-                                                18,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          children: [
-                                            TextSpan(
-                                              text: "Your Picks",
-                                              style: TextStyle(
-                                                color: AppColors.textSecondary,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      "Personalized plans just for you",
-                                      style: TextStyle(
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            14,
-                                        color: AppColors.textSecondary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                TextButton(
-                                  style: ButtonStyle(
-                                    foregroundColor: WidgetStatePropertyAll(
-                                      AppColors.textPrimary,
-                                    ),
-                                  ),
-                                  onPressed: () {},
-                                  child: Text(
-                                    "Discover all",
-                                    style: TextStyle(
-                                      fontSize:
-                                          AppTextStyles(context).accumulator *
-                                          12,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 16),
                           AllEventsWidget(),
                           promotionalEvents.when(
                             data: (data) {
@@ -974,36 +904,105 @@ class AllEventsWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // watch one page (or a merged list if you handle pagination manually)
     final eventsAsync = ref.watch(getEventsProvider(page: 1));
-
+    final user = ref.watch(currentUserProvider);
     return eventsAsync.when(
       data: (events) {
-        return SizedBox(
-          height: MediaQuery.sizeOf(context).height * 0.28,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.only(left: 16),
-            itemCount: events.length,
-            itemBuilder: (context, index) {
-              final event = events[index];
-              return OpenContainer(
-                openBuilder: (context, _) => EventDetailScreen(event: event),
-                closedColor: Colors.transparent,
-                closedElevation: 0,
-                closedBuilder: (context, _) => Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: EventContainer(
-                    tag: event.tags.firstOrNull,
-                    discount: 50,
-                    avatarImage: event.media.first,
-                    date: event.createdAt.formatDate(),
-                    heading: event.name,
-                    image: event.media.firstOrNull,
-                    description: event.description,
+        if (events.isEmpty) {
+          return SizedBox.shrink();
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 32),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      user.when(
+                        skipError: true,
+                        error: (error, stackTrace) => Text("Error Name"),
+                        loading: () => Container(),
+                        data: (data) => Text.rich(
+                          TextSpan(
+                            text: "${data?.fullName}, ",
+                            style: TextStyle(
+                              fontSize: AppTextStyles(context).accumulator * 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: "Your Picks",
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Text(
+                        "Personalized plans just for you",
+                        style: TextStyle(
+                          fontSize: AppTextStyles(context).accumulator * 14,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              );
-            },
-          ),
+                  TextButton(
+                    style: ButtonStyle(
+                      foregroundColor: WidgetStatePropertyAll(
+                        AppColors.textPrimary,
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: Text(
+                      "Discover all",
+                      style: TextStyle(
+                        fontSize: AppTextStyles(context).accumulator * 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 16),
+            SizedBox(
+              height: MediaQuery.sizeOf(context).height * 0.28,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(left: 16),
+                itemCount: events.length,
+                itemBuilder: (context, index) {
+                  final event = events[index];
+                  return OpenContainer(
+                    openBuilder: (context, _) =>
+                        EventDetailScreen(event: event),
+                    closedColor: Colors.transparent,
+                    closedElevation: 0,
+                    closedBuilder: (context, _) => Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: EventContainer(
+                        tag: event.tags.firstOrNull,
+                        discount: 50,
+                        avatarImage: event.media.first,
+                        date: event.createdAt.formatDate(),
+                        heading: event.name,
+                        image: event.media.firstOrNull,
+                        description: event.description,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         );
       },
       loading: () => SizedBox.shrink(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:lottie/lottie.dart';
 
@@ -7,10 +8,13 @@ class PrimaryButton extends StatefulWidget {
     super.key,
     required this.onTap,
     this.title = "Continue",
+    this.bgColor = AppColors.buttonPrimary,
+    this.frColor = AppColors.textPrimary,
   });
 
   final Future<void> Function()? onTap;
   final String title;
+  final Color bgColor, frColor;
 
   @override
   State<PrimaryButton> createState() => _PrimaryButtonState();
@@ -43,13 +47,9 @@ class _PrimaryButtonState extends State<PrimaryButton> {
         },
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(
-            widget.onTap != null
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.primaryContainer,
+            widget.onTap != null ? widget.bgColor : AppColors.textDisabled,
           ),
-          foregroundColor: WidgetStatePropertyAll(
-            Theme.of(context).colorScheme.onPrimary,
-          ),
+          foregroundColor: WidgetStatePropertyAll(widget.frColor),
         ),
         child: loading
             ? LottieBuilder.asset(
