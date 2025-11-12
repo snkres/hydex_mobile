@@ -3,7 +3,7 @@ name: iOS Build & UIScene Migration
 on:
   push:
     branches:
-      - main
+      - dev
   workflow_dispatch: # allow manual runs
 
 jobs:
