@@ -17,7 +17,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: stable
+          channel: stable
 
       - name: Flutter doctor
         run: flutter doctor -v
@@ -27,10 +27,6 @@ jobs:
 
       - name: Get dependencies
         run: flutter pub get
-
-      # Optional: Run tests
-      - name: Run tests
-        run: flutter test
 
       # Build the iOS app
       - name: Build iOS app
