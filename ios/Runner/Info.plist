@@ -35,14 +35,35 @@
 		<key>NSAllowsArbitraryLoadsInWebContent</key>
 		<true/>
 	</dict>
-	<key>NSUserNotificationUsageDescription</key>
-	<string>This app uses notification to update you with important events and notify you whether your membership is accepted or not</string>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This app may access your location while it is in use to give you the close events based on your location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app may access your location while it is in use to give you the close events based on your location</string>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>This app uses notification to update you with important events and notify you whether your membership is accepted or not</string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneClassName</key>
+					<string>UIWindowScene</string>
+					<key>UISceneConfigurationName</key>
+					<string>flutter</string>
+					<key>UISceneDelegateClassName</key>
+					<string>FlutterSceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

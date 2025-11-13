@@ -1,15 +1,11 @@
 name: iOS Build & UIScene Migration
 
-on:
-  push:
-    branches:
-      - dev
-    
-  workflow_dispatch: 
+
+workflow_dispatch: 
 
 permissions:
   contents: write  
-  
+
 jobs:
   build_ios:
     runs-on: macos-latest
