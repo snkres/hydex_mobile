@@ -4,8 +4,12 @@ on:
   push:
     branches:
       - dev
-  workflow_dispatch: # allow manual runs
+    
+  workflow_dispatch: 
 
+permissions:
+  contents: write  
+  
 jobs:
   build_ios:
     runs-on: macos-latest
