@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/type.dart';
@@ -195,7 +196,7 @@ class ForgotPasswordPhone extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final selectedCountry = ref.watch(countryPickerNotifierProvider);
+        final selectedCountry = ref.watch(countryPickerProvider);
 
         return selectedCountry.when(
           data: (data) {
@@ -299,8 +300,7 @@ class ForgotPasswordEmail extends StatelessWidget {
       key: formKey,
       child: TextFormField(
         controller: emailController,
-           keyboardType: TextInputType
-                                                        .emailAddress,
+        keyboardType: TextInputType.emailAddress,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: (value) {
           if (value!.isEmpty) {

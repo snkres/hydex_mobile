@@ -35,21 +35,23 @@ class AppTheme {
           ),
         ),
       ),
+      dividerTheme: DividerThemeData(color: AppColors.borderDefault),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           elevation: WidgetStatePropertyAll(0),
-          backgroundColor: WidgetStatePropertyAll(darkColorScheme.primary),
-          foregroundColor: WidgetStatePropertyAll(darkColorScheme.onPrimary),
+          backgroundColor: WidgetStatePropertyAll(AppColors.signalBrandSolid),
+          foregroundColor: WidgetStatePropertyAll(AppColors.textPrimary),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         suffixIconColor: Color.fromRGBO(164, 164, 164, 1),
+
         filled: true,
         prefixIconConstraints: BoxConstraints(minWidth: 23),
         labelStyle: TextStyle(
           fontWeight: FontWeight.w400,
           fontSize: 15,
-          color: Color.fromRGBO(164, 164, 164, 1),
+          color: .fromRGBO(164, 164, 164, 1),
         ),
 
         border: UnderlineInputBorder(
@@ -57,7 +59,7 @@ class AppTheme {
 
           borderRadius: BorderRadius.circular(16),
         ),
-        fillColor: darkColorScheme.secondaryContainer,
+        fillColor: AppColors.surfaceContainer,
       ),
     );
   }

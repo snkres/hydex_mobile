@@ -1,5 +1,6 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format off
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, unnecessary_cast, override_on_non_overriding_member
 // ignore_for_file: strict_raw_type, inference_failure_on_untyped_parameter
@@ -21,11 +22,15 @@ class WaitlistResponseMapper extends ClassMapperBase<WaitlistResponse> {
   final String id = 'WaitlistResponse';
 
   static String _$referralCode(WaitlistResponse v) => v.referralCode;
-  static const Field<WaitlistResponse, String> _f$referralCode =
-      Field('referralCode', _$referralCode);
+  static const Field<WaitlistResponse, String> _f$referralCode = Field(
+    'referralCode',
+    _$referralCode,
+  );
   static String _$originalPosition(WaitlistResponse v) => v.originalPosition;
-  static const Field<WaitlistResponse, String> _f$originalPosition =
-      Field('originalPosition', _$originalPosition);
+  static const Field<WaitlistResponse, String> _f$originalPosition = Field(
+    'originalPosition',
+    _$originalPosition,
+  );
 
   @override
   final MappableFields<WaitlistResponse> fields = const {
@@ -35,8 +40,9 @@ class WaitlistResponseMapper extends ClassMapperBase<WaitlistResponse> {
 
   static WaitlistResponse _instantiate(DecodingData data) {
     return WaitlistResponse(
-        referralCode: data.dec(_f$referralCode),
-        originalPosition: data.dec(_f$originalPosition));
+      referralCode: data.dec(_f$referralCode),
+      originalPosition: data.dec(_f$originalPosition),
+    );
   }
 
   @override
@@ -63,40 +69,48 @@ mixin WaitlistResponseMappable {
   }
 
   WaitlistResponseCopyWith<WaitlistResponse, WaitlistResponse, WaitlistResponse>
-      get copyWith =>
-          _WaitlistResponseCopyWithImpl<WaitlistResponse, WaitlistResponse>(
-              this as WaitlistResponse, $identity, $identity);
+  get copyWith =>
+      _WaitlistResponseCopyWithImpl<WaitlistResponse, WaitlistResponse>(
+        this as WaitlistResponse,
+        $identity,
+        $identity,
+      );
   @override
   String toString() {
-    return WaitlistResponseMapper.ensureInitialized()
-        .stringifyValue(this as WaitlistResponse);
+    return WaitlistResponseMapper.ensureInitialized().stringifyValue(
+      this as WaitlistResponse,
+    );
   }
 
   @override
   bool operator ==(Object other) {
-    return WaitlistResponseMapper.ensureInitialized()
-        .equalsValue(this as WaitlistResponse, other);
+    return WaitlistResponseMapper.ensureInitialized().equalsValue(
+      this as WaitlistResponse,
+      other,
+    );
   }
 
   @override
   int get hashCode {
-    return WaitlistResponseMapper.ensureInitialized()
-        .hashValue(this as WaitlistResponse);
+    return WaitlistResponseMapper.ensureInitialized().hashValue(
+      this as WaitlistResponse,
+    );
   }
 }
 
 extension WaitlistResponseValueCopy<$R, $Out>
     on ObjectCopyWith<$R, WaitlistResponse, $Out> {
   WaitlistResponseCopyWith<$R, WaitlistResponse, $Out>
-      get $asWaitlistResponse => $base
-          .as((v, t, t2) => _WaitlistResponseCopyWithImpl<$R, $Out>(v, t, t2));
+  get $asWaitlistResponse =>
+      $base.as((v, t, t2) => _WaitlistResponseCopyWithImpl<$R, $Out>(v, t, t2));
 }
 
 abstract class WaitlistResponseCopyWith<$R, $In extends WaitlistResponse, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   $R call({String? referralCode, String? originalPosition});
   WaitlistResponseCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
-      Then<$Out2, $R2> t);
+    Then<$Out2, $R2> t,
+  );
 }
 
 class _WaitlistResponseCopyWithImpl<$R, $Out>
@@ -108,19 +122,21 @@ class _WaitlistResponseCopyWithImpl<$R, $Out>
   late final ClassMapperBase<WaitlistResponse> $mapper =
       WaitlistResponseMapper.ensureInitialized();
   @override
-  $R call({String? referralCode, String? originalPosition}) =>
-      $apply(FieldCopyWithData({
-        if (referralCode != null) #referralCode: referralCode,
-        if (originalPosition != null) #originalPosition: originalPosition
-      }));
+  $R call({String? referralCode, String? originalPosition}) => $apply(
+    FieldCopyWithData({
+      if (referralCode != null) #referralCode: referralCode,
+      if (originalPosition != null) #originalPosition: originalPosition,
+    }),
+  );
   @override
   WaitlistResponse $make(CopyWithData data) => WaitlistResponse(
-      referralCode: data.get(#referralCode, or: $value.referralCode),
-      originalPosition:
-          data.get(#originalPosition, or: $value.originalPosition));
+    referralCode: data.get(#referralCode, or: $value.referralCode),
+    originalPosition: data.get(#originalPosition, or: $value.originalPosition),
+  );
 
   @override
   WaitlistResponseCopyWith<$R2, WaitlistResponse, $Out2> $chain<$R2, $Out2>(
-          Then<$Out2, $R2> t) =>
-      _WaitlistResponseCopyWithImpl<$R2, $Out2>($value, $cast, t);
+    Then<$Out2, $R2> t,
+  ) => _WaitlistResponseCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
+

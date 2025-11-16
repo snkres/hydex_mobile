@@ -18,11 +18,29 @@ class CreateBooking extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: .centerFloat,
       floatingActionButton: BottomBar(),
       body: Stack(
-        alignment: Alignment.bottomCenter,
+        alignment: .bottomCenter,
         children: [
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              width: double.infinity,
+              height: 195,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: .topCenter,
+                  end: .bottomCenter,
+                  colors: [
+                    AppColors.signalBrandSolid,
+                    AppColors.signalBrandSolid.withValues(alpha: 0.5),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          ),
           SingleChildScrollView(
             child: SafeArea(
               child: Column(
@@ -31,12 +49,12 @@ class CreateBooking extends StatelessWidget {
                     children: [
                       CustomBackButton(),
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: .start,
                         children: [
                           Text(
                             "Plan Your Experience",
                             style: TextStyle(
-                              fontWeight: FontWeight.w600,
+                              fontWeight: .w600,
                               fontSize: AppTextStyles(context).accumulator * 16,
                             ),
                           ),

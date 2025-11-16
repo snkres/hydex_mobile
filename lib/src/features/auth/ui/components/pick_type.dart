@@ -15,7 +15,7 @@ class PickUserType extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final currentType = ref.watch(userTypeNotifierProvider);
+        final currentType = ref.watch(userTypeProvider);
         return Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -38,7 +38,7 @@ class PickUserType extends StatelessWidget {
                 UserTypeContainer<Role>(
                   emoji: "👩‍🎤",
                   onChanged: (v) {
-                    ref.read(userTypeNotifierProvider.notifier).change(v);
+                    ref.read(userTypeProvider.notifier).change(v);
                   },
                   value: Role.seeker,
                   groupValue: currentType,
@@ -51,7 +51,7 @@ class PickUserType extends StatelessWidget {
                 UserTypeContainer<Role>(
                   emoji: "💫",
                   onChanged: (v) {
-                    ref.read(userTypeNotifierProvider.notifier).change(v);
+                    ref.read(userTypeProvider.notifier).change(v);
                   },
                   value: Role.ambassador,
                   groupValue: currentType,
@@ -63,7 +63,7 @@ class PickUserType extends StatelessWidget {
                 UserTypeContainer<Role>(
                   emoji: "💼",
                   onChanged: (v) {
-                    ref.read(userTypeNotifierProvider.notifier).change(v);
+                    ref.read(userTypeProvider.notifier).change(v);
                   },
                   value: Role.owner,
 
@@ -82,14 +82,14 @@ class PickUserType extends StatelessWidget {
                 builder: (context, ref, child) {
                   return PrimaryButton(
                     onTap: currentType != Role.none
-                        ? () async{
+                        ? () async {
                             pageController.nextPage(
                               duration: Duration(milliseconds: 300),
                               curve: Curves.easeInOut,
                             );
                             ref
-                                .read(userNotifierProvider.notifier)
-                                .create(role: currentType.toValue());
+                                .read(userTypeProvider.notifier)
+                                .change(currentType.toValue());
                           }
                         : null,
                   );

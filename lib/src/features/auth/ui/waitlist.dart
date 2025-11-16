@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/data/navitems.dart';
-import 'package:hydex/src/features/booking/ui/booking_screen.dart';
 import 'package:hydex/src/features/location/ui/location_required.dart';
 import 'package:hydex/src/features/location/ui/location_screen.dart';
 import 'package:hydex/src/features/settings/ui/settings.dart';
@@ -26,11 +25,7 @@ class _BaseScreenState extends State<BaseScreen> {
     NavItem(title: "Settings", index: 2, svgPath: "img/svg/settings.svg"),
   ];
 
-  final children = [
-    VibesScreen(),
-    const BookingScreen(),
-    const SettingsScreen(),
-  ];
+  final children = [VibesScreen(), const Placeholder(), const SettingsScreen()];
 
   @override
   void initState() {

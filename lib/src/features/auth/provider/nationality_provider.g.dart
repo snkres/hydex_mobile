@@ -6,22 +6,59 @@ part of 'nationality_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(NationalityNotifier)
+const nationalityProvider = NationalityNotifierProvider._();
+
+final class NationalityNotifierProvider
+    extends $NotifierProvider<NationalityNotifier, String?> {
+  const NationalityNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'nationalityProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$nationalityNotifierHash();
+
+  @$internal
+  @override
+  NationalityNotifier create() => NationalityNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
 String _$nationalityNotifierHash() =>
     r'873466475fcdb1a7e8a2a5350c75a0911479b26f';
 
-/// See also [NationalityNotifier].
-@ProviderFor(NationalityNotifier)
-final nationalityNotifierProvider =
-    NotifierProvider<NationalityNotifier, String?>.internal(
-      NationalityNotifier.new,
-      name: r'nationalityNotifierProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$nationalityNotifierHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$NationalityNotifier = Notifier<String?>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$NationalityNotifier extends $Notifier<String?> {
+  String? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<String?, String?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String?, String?>,
+              String?,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

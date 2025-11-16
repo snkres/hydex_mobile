@@ -28,7 +28,7 @@ class AuthService {
       // Parse user data from response
       final userData = responseData['data']['user'] as Map<String, dynamic>;
       final user = UserMapper.fromMap(userData);
-      ref.read(userNotifierProvider.notifier).setUser(user);
+      ref.read(userProvider.notifier).setUser(user);
       if (kDebugMode) {
         print('✅ Login successful for user: ${user.email}');
         print('🔐 Access token stored from response data');
@@ -72,9 +72,9 @@ class AuthService {
 
       if (response.success && response.data != null) {
         if (type == OTPType.email) {
-          ref.read(userNotifierProvider.notifier).create(email: identifier);
+          ref.read(userProvider.notifier).create(email: identifier);
         } else {
-          ref.read(userNotifierProvider.notifier).create(phone: identifier);
+          ref.read(userProvider.notifier).create(phone: identifier);
         }
         return response.data?["message"];
       } else {
@@ -106,7 +106,7 @@ class AuthService {
   }
 
   Future<bool> createProfile() async {
-    final user = ref.read(userNotifierProvider);
+    final user = ref.read(userProvider);
     final data = _getOnboardingData(user!);
     final response = await DioHelper.post<Map<String, dynamic>>(
       '/onboarding',
@@ -135,7 +135,7 @@ class AuthService {
 
   Future<String> register() async {
     try {
-      final user = ref.read(userNotifierProvider);
+      final user = ref.read(userProvider);
       final data = {
         "email": user?.email,
         "phone": user?.phone,
@@ -388,7 +388,7 @@ enum OTPType { phone, email }
 
 @Riverpod(keepAlive: true)
 Future<User?> currentUser(Ref ref) async {
-  final userState = ref.watch(userNotifierProvider);
+  final userState = ref.watch(userProvider);
 
   if (userState != null) {
     return userState;

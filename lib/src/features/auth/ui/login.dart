@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Consumer(
                         builder: (context, ref, child) {
                           final selectedCountry = ref.watch(
-                            countryPickerNotifierProvider,
+                            countryPickerProvider,
                           );
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

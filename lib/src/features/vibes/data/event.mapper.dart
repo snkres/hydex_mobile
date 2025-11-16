@@ -1,5 +1,6 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format off
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, unnecessary_cast, override_on_non_overriding_member
 // ignore_for_file: strict_raw_type, inference_failure_on_untyped_parameter
@@ -72,23 +73,37 @@ class BannerMapper extends ClassMapperBase<Banner> {
   static BannerType _$type(Banner v) => v.type;
   static const Field<Banner, BannerType> _f$type = Field('type', _$type);
   static String _$headline(Banner v) => v.headline;
-  static const Field<Banner, String> _f$headline =
-      Field('headline', _$headline);
+  static const Field<Banner, String> _f$headline = Field(
+    'headline',
+    _$headline,
+  );
   static String _$subtitle(Banner v) => v.subtitle;
-  static const Field<Banner, String> _f$subtitle =
-      Field('subtitle', _$subtitle);
+  static const Field<Banner, String> _f$subtitle = Field(
+    'subtitle',
+    _$subtitle,
+  );
   static String? _$image(Banner v) => v.image;
-  static const Field<Banner, String> _f$image =
-      Field('image', _$image, opt: true);
+  static const Field<Banner, String> _f$image = Field(
+    'image',
+    _$image,
+    opt: true,
+  );
   static String? _$video(Banner v) => v.video;
-  static const Field<Banner, String> _f$video =
-      Field('video', _$video, opt: true);
+  static const Field<Banner, String> _f$video = Field(
+    'video',
+    _$video,
+    opt: true,
+  );
   static DateTime _$campaignStartDate(Banner v) => v.campaignStartDate;
-  static const Field<Banner, DateTime> _f$campaignStartDate =
-      Field('campaignStartDate', _$campaignStartDate);
+  static const Field<Banner, DateTime> _f$campaignStartDate = Field(
+    'campaignStartDate',
+    _$campaignStartDate,
+  );
   static DateTime _$campaignEndDate(Banner v) => v.campaignEndDate;
-  static const Field<Banner, DateTime> _f$campaignEndDate =
-      Field('campaignEndDate', _$campaignEndDate);
+  static const Field<Banner, DateTime> _f$campaignEndDate = Field(
+    'campaignEndDate',
+    _$campaignEndDate,
+  );
 
   @override
   final MappableFields<Banner> fields = const {
@@ -104,14 +119,15 @@ class BannerMapper extends ClassMapperBase<Banner> {
 
   static Banner _instantiate(DecodingData data) {
     return Banner(
-        id: data.dec(_f$id),
-        type: data.dec(_f$type),
-        headline: data.dec(_f$headline),
-        subtitle: data.dec(_f$subtitle),
-        image: data.dec(_f$image),
-        video: data.dec(_f$video),
-        campaignStartDate: data.dec(_f$campaignStartDate),
-        campaignEndDate: data.dec(_f$campaignEndDate));
+      id: data.dec(_f$id),
+      type: data.dec(_f$type),
+      headline: data.dec(_f$headline),
+      subtitle: data.dec(_f$subtitle),
+      image: data.dec(_f$image),
+      video: data.dec(_f$video),
+      campaignStartDate: data.dec(_f$campaignStartDate),
+      campaignEndDate: data.dec(_f$campaignEndDate),
+    );
   }
 
   @override
@@ -160,15 +176,16 @@ extension BannerValueCopy<$R, $Out> on ObjectCopyWith<$R, Banner, $Out> {
 
 abstract class BannerCopyWith<$R, $In extends Banner, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  $R call(
-      {String? id,
-      BannerType? type,
-      String? headline,
-      String? subtitle,
-      String? image,
-      String? video,
-      DateTime? campaignStartDate,
-      DateTime? campaignEndDate});
+  $R call({
+    String? id,
+    BannerType? type,
+    String? headline,
+    String? subtitle,
+    String? image,
+    String? video,
+    DateTime? campaignStartDate,
+    DateTime? campaignEndDate,
+  });
   BannerCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -179,36 +196,41 @@ class _BannerCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Banner, $Out>
   @override
   late final ClassMapperBase<Banner> $mapper = BannerMapper.ensureInitialized();
   @override
-  $R call(
-          {String? id,
-          BannerType? type,
-          String? headline,
-          String? subtitle,
-          Object? image = $none,
-          Object? video = $none,
-          DateTime? campaignStartDate,
-          DateTime? campaignEndDate}) =>
-      $apply(FieldCopyWithData({
-        if (id != null) #id: id,
-        if (type != null) #type: type,
-        if (headline != null) #headline: headline,
-        if (subtitle != null) #subtitle: subtitle,
-        if (image != $none) #image: image,
-        if (video != $none) #video: video,
-        if (campaignStartDate != null) #campaignStartDate: campaignStartDate,
-        if (campaignEndDate != null) #campaignEndDate: campaignEndDate
-      }));
+  $R call({
+    String? id,
+    BannerType? type,
+    String? headline,
+    String? subtitle,
+    Object? image = $none,
+    Object? video = $none,
+    DateTime? campaignStartDate,
+    DateTime? campaignEndDate,
+  }) => $apply(
+    FieldCopyWithData({
+      if (id != null) #id: id,
+      if (type != null) #type: type,
+      if (headline != null) #headline: headline,
+      if (subtitle != null) #subtitle: subtitle,
+      if (image != $none) #image: image,
+      if (video != $none) #video: video,
+      if (campaignStartDate != null) #campaignStartDate: campaignStartDate,
+      if (campaignEndDate != null) #campaignEndDate: campaignEndDate,
+    }),
+  );
   @override
   Banner $make(CopyWithData data) => Banner(
-      id: data.get(#id, or: $value.id),
-      type: data.get(#type, or: $value.type),
-      headline: data.get(#headline, or: $value.headline),
-      subtitle: data.get(#subtitle, or: $value.subtitle),
-      image: data.get(#image, or: $value.image),
-      video: data.get(#video, or: $value.video),
-      campaignStartDate:
-          data.get(#campaignStartDate, or: $value.campaignStartDate),
-      campaignEndDate: data.get(#campaignEndDate, or: $value.campaignEndDate));
+    id: data.get(#id, or: $value.id),
+    type: data.get(#type, or: $value.type),
+    headline: data.get(#headline, or: $value.headline),
+    subtitle: data.get(#subtitle, or: $value.subtitle),
+    image: data.get(#image, or: $value.image),
+    video: data.get(#video, or: $value.video),
+    campaignStartDate: data.get(
+      #campaignStartDate,
+      or: $value.campaignStartDate,
+    ),
+    campaignEndDate: data.get(#campaignEndDate, or: $value.campaignEndDate),
+  );
 
   @override
   BannerCopyWith<$R2, Banner, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
@@ -301,12 +323,17 @@ class _DetailCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Detail, $Out>
   @override
   late final ClassMapperBase<Detail> $mapper = DetailMapper.ensureInitialized();
   @override
-  $R call({String? image, String? title}) => $apply(FieldCopyWithData(
-      {if (image != null) #image: image, if (title != null) #title: title}));
+  $R call({String? image, String? title}) => $apply(
+    FieldCopyWithData({
+      if (image != null) #image: image,
+      if (title != null) #title: title,
+    }),
+  );
   @override
   Detail $make(CopyWithData data) => Detail(
-      image: data.get(#image, or: $value.image),
-      title: data.get(#title, or: $value.title));
+    image: data.get(#image, or: $value.image),
+    title: data.get(#title, or: $value.title),
+  );
 
   @override
   DetailCopyWith<$R2, Detail, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
@@ -356,35 +383,43 @@ class OperatingHoursMapper extends ClassMapperBase<OperatingHours> {
 
 mixin OperatingHoursMappable {
   String toJson() {
-    return OperatingHoursMapper.ensureInitialized()
-        .encodeJson<OperatingHours>(this as OperatingHours);
+    return OperatingHoursMapper.ensureInitialized().encodeJson<OperatingHours>(
+      this as OperatingHours,
+    );
   }
 
   Map<String, dynamic> toMap() {
-    return OperatingHoursMapper.ensureInitialized()
-        .encodeMap<OperatingHours>(this as OperatingHours);
+    return OperatingHoursMapper.ensureInitialized().encodeMap<OperatingHours>(
+      this as OperatingHours,
+    );
   }
 
   OperatingHoursCopyWith<OperatingHours, OperatingHours, OperatingHours>
-      get copyWith =>
-          _OperatingHoursCopyWithImpl<OperatingHours, OperatingHours>(
-              this as OperatingHours, $identity, $identity);
+  get copyWith => _OperatingHoursCopyWithImpl<OperatingHours, OperatingHours>(
+    this as OperatingHours,
+    $identity,
+    $identity,
+  );
   @override
   String toString() {
-    return OperatingHoursMapper.ensureInitialized()
-        .stringifyValue(this as OperatingHours);
+    return OperatingHoursMapper.ensureInitialized().stringifyValue(
+      this as OperatingHours,
+    );
   }
 
   @override
   bool operator ==(Object other) {
-    return OperatingHoursMapper.ensureInitialized()
-        .equalsValue(this as OperatingHours, other);
+    return OperatingHoursMapper.ensureInitialized().equalsValue(
+      this as OperatingHours,
+      other,
+    );
   }
 
   @override
   int get hashCode {
-    return OperatingHoursMapper.ensureInitialized()
-        .hashValue(this as OperatingHours);
+    return OperatingHoursMapper.ensureInitialized().hashValue(
+      this as OperatingHours,
+    );
   }
 }
 
@@ -398,7 +433,8 @@ abstract class OperatingHoursCopyWith<$R, $In extends OperatingHours, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   $R call({String? open, String? close});
   OperatingHoursCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
-      Then<$Out2, $R2> t);
+    Then<$Out2, $R2> t,
+  );
 }
 
 class _OperatingHoursCopyWithImpl<$R, $Out>
@@ -410,17 +446,22 @@ class _OperatingHoursCopyWithImpl<$R, $Out>
   late final ClassMapperBase<OperatingHours> $mapper =
       OperatingHoursMapper.ensureInitialized();
   @override
-  $R call({String? open, String? close}) => $apply(FieldCopyWithData(
-      {if (open != null) #open: open, if (close != null) #close: close}));
+  $R call({String? open, String? close}) => $apply(
+    FieldCopyWithData({
+      if (open != null) #open: open,
+      if (close != null) #close: close,
+    }),
+  );
   @override
   OperatingHours $make(CopyWithData data) => OperatingHours(
-      open: data.get(#open, or: $value.open),
-      close: data.get(#close, or: $value.close));
+    open: data.get(#open, or: $value.open),
+    close: data.get(#close, or: $value.close),
+  );
 
   @override
   OperatingHoursCopyWith<$R2, OperatingHours, $Out2> $chain<$R2, $Out2>(
-          Then<$Out2, $R2> t) =>
-      _OperatingHoursCopyWithImpl<$R2, $Out2>($value, $cast, t);
+    Then<$Out2, $R2> t,
+  ) => _OperatingHoursCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
 class EventMapper extends ClassMapperBase<Event> {
@@ -445,34 +486,48 @@ class EventMapper extends ClassMapperBase<Event> {
   static String _$name(Event v) => v.name;
   static const Field<Event, String> _f$name = Field('name', _$name);
   static String _$description(Event v) => v.description;
-  static const Field<Event, String> _f$description =
-      Field('description', _$description);
+  static const Field<Event, String> _f$description = Field(
+    'description',
+    _$description,
+  );
   static DateTime _$startTime(Event v) => v.startTime;
-  static const Field<Event, DateTime> _f$startTime =
-      Field('startTime', _$startTime);
+  static const Field<Event, DateTime> _f$startTime = Field(
+    'startTime',
+    _$startTime,
+  );
   static DateTime _$endTime(Event v) => v.endTime;
   static const Field<Event, DateTime> _f$endTime = Field('endTime', _$endTime);
   static List<String> _$media(Event v) => v.media;
   static const Field<Event, List<String>> _f$media = Field('media', _$media);
   static Location _$location(Event v) => v.location;
-  static const Field<Event, Location> _f$location =
-      Field('location', _$location);
+  static const Field<Event, Location> _f$location = Field(
+    'location',
+    _$location,
+  );
   static List<Detail> _$details(Event v) => v.details;
-  static const Field<Event, List<Detail>> _f$details =
-      Field('details', _$details);
+  static const Field<Event, List<Detail>> _f$details = Field(
+    'details',
+    _$details,
+  );
   static String _$priceType(Event v) => v.priceType;
-  static const Field<Event, String> _f$priceType =
-      Field('priceType', _$priceType);
+  static const Field<Event, String> _f$priceType = Field(
+    'priceType',
+    _$priceType,
+  );
   static List<String> _$tags(Event v) => v.tags;
   static const Field<Event, List<String>> _f$tags = Field('tags', _$tags);
   static List<String> _$experiences(Event v) => v.experiences;
-  static const Field<Event, List<String>> _f$experiences =
-      Field('experiences', _$experiences);
+  static const Field<Event, List<String>> _f$experiences = Field(
+    'experiences',
+    _$experiences,
+  );
   static Vendor _$vendor(Event v) => v.vendor;
   static const Field<Event, Vendor> _f$vendor = Field('vendor', _$vendor);
   static DateTime _$createdAt(Event v) => v.createdAt;
-  static const Field<Event, DateTime> _f$createdAt =
-      Field('createdAt', _$createdAt);
+  static const Field<Event, DateTime> _f$createdAt = Field(
+    'createdAt',
+    _$createdAt,
+  );
 
   @override
   final MappableFields<Event> fields = const {
@@ -493,19 +548,20 @@ class EventMapper extends ClassMapperBase<Event> {
 
   static Event _instantiate(DecodingData data) {
     return Event(
-        id: data.dec(_f$id),
-        name: data.dec(_f$name),
-        description: data.dec(_f$description),
-        startTime: data.dec(_f$startTime),
-        endTime: data.dec(_f$endTime),
-        media: data.dec(_f$media),
-        location: data.dec(_f$location),
-        details: data.dec(_f$details),
-        priceType: data.dec(_f$priceType),
-        tags: data.dec(_f$tags),
-        experiences: data.dec(_f$experiences),
-        vendor: data.dec(_f$vendor),
-        createdAt: data.dec(_f$createdAt));
+      id: data.dec(_f$id),
+      name: data.dec(_f$name),
+      description: data.dec(_f$description),
+      startTime: data.dec(_f$startTime),
+      endTime: data.dec(_f$endTime),
+      media: data.dec(_f$media),
+      location: data.dec(_f$location),
+      details: data.dec(_f$details),
+      priceType: data.dec(_f$priceType),
+      tags: data.dec(_f$tags),
+      experiences: data.dec(_f$experiences),
+      vendor: data.dec(_f$vendor),
+      createdAt: data.dec(_f$createdAt),
+    );
   }
 
   @override
@@ -560,20 +616,21 @@ abstract class EventCopyWith<$R, $In extends Event, $Out>
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get tags;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get experiences;
   VendorCopyWith<$R, Vendor, Vendor> get vendor;
-  $R call(
-      {String? id,
-      String? name,
-      String? description,
-      DateTime? startTime,
-      DateTime? endTime,
-      List<String>? media,
-      Location? location,
-      List<Detail>? details,
-      String? priceType,
-      List<String>? tags,
-      List<String>? experiences,
-      Vendor? vendor,
-      DateTime? createdAt});
+  $R call({
+    String? id,
+    String? name,
+    String? description,
+    DateTime? startTime,
+    DateTime? endTime,
+    List<String>? media,
+    Location? location,
+    List<Detail>? details,
+    String? priceType,
+    List<String>? tags,
+    List<String>? experiences,
+    Vendor? vendor,
+    DateTime? createdAt,
+  });
   EventCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -585,75 +642,89 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
   late final ClassMapperBase<Event> $mapper = EventMapper.ensureInitialized();
   @override
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get media =>
-      ListCopyWith($value.media, (v, t) => ObjectCopyWith(v, $identity, t),
-          (v) => call(media: v));
+      ListCopyWith(
+        $value.media,
+        (v, t) => ObjectCopyWith(v, $identity, t),
+        (v) => call(media: v),
+      );
   @override
   LocationCopyWith<$R, Location, Location> get location =>
       $value.location.copyWith.$chain((v) => call(location: v));
   @override
   ListCopyWith<$R, Detail, DetailCopyWith<$R, Detail, Detail>> get details =>
-      ListCopyWith($value.details, (v, t) => v.copyWith.$chain(t),
-          (v) => call(details: v));
+      ListCopyWith(
+        $value.details,
+        (v, t) => v.copyWith.$chain(t),
+        (v) => call(details: v),
+      );
   @override
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get tags =>
-      ListCopyWith($value.tags, (v, t) => ObjectCopyWith(v, $identity, t),
-          (v) => call(tags: v));
+      ListCopyWith(
+        $value.tags,
+        (v, t) => ObjectCopyWith(v, $identity, t),
+        (v) => call(tags: v),
+      );
   @override
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>
-      get experiences => ListCopyWith(
-          $value.experiences,
-          (v, t) => ObjectCopyWith(v, $identity, t),
-          (v) => call(experiences: v));
+  get experiences => ListCopyWith(
+    $value.experiences,
+    (v, t) => ObjectCopyWith(v, $identity, t),
+    (v) => call(experiences: v),
+  );
   @override
   VendorCopyWith<$R, Vendor, Vendor> get vendor =>
       $value.vendor.copyWith.$chain((v) => call(vendor: v));
   @override
-  $R call(
-          {String? id,
-          String? name,
-          String? description,
-          DateTime? startTime,
-          DateTime? endTime,
-          List<String>? media,
-          Location? location,
-          List<Detail>? details,
-          String? priceType,
-          List<String>? tags,
-          List<String>? experiences,
-          Vendor? vendor,
-          DateTime? createdAt}) =>
-      $apply(FieldCopyWithData({
-        if (id != null) #id: id,
-        if (name != null) #name: name,
-        if (description != null) #description: description,
-        if (startTime != null) #startTime: startTime,
-        if (endTime != null) #endTime: endTime,
-        if (media != null) #media: media,
-        if (location != null) #location: location,
-        if (details != null) #details: details,
-        if (priceType != null) #priceType: priceType,
-        if (tags != null) #tags: tags,
-        if (experiences != null) #experiences: experiences,
-        if (vendor != null) #vendor: vendor,
-        if (createdAt != null) #createdAt: createdAt
-      }));
+  $R call({
+    String? id,
+    String? name,
+    String? description,
+    DateTime? startTime,
+    DateTime? endTime,
+    List<String>? media,
+    Location? location,
+    List<Detail>? details,
+    String? priceType,
+    List<String>? tags,
+    List<String>? experiences,
+    Vendor? vendor,
+    DateTime? createdAt,
+  }) => $apply(
+    FieldCopyWithData({
+      if (id != null) #id: id,
+      if (name != null) #name: name,
+      if (description != null) #description: description,
+      if (startTime != null) #startTime: startTime,
+      if (endTime != null) #endTime: endTime,
+      if (media != null) #media: media,
+      if (location != null) #location: location,
+      if (details != null) #details: details,
+      if (priceType != null) #priceType: priceType,
+      if (tags != null) #tags: tags,
+      if (experiences != null) #experiences: experiences,
+      if (vendor != null) #vendor: vendor,
+      if (createdAt != null) #createdAt: createdAt,
+    }),
+  );
   @override
   Event $make(CopyWithData data) => Event(
-      id: data.get(#id, or: $value.id),
-      name: data.get(#name, or: $value.name),
-      description: data.get(#description, or: $value.description),
-      startTime: data.get(#startTime, or: $value.startTime),
-      endTime: data.get(#endTime, or: $value.endTime),
-      media: data.get(#media, or: $value.media),
-      location: data.get(#location, or: $value.location),
-      details: data.get(#details, or: $value.details),
-      priceType: data.get(#priceType, or: $value.priceType),
-      tags: data.get(#tags, or: $value.tags),
-      experiences: data.get(#experiences, or: $value.experiences),
-      vendor: data.get(#vendor, or: $value.vendor),
-      createdAt: data.get(#createdAt, or: $value.createdAt));
+    id: data.get(#id, or: $value.id),
+    name: data.get(#name, or: $value.name),
+    description: data.get(#description, or: $value.description),
+    startTime: data.get(#startTime, or: $value.startTime),
+    endTime: data.get(#endTime, or: $value.endTime),
+    media: data.get(#media, or: $value.media),
+    location: data.get(#location, or: $value.location),
+    details: data.get(#details, or: $value.details),
+    priceType: data.get(#priceType, or: $value.priceType),
+    tags: data.get(#tags, or: $value.tags),
+    experiences: data.get(#experiences, or: $value.experiences),
+    vendor: data.get(#vendor, or: $value.vendor),
+    createdAt: data.get(#createdAt, or: $value.createdAt),
+  );
 
   @override
   EventCopyWith<$R2, Event, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
       _EventCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
+

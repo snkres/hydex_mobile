@@ -1,5 +1,6 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format off
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, unnecessary_cast, override_on_non_overriding_member
 // ignore_for_file: strict_raw_type, inference_failure_on_untyped_parameter
@@ -27,8 +28,11 @@ class CountryMapper extends ClassMapperBase<Country> {
   static String _$emoji(Country v) => v.emoji;
   static const Field<Country, String> _f$emoji = Field('emoji', _$emoji);
   static String _$dialCode(Country v) => v.dialCode;
-  static const Field<Country, String> _f$dialCode =
-      Field('dialCode', _$dialCode, key: r'dial_code');
+  static const Field<Country, String> _f$dialCode = Field(
+    'dialCode',
+    _$dialCode,
+    key: r'dial_code',
+  );
 
   @override
   final MappableFields<Country> fields = const {
@@ -40,10 +44,11 @@ class CountryMapper extends ClassMapperBase<Country> {
 
   static Country _instantiate(DecodingData data) {
     return Country(
-        name: data.dec(_f$name),
-        code: data.dec(_f$code),
-        emoji: data.dec(_f$emoji),
-        dialCode: data.dec(_f$dialCode));
+      name: data.dec(_f$name),
+      code: data.dec(_f$code),
+      emoji: data.dec(_f$emoji),
+      dialCode: data.dec(_f$dialCode),
+    );
   }
 
   @override
@@ -60,18 +65,23 @@ class CountryMapper extends ClassMapperBase<Country> {
 
 mixin CountryMappable {
   String toJson() {
-    return CountryMapper.ensureInitialized()
-        .encodeJson<Country>(this as Country);
+    return CountryMapper.ensureInitialized().encodeJson<Country>(
+      this as Country,
+    );
   }
 
   Map<String, dynamic> toMap() {
-    return CountryMapper.ensureInitialized()
-        .encodeMap<Country>(this as Country);
+    return CountryMapper.ensureInitialized().encodeMap<Country>(
+      this as Country,
+    );
   }
 
   CountryCopyWith<Country, Country, Country> get copyWith =>
       _CountryCopyWithImpl<Country, Country>(
-          this as Country, $identity, $identity);
+        this as Country,
+        $identity,
+        $identity,
+      );
   @override
   String toString() {
     return CountryMapper.ensureInitialized().stringifyValue(this as Country);
@@ -79,8 +89,10 @@ mixin CountryMappable {
 
   @override
   bool operator ==(Object other) {
-    return CountryMapper.ensureInitialized()
-        .equalsValue(this as Country, other);
+    return CountryMapper.ensureInitialized().equalsValue(
+      this as Country,
+      other,
+    );
   }
 
   @override
@@ -110,20 +122,24 @@ class _CountryCopyWithImpl<$R, $Out>
       CountryMapper.ensureInitialized();
   @override
   $R call({String? name, String? code, String? emoji, String? dialCode}) =>
-      $apply(FieldCopyWithData({
-        if (name != null) #name: name,
-        if (code != null) #code: code,
-        if (emoji != null) #emoji: emoji,
-        if (dialCode != null) #dialCode: dialCode
-      }));
+      $apply(
+        FieldCopyWithData({
+          if (name != null) #name: name,
+          if (code != null) #code: code,
+          if (emoji != null) #emoji: emoji,
+          if (dialCode != null) #dialCode: dialCode,
+        }),
+      );
   @override
   Country $make(CopyWithData data) => Country(
-      name: data.get(#name, or: $value.name),
-      code: data.get(#code, or: $value.code),
-      emoji: data.get(#emoji, or: $value.emoji),
-      dialCode: data.get(#dialCode, or: $value.dialCode));
+    name: data.get(#name, or: $value.name),
+    code: data.get(#code, or: $value.code),
+    emoji: data.get(#emoji, or: $value.emoji),
+    dialCode: data.get(#dialCode, or: $value.dialCode),
+  );
 
   @override
   CountryCopyWith<$R2, Country, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
       _CountryCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
+

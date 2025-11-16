@@ -1,17 +1,11 @@
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
-import 'package:hydex/src/features/auth/provider/country_picker_provider.dart';
-import 'package:hydex/src/features/auth/ui/components/country_picker.dart';
-import 'package:hydex/src/features/auth/ui/tellus.dart';
-import 'package:hydex/src/features/booking/data/guest.dart';
-import 'package:hydex/src/features/booking/ui/components/guest_form.dart';
-import 'package:hydex/src/widgets/primary_btn.dart';
 
-final guestsListProvider = StateProvider<List<Guest>>((ref) => []);
+import 'package:hydex/src/features/booking/ui/components/guest_form.dart';
+import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 
 class BottomBar extends ConsumerStatefulWidget {
   const BottomBar({super.key});
@@ -31,6 +25,7 @@ class _BottomBarState extends ConsumerState<BottomBar> {
 
   @override
   Widget build(BuildContext context) {
+    final totalGuests = ref.watch(guestsProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -75,6 +70,7 @@ class _BottomBarState extends ConsumerState<BottomBar> {
             onPressed: () {
               showModalBottomSheet(
                 context: context,
+                isScrollControlled: true,
                 builder: (context) {
                   return Wrap(
                     children: [
@@ -97,7 +93,14 @@ class _BottomBarState extends ConsumerState<BottomBar> {
                             animationCurve: Curves.easeIn,
                             animationDuration: Duration(milliseconds: 250),
                             physics: const NeverScrollableScrollPhysics(),
-                            children: [GuestForm(controller: pageController)],
+                            children: List.generate(
+                              totalGuests,
+                              (index) => GuestForm(
+                                controller: pageController,
+                                guestNumber: index + 1,
+                                totalGuests: totalGuests,
+                              ),
+                            ),
                           ),
                         ],
                       ),

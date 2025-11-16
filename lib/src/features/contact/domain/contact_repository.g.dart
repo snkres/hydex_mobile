@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'booking_repository.dart';
+part of 'contact_repository.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,41 +9,41 @@ part of 'booking_repository.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(getBookings)
-const getBookingsProvider = GetBookingsProvider._();
+@ProviderFor(getContacts)
+const getContactsProvider = GetContactsProvider._();
 
-final class GetBookingsProvider
+final class GetContactsProvider
     extends
         $FunctionalProvider<
-          AsyncValue<List<Booking>>,
-          List<Booking>,
-          FutureOr<List<Booking>>
+          AsyncValue<List<Contact>>,
+          List<Contact>,
+          FutureOr<List<Contact>>
         >
-    with $FutureModifier<List<Booking>>, $FutureProvider<List<Booking>> {
-  const GetBookingsProvider._()
+    with $FutureModifier<List<Contact>>, $FutureProvider<List<Contact>> {
+  const GetContactsProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'getBookingsProvider',
+        name: r'getContactsProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$getBookingsHash();
+  String debugGetCreateSourceHash() => _$getContactsHash();
 
   @$internal
   @override
-  $FutureProviderElement<List<Booking>> $createElement(
+  $FutureProviderElement<List<Contact>> $createElement(
     $ProviderPointer pointer,
   ) => $FutureProviderElement(pointer);
 
   @override
-  FutureOr<List<Booking>> create(Ref ref) {
-    return getBookings(ref);
+  FutureOr<List<Contact>> create(Ref ref) {
+    return getContacts(ref);
   }
 }
 
-String _$getBookingsHash() => r'a84b9ad87d17c1703d2976dd38f4bf24efa9c98c';
+String _$getContactsHash() => r'743fec898a70a18507f999d9af8b5930970c3d4c';

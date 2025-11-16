@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
@@ -24,7 +25,7 @@ class GuestsContainer extends StatelessWidget {
                 return Wrap(
                   children: [
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: .start,
                       children: [
                         SizedBox(height: 8),
                         Center(
@@ -33,16 +34,16 @@ class GuestsContainer extends StatelessWidget {
                             width: 44,
                             decoration: BoxDecoration(
                               color: Color(0xffDEDEDE),
-                              borderRadius: BorderRadius.circular(4),
+                              borderRadius: .circular(4),
                             ),
                           ),
                         ),
                         SizedBox(height: 20),
 
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          padding: const .symmetric(horizontal: 16),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: .start,
                             children: [
                               Text(
                                 "Select number of guests",
@@ -62,8 +63,8 @@ class GuestsContainer extends StatelessWidget {
                         SizedBox(
                           height: 60,
                           child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            scrollDirection: .horizontal,
+                            padding: const .symmetric(horizontal: 16),
                             separatorBuilder: (context, index) =>
                                 SizedBox(width: 10),
                             itemCount: 20,
@@ -105,7 +106,7 @@ class GuestsContainer extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
+                          padding: const .symmetric(
                             horizontal: 16,
                             vertical: 24,
                           ),
@@ -133,13 +134,13 @@ class GuestsContainer extends StatelessWidget {
 
           return Container(
             height: 56,
-            margin: EdgeInsets.symmetric(horizontal: 16),
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            width: double.infinity,
+            margin: .symmetric(horizontal: 16),
+            padding: .symmetric(horizontal: 16),
+            width: .infinity,
             decoration: BoxDecoration(
               color: Color(0xff1E1E20),
-              border: Border.all(color: AppColors.borderDefault),
-              borderRadius: BorderRadius.circular(100),
+              border: .all(color: AppColors.borderDefault),
+              borderRadius: .circular(100),
             ),
             child: Row(
               children: [
@@ -156,7 +157,7 @@ class GuestsContainer extends StatelessWidget {
                       (Widget child, Animation<double> animation) {
                         final offsetAnimation = Tween<Offset>(
                           begin: Offset(0, 0.5),
-                          end: Offset.zero,
+                          end: .zero,
                         ).animate(animation);
                         return ClipRect(
                           child: SlideTransition(

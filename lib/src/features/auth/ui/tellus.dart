@@ -272,7 +272,7 @@ class _TellusState extends State<Tellus> {
                                         Consumer(
                                           builder: (context, ref, child) {
                                             ref.listen<String?>(
-                                              nationalityNotifierProvider,
+                                              nationalityProvider,
                                               (previous, next) {
                                                 if (next != null) {
                                                   setState(() {
@@ -344,7 +344,7 @@ class _TellusState extends State<Tellus> {
                                   Consumer(
                                     builder: (context, ref, child) {
                                       final userType = ref.watch(
-                                        userTypeNotifierProvider,
+                                        userTypeProvider,
                                       );
                                       return Visibility(
                                         visible: userType == Role.owner,
@@ -436,7 +436,7 @@ class _TellusState extends State<Tellus> {
                                           }
                                           ref
                                               .read(
-                                                userNotifierProvider.notifier,
+                                                userProvider.notifier,
                                               )
                                               .create(
                                                 nationality:
@@ -652,7 +652,7 @@ class _NationalitiesPickerState extends ConsumerState<NationalitiesPicker> {
                 : Consumer(
                     builder: (context, ref, child) {
                       final selectedNationality = ref.watch(
-                        nationalityNotifierProvider,
+                        nationalityProvider,
                       );
                       return ListView.builder(
                         itemCount: filteredNations.length,
@@ -669,7 +669,7 @@ class _NationalitiesPickerState extends ConsumerState<NationalitiesPicker> {
                             ),
                             onTap: () {
                               ref
-                                  .read(nationalityNotifierProvider.notifier)
+                                  .read(nationalityProvider.notifier)
                                   .change(nationality);
                               context.pop();
                             },

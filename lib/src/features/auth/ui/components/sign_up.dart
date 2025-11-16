@@ -32,7 +32,7 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedCountry = ref.watch(countryPickerNotifierProvider);
+    final selectedCountry = ref.watch(countryPickerProvider);
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

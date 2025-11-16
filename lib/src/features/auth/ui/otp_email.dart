@@ -62,10 +62,7 @@ class _OtpEmailScreenState extends State<OtpEmailScreen> {
                                   Consumer(
                                     builder: (context, ref, child) {
                                       final email =
-                                          ref
-                                              .watch(userNotifierProvider)
-                                              ?.email ??
-                                          "";
+                                          ref.watch(userProvider)?.email ?? "";
                                       return Text(
                                         "Enter the security code we sent to $email",
                                         style: AppTextStyles(context)
@@ -150,7 +147,7 @@ class _OtpEmailScreenState extends State<OtpEmailScreen> {
                                               ),
                                               onPressed: () async {
                                                 final email = ref
-                                                    .read(userNotifierProvider)
+                                                    .read(userProvider)
                                                     ?.email;
                                                 await ref
                                                     .read(authServiceProvider)
@@ -199,7 +196,7 @@ class _OtpEmailScreenState extends State<OtpEmailScreen> {
                                             if (formKey.currentState!
                                                 .validate()) {
                                               final email = ref
-                                                  .read(userNotifierProvider)
+                                                  .read(userProvider)
                                                   ?.email;
 
                                               await ref

@@ -166,10 +166,7 @@ class _InfluencerScreenState extends State<InfluencerScreen> {
                                       onTap: selectedSize != null
                                           ? () async {
                                               ref
-                                                  .read(
-                                                    userNotifierProvider
-                                                        .notifier,
-                                                  )
+                                                  .read(userProvider.notifier)
                                                   .create(
                                                     preferredCountry:
                                                         countryActivityController

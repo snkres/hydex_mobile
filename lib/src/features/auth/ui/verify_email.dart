@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/type.dart';
@@ -107,19 +108,14 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                     onTap: email != ''
                                         ? () async {
                                             ref
-                                                .read(
-                                                  userNotifierProvider.notifier,
-                                                )
+                                                .read(userProvider.notifier)
                                                 .create(
                                                   email: emailController.text,
                                                 );
                                             if (formKey.currentState!
                                                 .validate()) {
                                               ref
-                                                  .read(
-                                                    userNotifierProvider
-                                                        .notifier,
-                                                  )
+                                                  .read(userProvider.notifier)
                                                   .create(
                                                     email: emailController.text,
                                                   );
@@ -147,10 +143,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                                   });
                                               if (!context.mounted) return;
                                               ref
-                                                  .read(
-                                                    userNotifierProvider
-                                                        .notifier,
-                                                  )
+                                                  .read(userProvider.notifier)
                                                   .create(
                                                     email: emailController.text,
                                                   );

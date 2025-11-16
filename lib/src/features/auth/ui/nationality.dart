@@ -35,7 +35,7 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
           SafeArea(
             child: Consumer(
               builder: (context, ref, child) {
-                final userType = ref.watch(userTypeNotifierProvider);
+                final userType = ref.watch(userTypeProvider);
 
                 return CustomScrollView(
                   slivers: [
@@ -176,7 +176,7 @@ class BusinessOnlyWidget extends StatelessWidget {
                       onTap: () async {
                         if (formKey.currentState!.validate()) {
                           ref
-                              .read(userNotifierProvider.notifier)
+                              .read(userProvider.notifier)
                               .create(
                                 businessName: businessController.text,
                                 instagram: linkController.text,
@@ -443,18 +443,16 @@ class _TellusForOthersState extends State<TellusForOthers> {
                       onTap: () async {
                         if (formKey.currentState!.validate()) {
                           widget.ref
-                              .read(userNotifierProvider.notifier)
+                              .read(userProvider.notifier)
                               .create(
                                 socialStatus: type,
                                 instagram: instagramController.text,
                                 facebook: facebookController.text,
-                                
+
                                 referralCode: referralCodeController.text,
                               );
 
-                          final currentType = widget.ref.read(
-                            userTypeNotifierProvider,
-                          );
+                          final currentType = widget.ref.read(userTypeProvider);
                           if (context.mounted) {
                             switch (currentType) {
                               case Role.seeker:

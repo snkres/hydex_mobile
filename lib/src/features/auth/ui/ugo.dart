@@ -258,7 +258,7 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
                                     return PrimaryButton(
                                       onTap: () async {
                                         ref
-                                            .read(userNotifierProvider.notifier)
+                                            .read(userProvider.notifier)
                                             .create(
                                               preferredCountry: selectedCountry,
                                               areas: selectedArea.toList(),

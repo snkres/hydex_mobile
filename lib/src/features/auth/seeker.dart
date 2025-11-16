@@ -104,7 +104,7 @@ class _SeekerScreenState extends State<SeekerScreen> {
                           child: Consumer(
                             builder: (context, ref, child) {
                               final userType = ref.read(
-                                userTypeNotifierProvider,
+                                userTypeProvider,
                               );
 
                               return PrimaryButton(
@@ -112,7 +112,7 @@ class _SeekerScreenState extends State<SeekerScreen> {
                                     ? null
                                     : () async {
                                         ref
-                                            .read(userNotifierProvider.notifier)
+                                            .read(userProvider.notifier)
                                             .create(
                                               interests: selectedCategories
                                                   .toList(),

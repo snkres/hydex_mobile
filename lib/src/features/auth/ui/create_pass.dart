@@ -281,7 +281,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                                         if (formKey.currentState!.validate()) {
                                           ref
                                               .read(
-                                                userNotifierProvider.notifier,
+                                                userProvider.notifier,
                                               )
                                               .create(
                                                 password:

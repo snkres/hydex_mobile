@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
-import 'package:hydex/src/widgets/primary_btn.dart';
+import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:smooth_corner/smooth_corner.dart';
+
+final VipCountProvider = StateProvider<int>((ref) => ref.watch(guestsProvider));
 
 class AccessSection extends StatelessWidget {
   const AccessSection({super.key});
@@ -164,48 +168,63 @@ class AccessSection extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Container(
-                    height: 40,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          onPressed: () {},
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(
-                              Colors.transparent,
-                            ),
-                          ),
-                          icon: Transform.translate(
-                            offset: const Offset(0, -6), // move up
-                            child: const Icon(
-                              Icons.minimize,
-                              color: Colors.black,
-                            ),
-                          ),
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final vpCount = ref.watch(VipCountProvider);
+                      return Container(
+                        height: 40,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(100),
                         ),
-                        Text(
-                          "3",
-                          style: AppTextStyles(
-                            context,
-                          ).smallMedium.copyWith(color: Colors.black),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(
-                              Colors.transparent,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                if (vpCount > 1) {
+                                  ref
+                                      .read(VipCountProvider.notifier)
+                                      .update((state) => state - 1);
+                                }
+                              },
+                              style: ButtonStyle(
+                                backgroundColor: WidgetStatePropertyAll(
+                                  Colors.transparent,
+                                ),
+                              ),
+                              icon: Transform.translate(
+                                offset: const Offset(0, -6), // move up
+                                child: const Icon(
+                                  Icons.minimize,
+                                  color: Colors.black,
+                                ),
+                              ),
                             ),
-                          ),
-                          icon: const Icon(Icons.add, color: Colors.black),
+                            Text(
+                              vpCount.toString(),
+                              style: AppTextStyles(
+                                context,
+                              ).smallMedium.copyWith(color: Colors.black),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                ref
+                                    .read(VipCountProvider.notifier)
+                                    .update((state) => state + 1);
+                              },
+                              style: ButtonStyle(
+                                backgroundColor: WidgetStatePropertyAll(
+                                  Colors.transparent,
+                                ),
+                              ),
+                              icon: const Icon(Icons.add, color: Colors.black),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ],
               ),

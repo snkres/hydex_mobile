@@ -107,7 +107,7 @@ class _CountryPickerBottomSheetState extends State<CountryPickerBottomSheet> {
             child: Consumer(
               builder: (context, ref, child) {
                 final selectedCountry = ref.watch(
-                  countryPickerNotifierProvider,
+                  countryPickerProvider,
                 );
                 return ListView.builder(
                   itemCount: filteredCountries.length,
@@ -126,7 +126,7 @@ class _CountryPickerBottomSheetState extends State<CountryPickerBottomSheet> {
                       ),
                       onTap: () {
                         ref
-                            .read(countryPickerNotifierProvider.notifier)
+                            .read(countryPickerProvider.notifier)
                             .change(country);
                         context.pop();
                       },
