@@ -46,4 +46,4 @@ final class GetContactsProvider
   }
 }
 
-String _$getContactsHash() => r'743fec898a70a18507f999d9af8b5930970c3d4c';
+String _$getContactsHash() => r'62b6e6688bb96d61a37fcfe181adfead92ff35ac';

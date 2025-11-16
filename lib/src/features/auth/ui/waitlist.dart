@@ -2,10 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/data/navitems.dart';
-import 'package:hydex/src/features/location/ui/location_required.dart';
-import 'package:hydex/src/features/location/ui/location_screen.dart';
 import 'package:hydex/src/features/settings/ui/settings.dart';
 import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
@@ -41,8 +38,7 @@ class _BaseScreenState extends State<BaseScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: LiquidGlass(
-          glassContainsChild: false,
+        child: LiquidGlassLayer(
           settings: LiquidGlassSettings(
             ambientStrength: 0.5,
             lightAngle: 0.5 * pi,
@@ -52,20 +48,23 @@ class _BaseScreenState extends State<BaseScreen> {
             lightIntensity: 0.5,
             blur: 20,
           ),
-          shape: LiquidRoundedRectangle(borderRadius: Radius.circular(100)),
-          child: Container(
-            width: (270 * MediaQuery.sizeOf(context).width) / 375,
-            height: (70 * MediaQuery.sizeOf(context).width) / 375,
-            alignment: Alignment.center,
-            padding: EdgeInsets.all(4),
-            child: NavBar(
-              items: navItems,
-              selectedIndex: currentIndex,
-              onTap: (index) {
-                setState(() {
-                  currentIndex = index;
-                });
-              },
+          child: LiquidGlass(
+            glassContainsChild: false,
+            shape: LiquidRoundedRectangle(borderRadius: 100),
+            child: Container(
+              width: (270 * MediaQuery.sizeOf(context).width) / 375,
+              height: (70 * MediaQuery.sizeOf(context).width) / 375,
+              alignment: .center,
+              padding: .all(4),
+              child: NavBar(
+                items: navItems,
+                selectedIndex: currentIndex,
+                onTap: (index) {
+                  setState(() {
+                    currentIndex = index;
+                  });
+                },
+              ),
             ),
           ),
         ),

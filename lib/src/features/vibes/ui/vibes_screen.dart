@@ -55,7 +55,6 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
     );
 
     final categories = ref.watch(getEventCategoriesProvider);
-
     return Scaffold(
       body: LocationRequired(
         child: SingleChildScrollView(
@@ -719,89 +718,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
 
                           SizedBox(height: 42),
 
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Explore our vendors",
-                                      style: TextStyle(
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            18,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                    Text(
-                                      "Unforgettable places. Trusted hosts.",
-                                      style: TextStyle(
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            14,
-                                        color: AppColors.textSecondary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                TextButton(
-                                  style: ButtonStyle(
-                                    foregroundColor: WidgetStatePropertyAll(
-                                      AppColors.textPrimary,
-                                    ),
-                                  ),
-                                  onPressed: () {},
-                                  child: Text(
-                                    "Explore all",
-                                    style: TextStyle(
-                                      fontSize:
-                                          AppTextStyles(context).accumulator *
-                                          12,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 16),
-
-                          SizedBox(
-                            height: 200,
-                            child: ListView.separated(
-                              itemCount: 3,
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              scrollDirection: Axis.horizontal,
-                              separatorBuilder: (context, index) =>
-                                  SizedBox(width: 12),
-                              itemBuilder: (context, index) {
-                                return OpenContainer(
-                                  closedColor: AppColors.backgroundBase,
-                                  closedElevation: 0,
-                                  closedBuilder: (context, _) {
-                                    return SizedBox(
-                                      width: 240,
-                                      child: EventContainer(
-                                        heading: "Heading Test",
-                                        description: "description",
-                                        image:
-                                            "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
-                                        tag: "Sports",
-                                        avatarImage:
-                                            "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
-                                        date: "date",
-                                      ),
-                                    );
-                                  },
-                                  openBuilder: (context, _) =>
-                                      VendorDetailsScreen(),
-                                );
-                              },
-                            ),
-                          ),
+                          AllVendorsWidget(),
                           Column(
                             children: [
                               categories.when(
@@ -892,6 +809,96 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class AllVendorsWidget extends ConsumerWidget {
+  const AllVendorsWidget({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // final vendors = ref.watch(getVendorsProvider(page: 1));
+
+    return Column(
+      crossAxisAlignment: .start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Explore our vendors",
+                    style: TextStyle(
+                      fontSize: AppTextStyles(context).accumulator * 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Text(
+                    "Unforgettable places. Trusted hosts.",
+                    style: TextStyle(
+                      fontSize: AppTextStyles(context).accumulator * 14,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  foregroundColor: WidgetStatePropertyAll(
+                    AppColors.textPrimary,
+                  ),
+                ),
+                onPressed: () {},
+                child: Text(
+                  "Explore all",
+                  style: TextStyle(
+                    fontSize: AppTextStyles(context).accumulator * 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 16),
+
+        SizedBox(
+          height: 200,
+          child: ListView.separated(
+            itemCount: 3,
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            scrollDirection: Axis.horizontal,
+            separatorBuilder: (context, index) => SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              return OpenContainer(
+                closedColor: AppColors.backgroundBase,
+                closedElevation: 0,
+                closedBuilder: (context, _) {
+                  return SizedBox(
+                    width: 240,
+                    child: EventContainer(
+                      heading: "Heading Test",
+                      description: "description",
+                      image:
+                          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
+                      tag: "Sports",
+                      avatarImage:
+                          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
+                      date: "date",
+                    ),
+                  );
+                },
+                openBuilder: (context, _) => VendorDetailsScreen(),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

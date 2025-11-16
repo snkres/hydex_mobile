@@ -130,8 +130,13 @@ String _$getEventCategoriesHash() =>
 const getVendorsProvider = GetVendorsFamily._();
 
 final class GetVendorsProvider
-    extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
-    with $FutureModifier<void>, $FutureProvider<void> {
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Vendor>>,
+          List<Vendor>,
+          FutureOr<List<Vendor>>
+        >
+    with $FutureModifier<List<Vendor>>, $FutureProvider<List<Vendor>> {
   const GetVendorsProvider._({
     required GetVendorsFamily super.from,
     required int super.argument,
@@ -155,11 +160,12 @@ final class GetVendorsProvider
 
   @$internal
   @override
-  $FutureProviderElement<void> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
+  $FutureProviderElement<List<Vendor>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
-  FutureOr<void> create(Ref ref) {
+  FutureOr<List<Vendor>> create(Ref ref) {
     final argument = this.argument as int;
     return getVendors(ref, page: argument);
   }
@@ -175,10 +181,10 @@ final class GetVendorsProvider
   }
 }
 
-String _$getVendorsHash() => r'158476512cd5c2b6ec0c8c83ddba2ea8721823bd';
+String _$getVendorsHash() => r'703aad8c03d21aedb93e657dcbde0599a42ded26';
 
 final class GetVendorsFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<void>, int> {
+    with $FunctionalFamilyOverride<FutureOr<List<Vendor>>, int> {
   const GetVendorsFamily._()
     : super(
         retry: null,

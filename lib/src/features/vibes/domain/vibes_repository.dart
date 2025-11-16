@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
+import 'package:hydex/src/features/vibes/data/vendor.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'vibes_repository.g.dart';
@@ -71,15 +72,17 @@ Future<List<EventCategory>> getEventCategories(Ref ref) async {
 }
 
 @riverpod
-Future<void> getVendors(Ref ref, {int page = 1}) async {
+Future<List<Vendor>> getVendors(Ref ref, {int page = 1}) async {
   try {
     final response = await DioHelper.get(
       '/vendors',
       queryParameters: {"page": page, "limit": 10},
     );
-    final eventsData = response.data['data'] as List<dynamic>;
+    final answer = response.data['data'] as List<dynamic>;
 
-    // return eventsData.map((e) => EventCategoryMapper.fromMap(e)).toList();
+    final eventsData = answer.first as List<dynamic>;
+
+    return eventsData.map((e) => VendorMapper.fromMap(e)).toList();
   } catch (e) {
     throw Exception('Failed to load vendors: $e');
   }

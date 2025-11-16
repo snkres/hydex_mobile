@@ -174,7 +174,7 @@ class DioHelper {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'X-App-Version': '0.1.4',
+        'X-App-Version': '0.2.0',
         'X-Platform': Platform.isAndroid ? 'android' : 'ios',
         ...?defaultHeaders,
       },

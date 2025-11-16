@@ -43,7 +43,7 @@ class AppRoutes {
         if (currentRoute != "/boarding") {
           return null;
         }
-        return "/create-booking"; //TODO: Change to home route
+        return "/"; 
       }
       return null;
     },
