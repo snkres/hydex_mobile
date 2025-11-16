@@ -8,7 +8,7 @@ import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
-final guestsProvider = StateProvider<int>((ref) => 3);
+final guestsProvider = StateProvider<int>((ref) => 0);
 
 class GuestsContainer extends StatelessWidget {
   const GuestsContainer({super.key});

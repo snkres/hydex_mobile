@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:hydex/src/features/vibes/ui/components/gallery.dart';
 import 'package:hydex/src/features/vibes/ui/components/ticket_widget.dart';
 import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
@@ -58,6 +61,21 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: .centerDocked,
+      floatingActionButton: FloatingActionButton.large(
+        elevation: 0,
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return PickGuestSheet(
+                onPressed: () => context.push("/create-booking"),
+              );
+            },
+          );
+        },
+        child: Text("Book"),
+      ),
       body: Stack(
         children: [
           Positioned.fill(
@@ -827,6 +845,21 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                       ),
                     ),
                   ),
+                ),
+              ),
+            ),
+          ),
+
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+                child: Container(
+                  height: 110,
+                  color: AppColors.backgroundBase.withOpacity(0.1),
                 ),
               ),
             ),
