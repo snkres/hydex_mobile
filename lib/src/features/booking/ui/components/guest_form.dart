@@ -242,17 +242,18 @@ class _GuestFormState extends ConsumerState<GuestForm> {
                     instagram: instagramController.text,
                     gender: selectedGender!,
                   );
+
                   ref
                       .read(guestFormProvider(widget.totalGuests).notifier)
                       .saveGuest(guest);
-
-                  if (widget.guestNumber == widget.totalGuests) {
-                    context.push("/summary");
-                    return;
-                  }
                   ref
                       .read(guestFormProvider(widget.totalGuests).notifier)
                       .next();
+                  if (widget.guestNumber + 1 == widget.totalGuests) {
+                    context.push("/summary");
+                    return;
+                  }
+
                   widget.controller.nextPage(
                     duration: Duration(milliseconds: 250),
                     curve: Curves.easeIn,

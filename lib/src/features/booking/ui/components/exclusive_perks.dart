@@ -4,9 +4,15 @@ import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
-class ExclusivePerks extends StatelessWidget {
+class ExclusivePerks extends StatefulWidget {
   const ExclusivePerks({super.key});
 
+  @override
+  State<ExclusivePerks> createState() => _ExclusivePerksState();
+}
+
+class _ExclusivePerksState extends State<ExclusivePerks> {
+  int? selectedIndex;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -33,29 +39,31 @@ class ExclusivePerks extends StatelessWidget {
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) {
-                      return SizedBox(
-                        height: 200,
-                        child: Center(
-                          child: Text("More details about the perk"),
-                        ),
-                      );
-                    },
-                  );
+                  if (selectedIndex == index) {
+                    setState(() {
+                      selectedIndex = null;
+                    });
+                  } else {
+                    setState(() {
+                      selectedIndex = index;
+                    });
+                  }
                 },
                 child: AnimatedContainer(
                   width: 341,
                   duration: Duration(milliseconds: 300),
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: ShapeDecoration(
-                    color: Color(0xff1E1E20),
+                    color: selectedIndex == index
+                        ? AppColors.signalBrandTint
+                        : Color(0xff1E1E20),
                     shape: SmoothRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                       smoothness: 1,
                       side: BorderSide(
-                        color: AppColors.borderDefault,
+                        color: selectedIndex == index
+                            ? AppColors.signalBrandSolid
+                            : AppColors.borderDefault,
                         width: 1,
                       ),
                     ),
@@ -80,9 +88,26 @@ class ExclusivePerks extends StatelessWidget {
                                       AppTextStyles(context).accumulator * 10,
                                 ),
                               ),
-                              SvgPicture.asset(
-                                "img/svg/terms.svg",
-                                package: "assets",
+                              GestureDetector(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return SizedBox(
+                                        height: 200,
+                                        child: Center(
+                                          child: Text(
+                                            "More details about the perk",
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: SvgPicture.asset(
+                                  "img/svg/terms.svg",
+                                  package: "assets",
+                                ),
                               ),
                             ],
                           ),
@@ -108,7 +133,13 @@ class ExclusivePerks extends StatelessWidget {
                       Spacer(),
                       Padding(
                         padding: const EdgeInsets.only(top: 16),
-                        child: Icon(Icons.circle_outlined, size: 20),
+                        child: Icon(
+                          Icons.circle_outlined,
+                          size: 20,
+                          color: selectedIndex == index
+                              ? AppColors.signalBrandSolid
+                              : AppColors.textSecondary,
+                        ),
                       ),
                     ],
                   ),

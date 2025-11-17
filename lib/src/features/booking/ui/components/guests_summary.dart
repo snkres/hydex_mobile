@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,16 +34,35 @@ class GuestsSummary extends ConsumerWidget {
             ).secondaryRegular.copyWith(fontWeight: .w700),
           ),
           SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            alignment: .center,
-            children: currentGuests.guests
-                .mapIndexed(
-                  (index, guest) =>
-                      GuestDetail(guest: guest!, number: index + 1),
-                )
-                .toList(),
+          currentGuests.when(
+            data: (data) {
+              log("Guests: ${data.guests}");
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                alignment: .center,
+                children: data.guests
+                    .mapIndexed(
+                      (index, guest) =>
+                          GuestDetail(guest: guest!, number: index + 1),
+                    )
+                    .toList(),
+              );
+            },
+            error: (e, s) {
+              log("Error:", stackTrace: s, error: e);
+              return Text("Error");
+            },
+            loading: () => Container(
+              width: 177,
+              decoration: ShapeDecoration(
+                color: AppColors.textDisabled,
+                shape: SmoothRectangleBorder(
+                  smoothness: 1,
+                  borderRadius: .circular(16),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -77,31 +98,34 @@ class GuestDetail extends StatelessWidget {
                 size: 15,
                 color: AppColors.textSecondary,
               ),
-              GestureDetector(
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (context) => Wrap(
-                      children: [
-                        GuestFormPopup(
-                          guestNumber: number,
-                          totalGuests: 3,
-                          initialName: guest.name,
-                          initialPhone: guest.phoneNumber,
-                          initialEmail: guest.email,
-                          initialInstagram: guest.instagram,
-                          initialGender: guest.gender,
-                          selectedGuestIndex: number - 1,
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                child: Icon(
-                  Icons.edit_outlined,
-                  size: 15,
-                  color: AppColors.textSecondary,
+              Visibility(
+                visible: number != 1,
+                child: GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) => Wrap(
+                        children: [
+                          GuestFormPopup(
+                            guestNumber: number,
+                            totalGuests: 3,
+                            initialName: guest.name,
+                            initialPhone: guest.phoneNumber,
+                            initialEmail: guest.email,
+                            initialInstagram: guest.instagram,
+                            initialGender: guest.gender,
+                            selectedGuestIndex: number - 1,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  child: Icon(
+                    Icons.edit_outlined,
+                    size: 15,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ),
             ],

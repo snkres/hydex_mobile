@@ -12,6 +12,7 @@ import 'package:hydex/src/features/vibes/ui/components/gallery.dart';
 import 'package:hydex/src/features/vibes/ui/components/ticket_widget.dart';
 import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
+import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:readmore/readmore.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -62,19 +63,23 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: .centerDocked,
-      floatingActionButton: FloatingActionButton.large(
-        elevation: 0,
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            builder: (context) {
-              return PickGuestSheet(
-                onPressed: () => context.push("/create-booking"),
-              );
-            },
-          );
-        },
-        child: Text("Book"),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: PrimaryButton(
+          bgColor: Colors.white,
+          frColor: Colors.black,
+          onTap: () async {
+            showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return PickGuestSheet(
+                  onPressed: () => context.push("/create-booking"),
+                );
+              },
+            );
+          },
+          title: "RSVP",
+        ),
       ),
       body: Stack(
         children: [
@@ -116,6 +121,7 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                       package: "assets",
                     ),
                   ),
+                  SizedBox(width: 5),
                 ],
               ),
             ],
@@ -858,7 +864,7 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
                 child: Container(
-                  height: 110,
+                  height: 80,
                   color: AppColors.backgroundBase.withOpacity(0.1),
                 ),
               ),

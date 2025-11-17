@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:hydex/core/network/auth_service.dart';
+import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/src/features/booking/data/form_guest.dart';
 import 'package:hydex/src/features/booking/data/guest.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -6,34 +10,46 @@ part 'guests_repo.g.dart';
 @Riverpod(keepAlive: true)
 class GuestFormNotifier extends _$GuestFormNotifier {
   @override
-  GuestFormState build(int totalGuests) {
-    return GuestFormState(
-      guests: List.filled(totalGuests, null),
-      currentIndex: 0,
-    );
+  Future<GuestFormState> build(int totalGuests) async {
+    final user = await ref.watch(currentUserProvider.future);
+
+    final guests = List<Guest?>.filled(totalGuests, null);
+    guests[0] = user?.toGuest();
+
+    return GuestFormState(guests: guests, currentIndex: 0);
   }
 
   void saveGuest(Guest guest, {int? selectedIndex}) {
-    final updated = [...state.guests];
+    final current = state.value;
+    if (current == null) return;
+    final index = selectedIndex ?? current.currentIndex + 1;
+    log("Selected Index: $index");
 
-    if (selectedIndex != null) {
-      updated[selectedIndex] = guest;
-      state = state.copyWith(guests: updated);
-      return;
-    }
-    updated[state.currentIndex] = guest;
-    state = state.copyWith(guests: updated);
+    final updatedGuests = [...current.guests];
+    updatedGuests[index] = guest;
+
+    state = AsyncData(current.copyWith(guests: updatedGuests));
   }
 
   void next() {
-    if (state.currentIndex < state.guests.length - 1) {
-      state = state.copyWith(currentIndex: state.currentIndex + 1);
+    final current = state.value;
+    if (current == null) return;
+
+    if (current.currentIndex < current.guests.length - 1) {
+      state = AsyncData(
+        current.copyWith(currentIndex: current.currentIndex + 1),
+      );
     }
   }
 
   void back() {
-    if (state.currentIndex > 0) {
-      state = state.copyWith(currentIndex: state.currentIndex - 1);
+    final current = state.value;
+    if (current == null) return;
+
+    if (current.currentIndex > 0) {
+      state = AsyncData(
+        current.copyWith(currentIndex: current.currentIndex - 1),
+      );
     }
   }
 }

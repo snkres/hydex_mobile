@@ -1,4 +1,5 @@
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:hydex/src/features/booking/data/guest.dart';
 
 part 'user.mapper.dart';
 
@@ -81,4 +82,16 @@ class SocialLinks with SocialLinksMappable {
   final String? website;
 
   SocialLinks({this.facebook, this.instagram, this.website});
+}
+
+extension UserToGuest on User {
+  Guest toGuest() {
+    return Guest(
+      name: fullName ?? "Unnamed",
+      email: email,
+      phoneNumber: phone!,
+      instagram: socialLinks?.instagram ?? "",
+      gender: gender ?? "male",
+    );
+  }
 }

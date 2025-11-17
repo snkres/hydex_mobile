@@ -13,7 +13,7 @@ part of 'guests_repo.dart';
 const guestFormProvider = GuestFormNotifierFamily._();
 
 final class GuestFormNotifierProvider
-    extends $NotifierProvider<GuestFormNotifier, GuestFormState> {
+    extends $AsyncNotifierProvider<GuestFormNotifier, GuestFormState> {
   const GuestFormNotifierProvider._({
     required GuestFormNotifierFamily super.from,
     required int super.argument,
@@ -39,14 +39,6 @@ final class GuestFormNotifierProvider
   @override
   GuestFormNotifier create() => GuestFormNotifier();
 
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(GuestFormState value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<GuestFormState>(value),
-    );
-  }
-
   @override
   bool operator ==(Object other) {
     return other is GuestFormNotifierProvider && other.argument == argument;
@@ -58,15 +50,15 @@ final class GuestFormNotifierProvider
   }
 }
 
-String _$guestFormNotifierHash() => r'17d006e109bf3b62f08b009c030081115576bb17';
+String _$guestFormNotifierHash() => r'12fe29ba40d8fbfbc7350b10aa354559a7f597b4';
 
 final class GuestFormNotifierFamily extends $Family
     with
         $ClassFamilyOverride<
           GuestFormNotifier,
+          AsyncValue<GuestFormState>,
           GuestFormState,
-          GuestFormState,
-          GuestFormState,
+          FutureOr<GuestFormState>,
           int
         > {
   const GuestFormNotifierFamily._()
@@ -85,21 +77,21 @@ final class GuestFormNotifierFamily extends $Family
   String toString() => r'guestFormProvider';
 }
 
-abstract class _$GuestFormNotifier extends $Notifier<GuestFormState> {
+abstract class _$GuestFormNotifier extends $AsyncNotifier<GuestFormState> {
   late final _$args = ref.$arg as int;
   int get totalGuests => _$args;
 
-  GuestFormState build(int totalGuests);
+  FutureOr<GuestFormState> build(int totalGuests);
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build(_$args);
-    final ref = this.ref as $Ref<GuestFormState, GuestFormState>;
+    final ref = this.ref as $Ref<AsyncValue<GuestFormState>, GuestFormState>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<GuestFormState, GuestFormState>,
-              GuestFormState,
+              AnyNotifier<AsyncValue<GuestFormState>, GuestFormState>,
+              AsyncValue<GuestFormState>,
               Object?,
               Object?
             >;

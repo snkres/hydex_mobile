@@ -68,8 +68,22 @@ class AppColors {
   // ------------------
   // 8. Buttons
   // ------------------
-  static const Color buttonPrimary = Color(0xFFA25BFF); // before: PopOfColor
-  static const Color buttonSecondary = Color(0xFF2A2A2E); // new
+  static const Color buttonPrimary = Color(0xFFFFFFFF);
+  static const Color buttonPrimaryPressed = Color(0xFFD4D4D4);
+  static const Color buttonPrimaryDisabled = Color(0xFF313133);
+
+  static const Color buttonSecondary = Color(0xFF8A30FF);
+  static const Color buttonSecondaryPressed = Color(0xFF6E1FD8);
+  static const Color buttonSecondaryDisabled = Color(0xFF291842);
+
+  static const Color buttonTertiary = Color(0xFF2A2A2A);
+  static const Color buttonTertiaryPressed = Color(0xFF1F1F1F);
+  static const Color buttonTertiaryDisabled = Color(0xFF19191B);
+
+  static const Color buttonText = Color(0xFFFFFFFF);
+  static const Color buttonTextDisabled = Color(0xFF656566);
+
+  static const Color buttonOutlinePressed = Color(0xFF1C1C1C);
 }
 
 const darkColorScheme = ColorScheme(

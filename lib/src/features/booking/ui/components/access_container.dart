@@ -6,13 +6,15 @@ import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
-final VipCountProvider = StateProvider<int>((ref) => ref.watch(guestsProvider));
+final vipCountProvider = StateProvider<int>((ref) => ref.watch(guestsProvider));
+final isAccessSelected = StateProvider<int>((ref) => -1);
 
-class AccessSection extends StatelessWidget {
+class AccessSection extends ConsumerWidget {
   const AccessSection({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedAccess = ref.watch(isAccessSelected);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -26,102 +28,92 @@ class AccessSection extends StatelessWidget {
           ),
         ),
         SizedBox(height: 12),
-        AnimatedContainer(
-          duration: Duration(milliseconds: 300),
-          padding: EdgeInsets.all(16),
-          margin: EdgeInsets.symmetric(horizontal: 16),
-          decoration: ShapeDecoration(
-            color: Color(0xff1E1E20),
-            shape: SmoothRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              smoothness: 1,
-              side: BorderSide(color: AppColors.borderDefault, width: 1),
+        GestureDetector(
+          onTap: () {
+            ref.read(isAccessSelected.notifier).update((state) => 0);
+          },
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 300),
+            padding: EdgeInsets.all(16),
+            margin: EdgeInsets.symmetric(horizontal: 16),
+            decoration: ShapeDecoration(
+              color: Color(0xff1E1E20),
+              shape: SmoothRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                smoothness: 1,
+                side: BorderSide(color: AppColors.borderDefault, width: 1),
+              ),
             ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Standard Access",
-                        style: AppTextStyles(context).secondaryBold,
-                      ),
-                      SizedBox(height: 4),
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "1,700 ",
-                              style: AppTextStyles(context).smallBold,
-                            ),
-                            TextSpan(
-                              text: "EGP",
-                              style: AppTextStyles(context).captionMedium
-                                  .copyWith(color: AppColors.textSecondary),
-                            ),
-                          ],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Standard Access",
+                          style: AppTextStyles(context).secondaryBold,
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
-                      ),
-                      onPressed: () {},
-                      child: Text(
-                        "Add",
-                        style: TextStyle(
-                          color: AppColors.textInverse,
-                          fontSize: AppTextStyles(context).accumulator * 13,
+                        SizedBox(height: 4),
+                        Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "1,700 ",
+                                style: AppTextStyles(context).smallBold,
+                              ),
+                              TextSpan(
+                                text: "EGP",
+                                style: AppTextStyles(context).captionMedium
+                                    .copyWith(color: AppColors.textSecondary),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 8),
+                    AddButton(onPressed: () {}),
+                  ],
+                ),
+                SizedBox(height: 8),
 
-              Text(
-                "Enjoy full access to the event with general seating or entry.",
-                style: AppTextStyles(
-                  context,
-                ).captionRegular.copyWith(color: AppColors.textSecondary),
-              ),
-              SizedBox(height: 20),
+                Text(
+                  "Enjoy full access to the event with general seating or entry.",
+                  style: AppTextStyles(
+                    context,
+                  ).captionRegular.copyWith(color: AppColors.textSecondary),
+                ),
+                SizedBox(height: 20),
 
-              Text(
-                "Includes:",
-                style: AppTextStyles(
-                  context,
-                ).captionRegular.copyWith(color: AppColors.textSecondary),
-              ),
-              Text(
-                "\u2022 Event access",
-                style: AppTextStyles(
-                  context,
-                ).captionRegular.copyWith(color: AppColors.textSecondary),
-              ),
-              Text(
-                "\u2022 Complimentary welcome drink",
-                style: AppTextStyles(
-                  context,
-                ).captionRegular.copyWith(color: AppColors.textSecondary),
-              ),
-              Text(
-                "\u2022 Standard seating area",
-                style: AppTextStyles(
-                  context,
-                ).captionRegular.copyWith(color: AppColors.textSecondary),
-              ),
-            ],
+                Text(
+                  "Includes:",
+                  style: AppTextStyles(
+                    context,
+                  ).captionRegular.copyWith(color: AppColors.textSecondary),
+                ),
+                Text(
+                  "\u2022 Event access",
+                  style: AppTextStyles(
+                    context,
+                  ).captionRegular.copyWith(color: AppColors.textSecondary),
+                ),
+                Text(
+                  "\u2022 Complimentary welcome drink",
+                  style: AppTextStyles(
+                    context,
+                  ).captionRegular.copyWith(color: AppColors.textSecondary),
+                ),
+                Text(
+                  "\u2022 Standard seating area",
+                  style: AppTextStyles(
+                    context,
+                  ).captionRegular.copyWith(color: AppColors.textSecondary),
+                ),
+              ],
+            ),
           ),
         ),
         SizedBox(height: 10),
@@ -130,11 +122,18 @@ class AccessSection extends StatelessWidget {
           padding: EdgeInsets.all(16),
           margin: EdgeInsets.symmetric(horizontal: 16),
           decoration: ShapeDecoration(
-            color: Color(0xff1E1E20),
+            color: selectedAccess == 1
+                ? AppColors.signalBrandTint
+                : Color(0xff1E1E20),
             shape: SmoothRectangleBorder(
               borderRadius: BorderRadius.circular(16),
               smoothness: 1,
-              side: BorderSide(color: AppColors.borderDefault, width: 1),
+              side: BorderSide(
+                color: selectedAccess == 1
+                    ? AppColors.signalBrandSolid
+                    : AppColors.borderDefault,
+                width: 1,
+              ),
             ),
           ),
           child: Column(
@@ -170,7 +169,7 @@ class AccessSection extends StatelessWidget {
                   ),
                   Consumer(
                     builder: (context, ref, _) {
-                      final vpCount = ref.watch(VipCountProvider);
+                      final vpCount = ref.watch(vipCountProvider);
                       return Container(
                         height: 40,
                         alignment: Alignment.center,
@@ -178,51 +177,79 @@ class AccessSection extends StatelessWidget {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(100),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                if (vpCount > 1) {
+                        child: selectedAccess != 1
+                            ? AddButton(
+                                onPressed: () {
                                   ref
-                                      .read(VipCountProvider.notifier)
-                                      .update((state) => state - 1);
-                                }
-                              },
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll(
-                                  Colors.transparent,
-                                ),
+                                      .read(isAccessSelected.notifier)
+                                      .update((state) => 1);
+                                },
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      if (vpCount > 0) {
+                                        // Decrease VIP
+                                        ref
+                                            .read(vipCountProvider.notifier)
+                                            .update((state) => state - 1);
+
+                                        // Decrease guests but never below 1
+                                        ref
+                                            .read(guestsProvider.notifier)
+                                            .update((state) {
+                                              final newValue = state - 1;
+                                              return newValue < 1
+                                                  ? 1
+                                                  : newValue;
+                                            });
+                                      }
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor: WidgetStatePropertyAll(
+                                        Colors.transparent,
+                                      ),
+                                    ),
+                                    icon: Transform.translate(
+                                      offset: const Offset(0, -6), // move up
+                                      child: const Icon(
+                                        Icons.minimize,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    vpCount.toString(),
+                                    style: AppTextStyles(
+                                      context,
+                                    ).smallMedium.copyWith(color: Colors.black),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      // Increase VIP
+                                      ref
+                                          .read(vipCountProvider.notifier)
+                                          .update((state) => state + 1);
+
+                                      // Increase guests
+                                      ref
+                                          .read(guestsProvider.notifier)
+                                          .update((state) => state + 1);
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor: WidgetStatePropertyAll(
+                                        Colors.transparent,
+                                      ),
+                                    ),
+                                    icon: const Icon(
+                                      Icons.add,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              icon: Transform.translate(
-                                offset: const Offset(0, -6), // move up
-                                child: const Icon(
-                                  Icons.minimize,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              vpCount.toString(),
-                              style: AppTextStyles(
-                                context,
-                              ).smallMedium.copyWith(color: Colors.black),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                ref
-                                    .read(VipCountProvider.notifier)
-                                    .update((state) => state + 1);
-                              },
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll(
-                                  Colors.transparent,
-                                ),
-                              ),
-                              icon: const Icon(Icons.add, color: Colors.black),
-                            ),
-                          ],
-                        ),
                       );
                     },
                   ),
@@ -266,6 +293,30 @@ class AccessSection extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class AddButton extends StatelessWidget {
+  const AddButton({super.key, required this.onPressed});
+  final VoidCallback onPressed;
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+        ),
+        onPressed: onPressed,
+        child: Text(
+          "Add",
+          style: TextStyle(
+            color: AppColors.textInverse,
+            fontSize: AppTextStyles(context).accumulator * 13,
+          ),
+        ),
+      ),
     );
   }
 }

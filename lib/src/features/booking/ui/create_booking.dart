@@ -23,68 +23,74 @@ class CreateBooking extends StatelessWidget {
       body: Stack(
         alignment: .bottomCenter,
         children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              width: double.infinity,
-              height: 195,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: .topCenter,
-                  end: .bottomCenter,
-                  colors: [
-                    AppColors.signalBrandSolid,
-                    AppColors.signalBrandSolid.withValues(alpha: 0.5),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
           SingleChildScrollView(
-            child: SafeArea(
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      CustomBackButton(),
-                      Column(
-                        crossAxisAlignment: .start,
-                        children: [
-                          Text(
-                            "Plan Your Experience",
-                            style: TextStyle(
-                              fontWeight: .w600,
-                              fontSize: AppTextStyles(context).accumulator * 16,
-                            ),
-                          ),
-                          Text(
-                            "La Jardin",
-                            style: AppTextStyles(context).primaryRegular
-                                .copyWith(color: AppColors.textSecondary),
-                          ),
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 195,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          AppColors.signalBrandSolid,
+                          AppColors.signalBrandSolid.withValues(alpha: 0.5),
+                          Colors.transparent,
                         ],
                       ),
-                      Spacer(),
-                      CircleAvatar(),
-                      SizedBox(width: 16),
+                    ),
+                  ),
+                ),
+                SafeArea(
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          CustomBackButton(),
+                          Column(
+                            crossAxisAlignment: .start,
+                            children: [
+                              Text(
+                                "Plan Your Experience",
+                                style: TextStyle(
+                                  fontWeight: .w600,
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 16,
+                                ),
+                              ),
+                              Text(
+                                "La Jardin",
+                                style: AppTextStyles(context).primaryRegular
+                                    .copyWith(color: AppColors.textSecondary),
+                              ),
+                            ],
+                          ),
+                          Spacer(),
+                          CircleAvatar(),
+                          SizedBox(width: 16),
+                        ],
+                      ),
+                      SizedBox(height: 6),
+                      GuestsContainer(),
+                      SizedBox(height: 24),
+                      PerkContainer(),
+                      SizedBox(height: 24),
+                      DateContainer(),
+                      SizedBox(height: 24),
+                      SlotsContainer(),
+                      SizedBox(height: 24),
+                      AccessSection(),
+                      SizedBox(height: 24),
+                      ExclusivePerks(),
+                      SizedBox(height: 100),
                     ],
                   ),
-                  SizedBox(height: 6),
-                  GuestsContainer(),
-                  SizedBox(height: 24),
-                  PerkContainer(),
-                  SizedBox(height: 24),
-                  DateContainer(),
-                  SizedBox(height: 24),
-                  SlotsContainer(),
-                  SizedBox(height: 24),
-                  AccessSection(),
-                  SizedBox(height: 24),
-                  ExclusivePerks(),
-                  SizedBox(height: 100),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           Positioned(
@@ -95,7 +101,7 @@ class CreateBooking extends StatelessWidget {
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
                 child: Container(
-                  height: 110,
+                  height: 80,
                   color: AppColors.backgroundBase.withOpacity(0.1),
                 ),
               ),
