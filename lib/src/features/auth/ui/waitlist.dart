@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/data/navitems.dart';
+import 'package:hydex/src/features/profile/ui/profile_screen.dart';
 import 'package:hydex/src/features/settings/ui/settings.dart';
 import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
@@ -17,16 +19,16 @@ class BaseScreen extends StatefulWidget {
 class _BaseScreenState extends State<BaseScreen> {
   int currentIndex = 0;
   final navItems = [
-    NavItem(title: "Home", index: 0, svgPath: "img/svg/home.svg"),
-    NavItem(title: "Bookings", index: 1, svgPath: "img/svg/booking.svg"),
-    NavItem(title: "Bookings", index: 3, svgPath: "img/svg/booking.svg"),
-    NavItem(title: "Settings", index: 2, svgPath: "img/svg/settings.svg"),
+    NavItem(index: 0, svgPath: "img/svg/home.svg"),
+    NavItem(index: 1, svgPath: "img/svg/search.svg"),
+    NavItem(index: 2, svgPath: "img/svg/profile.svg"),
+    NavItem(index: 3, svgPath: "img/svg/settings.svg"),
   ];
 
   final children = [
     VibesScreen(),
     const Placeholder(),
-    const Placeholder(),
+    const ProfileScreen(),
     const SettingsScreen(),
   ];
 
@@ -58,8 +60,8 @@ class _BaseScreenState extends State<BaseScreen> {
             glassContainsChild: false,
             shape: LiquidRoundedRectangle(borderRadius: 100),
             child: Container(
-              width: (270 * MediaQuery.sizeOf(context).width) / 450,
-              height: (70 * MediaQuery.sizeOf(context).width) / 500,
+              width: AppTextStyles(context).accumulator * 327,
+              height: AppTextStyles(context).heightAccumulator * 56,
               alignment: .center,
               padding: .all(4),
               child: NavBar(
