@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/booking/data/format_time.dart';
 import 'package:hydex/src/features/location/ui/location_required.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
@@ -352,7 +353,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                               "img/svg/fire.svg",
                                               package: "assets",
                                               colorFilter: ColorFilter.mode(
-                                                AppColors.buttonPrimary,
+                                                AppColors.buttonSecondary,
                                                 BlendMode.srcIn,
                                               ),
                                             ),
@@ -496,7 +497,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                             "img/svg/fire.svg",
                                             package: "assets",
                                             colorFilter: ColorFilter.mode(
-                                              AppColors.buttonPrimary,
+                                              AppColors.buttonSecondary,
                                               BlendMode.srcIn,
                                             ),
                                           ),
@@ -818,7 +819,7 @@ class AllVendorsWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final vendors = ref.watch(getVendorsProvider(page: 1));
+    final vendors = ref.watch(getVendorsProvider(page: 1));
 
     return Column(
       crossAxisAlignment: .start,
@@ -867,36 +868,41 @@ class AllVendorsWidget extends ConsumerWidget {
         ),
         SizedBox(height: 16),
 
-        SizedBox(
-          height: 200,
-          child: ListView.separated(
-            itemCount: 3,
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            scrollDirection: Axis.horizontal,
-            separatorBuilder: (context, index) => SizedBox(width: 12),
-            itemBuilder: (context, index) {
-              return OpenContainer(
-                closedColor: AppColors.backgroundBase,
-                closedElevation: 0,
-                closedBuilder: (context, _) {
-                  return SizedBox(
-                    width: 240,
-                    child: EventContainer(
-                      heading: "Heading Test",
-                      description: "description",
-                      image:
-                          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
-                      tag: "Sports",
-                      avatarImage:
-                          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
-                      date: "date",
-                    ),
+        vendors.when(
+          data: (data) {
+            return SizedBox(
+              height: 200,
+              child: ListView.separated(
+                itemCount: 3,
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                scrollDirection: Axis.horizontal,
+                separatorBuilder: (context, index) => SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  return OpenContainer(
+                    closedColor: AppColors.backgroundBase,
+                    closedElevation: 0,
+                    closedBuilder: (context, _) {
+                      return SizedBox(
+                        width: 240,
+                        child: EventContainer(
+                          heading: data[index].name,
+                          description: data[index].description,
+                          image: data[index].media.first,
+                          tag: data[index].tags.first.capitalize(),
+                          avatarImage: data[index].logo,
+                          date: "date",
+                        ),
+                      );
+                    },
+                    openBuilder: (context, _) =>
+                        VendorDetailsScreen(vendor: data[index]),
                   );
                 },
-                openBuilder: (context, _) => VendorDetailsScreen(),
-              );
-            },
-          ),
+              ),
+            );
+          },
+          error: (e, s) => Text("Error"),
+          loading: () => SizedBox.shrink(),
         ),
       ],
     );
@@ -909,7 +915,6 @@ class AllEventsWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // watch one page (or a merged list if you handle pagination manually)
     final eventsAsync = ref.watch(getEventsProvider(page: 1));
     final user = ref.watch(currentUserProvider);
     return eventsAsync.when(
@@ -996,7 +1001,7 @@ class AllEventsWidget extends ConsumerWidget {
                     closedBuilder: (context, _) => Padding(
                       padding: const EdgeInsets.only(right: 16),
                       child: EventContainer(
-                        tag: event.tags.firstOrNull,
+                        tag: event.tags.firstOrNull!.capitalize(),
                         discount: 50,
                         avatarImage: event.media.first,
                         date: event.createdAt.formatDate(),
@@ -1014,8 +1019,12 @@ class AllEventsWidget extends ConsumerWidget {
       },
       loading: () => SizedBox.shrink(),
       error: (e, s) {
-        debugPrint("Events Error: $e");
-        return const Center(child: Text('Failed to load events'));
+        return SmoothContainer(
+          borderRadius: BorderRadius.circular(24),
+          smoothness: 1,
+          width: 312,
+          color: AppColors.surfaceContainerLighter,
+        );
       },
     );
   }
@@ -1252,14 +1261,14 @@ class EventContainer extends StatelessWidget {
     this.description,
     required this.image,
     this.tag,
-    required this.avatarImage,
+    this.avatarImage,
     this.discount,
 
     required this.date,
   });
   final VoidCallback? onView;
-  final String heading, date, avatarImage;
-  final String? image, tag, description;
+  final String heading, date;
+  final String? image, tag, description, avatarImage;
   final int? discount;
   @override
   Widget build(BuildContext context) {
@@ -1306,11 +1315,19 @@ class EventContainer extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                CircleAvatar(
-                                  backgroundImage: CachedNetworkImageProvider(
-                                    avatarImage,
-                                  ),
-                                ),
+                                avatarImage != null
+                                    ? CircleAvatar(
+                                        backgroundImage:
+                                            CachedNetworkImageProvider(
+                                              avatarImage!,
+                                            ),
+                                      )
+                                    : CircleAvatar(
+                                        child: Icon(
+                                          Icons.broken_image,
+                                          size: 16,
+                                        ),
+                                      ),
                                 Container(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: 12,
@@ -1357,7 +1374,7 @@ class EventContainer extends StatelessWidget {
                               gradient: LinearGradient(
                                 colors: [
                                   Color(0xff201233),
-                                  AppColors.buttonPrimary,
+                                  AppColors.buttonSecondary,
                                 ],
                               ),
                             ),
@@ -1412,6 +1429,8 @@ class EventContainer extends StatelessWidget {
                               ),
                               Text(
                                 heading,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize:
                                       AppTextStyles(context).accumulator * 18,

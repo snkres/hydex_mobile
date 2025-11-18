@@ -1,24 +1,29 @@
 import 'dart:ui';
 
 import 'package:animations/animations.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
+import 'package:hydex/src/features/vibes/data/vendor.dart';
 import 'package:hydex/src/features/vibes/ui/components/gallery.dart';
 import 'package:hydex/src/features/vibes/ui/components/ticket_widget.dart';
 import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:readmore/readmore.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class VendorDetailsScreen extends StatefulWidget {
-  const VendorDetailsScreen({super.key});
+  const VendorDetailsScreen({super.key, required this.vendor});
+  final Vendor vendor;
 
   @override
   State<VendorDetailsScreen> createState() => _VendorDetailsScreenState();
@@ -28,13 +33,7 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
   // <-- track if pinned
   final pageController = PageController();
   bool isBarCollapsed = false;
-  final data = [
-    "🍸 Full Bar",
-    "🕺 Dance Floor",
-    "🌃 Rooftop",
-    "👔 Smart Casual",
-    "🎧 DJ Set",
-  ];
+
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
   bool _isCollapsedFromSheet = false;
@@ -84,10 +83,19 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.network(
-              "https://images.unsplash.com/photo-1494253109108-2e30c049369b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N7x8cmFuZG9tfGVufDB8fDB8fHww&fm=jpg&q=60&w=3000",
-              alignment: Alignment.topCenter,
-              fit: BoxFit.cover,
+            child: PageView.builder(
+              itemCount: widget.vendor.media.length,
+              itemBuilder: (_, i) {
+                return CachedNetworkImage(
+                  imageUrl: widget.vendor.media[i],
+                  alignment: Alignment.topCenter,
+                  fit: BoxFit.cover,
+                  placeholder: (_, __) =>
+                      const Center(child: CircularProgressIndicator()),
+                  errorWidget: (_, __, ___) =>
+                      const Center(child: Icon(Icons.error)),
+                );
+              },
             ),
           ),
 
@@ -101,7 +109,7 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                   switchInCurve: Curves.easeOut,
                   switchOutCurve: Curves.easeIn,
                   child: _isCollapsedFromSheet
-                      ? Text("Blah blah", key: ValueKey('title'))
+                      ? Text(widget.vendor.name, key: ValueKey('title'))
                       : const SizedBox.shrink(key: ValueKey('empty')),
                 ),
                 actions: [
@@ -163,16 +171,17 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsets.only(
+                                    padding: const EdgeInsets.only(
                                       left: 16,
                                       bottom: 12,
                                       top: 16,
                                     ),
-                                    child: Row(
+                                    child: Wrap(
                                       spacing: 4,
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
+                                      runSpacing: 8,
+                                      children: widget.vendor.tags.map((tag) {
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(
                                             horizontal: 12,
                                             vertical: 6,
                                           ),
@@ -184,7 +193,7 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                                             ),
                                           ),
                                           child: Text(
-                                            "NightLife",
+                                            tag.capitalize(),
                                             style: TextStyle(
                                               fontSize:
                                                   AppTextStyles(
@@ -193,54 +202,8 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                                                   12,
                                             ),
                                           ),
-                                        ),
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 6,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: AppColors
-                                                .surfaceContainerLighter,
-                                            borderRadius: BorderRadius.circular(
-                                              100,
-                                            ),
-                                          ),
-                                          child: Text(
-                                            "🔥 Lively",
-                                            style: TextStyle(
-                                              fontSize:
-                                                  AppTextStyles(
-                                                    context,
-                                                  ).accumulator *
-                                                  12,
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 6,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: AppColors
-                                                .surfaceContainerLighter,
-                                            borderRadius: BorderRadius.circular(
-                                              100,
-                                            ),
-                                          ),
-                                          child: Text(
-                                            "⏰ Happy Hour",
-                                            style: TextStyle(
-                                              fontSize:
-                                                  AppTextStyles(
-                                                    context,
-                                                  ).accumulator *
-                                                  12,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                        );
+                                      }).toList(),
                                     ),
                                   ),
                                   Padding(
@@ -251,35 +214,38 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Cairo Jazz Club",
-                                              style: TextStyle(
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    24,
-                                                fontWeight: FontWeight.w900,
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                widget.vendor.name,
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      24,
+                                                  fontWeight: FontWeight.w900,
+                                                ),
                                               ),
-                                            ),
-                                            SizedBox(height: 12),
+                                              SizedBox(height: 12),
 
-                                            Text(
-                                              "📍 197, 26th of July Street, Agouza, Giza",
-                                              style: TextStyle(
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    12,
-                                                color: AppColors.textSecondary,
+                                              Text(
+                                                "📍 ${widget.vendor.location.street}, ${widget.vendor.location.city}, ${widget.vendor.location.country}",
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      12,
+                                                  color:
+                                                      AppColors.textSecondary,
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                         SmoothContainer(
                                           padding: EdgeInsets.all(6),
@@ -332,7 +298,7 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                                           ),
                                         ),
                                         Text(
-                                          "Casual Premium (400)",
+                                          "Casual ${widget.vendor.priceType} (\$\$\$)",
                                           style: TextStyle(
                                             fontSize:
                                                 AppTextStyles(
@@ -381,37 +347,52 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                                             ),
                                           ],
                                         ),
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 6,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: AppColors
-                                                .surfaceContainerLighter,
-                                            borderRadius: BorderRadius.circular(
-                                              100,
+                                        GestureDetector(
+                                          onTap: () {
+                                            MapsLauncher.launchCoordinates(
+                                              widget
+                                                  .vendor
+                                                  .location
+                                                  .coordinates
+                                                  .lat,
+                                              widget
+                                                  .vendor
+                                                  .location
+                                                  .coordinates
+                                                  .lng,
+                                            );
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 6,
                                             ),
-                                          ),
-                                          child: Row(
-                                            spacing: 5,
-                                            children: [
-                                              SvgPicture.asset(
-                                                "img/svg/directions.svg",
-                                                package: "assets",
-                                                width: 13,
-                                              ),
-                                              Text(
-                                                "Directions",
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      AppTextStyles(
-                                                        context,
-                                                      ).accumulator *
-                                                      12,
+                                            decoration: BoxDecoration(
+                                              color: AppColors
+                                                  .surfaceContainerLighter,
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                            ),
+                                            child: Row(
+                                              spacing: 5,
+                                              children: [
+                                                SvgPicture.asset(
+                                                  "img/svg/directions.svg",
+                                                  package: "assets",
+                                                  width: 13,
                                                 ),
-                                              ),
-                                            ],
+                                                Text(
+                                                  "Directions",
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        AppTextStyles(
+                                                          context,
+                                                        ).accumulator *
+                                                        12,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -583,7 +564,7 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                                             ),
                                           ),
                                           ReadMoreText(
-                                            "Enjoy a smooth nightlife experience at one of Egypt’s most iconic clubs, vibrant music, crafted cocktails, and unforgettable evenings.Enjoy a smooth nightlife experience at one of Egypt’s most iconic clubs, vibrant music, crafted cocktails, and unforgettable evenings.Enjoy a smooth nightlife experience at one of Egypt’s most iconic clubs, vibrant music, crafted cocktails, and unforgettable evenings.Enjoy a smooth nightlife experience at one of Egypt’s most iconic clubs, vibrant music, crafted cocktails, and unforgettable evenings.",
+                                            widget.vendor.description,
                                             trimMode: TrimMode.Line,
                                             trimLines: 3,
                                             delimiter: "....",
@@ -638,7 +619,7 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                                           Wrap(
                                             spacing: 8,
                                             runSpacing: 8,
-                                            children: data
+                                            children: widget.vendor.experiences
                                                 .map(
                                                   (e) => Container(
                                                     padding:
@@ -739,17 +720,22 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                                           ),
                                         ),
                                         SizedBox(height: 12),
-                                        Text(
-                                          "🍽️ North Indian, Birarny, Seafood, Kebab, Italian, Chinese, Bevareges",
-                                          style: TextStyle(
-                                            color: AppColors.textSecondary,
-                                            fontSize:
-                                                AppTextStyles(
-                                                  context,
-                                                ).accumulator *
-                                                14,
-                                          ),
-                                        ),
+                                        widget.vendor.detailsDescription != null
+                                            ? Text(
+                                                widget
+                                                    .vendor
+                                                    .detailsDescription!,
+                                                style: TextStyle(
+                                                  color:
+                                                      AppColors.textSecondary,
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      14,
+                                                ),
+                                              )
+                                            : SizedBox.shrink(),
                                       ],
                                     ),
                                   ),
@@ -758,7 +744,7 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                                   SizedBox(
                                     height: 200,
                                     child: ListView.separated(
-                                      itemCount: 3,
+                                      itemCount: widget.vendor.details.length,
                                       padding: EdgeInsets.symmetric(
                                         horizontal: 16,
                                       ),
@@ -767,19 +753,26 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                                       separatorBuilder: (context, index) =>
                                           SizedBox(width: 8),
                                       itemBuilder: (context, index) {
+                                        final item =
+                                            widget.vendor.details[index];
                                         return Column(
                                           spacing: 12,
                                           children: [
-                                            SmoothContainer(
-                                              width: 165,
-                                              height: 168,
-                                              color: Colors.red,
+                                            SmoothClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(24),
                                               smoothness: 1,
+                                              child: SizedBox(
+                                                width: 165,
+                                                height: 168,
+                                                child: CachedNetworkImage(
+                                                  fit: BoxFit.cover,
+                                                  imageUrl: item.image,
+                                                ),
+                                              ),
                                             ),
                                             Text(
-                                              "Happy Hour",
+                                              item.title,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w700,
                                                 fontSize:
@@ -811,7 +804,7 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                                   ),
                                   SizedBox(height: 12),
                                   GridView.builder(
-                                    itemCount: 4,
+                                    itemCount: widget.vendor.gallery.length,
                                     shrinkWrap: true,
                                     physics: NeverScrollableScrollPhysics(),
                                     padding: EdgeInsets.symmetric(
@@ -826,23 +819,91 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                                     itemBuilder: (context, index) {
                                       return OpenContainer(
                                         closedColor: Colors.transparent,
+                                        closedElevation: 0,
                                         openBuilder: (context, action) =>
-                                            Gallery(),
+                                            Gallery(
+                                              gallery: widget.vendor.gallery,
+                                              clickedPhoto:
+                                                  widget.vendor.gallery[index],
+                                            ),
                                         closedBuilder: (context, _) {
-                                          return SmoothContainer(
-                                            color: Colors.red,
-                                            width: 165,
-
+                                          return SmoothClipRRect(
                                             borderRadius: BorderRadius.circular(
                                               24,
                                             ),
                                             smoothness: 1,
+                                            child: SizedBox(
+                                              width: 165,
+
+                                              child: CachedNetworkImage(
+                                                fit: BoxFit.cover,
+                                                imageUrl: widget
+                                                    .vendor
+                                                    .gallery[index],
+                                              ),
+                                            ),
                                           );
                                         },
                                       );
                                     },
                                   ),
                                   SizedBox(height: 24),
+
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Things to know".toUpperCase(),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColors.textSecondary,
+                                            fontSize:
+                                                AppTextStyles(
+                                                  context,
+                                                ).accumulator *
+                                                16,
+                                          ),
+                                        ),
+
+                                        ListView.separated(
+                                          shrinkWrap: true,
+                                          padding: .zero,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemCount:
+                                              widget.vendor.thingsToKnow.length,
+                                          separatorBuilder: (_, __) => Divider(
+                                            color: AppColors.borderDefault,
+                                          ),
+                                          itemBuilder: (_, index) {
+                                            return ListTile(
+                                              contentPadding: .zero,
+                                              leading: SvgPicture.asset(
+                                                "img/svg/ar_.svg",
+                                                width: 15,
+                                                height: 15,
+                                                package: "assets",
+                                              ),
+                                              title: Text(
+                                                widget
+                                                    .vendor
+                                                    .thingsToKnow[index],
+                                                style: AppTextStyles(
+                                                  context,
+                                                ).smallRegular,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 124),
                                 ],
                               ),
                             ),

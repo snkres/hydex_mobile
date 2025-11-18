@@ -19,10 +19,16 @@ class _BaseScreenState extends State<BaseScreen> {
   final navItems = [
     NavItem(title: "Home", index: 0, svgPath: "img/svg/home.svg"),
     NavItem(title: "Bookings", index: 1, svgPath: "img/svg/booking.svg"),
+    NavItem(title: "Bookings", index: 3, svgPath: "img/svg/booking.svg"),
     NavItem(title: "Settings", index: 2, svgPath: "img/svg/settings.svg"),
   ];
 
-  final children = [VibesScreen(), const Placeholder(), const SettingsScreen()];
+  final children = [
+    VibesScreen(),
+    const Placeholder(),
+    const Placeholder(),
+    const SettingsScreen(),
+  ];
 
   @override
   void initState() {
@@ -52,8 +58,8 @@ class _BaseScreenState extends State<BaseScreen> {
             glassContainsChild: false,
             shape: LiquidRoundedRectangle(borderRadius: 100),
             child: Container(
-              width: (270 * MediaQuery.sizeOf(context).width) / 375,
-              height: (70 * MediaQuery.sizeOf(context).width) / 375,
+              width: (270 * MediaQuery.sizeOf(context).width) / 450,
+              height: (70 * MediaQuery.sizeOf(context).width) / 500,
               alignment: .center,
               padding: .all(4),
               child: NavBar(
@@ -172,29 +178,6 @@ class _NavBarState extends State<NavBar> {
                                               .onSurface
                                               .withOpacity(0.5),
                                     BlendMode.srcIn,
-                                  ),
-                                ),
-                              ),
-
-                              const SizedBox(height: 6),
-
-                              // Label
-                              FittedBox(
-                                child: Text(
-                                  item.title,
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Theme.of(
-                                            context,
-                                          ).colorScheme.onSurface
-                                        : Theme.of(context)
-                                              .colorScheme
-                                              .onSurface
-                                              .withOpacity(0.5),
-                                    fontWeight: isSelected
-                                        ? FontWeight.w700
-                                        : null,
-                                    fontSize: 12,
                                   ),
                                 ),
                               ),

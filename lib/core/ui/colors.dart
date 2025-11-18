@@ -4,7 +4,7 @@ class AppColors {
   // ------------------
   // 1. Background
   // ------------------
-  static const Color backgroundBase = Color(0xFF131316); // before: Surface.Dark
+  static const Color backgroundBase = Color(0xFF0F0F12); // before: Surface.Dark
   static const Color backgroundOverlay = Color(
     0xFF1F1D26,
   ); // before: Surface.SurfContainerDark
@@ -86,6 +86,7 @@ class AppColors {
   static const Color buttonOutlinePressed = Color(0xFF1C1C1C);
 }
 
+@Deprecated("old color scheme")
 const darkColorScheme = ColorScheme(
   brightness: Brightness.dark,
 

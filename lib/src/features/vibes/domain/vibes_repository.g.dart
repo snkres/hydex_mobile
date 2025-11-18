@@ -181,7 +181,7 @@ final class GetVendorsProvider
   }
 }
 
-String _$getVendorsHash() => r'703aad8c03d21aedb93e657dcbde0599a42ded26';
+String _$getVendorsHash() => r'1f1458aa0b5f42a6b79e0aba0756f6f148450538';
 
 final class GetVendorsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<Vendor>>, int> {
@@ -256,7 +256,7 @@ final class GetEventsProvider
   }
 }
 
-String _$getEventsHash() => r'924a751789eee9e3ce74514fbe90f20899762d8a';
+String _$getEventsHash() => r'f0c90457b060d89d08b71b8d88dd6e4d3a6ef453';
 
 final class GetEventsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<Event>>, int> {

@@ -22,24 +22,32 @@ class LocationMapper extends ClassMapperBase<Location> {
   @override
   final String id = 'Location';
 
-  static String _$address(Location v) => v.address;
-  static const Field<Location, String> _f$address = Field('address', _$address);
   static Coordinates _$coordinates(Location v) => v.coordinates;
   static const Field<Location, Coordinates> _f$coordinates = Field(
     'coordinates',
     _$coordinates,
   );
+  static String _$city(Location v) => v.city;
+  static const Field<Location, String> _f$city = Field('city', _$city);
+  static String _$street(Location v) => v.street;
+  static const Field<Location, String> _f$street = Field('street', _$street);
+  static String _$country(Location v) => v.country;
+  static const Field<Location, String> _f$country = Field('country', _$country);
 
   @override
   final MappableFields<Location> fields = const {
-    #address: _f$address,
     #coordinates: _f$coordinates,
+    #city: _f$city,
+    #street: _f$street,
+    #country: _f$country,
   };
 
   static Location _instantiate(DecodingData data) {
     return Location(
-      address: data.dec(_f$address),
       coordinates: data.dec(_f$coordinates),
+      city: data.dec(_f$city),
+      street: data.dec(_f$street),
+      country: data.dec(_f$country),
     );
   }
 
@@ -101,7 +109,12 @@ extension LocationValueCopy<$R, $Out> on ObjectCopyWith<$R, Location, $Out> {
 abstract class LocationCopyWith<$R, $In extends Location, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   CoordinatesCopyWith<$R, Coordinates, Coordinates> get coordinates;
-  $R call({String? address, Coordinates? coordinates});
+  $R call({
+    Coordinates? coordinates,
+    String? city,
+    String? street,
+    String? country,
+  });
   LocationCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -117,16 +130,25 @@ class _LocationCopyWithImpl<$R, $Out>
   CoordinatesCopyWith<$R, Coordinates, Coordinates> get coordinates =>
       $value.coordinates.copyWith.$chain((v) => call(coordinates: v));
   @override
-  $R call({String? address, Coordinates? coordinates}) => $apply(
+  $R call({
+    Coordinates? coordinates,
+    String? city,
+    String? street,
+    String? country,
+  }) => $apply(
     FieldCopyWithData({
-      if (address != null) #address: address,
       if (coordinates != null) #coordinates: coordinates,
+      if (city != null) #city: city,
+      if (street != null) #street: street,
+      if (country != null) #country: country,
     }),
   );
   @override
   Location $make(CopyWithData data) => Location(
-    address: data.get(#address, or: $value.address),
     coordinates: data.get(#coordinates, or: $value.coordinates),
+    city: data.get(#city, or: $value.city),
+    street: data.get(#street, or: $value.street),
+    country: data.get(#country, or: $value.country),
   );
 
   @override

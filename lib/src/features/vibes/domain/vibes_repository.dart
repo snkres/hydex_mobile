@@ -81,6 +81,7 @@ Future<List<Vendor>> getVendors(Ref ref, {int page = 1}) async {
     final answer = response.data['data'] as List<dynamic>;
 
     final eventsData = answer.first as List<dynamic>;
+    log("Vendors Data: ${eventsData.first}");
 
     return eventsData.map((e) => VendorMapper.fromMap(e)).toList();
   } catch (e) {
@@ -98,10 +99,8 @@ Future<List<Event>> getEvents(Ref ref, {int page = 1}) async {
     final answer = response.data['data'] as List<dynamic>;
 
     final eventsData = answer.first as List<dynamic>;
-
     return eventsData.map((e) => EventMapper.fromMap(e)).toList();
   } catch (e) {
-    log("Events Error:", error: e, stackTrace: StackTrace.current);
     throw Exception('Failed to load events: $e');
   }
 }

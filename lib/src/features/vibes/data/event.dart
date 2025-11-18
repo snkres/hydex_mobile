@@ -65,6 +65,8 @@ class Event with EventMappable {
   final String priceType;
   final List<String> tags;
   final List<String> experiences;
+
+
   final Vendor vendor;
   final DateTime createdAt;
 
@@ -82,5 +84,6 @@ class Event with EventMappable {
     required this.experiences,
     required this.vendor,
     required this.createdAt,
+
   });
 }

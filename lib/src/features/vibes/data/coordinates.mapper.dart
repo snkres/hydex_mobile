@@ -22,9 +22,17 @@ class CoordinatesMapper extends ClassMapperBase<Coordinates> {
   final String id = 'Coordinates';
 
   static double _$lat(Coordinates v) => v.lat;
-  static const Field<Coordinates, double> _f$lat = Field('lat', _$lat);
+  static const Field<Coordinates, double> _f$lat = Field(
+    'lat',
+    _$lat,
+    key: r'latitude',
+  );
   static double _$lng(Coordinates v) => v.lng;
-  static const Field<Coordinates, double> _f$lng = Field('lng', _$lng);
+  static const Field<Coordinates, double> _f$lng = Field(
+    'lng',
+    _$lng,
+    key: r'longitude',
+  );
 
   @override
   final MappableFields<Coordinates> fields = const {#lat: _f$lat, #lng: _f$lng};

@@ -28,8 +28,8 @@ class VendorMapper extends ClassMapperBase<Vendor> {
   static const Field<Vendor, String> _f$id = Field('id', _$id);
   static String _$ownerId(Vendor v) => v.ownerId;
   static const Field<Vendor, String> _f$ownerId = Field('ownerId', _$ownerId);
-  static String _$logo(Vendor v) => v.logo;
-  static const Field<Vendor, String> _f$logo = Field('logo', _$logo);
+  static String? _$logo(Vendor v) => v.logo;
+  static const Field<Vendor, String> _f$logo = Field('logo', _$logo, opt: true);
   static String _$name(Vendor v) => v.name;
   static const Field<Vendor, String> _f$name = Field('name', _$name);
   static String _$headline(Vendor v) => v.headline;
@@ -80,10 +80,11 @@ class VendorMapper extends ClassMapperBase<Vendor> {
     'details',
     _$details,
   );
-  static String _$detailsDescription(Vendor v) => v.detailsDescription;
+  static String? _$detailsDescription(Vendor v) => v.detailsDescription;
   static const Field<Vendor, String> _f$detailsDescription = Field(
     'detailsDescription',
     _$detailsDescription,
+    opt: true,
   );
   static List<String> _$tags(Vendor v) => v.tags;
   static const Field<Vendor, List<String>> _f$tags = Field('tags', _$tags);
@@ -91,32 +92,6 @@ class VendorMapper extends ClassMapperBase<Vendor> {
   static const Field<Vendor, List<String>> _f$thingsToKnow = Field(
     'thingsToKnow',
     _$thingsToKnow,
-  );
-  static bool _$isApproved(Vendor v) => v.isApproved;
-  static const Field<Vendor, bool> _f$isApproved = Field(
-    'isApproved',
-    _$isApproved,
-  );
-  static bool _$isDrafted(Vendor v) => v.isDrafted;
-  static const Field<Vendor, bool> _f$isDrafted = Field(
-    'isDrafted',
-    _$isDrafted,
-  );
-  static DateTime _$createdAt(Vendor v) => v.createdAt;
-  static const Field<Vendor, DateTime> _f$createdAt = Field(
-    'createdAt',
-    _$createdAt,
-  );
-  static DateTime _$updatedAt(Vendor v) => v.updatedAt;
-  static const Field<Vendor, DateTime> _f$updatedAt = Field(
-    'updatedAt',
-    _$updatedAt,
-  );
-  static DateTime? _$deletedAt(Vendor v) => v.deletedAt;
-  static const Field<Vendor, DateTime> _f$deletedAt = Field(
-    'deletedAt',
-    _$deletedAt,
-    opt: true,
   );
 
   @override
@@ -139,11 +114,6 @@ class VendorMapper extends ClassMapperBase<Vendor> {
     #detailsDescription: _f$detailsDescription,
     #tags: _f$tags,
     #thingsToKnow: _f$thingsToKnow,
-    #isApproved: _f$isApproved,
-    #isDrafted: _f$isDrafted,
-    #createdAt: _f$createdAt,
-    #updatedAt: _f$updatedAt,
-    #deletedAt: _f$deletedAt,
   };
 
   static Vendor _instantiate(DecodingData data) {
@@ -166,11 +136,6 @@ class VendorMapper extends ClassMapperBase<Vendor> {
       detailsDescription: data.dec(_f$detailsDescription),
       tags: data.dec(_f$tags),
       thingsToKnow: data.dec(_f$thingsToKnow),
-      isApproved: data.dec(_f$isApproved),
-      isDrafted: data.dec(_f$isDrafted),
-      createdAt: data.dec(_f$createdAt),
-      updatedAt: data.dec(_f$updatedAt),
-      deletedAt: data.dec(_f$deletedAt),
     );
   }
 
@@ -253,11 +218,6 @@ abstract class VendorCopyWith<$R, $In extends Vendor, $Out>
     String? detailsDescription,
     List<String>? tags,
     List<String>? thingsToKnow,
-    bool? isApproved,
-    bool? isDrafted,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    DateTime? deletedAt,
   });
   VendorCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -329,7 +289,7 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
   $R call({
     String? id,
     String? ownerId,
-    String? logo,
+    Object? logo = $none,
     String? name,
     String? headline,
     String? website,
@@ -342,19 +302,14 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
     List<String>? media,
     List<String>? gallery,
     List<Detail>? details,
-    String? detailsDescription,
+    Object? detailsDescription = $none,
     List<String>? tags,
     List<String>? thingsToKnow,
-    bool? isApproved,
-    bool? isDrafted,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    Object? deletedAt = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
       if (ownerId != null) #ownerId: ownerId,
-      if (logo != null) #logo: logo,
+      if (logo != $none) #logo: logo,
       if (name != null) #name: name,
       if (headline != null) #headline: headline,
       if (website != null) #website: website,
@@ -367,14 +322,9 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
       if (media != null) #media: media,
       if (gallery != null) #gallery: gallery,
       if (details != null) #details: details,
-      if (detailsDescription != null) #detailsDescription: detailsDescription,
+      if (detailsDescription != $none) #detailsDescription: detailsDescription,
       if (tags != null) #tags: tags,
       if (thingsToKnow != null) #thingsToKnow: thingsToKnow,
-      if (isApproved != null) #isApproved: isApproved,
-      if (isDrafted != null) #isDrafted: isDrafted,
-      if (createdAt != null) #createdAt: createdAt,
-      if (updatedAt != null) #updatedAt: updatedAt,
-      if (deletedAt != $none) #deletedAt: deletedAt,
     }),
   );
   @override
@@ -400,11 +350,6 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
     ),
     tags: data.get(#tags, or: $value.tags),
     thingsToKnow: data.get(#thingsToKnow, or: $value.thingsToKnow),
-    isApproved: data.get(#isApproved, or: $value.isApproved),
-    isDrafted: data.get(#isDrafted, or: $value.isDrafted),
-    createdAt: data.get(#createdAt, or: $value.createdAt),
-    updatedAt: data.get(#updatedAt, or: $value.updatedAt),
-    deletedAt: data.get(#deletedAt, or: $value.deletedAt),
   );
 
   @override

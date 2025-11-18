@@ -7,11 +7,14 @@ part 'location.mapper.dart';
 
 @MappableClass()
 class Location with LocationMappable {
-  final String address;
+  final String city,street,country;
   final Coordinates coordinates;
 
   Location({
-    required this.address,
     required this.coordinates,
+    required this.city,
+    required this.street,
+    required this.country,
+
   });
 }
