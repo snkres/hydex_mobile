@@ -41,7 +41,7 @@ class AppRoutes {
         if (currentRoute != "/boarding") {
           return null;
         }
-        return "/summary";
+        return "/";
       }
       return null;
     },
