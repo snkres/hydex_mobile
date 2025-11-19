@@ -47,3 +47,36 @@ final class GetBookingsProvider
 }
 
 String _$getBookingsHash() => r'a84b9ad87d17c1703d2976dd38f4bf24efa9c98c';
+
+@ProviderFor(createBooking)
+const createBookingProvider = CreateBookingProvider._();
+
+final class CreateBookingProvider
+    extends $FunctionalProvider<AsyncValue<bool>, bool, FutureOr<bool>>
+    with $FutureModifier<bool>, $FutureProvider<bool> {
+  const CreateBookingProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'createBookingProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$createBookingHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<bool> create(Ref ref) {
+    return createBooking(ref);
+  }
+}
+
+String _$createBookingHash() => r'0a494e9244bae55101fe4a59659c7dcb22753ddb';

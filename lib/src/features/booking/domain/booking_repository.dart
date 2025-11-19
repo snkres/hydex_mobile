@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
+import 'package:hydex/src/features/booking/domain/guests_repo.dart';
+import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'booking_repository.g.dart';
@@ -30,6 +34,36 @@ Future<List<Booking>> getBookings(Ref ref) async {
     }
 
     return responseData.map((e) => BookingMapper.fromMap(e)).toList();
+  } catch (e) {
+    throw Exception('Failed to load bookings: $e');
+  }
+}
+
+@riverpod
+Future<bool> createBooking(Ref ref) async {
+  try {
+    final numberOfGuests = ref.read(guestsProvider);
+    final guestsFormState = await ref.read(
+      guestFormProvider(numberOfGuests).future,
+    );
+    final guests = guestsFormState.guests;
+    final List<Map<String, dynamic>> guestsData = guests
+        .map(
+          (e) => {
+            "fullName": e!.name,
+            "email": e.email,
+            "phone": e.phoneNumber,
+            "age": e.age,
+            "gender": e.gender,
+            "instagramLink": e.instagram,
+          },
+        )
+        .toList();
+    final response = await DioHelper.post(
+      "/bookings",
+      data: {"guests": guestsData},
+    );
+    return response.success;
   } catch (e) {
     throw Exception('Failed to load bookings: $e');
   }

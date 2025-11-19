@@ -4,12 +4,14 @@ class Guest {
   final String phoneNumber;
   final String instagram;
   final String gender;
+  final int age;
 
   Guest({
     required this.name,
     required this.email,
     required this.phoneNumber,
     required this.instagram,
-    required this.gender
+    required this.gender,
+    required this.age
   });
 }

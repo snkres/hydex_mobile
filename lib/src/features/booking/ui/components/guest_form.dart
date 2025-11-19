@@ -83,21 +83,61 @@ class _GuestFormState extends ConsumerState<GuestForm> {
             TextFormField(
               controller: nameController,
               decoration: InputDecoration(labelText: "Full Name"),
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) {
+                  return "Please enter your full name";
+                }
+                if (v.trim().length < 2) {
+                  return "Name is too short";
+                }
+                return null;
+              },
             ),
+
             Row(
               children: [
                 Expanded(
                   child: TextFormField(
                     controller: instagramController,
                     decoration: InputDecoration(labelText: "Instagram Link"),
+                    keyboardType: TextInputType.url,
+                    validator: (v) {
+                      if (v == null || v.trim().isEmpty) {
+                        return "Instagram link is required";
+                      }
+
+                      final uri = Uri.tryParse(v.trim());
+                      if (uri == null || !uri.hasAbsolutePath) {
+                        return "Invalid URL";
+                      }
+
+                      if (!v.contains("instagram.com")) {
+                        return "Must be a valid Instagram URL";
+                      }
+
+                      return null;
+                    },
                   ),
                 ),
                 SizedBox(width: 16),
                 Expanded(
                   child: TextFormField(
                     controller: ageController,
-
                     decoration: InputDecoration(labelText: "Age"),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    validator: (v) {
+                      if (v == null || v.isEmpty) return "Age is required";
+
+                      final age = int.tryParse(v);
+                      if (age == null) return "Age must be a number";
+
+                      if (age <= 18 || age > 100) {
+                        return "Age must be more than or equal to 18 and less than 100";
+                      }
+
+                      return null;
+                    },
                   ),
                 ),
               ],
@@ -105,7 +145,21 @@ class _GuestFormState extends ConsumerState<GuestForm> {
             TextFormField(
               controller: emailController,
               decoration: InputDecoration(labelText: "Email"),
+              keyboardType: TextInputType.emailAddress,
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) {
+                  return "Email is required";
+                }
+
+                final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
+                if (!emailRegex.hasMatch(v.trim())) {
+                  return "Enter a valid email";
+                }
+
+                return null;
+              },
             ),
+
             selectedCountry.when(
               data: (data) {
                 return Row(
@@ -152,15 +206,15 @@ class _GuestFormState extends ConsumerState<GuestForm> {
                             phoneNumber = data.dialCode + phoneController.text;
                           });
                         },
-                        // validator: (v) {
-                        //   if (v!.isEmpty) {
-                        //     return "Please add your phone number";
-                        //   }
-                        //   if (v.length > 13) {
-                        //     return "Phone shouldn't be more than 13 characters";
-                        //   }
-                        //   return null;
-                        // },
+                        validator: (v) {
+                          if (v!.isEmpty) {
+                            return "Please add your phone number";
+                          }
+                          if (v.length > 13) {
+                            return "Phone shouldn't be more than 13 characters";
+                          }
+                          return null;
+                        },
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                           TextInputFormatter.withFunction((oldValue, newValue) {
@@ -234,9 +288,17 @@ class _GuestFormState extends ConsumerState<GuestForm> {
 
             PrimaryButton(
               onTap: () async {
+                if (selectedGender == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Please select your gender")),
+                  );
+                  return;
+                }
+
                 if (key.currentState!.validate()) {
                   final guest = Guest(
                     name: nameController.text,
+                    age: int.parse(ageController.text),
                     email: emailController.text,
                     phoneNumber: phoneNumber!,
                     instagram: instagramController.text,

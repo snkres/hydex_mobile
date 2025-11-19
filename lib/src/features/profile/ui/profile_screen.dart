@@ -41,6 +41,7 @@ class ProfileScreen extends StatelessWidget {
                         alignment: Alignment.topCenter,
                         child: SvgPicture.asset(
                           "img/svg/pattern.svg",
+                          fit: BoxFit.cover,
                           package: "assets",
                           color: AppColors.backgroundBase.withValues(
                             alpha: 0.1,

@@ -435,9 +435,7 @@ class _TellusState extends State<Tellus> {
                                             return;
                                           }
                                           ref
-                                              .read(
-                                                userProvider.notifier,
-                                              )
+                                              .read(userProvider.notifier)
                                               .create(
                                                 nationality:
                                                     nationalityController.text,
@@ -520,7 +518,7 @@ class CustomChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.signalBrandTint
-              : Theme.of(context).colorScheme.secondaryContainer,
+              : AppColors.containerDim,
           borderRadius: BorderRadius.circular(99),
           border: isSelected
               ? Border.all(color: AppColors.borderBrand, width: 1)

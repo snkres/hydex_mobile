@@ -15,9 +15,8 @@ class AppColors {
   static const Color surfaceInputField = Color(
     0xFF1B1921,
   ); // before: Surface.Dim.Dark (updated)
-  static const Color surfaceContainer = Color(
-    0xFF1B1921,
-  ); // before: Surface.Dimmer.Dark
+  static const Color surfaceContainer = Color(0xFF1B1921);
+  static const Color containerDim = Color(0xFF1E1E20);
   static const Color surfaceContainerInverse = Color(
     0xFFFFFFFF,
   ); // before: Surface.Light

@@ -87,6 +87,7 @@ class SocialLinks with SocialLinksMappable {
 extension UserToGuest on User {
   Guest toGuest() {
     return Guest(
+      age: calcualteAge(dateOfBirth),
       name: fullName ?? "Unnamed",
       email: email,
       phoneNumber: phone!,
@@ -94,4 +95,12 @@ extension UserToGuest on User {
       gender: gender ?? "male",
     );
   }
+}
+
+int calcualteAge(DateTime? bDay) {
+  if (bDay == null) {
+    return 0;
+  }
+
+  return DateTime.now().year - bDay.year;
 }

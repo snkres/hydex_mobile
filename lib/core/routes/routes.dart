@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/auth/reset_pass.dart';
@@ -25,7 +23,7 @@ import 'package:hydex/src/features/contact/ui/contacts.dart';
 import 'package:hydex/src/features/loading/ui/loading.dart';
 import 'package:hydex/src/features/location/ui/location_screen.dart';
 import 'package:hydex/src/features/notifications/ui/notifications_screen.dart';
-import 'package:hydex/src/features/vibes/ui/details_screen.dart';
+import 'package:hydex/src/features/profile_summary/ui/profile_summary.dart';
 import 'package:hydex/src/features/waitlist/ui/waitlist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -43,7 +41,7 @@ class AppRoutes {
         if (currentRoute != "/boarding") {
           return null;
         }
-        return "/";
+        return "/summary";
       }
       return null;
     },
@@ -98,6 +96,10 @@ class AppRoutes {
       GoRoute(
         path: '/forget-password',
         builder: (context, state) => ForgetPassword(),
+      ),
+      GoRoute(
+        path: '/profile-summary',
+        builder: (context, state) => ProfileSummary(),
       ),
       GoRoute(
         path: '/forgot-password',

@@ -39,7 +39,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           elevation: WidgetStatePropertyAll(0),
-          backgroundColor: WidgetStatePropertyAll(AppColors.signalBrandSolid),
+          backgroundColor: WidgetStatePropertyAll(AppColors.buttonSecondary),
           foregroundColor: WidgetStatePropertyAll(AppColors.textPrimary),
         ),
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
@@ -13,7 +14,8 @@ class UpcomingEvent extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: ListView.separated(
-        separatorBuilder: (_, _) => Divider(),
+        separatorBuilder: (_, _) =>
+            Column(children: [Divider(), SizedBox(height: 16)]),
         itemCount: 3,
         itemBuilder: (context, index) => UpcomingEventContainer(),
       ),
@@ -154,7 +156,9 @@ class UpcomingEventContainer extends StatelessWidget {
         ),
         SizedBox(height: 16),
         PrimaryButton(
-          onTap: () async {},
+          onTap: () async {
+            context.push("/profile-summary");
+          },
           title: "View details",
           bgColor: AppColors.buttonTertiary,
         ),

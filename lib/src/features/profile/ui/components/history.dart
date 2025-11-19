@@ -9,7 +9,8 @@ class History extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: ListView.separated(
-        separatorBuilder: (_, _) => Divider(),
+        separatorBuilder: (_, _) =>
+            Column(children: [Divider(), SizedBox(height: 16)]),
         itemCount: 3,
         itemBuilder: (context, index) => UpcomingEventContainer(),
       ),

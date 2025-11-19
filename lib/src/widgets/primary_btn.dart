@@ -9,7 +9,7 @@ class PrimaryButton extends StatefulWidget {
     required this.onTap,
     this.title = "Continue",
     this.bgColor = AppColors.buttonPrimary,
-    this.frColor = AppColors.textPrimary,
+    this.frColor = AppColors.textInverse,
   });
 
   final Future<void> Function()? onTap;
@@ -24,9 +24,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
   bool loading = false;
   @override
   Widget build(BuildContext context) {
-    final loadingPath = Theme.brightnessOf(context) == Brightness.dark
-        ? "json/dark_loading.json"
-        : "json/light_loading.json";
+    
     return ConstrainedBox(
       constraints: BoxConstraints(minWidth: double.infinity, minHeight: 50),
       child: ElevatedButton(
@@ -47,19 +45,31 @@ class _PrimaryButtonState extends State<PrimaryButton> {
         },
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(
-            widget.onTap != null ? widget.bgColor : AppColors.textDisabled,
+            widget.onTap != null
+                ? widget.bgColor
+                : AppColors.buttonPrimaryDisabled,
           ),
-          foregroundColor: WidgetStatePropertyAll(widget.frColor),
+          foregroundColor: WidgetStatePropertyAll(
+            widget.onTap != null
+                ? widget.frColor
+                : AppColors.buttonTextDisabled,
+          ),
         ),
         child: loading
             ? LottieBuilder.asset(
-                loadingPath,
+                "json/dark_loading.json",
                 package: "assets",
                 width: 50,
                 height: 50,
                 fit: BoxFit.cover,
               )
-            : Text(widget.title, style: AppTextStyles(context).smallBold),
+            : Text(
+                widget.title,
+                style: TextStyle(
+                  fontSize: AppTextStyles(context).accumulator * 15,
+                  fontWeight: .w600,
+                ),
+              ),
       ),
     );
   }

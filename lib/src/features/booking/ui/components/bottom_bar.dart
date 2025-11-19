@@ -48,7 +48,7 @@ class _BottomBarState extends ConsumerState<BottomBar> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        "1 Passes",
+                        "$totalGuests Passes",
                         style: AppTextStyles(context).smallMedium.copyWith(
                           fontWeight: FontWeight.w500,
                           fontSize: AppTextStyles(context).accumulator * 14,

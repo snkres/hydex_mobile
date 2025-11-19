@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/booking/domain/booking_repository.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_summary.dart';
 import 'package:hydex/src/features/booking/ui/components/vendor_container.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
+import 'package:lottie/lottie.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 class SummaryBooking extends StatelessWidget {
@@ -18,14 +21,10 @@ class SummaryBooking extends StatelessWidget {
         padding: const .symmetric(horizontal: 16),
         child: SizedBox.fromSize(
           size: Size.fromHeight(52),
-          child: FloatingActionButton.extended(
-            onPressed: () {},
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
-            elevation: 0,
-
-            shape: RoundedRectangleBorder(borderRadius: .circular(100)),
-            label: Text("Submit Request"),
+          child: Consumer(
+            builder: (context, ref, _) {
+              return LoadingFloatingButton();
+            },
           ),
         ),
       ),
@@ -172,6 +171,56 @@ class SummaryBooking extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class LoadingFloatingButton extends ConsumerStatefulWidget {
+  const LoadingFloatingButton({super.key});
+
+  @override
+  ConsumerState<LoadingFloatingButton> createState() =>
+      _LoadingFloatingButtonState();
+}
+
+class _LoadingFloatingButtonState extends ConsumerState<LoadingFloatingButton> {
+  bool loading = false;
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton.extended(
+      onPressed: () async {
+        setState(() {
+          loading = true;
+        });
+        final status = await ref.read(createBookingProvider.future).catchError((
+          e,
+        ) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(e.message)));
+          }
+
+          return false;
+        });
+        setState(() {
+          loading = false;
+        });
+      },
+      backgroundColor: Colors.white,
+      foregroundColor: Colors.black,
+      elevation: 0,
+
+      shape: RoundedRectangleBorder(borderRadius: .circular(100)),
+      label: loading
+          ? LottieBuilder.asset(
+              "json/dark_loading.json",
+              package: "assets",
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+            )
+          : Text("Submit Request"),
     );
   }
 }

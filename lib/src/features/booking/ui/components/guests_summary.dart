@@ -379,6 +379,7 @@ class _GuestFormPopupState extends ConsumerState<GuestFormPopup> {
                 if (key.currentState!.validate()) {
                   final guest = Guest(
                     name: nameController.text,
+                    age: int.parse(ageController.text),
                     email: emailController.text,
                     phoneNumber: phoneNumber ?? "",
                     instagram: instagramController.text,

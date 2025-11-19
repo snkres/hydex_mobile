@@ -70,53 +70,90 @@ class _PassportState extends State<Passport> {
             ),
           ),
           SizedBox(height: 16),
-          SmoothContainer(
-            padding: .all(16),
+          SmoothClipRRect(
             smoothness: 1,
-            color: Colors.red,
-            borderRadius: .circular(16),
-            child: Column(
-              crossAxisAlignment: .start,
+            borderRadius: BorderRadius.circular(16),
+            child: Stack(
               children: [
-                CircleAvatar(),
-                SizedBox(height: 32),
+                Positioned.fill(
+                  child: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomRight,
+                            end: Alignment.topCenter,
+                            colors: [
+                              Color(0xFFA25BFF),
 
-                Row(
-                  mainAxisAlignment: .spaceBetween,
-                  children: [
-                    Text(
-                      "Cairo Jazz Club",
-                      style: TextStyle(
-                        fontSize: AppTextStyles(context).accumulator * 18,
-                        fontWeight: .w900,
+                              Color.fromARGB(255, 105, 59, 165),
+
+                              Color(0xFF251343),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                    Text(
-                      "01",
-                      style: TextStyle(
-                        fontSize: AppTextStyles(context).accumulator * 18,
-                        fontWeight: .w700,
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: SvgPicture.asset(
+                          "img/svg/pattern.svg",
+                          package: "assets",
+                          fit: BoxFit.cover,
+                          color: AppColors.backgroundBase.withValues(
+                            alpha: 0.1,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: .spaceBetween,
 
-                  children: [
-                    Text(
-                      "Nightlife",
-                      style: TextStyle(
-                        fontSize: AppTextStyles(context).accumulator * 14,
+                // foreground content
+                SmoothContainer(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(),
+                      SizedBox(height: 32),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Cairo Jazz Club",
+                            style: TextStyle(
+                              fontSize: AppTextStyles(context).accumulator * 18,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          Text(
+                            "01",
+                            style: TextStyle(
+                              fontSize: AppTextStyles(context).accumulator * 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    Text(
-                      "Visit(s)",
-                      style: TextStyle(
-                        fontSize: AppTextStyles(context).accumulator * 14,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Nightlife",
+                            style: TextStyle(
+                              fontSize: AppTextStyles(context).accumulator * 14,
+                            ),
+                          ),
+                          Text(
+                            "Visit(s)",
+                            style: TextStyle(
+                              fontSize: AppTextStyles(context).accumulator * 14,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
