@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/data/navitems.dart';
 import 'package:hydex/src/features/profile/ui/profile_screen.dart';
+import 'package:hydex/src/features/search/ui/search_screen.dart';
 import 'package:hydex/src/features/settings/ui/settings.dart';
 import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
@@ -27,7 +28,7 @@ class _BaseScreenState extends State<BaseScreen> {
 
   final children = [
     VibesScreen(),
-    const Placeholder(),
+    SearchScreen(),
     const ProfileScreen(),
     const SettingsScreen(),
   ];

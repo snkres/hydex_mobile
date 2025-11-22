@@ -43,6 +43,11 @@ class AppTheme {
           foregroundColor: WidgetStatePropertyAll(AppColors.textPrimary),
         ),
       ),
+      sliderTheme: SliderThemeData(
+        thumbColor: AppColors.buttonPrimary,
+        activeTrackColor: AppColors.buttonSecondary,
+        inactiveTrackColor: AppColors.containerDim,
+      ),
       inputDecorationTheme: InputDecorationTheme(
         suffixIconColor: Color.fromRGBO(164, 164, 164, 1),
 

@@ -10,6 +10,7 @@ import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
+import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/data/vendor.dart';
 import 'package:hydex/src/features/vibes/ui/components/gallery.dart';
 import 'package:hydex/src/features/vibes/ui/components/ticket_widget.dart';
@@ -42,6 +43,7 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
   @override
   void initState() {
     super.initState();
+
     _sheetController.addListener(() {
       final bool next = _sheetController.size >= _collapseThreshold;
       if (next != _isCollapsedFromSheet) {
@@ -56,6 +58,74 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
   void dispose() {
     pageController.dispose();
     super.dispose();
+  }
+
+  String isOpenNow(Map<String, OperatingHours> hours) {
+    final now = DateTime.now();
+    final weekday = _weekdayName(now.weekday);
+
+    // If today has no hours → Closed
+    if (!hours.containsKey(weekday)) return "Closed";
+
+    final today = hours[weekday]!;
+    final openTime = _parseTime(today.open, now);
+    final closeTime = _parseClosingTime(today.close, openTime);
+
+    if (now.isAfter(openTime) && now.isBefore(closeTime)) {
+      return "Open";
+    }
+
+    return "Closed";
+  }
+
+  String _weekdayName(int w) {
+    switch (w) {
+      case 1:
+        return 'monday';
+      case 2:
+        return 'tuesday';
+      case 3:
+        return 'wednesday';
+      case 4:
+        return 'thursday';
+      case 5:
+        return 'friday';
+      case 6:
+        return 'saturday';
+      case 7:
+        return 'sunday';
+      default:
+        return '';
+    }
+  }
+
+  DateTime _parseTime(String raw, DateTime base) {
+    final parts = raw.split(':');
+    final hour = int.parse(parts[0]);
+    final minute = int.parse(parts[1]);
+
+    return DateTime(base.year, base.month, base.day, hour, minute);
+  }
+
+  DateTime _parseClosingTime(String close, DateTime openDateTime) {
+    final parts = close.split(':');
+    final hour = int.parse(parts[0]);
+    final minute = int.parse(parts[1]);
+
+    var closeDateTime = DateTime(
+      openDateTime.year,
+      openDateTime.month,
+      openDateTime.day,
+      hour,
+      minute,
+    );
+
+    // If closing time is next day (e.g., 03:00 after 23:00)
+    if (closeDateTime.isBefore(openDateTime)) {
+      closeDateTime = closeDateTime.add(Duration(days: 1));
+    }
+
+    return closeDateTime;
   }
 
   @override
@@ -325,14 +395,24 @@ class _VendorDetailsScreenState extends State<VendorDetailsScreen> {
                                           spacing: 10,
                                           children: [
                                             Text(
-                                              "Open",
+                                              isOpenNow(
+                                                widget.vendor.operatingHours,
+                                              ),
                                               style: TextStyle(
                                                 fontSize:
                                                     AppTextStyles(
                                                       context,
                                                     ).accumulator *
                                                     12,
-                                                color: AppColors.textSuccess,
+                                                color:
+                                                    isOpenNow(
+                                                          widget
+                                                              .vendor
+                                                              .operatingHours,
+                                                        ) ==
+                                                        "Open"
+                                                    ? AppColors.textSuccess
+                                                    : AppColors.textError,
                                               ),
                                             ),
                                             Text(

@@ -50,16 +50,6 @@ Future<List<Banner>> getBanners(Ref ref, {required BannerType type}) async {
   }
 }
 
-// @riverpod
-// Future<Event> getEventByID(Ref ref, {required String id}) async {
-//   try {
-//     final response = await DioHelper.get('/events/$id');
-//     return EventMapper.fromMap(response.data['data']);
-//   } catch (e) {
-//     throw Exception('Failed to load event: $e');
-//   }
-// }
-
 @riverpod
 Future<List<EventCategory>> getEventCategories(Ref ref) async {
   try {
@@ -99,6 +89,7 @@ Future<List<Event>> getEvents(Ref ref, {int page = 1}) async {
     final answer = response.data['data'] as List<dynamic>;
 
     final eventsData = answer.first as List<dynamic>;
+    log(eventsData.toString());
     return eventsData.map((e) => EventMapper.fromMap(e)).toList();
   } catch (e) {
     throw Exception('Failed to load events: $e');
