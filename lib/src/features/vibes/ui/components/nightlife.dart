@@ -2,20 +2,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/ui/components/sports_section.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 class NightLifeSection extends StatelessWidget {
-  NightLifeSection({super.key});
-
-  final data = [
-    Sports(category: "Skill Level", title: "Beginner"),
-    Sports(category: "Coach", title: "Available on request"),
-    Sports(category: "Dress Code", title: "Smart Casual"),
-    Sports(category: "Dress Code", title: "Smart Casual"),
-    Sports(category: "Dress Code", title: "Smart Casual"),
-  ];
-
+  const NightLifeSection({super.key, required this.experiences});
+  final List<Experiences> experiences;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -41,7 +34,7 @@ class NightLifeSection extends StatelessWidget {
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: data
+                  children: experiences
                       .map(
                         (e) => IntrinsicWidth(
                           child: SmoothClipRRect(
@@ -59,7 +52,7 @@ class NightLifeSection extends StatelessWidget {
                                     padding: EdgeInsets.all(8),
                                     color: AppColors.buttonSecondary,
                                     child: Text(
-                                      e.category,
+                                      e.name,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize:
@@ -74,7 +67,7 @@ class NightLifeSection extends StatelessWidget {
                                       vertical: 6,
                                     ),
                                     child: Text(
-                                      e.title,
+                                      e.description,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize:

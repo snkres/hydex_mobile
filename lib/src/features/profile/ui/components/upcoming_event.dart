@@ -31,7 +31,7 @@ class UpcomingEventContainer extends StatelessWidget {
     return Column(
       children: [
         SizedBox(
-          height: 56,
+          height: 67,
           child: Row(
             crossAxisAlignment: .start,
             children: [

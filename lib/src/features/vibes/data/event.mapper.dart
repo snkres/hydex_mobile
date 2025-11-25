@@ -464,6 +464,132 @@ class _OperatingHoursCopyWithImpl<$R, $Out>
   ) => _OperatingHoursCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
+class ExperiencesMapper extends ClassMapperBase<Experiences> {
+  ExperiencesMapper._();
+
+  static ExperiencesMapper? _instance;
+  static ExperiencesMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = ExperiencesMapper._());
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'Experiences';
+
+  static String _$name(Experiences v) => v.name;
+  static const Field<Experiences, String> _f$name = Field('name', _$name);
+  static String _$description(Experiences v) => v.description;
+  static const Field<Experiences, String> _f$description = Field(
+    'description',
+    _$description,
+  );
+
+  @override
+  final MappableFields<Experiences> fields = const {
+    #name: _f$name,
+    #description: _f$description,
+  };
+
+  static Experiences _instantiate(DecodingData data) {
+    return Experiences(
+      name: data.dec(_f$name),
+      description: data.dec(_f$description),
+    );
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static Experiences fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<Experiences>(map);
+  }
+
+  static Experiences fromJson(String json) {
+    return ensureInitialized().decodeJson<Experiences>(json);
+  }
+}
+
+mixin ExperiencesMappable {
+  String toJson() {
+    return ExperiencesMapper.ensureInitialized().encodeJson<Experiences>(
+      this as Experiences,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return ExperiencesMapper.ensureInitialized().encodeMap<Experiences>(
+      this as Experiences,
+    );
+  }
+
+  ExperiencesCopyWith<Experiences, Experiences, Experiences> get copyWith =>
+      _ExperiencesCopyWithImpl<Experiences, Experiences>(
+        this as Experiences,
+        $identity,
+        $identity,
+      );
+  @override
+  String toString() {
+    return ExperiencesMapper.ensureInitialized().stringifyValue(
+      this as Experiences,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return ExperiencesMapper.ensureInitialized().equalsValue(
+      this as Experiences,
+      other,
+    );
+  }
+
+  @override
+  int get hashCode {
+    return ExperiencesMapper.ensureInitialized().hashValue(this as Experiences);
+  }
+}
+
+extension ExperiencesValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, Experiences, $Out> {
+  ExperiencesCopyWith<$R, Experiences, $Out> get $asExperiences =>
+      $base.as((v, t, t2) => _ExperiencesCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class ExperiencesCopyWith<$R, $In extends Experiences, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  $R call({String? name, String? description});
+  ExperiencesCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+}
+
+class _ExperiencesCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, Experiences, $Out>
+    implements ExperiencesCopyWith<$R, Experiences, $Out> {
+  _ExperiencesCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<Experiences> $mapper =
+      ExperiencesMapper.ensureInitialized();
+  @override
+  $R call({String? name, String? description}) => $apply(
+    FieldCopyWithData({
+      if (name != null) #name: name,
+      if (description != null) #description: description,
+    }),
+  );
+  @override
+  Experiences $make(CopyWithData data) => Experiences(
+    name: data.get(#name, or: $value.name),
+    description: data.get(#description, or: $value.description),
+  );
+
+  @override
+  ExperiencesCopyWith<$R2, Experiences, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  ) => _ExperiencesCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
 class EventMapper extends ClassMapperBase<Event> {
   EventMapper._();
 
@@ -473,6 +599,8 @@ class EventMapper extends ClassMapperBase<Event> {
       MapperContainer.globals.use(_instance = EventMapper._());
       LocationMapper.ensureInitialized();
       DetailMapper.ensureInitialized();
+      EventCategoryMapper.ensureInitialized();
+      ExperiencesMapper.ensureInitialized();
       VendorMapper.ensureInitialized();
     }
     return _instance!;
@@ -516,8 +644,13 @@ class EventMapper extends ClassMapperBase<Event> {
   );
   static List<String> _$tags(Event v) => v.tags;
   static const Field<Event, List<String>> _f$tags = Field('tags', _$tags);
-  static List<String> _$experiences(Event v) => v.experiences;
-  static const Field<Event, List<String>> _f$experiences = Field(
+  static EventCategory? _$category(Event v) => v.category;
+  static const Field<Event, EventCategory> _f$category = Field(
+    'category',
+    _$category,
+  );
+  static List<Experiences> _$experiences(Event v) => v.experiences;
+  static const Field<Event, List<Experiences>> _f$experiences = Field(
     'experiences',
     _$experiences,
   );
@@ -541,6 +674,7 @@ class EventMapper extends ClassMapperBase<Event> {
     #details: _f$details,
     #priceType: _f$priceType,
     #tags: _f$tags,
+    #category: _f$category,
     #experiences: _f$experiences,
     #vendor: _f$vendor,
     #createdAt: _f$createdAt,
@@ -558,6 +692,7 @@ class EventMapper extends ClassMapperBase<Event> {
       details: data.dec(_f$details),
       priceType: data.dec(_f$priceType),
       tags: data.dec(_f$tags),
+      category: data.dec(_f$category),
       experiences: data.dec(_f$experiences),
       vendor: data.dec(_f$vendor),
       createdAt: data.dec(_f$createdAt),
@@ -614,7 +749,13 @@ abstract class EventCopyWith<$R, $In extends Event, $Out>
   LocationCopyWith<$R, Location, Location> get location;
   ListCopyWith<$R, Detail, DetailCopyWith<$R, Detail, Detail>> get details;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get tags;
-  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get experiences;
+  EventCategoryCopyWith<$R, EventCategory, EventCategory>? get category;
+  ListCopyWith<
+    $R,
+    Experiences,
+    ExperiencesCopyWith<$R, Experiences, Experiences>
+  >
+  get experiences;
   VendorCopyWith<$R, Vendor, Vendor> get vendor;
   $R call({
     String? id,
@@ -627,7 +768,8 @@ abstract class EventCopyWith<$R, $In extends Event, $Out>
     List<Detail>? details,
     String? priceType,
     List<String>? tags,
-    List<String>? experiences,
+    EventCategory? category,
+    List<Experiences>? experiences,
     Vendor? vendor,
     DateTime? createdAt,
   });
@@ -665,10 +807,17 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
         (v) => call(tags: v),
       );
   @override
-  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>
+  EventCategoryCopyWith<$R, EventCategory, EventCategory>? get category =>
+      $value.category?.copyWith.$chain((v) => call(category: v));
+  @override
+  ListCopyWith<
+    $R,
+    Experiences,
+    ExperiencesCopyWith<$R, Experiences, Experiences>
+  >
   get experiences => ListCopyWith(
     $value.experiences,
-    (v, t) => ObjectCopyWith(v, $identity, t),
+    (v, t) => v.copyWith.$chain(t),
     (v) => call(experiences: v),
   );
   @override
@@ -686,7 +835,8 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
     List<Detail>? details,
     String? priceType,
     List<String>? tags,
-    List<String>? experiences,
+    Object? category = $none,
+    List<Experiences>? experiences,
     Vendor? vendor,
     DateTime? createdAt,
   }) => $apply(
@@ -701,6 +851,7 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
       if (details != null) #details: details,
       if (priceType != null) #priceType: priceType,
       if (tags != null) #tags: tags,
+      if (category != $none) #category: category,
       if (experiences != null) #experiences: experiences,
       if (vendor != null) #vendor: vendor,
       if (createdAt != null) #createdAt: createdAt,
@@ -718,6 +869,7 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
     details: data.get(#details, or: $value.details),
     priceType: data.get(#priceType, or: $value.priceType),
     tags: data.get(#tags, or: $value.tags),
+    category: data.get(#category, or: $value.category),
     experiences: data.get(#experiences, or: $value.experiences),
     vendor: data.get(#vendor, or: $value.vendor),
     createdAt: data.get(#createdAt, or: $value.createdAt),

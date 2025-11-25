@@ -202,6 +202,7 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                                 phoneError = e.message;
                               });
                             }
+                            return "";
                           });
                       if (context.mounted) {
                         context.go("/otp");

@@ -35,10 +35,35 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="app.hyde-x.com"/>
-                <data android:scheme="https" android:host="app.hyde-x.com"/>
-                <data android:path="/forgot-password" />  
+
+                <data
+                    android:scheme="https"
+                    android:host="app.hyde-x.com"
+                    android:path="/forgot-password" />
             </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="app.hyde-x.com"
+                    android:pathPrefix="/event/" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="app.hyde-x.com"
+                    android:pathPrefix="/vendor/" />
+            </intent-filter>
+
+
+
 
             <meta-data
                 android:name="flutter_deeplinking_enabled"

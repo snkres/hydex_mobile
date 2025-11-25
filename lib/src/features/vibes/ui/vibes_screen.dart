@@ -20,6 +20,7 @@ import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/features/vibes/ui/components/event_details.dart';
 import 'package:hydex/src/features/vibes/ui/details_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:video_player/video_player.dart';
@@ -328,19 +329,21 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                         children: [
                           LayoutBuilder(
                             builder: (context, constraints) {
-                              if (constraints.maxWidth > 600) {
-                                return SizedBox(
-                                  height: 130 * 1.5,
-                                  child: ListView(
-                                    physics: BouncingScrollPhysics(),
-                                    scrollDirection: Axis.horizontal,
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                    ),
-                                    children: [
-                                      SmoothContainer(
-                                        width: 150 * 1.5,
-                                        height: 130 * 1.5,
+                              return SizedBox(
+                                height: constraints.maxWidth > 600
+                                    ? 130 * 1.5
+                                    : 130,
+                                child: ListView(
+                                  physics: BouncingScrollPhysics(),
+                                  scrollDirection: Axis.horizontal,
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () =>
+                                          context.push("/happening_tonight"),
+                                      child: SmoothContainer(
+                                        width: 150,
+                                        height: 130,
                                         color: AppColors.surfaceContainer,
                                         smoothness: 1,
                                         padding: EdgeInsets.all(12),
@@ -349,13 +352,10 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            SvgPicture.asset(
-                                              "img/svg/fire.svg",
+                                            LottieBuilder.asset(
+                                              "json/fire.json",
                                               package: "assets",
-                                              colorFilter: ColorFilter.mode(
-                                                AppColors.buttonSecondary,
-                                                BlendMode.srcIn,
-                                              ),
+                                              height: 24,
                                             ),
                                             Spacer(),
                                             Text(
@@ -384,10 +384,15 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                           ],
                                         ),
                                       ),
-                                      SizedBox(width: 6),
-                                      SmoothContainer(
-                                        width: 150 * 1.5,
-                                        height: 130 * 1.5,
+                                    ),
+                                    SizedBox(width: 6),
+                                    GestureDetector(
+                                      onTap: () =>
+                                          context.push("/happening_nearby"),
+
+                                      child: SmoothContainer(
+                                        width: 150,
+                                        height: 110,
                                         color: AppColors.surfaceContainer,
 
                                         smoothness: 1,
@@ -398,6 +403,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             SvgPicture.asset(
+                                              height: 24,
                                               "img/svg/location_pin.svg",
                                               package: "assets",
                                             ),
@@ -428,150 +434,6 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                             ),
                                           ],
                                         ),
-                                      ),
-                                      SizedBox(width: 6),
-                                      SmoothContainer(
-                                        width: 150 * 1.5,
-                                        height: 130 * 1.5,
-                                        color: AppColors.surfaceContainer,
-
-                                        smoothness: 1,
-                                        padding: EdgeInsets.all(12),
-                                        borderRadius: BorderRadius.circular(24),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Spacer(),
-                                            Text(
-                                              "Search &",
-                                              style: TextStyle(
-                                                color: AppColors.textSecondary,
-
-                                                fontWeight: FontWeight.w100,
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    12,
-                                              ),
-                                            ),
-                                            Text(
-                                              "Explore",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    18,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                              return SizedBox(
-                                height: 130,
-                                child: ListView(
-                                  physics: BouncingScrollPhysics(),
-                                  scrollDirection: Axis.horizontal,
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
-                                  children: [
-                                    SmoothContainer(
-                                      width: 150,
-                                      height: 130,
-                                      color: AppColors.surfaceContainer,
-                                      smoothness: 1,
-                                      padding: EdgeInsets.all(12),
-                                      borderRadius: BorderRadius.circular(24),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SvgPicture.asset(
-                                            height: 24,
-                                            "img/svg/fire.svg",
-                                            package: "assets",
-                                            colorFilter: ColorFilter.mode(
-                                              AppColors.buttonSecondary,
-                                              BlendMode.srcIn,
-                                            ),
-                                          ),
-                                          Spacer(),
-                                          Text(
-                                            "Happening",
-                                            style: TextStyle(
-                                              color: AppColors.textSecondary,
-                                              fontWeight: FontWeight.w100,
-                                              fontSize:
-                                                  AppTextStyles(
-                                                    context,
-                                                  ).accumulator *
-                                                  12,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Tonight",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize:
-                                                  AppTextStyles(
-                                                    context,
-                                                  ).accumulator *
-                                                  18,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(width: 6),
-                                    SmoothContainer(
-                                      width: 150,
-                                      height: 110,
-                                      color: AppColors.surfaceContainer,
-
-                                      smoothness: 1,
-                                      padding: EdgeInsets.all(12),
-                                      borderRadius: BorderRadius.circular(24),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SvgPicture.asset(
-                                            height: 24,
-                                            "img/svg/location_pin.svg",
-                                            package: "assets",
-                                          ),
-                                          Spacer(),
-                                          Text(
-                                            "Happening",
-                                            style: TextStyle(
-                                              color: AppColors.textSecondary,
-
-                                              fontWeight: FontWeight.w100,
-                                              fontSize:
-                                                  AppTextStyles(
-                                                    context,
-                                                  ).accumulator *
-                                                  12,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Near me",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize:
-                                                  AppTextStyles(
-                                                    context,
-                                                  ).accumulator *
-                                                  18,
-                                            ),
-                                          ),
-                                        ],
                                       ),
                                     ),
                                     SizedBox(width: 6),
@@ -888,14 +750,14 @@ class AllVendorsWidget extends ConsumerWidget {
                           heading: data[index].name,
                           description: data[index].description,
                           image: data[index].media.first,
-                          tag: data[index].tags.first.capitalize(),
+                          tag: data[index].tags.first,
                           avatarImage: data[index].logo,
                           date: "date",
                         ),
                       );
                     },
                     openBuilder: (context, _) =>
-                        VendorDetailsScreen(vendor: data[index]),
+                        VendorDetailsScreen(id: data[index].id),
                   );
                 },
               ),
@@ -995,14 +857,13 @@ class AllEventsWidget extends ConsumerWidget {
                   final event = events[index];
                   return OpenContainer(
                     openBuilder: (context, _) =>
-                        EventDetailScreen(event: event),
+                        EventDetailScreen(id: event.id),
                     closedColor: Colors.transparent,
                     closedElevation: 0,
                     closedBuilder: (context, _) => Padding(
                       padding: const EdgeInsets.only(right: 16),
                       child: EventContainer(
                         tag: event.tags.firstOrNull!.capitalize(),
-                        discount: 50,
                         avatarImage: event.media.first,
                         date: event.createdAt.formatDate(),
                         heading: event.name,
@@ -1263,6 +1124,7 @@ class EventContainer extends StatelessWidget {
     this.tag,
     this.avatarImage,
     this.discount,
+    this.width = 330,
 
     required this.date,
   });
@@ -1270,6 +1132,7 @@ class EventContainer extends StatelessWidget {
   final String heading, date;
   final String? image, tag, description, avatarImage;
   final int? discount;
+  final double width;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -1282,9 +1145,8 @@ class EventContainer extends StatelessWidget {
           children: [
             CachedNetworkImage(
               imageUrl: image ?? '',
-              width: 330,
               height: MediaQuery.heightOf(context) * 0.28,
-
+              width: width,
               fit: BoxFit.cover,
               color: Colors.black.withValues(alpha: 0.4),
               colorBlendMode: BlendMode.darken,
@@ -1302,7 +1164,7 @@ class EventContainer extends StatelessWidget {
               ),
             ),
             SizedBox(
-              width: 330,
+              width: width,
               height: MediaQuery.heightOf(context) * 0.28,
 
               child: Column(
@@ -1365,7 +1227,6 @@ class EventContainer extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                           child: Container(
                             height: 120,
-
                             padding: EdgeInsets.symmetric(
                               horizontal: 12,
                               vertical: 8,

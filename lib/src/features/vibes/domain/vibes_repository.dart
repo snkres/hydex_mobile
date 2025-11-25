@@ -89,8 +89,31 @@ Future<List<Event>> getEvents(Ref ref, {int page = 1}) async {
     final answer = response.data['data'] as List<dynamic>;
 
     final eventsData = answer.first as List<dynamic>;
-    log(eventsData.toString());
     return eventsData.map((e) => EventMapper.fromMap(e)).toList();
+  } catch (e) {
+    throw Exception('Failed to load events: $e');
+  }
+}
+
+@riverpod
+Future<Event> getEventById(Ref ref, {required String id}) async {
+  try {
+    final response = await DioHelper.get('/events/$id');
+    final answer = response.data['data'] as Map<String, dynamic>;
+
+    return EventMapper.fromMap(answer);
+  } catch (e) {
+    throw Exception('Failed to load events: $e');
+  }
+}
+
+@riverpod
+Future<Vendor> getVendorbyID(Ref ref, {required String id}) async {
+  try {
+    final response = await DioHelper.get('/vendors/$id');
+    final answer = response.data['data'] as Map<String, dynamic>;
+
+    return VendorMapper.fromMap(answer);
   } catch (e) {
     throw Exception('Failed to load events: $e');
   }

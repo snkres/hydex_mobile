@@ -1,4 +1,5 @@
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/data/location.dart';
 
@@ -15,7 +16,6 @@ class Vendor with VendorMappable {
   final String description;
   final Location location;
 
-  final String categoryId;
   final String priceType;
   final Map<String, OperatingHours> operatingHours;
   final List<String> experiences;
@@ -37,7 +37,6 @@ class Vendor with VendorMappable {
     required this.website,
     required this.description,
     required this.location,
-    required this.categoryId,
     required this.priceType,
     required this.operatingHours,
     required this.experiences,

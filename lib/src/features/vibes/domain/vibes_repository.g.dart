@@ -275,3 +275,141 @@ final class GetEventsFamily extends $Family
   @override
   String toString() => r'getEventsProvider';
 }
+
+@ProviderFor(getEventById)
+const getEventByIdProvider = GetEventByIdFamily._();
+
+final class GetEventByIdProvider
+    extends $FunctionalProvider<AsyncValue<Event>, Event, FutureOr<Event>>
+    with $FutureModifier<Event>, $FutureProvider<Event> {
+  const GetEventByIdProvider._({
+    required GetEventByIdFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'getEventByIdProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$getEventByIdHash();
+
+  @override
+  String toString() {
+    return r'getEventByIdProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<Event> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Event> create(Ref ref) {
+    final argument = this.argument as String;
+    return getEventById(ref, id: argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetEventByIdProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$getEventByIdHash() => r'3eb6110a41d26f41c26f49528e8669a1e46d40f3';
+
+final class GetEventByIdFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<Event>, String> {
+  const GetEventByIdFamily._()
+    : super(
+        retry: null,
+        name: r'getEventByIdProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  GetEventByIdProvider call({required String id}) =>
+      GetEventByIdProvider._(argument: id, from: this);
+
+  @override
+  String toString() => r'getEventByIdProvider';
+}
+
+@ProviderFor(getVendorbyID)
+const getVendorbyIDProvider = GetVendorbyIDFamily._();
+
+final class GetVendorbyIDProvider
+    extends $FunctionalProvider<AsyncValue<Vendor>, Vendor, FutureOr<Vendor>>
+    with $FutureModifier<Vendor>, $FutureProvider<Vendor> {
+  const GetVendorbyIDProvider._({
+    required GetVendorbyIDFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'getVendorbyIDProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$getVendorbyIDHash();
+
+  @override
+  String toString() {
+    return r'getVendorbyIDProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<Vendor> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Vendor> create(Ref ref) {
+    final argument = this.argument as String;
+    return getVendorbyID(ref, id: argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetVendorbyIDProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$getVendorbyIDHash() => r'e4e049920d70ccb1895699d1ea670684d339f892';
+
+final class GetVendorbyIDFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<Vendor>, String> {
+  const GetVendorbyIDFamily._()
+    : super(
+        retry: null,
+        name: r'getVendorbyIDProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  GetVendorbyIDProvider call({required String id}) =>
+      GetVendorbyIDProvider._(argument: id, from: this);
+
+  @override
+  String toString() => r'getVendorbyIDProvider';
+}

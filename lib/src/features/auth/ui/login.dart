@@ -298,6 +298,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 ),
                                               );
                                             }
+                                            return null;
                                           });
                                       if (context.mounted) {
                                         context.go("/loading");

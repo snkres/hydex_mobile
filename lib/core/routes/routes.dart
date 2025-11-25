@@ -24,6 +24,10 @@ import 'package:hydex/src/features/loading/ui/loading.dart';
 import 'package:hydex/src/features/location/ui/location_screen.dart';
 import 'package:hydex/src/features/notifications/ui/notifications_screen.dart';
 import 'package:hydex/src/features/profile_summary/ui/profile_summary.dart';
+import 'package:hydex/src/features/vibes/ui/components/event_details.dart';
+import 'package:hydex/src/features/vibes/ui/details_screen.dart';
+import 'package:hydex/src/features/vibes/ui/happening_nearby.dart';
+import 'package:hydex/src/features/vibes/ui/happening_tonight.dart';
 import 'package:hydex/src/features/waitlist/ui/waitlist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -136,6 +140,28 @@ class AppRoutes {
       GoRoute(
         path: "/notifications",
         builder: (context, state) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: "/notifications",
+        builder: (context, state) => const NotificationsScreen(),
+      ),
+       GoRoute(
+        path: "/happening_tonight",
+        builder: (context, state) => const HappeningTonight(),
+      ),
+       GoRoute(
+        path: "/happening_nearby",
+        builder: (context, state) => const HappeningNearby(),
+      ),
+      GoRoute(
+        path: "/event/:id",
+        builder: (context, state) =>
+            EventDetailScreen(id: state.pathParameters["id"] as String),
+      ),
+      GoRoute(
+        path: "/vendor/:id",
+        builder: (context, state) =>
+            VendorDetailsScreen(id: state.pathParameters["id"] as String),
       ),
     ],
   );

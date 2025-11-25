@@ -1,4 +1,5 @@
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/data/coordinates.dart';
 import 'package:hydex/src/features/vibes/data/location.dart';
 import 'package:hydex/src/features/vibes/data/vendor.dart';
@@ -53,6 +54,14 @@ class OperatingHours with OperatingHoursMappable {
 }
 
 @MappableClass()
+class Experiences with ExperiencesMappable {
+  final String name;
+  final String description;
+
+  Experiences({required this.name, required this.description});
+}
+
+@MappableClass()
 class Event with EventMappable {
   final String id;
   final String name;
@@ -64,8 +73,8 @@ class Event with EventMappable {
   final List<Detail> details;
   final String priceType;
   final List<String> tags;
-  final List<String> experiences;
-
+  final List<Experiences> experiences;
+  final EventCategory? category;
 
   final Vendor vendor;
   final DateTime createdAt;
@@ -81,9 +90,9 @@ class Event with EventMappable {
     required this.details,
     required this.priceType,
     required this.tags,
+    required this.category,
     required this.experiences,
     required this.vendor,
     required this.createdAt,
-
   });
 }

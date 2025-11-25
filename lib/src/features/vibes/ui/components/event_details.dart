@@ -17,31 +17,35 @@ import 'package:hydex/src/features/location/domain/location_service.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/data/location.dart';
 import 'package:hydex/src/features/vibes/data/vendor.dart';
+import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/features/vibes/ui/components/nightlife.dart';
 import 'package:hydex/src/features/vibes/ui/components/ticket_widget.dart';
+import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
+import 'package:intl/intl.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:readmore/readmore.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class EventDetailScreen extends StatefulWidget {
-  const EventDetailScreen({super.key, required this.event});
+class EventDetailScreen extends ConsumerStatefulWidget {
+  const EventDetailScreen({super.key, required this.id});
 
-  final Event event;
+  final String id;
 
   @override
-  State<EventDetailScreen> createState() => _EventDetailScreenState();
+  ConsumerState<EventDetailScreen> createState() => _EventDetailScreenState();
 }
 
-class _EventDetailScreenState extends State<EventDetailScreen> {
-  // <-- track if pinned
+class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
   final pageController = PageController();
   bool isBarCollapsed = false;
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
   bool _isCollapsedFromSheet = false;
-  final double _collapseThreshold = 0.98;
+  final double _collapseThreshold = 0.9;
+  double _sheetSize = 0.3;
 
   @override
   void initState() {
@@ -51,6 +55,12 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       if (next != _isCollapsedFromSheet) {
         setState(() {
           _isCollapsedFromSheet = next;
+        });
+      }
+      // Update sheet size for image overlay opacity
+      if (_sheetSize != _sheetController.size) {
+        setState(() {
+          _sheetSize = _sheetController.size;
         });
       }
     });
@@ -65,134 +75,233 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButtonLocation: .centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: PrimaryButton(
-          bgColor: Colors.white,
-          frColor: Colors.black,
-          onTap: () async {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return PickGuestSheet(
-                  onPressed: () => context.push("/create-booking"),
-                );
-              },
-            );
-          },
-          title: "RSVP",
-        ),
-      ),
+    final eventAsync = ref.watch(getEventByIdProvider(id: widget.id));
+    final double screenHeight = MediaQuery.of(context).size.height;
 
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: PageView.builder(
-              itemCount: widget.event.media.length,
-              itemBuilder: (_, i) {
-                return CachedNetworkImage(
-                  imageUrl: widget.event.media[i],
-                  alignment: Alignment.topCenter,
-                  fit: BoxFit.cover,
-                  placeholder: (_, __) =>
-                      const Center(child: CircularProgressIndicator()),
-                  errorWidget: (_, __, ___) =>
-                      const Center(child: Icon(Icons.error)),
-                );
+    final overlayOpacity = ((_sheetSize - 0.3) / (0.9 - 0.3) * 0.6).clamp(
+      0.0,
+      0.6,
+    );
+
+    return eventAsync.when(
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (e, st) =>
+          const Scaffold(body: Center(child: Text("Something went wrong"))),
+      data: (event) {
+        return Scaffold(
+          // FAB Logic ...
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: PrimaryButton(
+              bgColor: Colors.white,
+              frColor: Colors.black,
+              onTap: () async {
+                /* ... */
               },
+              title: "RSVP",
             ),
           ),
 
-          NestedScrollView(
-            physics: NeverScrollableScrollPhysics(),
-            headerSliverBuilder: (context, _) => [
-              SliverAppBar(
-                backgroundColor: Colors.transparent,
-                title: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 220),
-                  switchInCurve: Curves.easeOut,
-                  switchOutCurve: Curves.easeIn,
-                  child: _isCollapsedFromSheet
-                      ? Text(widget.event.name, key: ValueKey('title'))
-                      : const SizedBox.shrink(key: ValueKey('empty')),
+          body: Stack(
+            children: [
+              // -----------------------------------------------
+              // LAYER 1: Background Image + Overlay
+              // -----------------------------------------------
+              Positioned.fill(
+                child: PageView.builder(
+                  controller: pageController,
+                  itemCount: event.media.length,
+                  itemBuilder: (_, i) {
+                    return Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        CachedNetworkImage(
+                          imageUrl: event.media[i],
+                          fit: BoxFit.cover,
+                          alignment: Alignment.topCenter,
+                          placeholder: (_, __) =>
+                              const Center(child: CircularProgressIndicator()),
+                          errorWidget: (_, __, ___) =>
+                              const Center(child: Icon(Icons.error)),
+                        ),
+                        // The darkening overlay
+                        Container(
+                          color: Colors.black.withOpacity(overlayOpacity),
+                        ),
+                      ],
+                    );
+                  },
                 ),
-                actions: [
-                  IconButton.filled(
-                    onPressed: () {},
-                    icon: SvgPicture.asset(
-                      "img/svg/share.svg",
-                      package: "assets",
-                    ),
-                  ),
-
-                  SizedBox(width: 9),
-                  IconButton.filled(
-                    onPressed: () {},
-                    icon: SvgPicture.asset(
-                      "img/svg/favorite.svg",
-                      package: "assets",
-                    ),
-                  ),
-                  SizedBox(width: 5),
-                ],
               ),
-            ],
-            body: DraggableScrollableSheet(
-              controller: _sheetController,
-              maxChildSize: .98,
-              initialChildSize: .3,
-              minChildSize: .3,
-              snap: true,
-              snapSizes: const [0.6, 0.8, 0.98], // tweak as you like
 
-              builder: (context, scrollController) => Material(
-                color: Colors.transparent,
+              // -----------------------------------------------
+              // LAYER 2: Drag Logic (The Invisible Controller)
+              // -----------------------------------------------
+              // This sits BEHIND the sheet but ON TOP of the image.
+              // It catches drags in the empty space.
+              Positioned.fill(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onVerticalDragUpdate: (details) {
+                    // 1. Stop dragging if sheet is already full (let the sheet scroll instead)
+                    if (_sheetSize >= _collapseThreshold &&
+                        details.delta.dy < 0)
+                      return;
 
-                child: SmoothClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(32),
-                    topRight: Radius.circular(32),
-                  ),
-                  smoothness: 1,
-                  child: Container(
-                    decoration: const BoxDecoration(color: Colors.transparent),
-                    child: SingleChildScrollView(
-                      controller: scrollController,
-                      child: CollapsedEventContainer(
-                        name: widget.event.name,
-                        thingsToKnow: ["Mawkoos"],
-                        description: widget.event.description,
-                        endTime: widget.event.endTime,
-                        startTime: widget.event.startTime,
-                        tags: widget.event.tags,
-                        location: widget.event.location,
-                        pricing: widget.event.priceType,
-                        owner: widget.event.vendor,
+                    // 2. Calculate new size
+                    final delta = -details.delta.dy / screenHeight;
+                    final newSize = (_sheetSize + delta).clamp(0.3, 0.9);
+
+                    // 3. Move sheet
+                    if (_sheetController.isAttached) {
+                      _sheetController.jumpTo(newSize);
+                    }
+                  },
+                  child: Container(color: Colors.transparent),
+                ),
+              ),
+
+              // -----------------------------------------------
+              // LAYER 3: The Draggable Sheet (Content)
+              // -----------------------------------------------
+              // Since this is above Layer 2, touches here are handled by the Sheet
+              // (scrolling), not the drag detector.
+              DraggableScrollableSheet(
+                controller: _sheetController,
+                maxChildSize: 0.9,
+                initialChildSize: 0.3,
+                minChildSize: 0.3,
+                builder: (context, scrollController) {
+                  return Material(
+                    color: Colors.transparent,
+                    child: SmoothClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(32),
+                      ),
+                      smoothness: 1,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.transparent,
+                        ), // Or your bg color
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          // Ensure content is scrollable even if short
+                          physics: const ClampingScrollPhysics(),
+                          child: CollapsedEventContainer(
+                            experiences: event.experiences,
+                            name: event.name,
+                            createdTime: event.createdAt,
+                            thingsToKnow: const ["Mawkoos"],
+                            description: event.description,
+                            endTime: event.endTime,
+                            startTime: event.startTime,
+                            tags: event.tags,
+                            location: event.location,
+                            pricing: event.priceType,
+                            owner: event.vendor,
+                          ),
+                        ),
                       ),
                     ),
+                  );
+                },
+              ),
+
+              // -----------------------------------------------
+              // LAYER 4: Custom "App Bar" (Visual Only)
+              // -----------------------------------------------
+              // We position this at the top. We use a Row so touches pass through
+              // the empty spaces around the buttons.
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: SafeArea(
+                  child: SizedBox(
+                    height: 70, // Standard AppBar height
+                    child: Row(
+                      children: [
+                        CustomBackButton(),
+                        Expanded(
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 220),
+                            switchInCurve: Curves.easeOut,
+                            switchOutCurve: Curves.easeIn,
+                            child: _isCollapsedFromSheet
+                                ? Text(
+                                    event.name,
+                                    key: const ValueKey('title'),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  )
+                                : const SizedBox.shrink(key: ValueKey('empty')),
+                          ),
+                        ),
+
+                        // Action Buttons
+                        IconButton.filled(
+                          onPressed: () {
+                            final formatter = DateFormat("EEE, MMM d • h:mm a");
+                            final start = formatter.format(event.startTime);
+
+                            final shareText =
+                                "I'm going to ${event.name} on $start!\n"
+                                "Join me: https://app.hyde-x.com/event/${event.id}";
+
+                            SharePlus.instance.share(
+                              ShareParams(text: shareText),
+                            );
+                          },
+                          icon: SvgPicture.asset(
+                            "img/svg/share.svg",
+                            package: "assets",
+                          ),
+                        ),
+                        const SizedBox(width: 9),
+                        IconButton.filled(
+                          onPressed: () {
+                            /* Favorite Logic */
+                          },
+                          icon: SvgPicture.asset(
+                            "img/svg/favorite.svg",
+                            package: "assets",
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
-                child: Container(
-                  height: 90,
-                  color: AppColors.backgroundBase.withOpacity(0.1),
+
+              // -----------------------------------------------
+              // LAYER 5: Bottom Blur Overlay
+              // -----------------------------------------------
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+                    child: Container(
+                      height: 90,
+                      color: AppColors.backgroundBase.withOpacity(0.1),
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -208,12 +317,15 @@ class CollapsedEventContainer extends ConsumerWidget {
     required this.endTime,
     required this.pricing,
     required this.owner,
+    required this.createdTime,
     required this.thingsToKnow,
+    required this.experiences,
   });
   final String name, description, pricing;
   final Location location;
   final List<String> tags, thingsToKnow;
-  final DateTime startTime, endTime;
+  final List<Experiences> experiences;
+  final DateTime startTime, endTime, createdTime;
   final locationService = LocationService();
   final Vendor owner;
 
@@ -229,6 +341,12 @@ class CollapsedEventContainer extends ConsumerWidget {
     } else {
       return "$minutes mins";
     }
+  }
+
+  int getHostingTime(DateTime createdAt) {
+    final currentTime = DateTime.now();
+
+    return currentTime.year - createdAt.year;
   }
 
   @override
@@ -706,7 +824,7 @@ class CollapsedEventContainer extends ConsumerWidget {
                                         ),
 
                                         Text(
-                                          "2.2 Years",
+                                          "${getHostingTime(createdTime)} Years",
                                           style: TextStyle(
                                             fontWeight: FontWeight.w700,
                                             fontSize:
@@ -731,7 +849,7 @@ class CollapsedEventContainer extends ConsumerWidget {
                 ),
                 SizedBox(height: 24),
 
-                NightLifeSection(),
+                NightLifeSection(experiences: experiences),
                 // SportsSection(),
                 // AdventureScreen(),
                 // ShowSection(),

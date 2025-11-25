@@ -49,11 +49,6 @@ class VendorMapper extends ClassMapperBase<Vendor> {
     'location',
     _$location,
   );
-  static String _$categoryId(Vendor v) => v.categoryId;
-  static const Field<Vendor, String> _f$categoryId = Field(
-    'categoryId',
-    _$categoryId,
-  );
   static String _$priceType(Vendor v) => v.priceType;
   static const Field<Vendor, String> _f$priceType = Field(
     'priceType',
@@ -104,7 +99,6 @@ class VendorMapper extends ClassMapperBase<Vendor> {
     #website: _f$website,
     #description: _f$description,
     #location: _f$location,
-    #categoryId: _f$categoryId,
     #priceType: _f$priceType,
     #operatingHours: _f$operatingHours,
     #experiences: _f$experiences,
@@ -126,7 +120,6 @@ class VendorMapper extends ClassMapperBase<Vendor> {
       website: data.dec(_f$website),
       description: data.dec(_f$description),
       location: data.dec(_f$location),
-      categoryId: data.dec(_f$categoryId),
       priceType: data.dec(_f$priceType),
       operatingHours: data.dec(_f$operatingHours),
       experiences: data.dec(_f$experiences),
@@ -208,7 +201,6 @@ abstract class VendorCopyWith<$R, $In extends Vendor, $Out>
     String? website,
     String? description,
     Location? location,
-    String? categoryId,
     String? priceType,
     Map<String, OperatingHours>? operatingHours,
     List<String>? experiences,
@@ -295,7 +287,6 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
     String? website,
     String? description,
     Location? location,
-    String? categoryId,
     String? priceType,
     Map<String, OperatingHours>? operatingHours,
     List<String>? experiences,
@@ -315,7 +306,6 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
       if (website != null) #website: website,
       if (description != null) #description: description,
       if (location != null) #location: location,
-      if (categoryId != null) #categoryId: categoryId,
       if (priceType != null) #priceType: priceType,
       if (operatingHours != null) #operatingHours: operatingHours,
       if (experiences != null) #experiences: experiences,
@@ -337,7 +327,6 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
     website: data.get(#website, or: $value.website),
     description: data.get(#description, or: $value.description),
     location: data.get(#location, or: $value.location),
-    categoryId: data.get(#categoryId, or: $value.categoryId),
     priceType: data.get(#priceType, or: $value.priceType),
     operatingHours: data.get(#operatingHours, or: $value.operatingHours),
     experiences: data.get(#experiences, or: $value.experiences),
