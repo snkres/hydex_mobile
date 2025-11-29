@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
+import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 
@@ -25,7 +26,7 @@ class SettingsScreen extends StatelessWidget {
                     Text(
                       "Settings",
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: AppColors.textPrimary,
                         fontSize: AppTextStyles(context).accumulator * 28,
                         fontWeight: FontWeight.w700,
                       ),
@@ -33,7 +34,7 @@ class SettingsScreen extends StatelessWidget {
                     GestureDetector(
                       onTap: () => context.push("/terms"),
                       child: Text(
-                        "Terms and Conditions",
+                        "Privacy Policy",
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
 
@@ -219,16 +220,10 @@ class SettingsScreen extends StatelessWidget {
                         );
                       },
                       style: ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll(
-                          Theme.of(context).colorScheme.secondaryContainer,
-                        ),
+                        foregroundColor: .all(AppColors.textPrimary),
+                        backgroundColor: .all(AppColors.surfaceInputField),
                       ),
-                      child: Text(
-                        "Log out",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
+                      child: Text("Log out"),
                     ),
                     ElevatedButton(
                       onPressed: () {
@@ -323,16 +318,10 @@ class SettingsScreen extends StatelessWidget {
                         );
                       },
                       style: ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll(
-                          Theme.of(context).colorScheme.secondaryContainer,
-                        ),
+                        foregroundColor: .all(AppColors.textPrimary),
+                        backgroundColor: .all(AppColors.surfaceInputField),
                       ),
-                      child: Text(
-                        "Delete account",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
+                      child: Text("Delete account"),
                     ),
                   ],
                 ),

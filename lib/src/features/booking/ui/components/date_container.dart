@@ -14,7 +14,7 @@ class _DateContainerState extends State<DateContainer> {
   DateTime selectedDate = DateTime.now();
 
   final List<DateTime> dates = List.generate(
-    10,
+    7,
     (index) => DateTime.now().add(Duration(days: index)),
   );
 

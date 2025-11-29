@@ -11,12 +11,14 @@ import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
+import 'package:hydex/src/features/booking/data/create_book.dart';
 import 'package:hydex/src/features/booking/data/format_time.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:hydex/src/features/location/domain/location_service.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/data/location.dart';
 import 'package:hydex/src/features/vibes/data/vendor.dart';
+import 'package:hydex/src/features/vibes/domain/event_notifier.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/features/vibes/ui/components/nightlife.dart';
 import 'package:hydex/src/features/vibes/ui/components/ticket_widget.dart';
@@ -75,7 +77,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final eventAsync = ref.watch(getEventByIdProvider(id: widget.id));
+    final eventAsync = ref.watch(eventProvider(widget.id));
     final double screenHeight = MediaQuery.of(context).size.height;
 
     final overlayOpacity = ((_sheetSize - 0.3) / (0.9 - 0.3) * 0.6).clamp(
@@ -90,7 +92,6 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
           const Scaffold(body: Center(child: Text("Something went wrong"))),
       data: (event) {
         return Scaffold(
-          // FAB Logic ...
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
           floatingActionButton: Padding(
@@ -99,17 +100,14 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               bgColor: Colors.white,
               frColor: Colors.black,
               onTap: () async {
-                /* ... */
+                final book = CreateBook(name: event.name);
+                context.push("/create-booking", extra: book);
               },
               title: "RSVP",
             ),
           ),
-
           body: Stack(
             children: [
-              // -----------------------------------------------
-              // LAYER 1: Background Image + Overlay
-              // -----------------------------------------------
               Positioned.fill(
                 child: PageView.builder(
                   controller: pageController,
@@ -137,25 +135,17 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                 ),
               ),
 
-              // -----------------------------------------------
-              // LAYER 2: Drag Logic (The Invisible Controller)
-              // -----------------------------------------------
-              // This sits BEHIND the sheet but ON TOP of the image.
-              // It catches drags in the empty space.
               Positioned.fill(
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onVerticalDragUpdate: (details) {
-                    // 1. Stop dragging if sheet is already full (let the sheet scroll instead)
                     if (_sheetSize >= _collapseThreshold &&
                         details.delta.dy < 0)
                       return;
 
-                    // 2. Calculate new size
                     final delta = -details.delta.dy / screenHeight;
                     final newSize = (_sheetSize + delta).clamp(0.3, 0.9);
 
-                    // 3. Move sheet
                     if (_sheetController.isAttached) {
                       _sheetController.jumpTo(newSize);
                     }
@@ -164,11 +154,6 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                 ),
               ),
 
-              // -----------------------------------------------
-              // LAYER 3: The Draggable Sheet (Content)
-              // -----------------------------------------------
-              // Since this is above Layer 2, touches here are handled by the Sheet
-              // (scrolling), not the drag detector.
               DraggableScrollableSheet(
                 controller: _sheetController,
                 maxChildSize: 0.9,
@@ -210,18 +195,13 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                 },
               ),
 
-              // -----------------------------------------------
-              // LAYER 4: Custom "App Bar" (Visual Only)
-              // -----------------------------------------------
-              // We position this at the top. We use a Row so touches pass through
-              // the empty spaces around the buttons.
               Positioned(
                 top: 0,
                 left: 0,
                 right: 0,
                 child: SafeArea(
                   child: SizedBox(
-                    height: 70, // Standard AppBar height
+                    height: 70,
                     child: Row(
                       children: [
                         CustomBackButton(),
@@ -266,12 +246,20 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                         ),
                         const SizedBox(width: 9),
                         IconButton.filled(
-                          onPressed: () {
-                            /* Favorite Logic */
+                          onPressed: () async {
+                            await ref
+                                .read(eventProvider(widget.id).notifier)
+                                .toggleFavorite();
                           },
                           icon: SvgPicture.asset(
                             "img/svg/favorite.svg",
                             package: "assets",
+                            colorFilter: .mode(
+                              event.isFavorited
+                                  ? Colors.red
+                                  : AppColors.textPrimary,
+                              .srcIn,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -280,10 +268,6 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                   ),
                 ),
               ),
-
-              // -----------------------------------------------
-              // LAYER 5: Bottom Blur Overlay
-              // -----------------------------------------------
               Positioned(
                 bottom: 0,
                 left: 0,

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:animations/animations.dart';
@@ -10,8 +11,10 @@ import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
+import 'package:hydex/src/features/booking/data/create_book.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
+import 'package:hydex/src/features/vibes/domain/vendor_notifier.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/features/vibes/ui/components/gallery.dart';
 import 'package:hydex/src/features/vibes/ui/components/ticket_widget.dart';
@@ -140,9 +143,11 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final vendorAsync = ref.watch(getVendorbyIDProvider(id: widget.id));
+    final vendorAsync = ref.watch(vendorProvider(widget.id));
     final double screenHeight = MediaQuery.of(context).size.height;
-
+    final eventsAsync = ref.watch(
+      getEventByVendorProvider(vendorID: widget.id),
+    );
     // Logic for overlay opacity
     final overlayOpacity = ((_sheetSize - 0.3) / (0.9 - 0.3) * 0.6).clamp(
       0.0,
@@ -156,14 +161,8 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
           bgColor: Colors.white,
           frColor: Colors.black,
           onTap: () async {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return PickGuestSheet(
-                  onPressed: () => context.push("/create-booking"),
-                );
-              },
-            );
+            final book = CreateBook(name: vendorAsync.requireValue.name);
+            context.push("/create-booking", extra: book);
           },
           title: "RSVP",
         ),
@@ -746,50 +745,71 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 24),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                      ),
-                                      child: Text(
-                                        "Upcoming Events".toUpperCase(),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.textSecondary,
-                                          fontSize:
-                                              AppTextStyles(
-                                                context,
-                                              ).accumulator *
-                                              16,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: 8),
 
-                                    SizedBox(
-                                      height: 202,
-                                      child: ListView.separated(
-                                        itemCount: 3,
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                        ),
-                                        scrollDirection: Axis.horizontal,
-                                        separatorBuilder: (context, index) =>
-                                            SizedBox(width: 8),
-                                        itemBuilder: (context, index) {
-                                          return SizedBox(
-                                            width: 330,
-                                            child: EventContainer(
-                                              heading:
-                                                  "Zeft Funk x Moenes x Jess ",
-                                              image:
-                                                  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
-                                              avatarImage:
-                                                  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
-                                              date: "Sat, 4 Oct, 5:00PM",
+                                    eventsAsync.when(
+                                      data: (data) {
+                                        return Column(
+                                          crossAxisAlignment: .start,
+                                          children: [
+                                            SizedBox(height: 24),
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 16,
+                                              ),
+                                              child: Text(
+                                                "Upcoming Events".toUpperCase(),
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color:
+                                                      AppColors.textSecondary,
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      16,
+                                                ),
+                                              ),
                                             ),
-                                          );
-                                        },
+                                            SizedBox(height: 8),
+                                            SizedBox(
+                                              height: 202,
+                                              child: ListView.separated(
+                                                itemCount: 3,
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                ),
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                separatorBuilder:
+                                                    (context, index) =>
+                                                        SizedBox(width: 8),
+                                                itemBuilder: (context, index) {
+                                                  return SizedBox(
+                                                    width: 330,
+                                                    child: EventContainer(
+                                                      heading:
+                                                          "Zeft Funk x Moenes x Jess ",
+                                                      image:
+                                                          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
+                                                      avatarImage:
+                                                          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
+                                                      date:
+                                                          "Sat, 4 Oct, 5:00PM",
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                      error: (e, s) {
+                                        log("Event: ", error: e, stackTrace: s);
+                                        return SizedBox.shrink();
+                                      },
+                                      loading: () => Center(
+                                        child:
+                                            CircularProgressIndicator.adaptive(),
                                       ),
                                     ),
                                     SizedBox(height: 24),
@@ -1055,8 +1075,10 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                         ),
                         const SizedBox(width: 9),
                         IconButton.filled(
-                          onPressed: () {
-                            /* Favorite Logic */
+                          onPressed: () async {
+                            await ref
+                                .read(vendorProvider(widget.id).notifier)
+                                .toggleFavorite();
                           },
                           icon: SvgPicture.asset(
                             "img/svg/favorite.svg",

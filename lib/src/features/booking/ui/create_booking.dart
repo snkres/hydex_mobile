@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/booking/data/create_book.dart';
 import 'package:hydex/src/features/booking/ui/components/access_container.dart';
 import 'package:hydex/src/features/booking/ui/components/bottom_bar.dart';
 import 'package:hydex/src/features/booking/ui/components/date_container.dart';
@@ -13,7 +14,9 @@ import 'package:hydex/src/features/booking/ui/components/slots_container.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 
 class CreateBooking extends StatelessWidget {
-  const CreateBooking({super.key});
+  const CreateBooking({super.key, required this.book});
+
+  final CreateBook book;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +66,7 @@ class CreateBooking extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "La Jardin",
+                                book.name,
                                 style: AppTextStyles(context).primaryRegular
                                     .copyWith(color: AppColors.textSecondary),
                               ),

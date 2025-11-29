@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
+import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/country_picker_provider.dart';
 import 'package:hydex/src/features/auth/ui/components/country_picker.dart';
@@ -180,6 +181,11 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
         Padding(
           padding: const EdgeInsets.only(bottom: 24),
           child: PrimaryButton(
+            nullbgColor: Color(0xff080808),
+            nullfrColor: AppColors.surfaceContainer,
+            bgColor: AppColors.textBrand,
+            frColor: AppColors.textPrimary,
+
             onTap: textController.text != ''
                 ? () async {
                     if (phoneError != null) {
@@ -202,7 +208,6 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                                 phoneError = e.message;
                               });
                             }
-                            return "";
                           });
                       if (context.mounted) {
                         context.go("/otp");

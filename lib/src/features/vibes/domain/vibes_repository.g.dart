@@ -413,3 +413,78 @@ final class GetVendorbyIDFamily extends $Family
   @override
   String toString() => r'getVendorbyIDProvider';
 }
+
+@ProviderFor(getEventByVendor)
+const getEventByVendorProvider = GetEventByVendorFamily._();
+
+final class GetEventByVendorProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Event>>,
+          List<Event>,
+          FutureOr<List<Event>>
+        >
+    with $FutureModifier<List<Event>>, $FutureProvider<List<Event>> {
+  const GetEventByVendorProvider._({
+    required GetEventByVendorFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'getEventByVendorProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$getEventByVendorHash();
+
+  @override
+  String toString() {
+    return r'getEventByVendorProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<List<Event>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<Event>> create(Ref ref) {
+    final argument = this.argument as String;
+    return getEventByVendor(ref, vendorID: argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetEventByVendorProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$getEventByVendorHash() => r'ea659d065c21b978eeb3dcb222454a79fe1d26f1';
+
+final class GetEventByVendorFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<List<Event>>, String> {
+  const GetEventByVendorFamily._()
+    : super(
+        retry: null,
+        name: r'getEventByVendorProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  GetEventByVendorProvider call({required String vendorID}) =>
+      GetEventByVendorProvider._(argument: vendorID, from: this);
+
+  @override
+  String toString() => r'getEventByVendorProvider';
+}

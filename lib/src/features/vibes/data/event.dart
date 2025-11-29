@@ -75,6 +75,7 @@ class Event with EventMappable {
   final List<String> tags;
   final List<Experiences> experiences;
   final EventCategory? category;
+  final bool isFavorited;
 
   final Vendor vendor;
   final DateTime createdAt;
@@ -94,5 +95,6 @@ class Event with EventMappable {
     required this.experiences,
     required this.vendor,
     required this.createdAt,
+    this.isFavorited = false,
   });
 }

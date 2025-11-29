@@ -1,30 +1,88 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/booking/data/booking.dart';
+import 'package:hydex/src/features/profile/data/upcoming_event.dart';
+import 'package:hydex/src/features/profile/domain/profile_providers.dart';
+import 'package:hydex/src/features/vibes/data/coordinates.dart';
+import 'package:hydex/src/features/vibes/data/location.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
+import 'package:intl/intl.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
-class UpcomingEvent extends StatelessWidget {
-  const UpcomingEvent({super.key});
+class UpcomingEventSection extends ConsumerWidget {
+  const UpcomingEventSection({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: ListView.separated(
-        separatorBuilder: (_, _) =>
-            Column(children: [Divider(), SizedBox(height: 16)]),
-        itemCount: 3,
-        itemBuilder: (context, index) => UpcomingEventContainer(),
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final upcomingEvents = ref.watch(getUpcomingEventsProvider);
+    return upcomingEvents.when(
+      data: (data) {
+        if (data.isEmpty) {
+          return Center(child: Text("No Upcoming Event"));
+        }
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: ListView.separated(
+            separatorBuilder: (_, _) =>
+                Column(children: [Divider(), SizedBox(height: 16)]),
+            itemCount: data.length,
+            itemBuilder: (context, index) =>
+                UpcomingEventContainer(event: data[index]),
+          ),
+        );
+      },
+      error: (e, s) => Center(child: Text("Error")),
+      loading: () => Center(child: CircularProgressIndicator.adaptive()),
     );
   }
 }
 
 class UpcomingEventContainer extends StatelessWidget {
-  const UpcomingEventContainer({super.key});
+  const UpcomingEventContainer({super.key, required this.event});
+
+  final UpcomingEvent event;
+
+  String formatDate(DateTime time) {
+    final date = DateTime.parse("2025-12-25T00:30:00.000Z");
+    final nice = DateFormat('MMM d').format(date);
+    return nice;
+  }
+
+  String weekdayShort(DateTime date) {
+    return DateFormat('EEE').format(date);
+  }
+
+  Color getStatusBgColor(UpcomingEventStatus status) {
+    switch (status) {
+      case UpcomingEventStatus.confirmed:
+        return AppColors.signalFunSuccess;
+
+      case UpcomingEventStatus.pending:
+        return AppColors.signalFunWarning;
+      case UpcomingEventStatus.cancelled:
+        return AppColors.signalFunError;
+      case UpcomingEventStatus.invitation:
+        return AppColors.signalFunSuccess;
+    }
+  }
+
+  Color getStatusFrColor(UpcomingEventStatus status) {
+    switch (status) {
+      case UpcomingEventStatus.confirmed:
+        return AppColors.textSuccess;
+
+      case UpcomingEventStatus.pending:
+        return AppColors.textWarning;
+      case UpcomingEventStatus.cancelled:
+        return AppColors.textError;
+      case UpcomingEventStatus.invitation:
+        return AppColors.textSuccess;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +108,7 @@ class UpcomingEventContainer extends StatelessWidget {
                   spacing: 4,
                   children: [
                     Text(
-                      "16",
+                      event.date.day.toString(),
                       style: TextStyle(
                         fontSize: AppTextStyles(context).accumulator * 18,
                         color: AppColors.signalBrandSolid,
@@ -58,7 +116,7 @@ class UpcomingEventContainer extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "SAT",
+                      weekdayShort(event.date).toUpperCase(),
                       style: TextStyle(
                         fontSize: AppTextStyles(context).accumulator * 14,
                         color: AppColors.signalBrandSolid,
@@ -78,14 +136,14 @@ class UpcomingEventContainer extends StatelessWidget {
                       mainAxisAlignment: .spaceBetween,
                       children: [
                         Text(
-                          "Midnight Soirée",
+                          event.name,
                           style: TextStyle(
                             fontSize: AppTextStyles(context).accumulator * 16,
                             fontWeight: .w600,
                           ),
                         ),
                         Text(
-                          "Nov 16 • 10:00 PM",
+                          "${formatDate(event.date)} • ${event.time}",
                           style: TextStyle(
                             color: AppColors.textSecondary,
                             fontSize: AppTextStyles(context).accumulator * 14,
@@ -96,14 +154,14 @@ class UpcomingEventContainer extends StatelessWidget {
                     Container(
                       padding: .symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: AppColors.signalFunSuccess,
+                        color: getStatusBgColor(event.status),
                         borderRadius: .circular(100),
                       ),
                       child: Text(
-                        "Confirmed",
+                        event.status.name.capitalize(),
                         style: TextStyle(
                           fontSize: AppTextStyles(context).accumulator * 12,
-                          color: AppColors.textSuccess,
+                          color: getStatusFrColor(event.status),
                         ),
                       ),
                     ),
@@ -126,7 +184,7 @@ class UpcomingEventContainer extends StatelessWidget {
                   width: 15,
                 ),
                 Text(
-                  "The Vault, Zamalek",
+                  event.location.street,
                   style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: AppTextStyles(context).accumulator * 14,
@@ -144,7 +202,7 @@ class UpcomingEventContainer extends StatelessWidget {
                   width: 15,
                 ),
                 Text(
-                  "Booked for 2",
+                  "Booked for ${event.numberOfGuests}",
                   style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: AppTextStyles(context).accumulator * 14,
@@ -160,6 +218,7 @@ class UpcomingEventContainer extends StatelessWidget {
             context.push("/profile-summary");
           },
           title: "View details",
+          frColor: AppColors.buttonPrimary,
           bgColor: AppColors.buttonTertiary,
         ),
         SizedBox(height: 16),

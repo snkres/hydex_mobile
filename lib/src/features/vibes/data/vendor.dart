@@ -15,6 +15,7 @@ class Vendor with VendorMappable {
   final String website;
   final String description;
   final Location location;
+  final bool isFavorited;
 
   final String priceType;
   final Map<String, OperatingHours> operatingHours;
@@ -35,6 +36,7 @@ class Vendor with VendorMappable {
     required this.name,
     required this.headline,
     required this.website,
+    this.isFavorited = false,
     required this.description,
     required this.location,
     required this.priceType,

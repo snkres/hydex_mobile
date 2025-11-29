@@ -39,6 +39,13 @@ class VendorMapper extends ClassMapperBase<Vendor> {
   );
   static String _$website(Vendor v) => v.website;
   static const Field<Vendor, String> _f$website = Field('website', _$website);
+  static bool _$isFavorited(Vendor v) => v.isFavorited;
+  static const Field<Vendor, bool> _f$isFavorited = Field(
+    'isFavorited',
+    _$isFavorited,
+    opt: true,
+    def: false,
+  );
   static String _$description(Vendor v) => v.description;
   static const Field<Vendor, String> _f$description = Field(
     'description',
@@ -97,6 +104,7 @@ class VendorMapper extends ClassMapperBase<Vendor> {
     #name: _f$name,
     #headline: _f$headline,
     #website: _f$website,
+    #isFavorited: _f$isFavorited,
     #description: _f$description,
     #location: _f$location,
     #priceType: _f$priceType,
@@ -118,6 +126,7 @@ class VendorMapper extends ClassMapperBase<Vendor> {
       name: data.dec(_f$name),
       headline: data.dec(_f$headline),
       website: data.dec(_f$website),
+      isFavorited: data.dec(_f$isFavorited),
       description: data.dec(_f$description),
       location: data.dec(_f$location),
       priceType: data.dec(_f$priceType),
@@ -199,6 +208,7 @@ abstract class VendorCopyWith<$R, $In extends Vendor, $Out>
     String? name,
     String? headline,
     String? website,
+    bool? isFavorited,
     String? description,
     Location? location,
     String? priceType,
@@ -285,6 +295,7 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
     String? name,
     String? headline,
     String? website,
+    bool? isFavorited,
     String? description,
     Location? location,
     String? priceType,
@@ -304,6 +315,7 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
       if (name != null) #name: name,
       if (headline != null) #headline: headline,
       if (website != null) #website: website,
+      if (isFavorited != null) #isFavorited: isFavorited,
       if (description != null) #description: description,
       if (location != null) #location: location,
       if (priceType != null) #priceType: priceType,
@@ -325,6 +337,7 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
     name: data.get(#name, or: $value.name),
     headline: data.get(#headline, or: $value.headline),
     website: data.get(#website, or: $value.website),
+    isFavorited: data.get(#isFavorited, or: $value.isFavorited),
     description: data.get(#description, or: $value.description),
     location: data.get(#location, or: $value.location),
     priceType: data.get(#priceType, or: $value.priceType),

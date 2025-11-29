@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/user/user.dart';
+import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
@@ -80,6 +81,10 @@ class PickUserType extends StatelessWidget {
               child: Consumer(
                 builder: (context, ref, child) {
                   return PrimaryButton(
+                    bgColor: AppColors.textBrand,
+                    frColor: AppColors.textPrimary,
+                    nullbgColor: Color(0xff080808),
+                    nullfrColor: AppColors.surfaceContainer,
                     onTap: currentType != Role.none
                         ? () async {
                             pageController.nextPage(

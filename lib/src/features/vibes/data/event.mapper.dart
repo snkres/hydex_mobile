@@ -661,6 +661,13 @@ class EventMapper extends ClassMapperBase<Event> {
     'createdAt',
     _$createdAt,
   );
+  static bool _$isFavorited(Event v) => v.isFavorited;
+  static const Field<Event, bool> _f$isFavorited = Field(
+    'isFavorited',
+    _$isFavorited,
+    opt: true,
+    def: false,
+  );
 
   @override
   final MappableFields<Event> fields = const {
@@ -678,6 +685,7 @@ class EventMapper extends ClassMapperBase<Event> {
     #experiences: _f$experiences,
     #vendor: _f$vendor,
     #createdAt: _f$createdAt,
+    #isFavorited: _f$isFavorited,
   };
 
   static Event _instantiate(DecodingData data) {
@@ -696,6 +704,7 @@ class EventMapper extends ClassMapperBase<Event> {
       experiences: data.dec(_f$experiences),
       vendor: data.dec(_f$vendor),
       createdAt: data.dec(_f$createdAt),
+      isFavorited: data.dec(_f$isFavorited),
     );
   }
 
@@ -772,6 +781,7 @@ abstract class EventCopyWith<$R, $In extends Event, $Out>
     List<Experiences>? experiences,
     Vendor? vendor,
     DateTime? createdAt,
+    bool? isFavorited,
   });
   EventCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -839,6 +849,7 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
     List<Experiences>? experiences,
     Vendor? vendor,
     DateTime? createdAt,
+    bool? isFavorited,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -855,6 +866,7 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
       if (experiences != null) #experiences: experiences,
       if (vendor != null) #vendor: vendor,
       if (createdAt != null) #createdAt: createdAt,
+      if (isFavorited != null) #isFavorited: isFavorited,
     }),
   );
   @override
@@ -873,6 +885,7 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
     experiences: data.get(#experiences, or: $value.experiences),
     vendor: data.get(#vendor, or: $value.vendor),
     createdAt: data.get(#createdAt, or: $value.createdAt),
+    isFavorited: data.get(#isFavorited, or: $value.isFavorited),
   );
 
   @override

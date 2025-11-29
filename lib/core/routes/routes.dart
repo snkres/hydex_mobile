@@ -17,6 +17,7 @@ import 'package:hydex/src/features/auth/ui/verify_email.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/features/auth/ui/ugo.dart';
 import 'package:hydex/src/features/auth/ui/waitlist.dart';
+import 'package:hydex/src/features/booking/data/create_book.dart';
 import 'package:hydex/src/features/booking/ui/create_booking.dart';
 import 'package:hydex/src/features/booking/ui/summary.dart';
 import 'package:hydex/src/features/contact/ui/contacts.dart';
@@ -119,7 +120,8 @@ class AppRoutes {
       ),
       GoRoute(
         path: "/create-booking",
-        builder: (context, state) => CreateBooking(),
+        builder: (context, state) =>
+            CreateBooking(book: state.extra as CreateBook),
       ),
       GoRoute(path: "/summary", builder: (context, state) => SummaryBooking()),
       GoRoute(path: "/contacts", builder: (context, state) => ContactsScreen()),
@@ -145,11 +147,11 @@ class AppRoutes {
         path: "/notifications",
         builder: (context, state) => const NotificationsScreen(),
       ),
-       GoRoute(
+      GoRoute(
         path: "/happening_tonight",
         builder: (context, state) => const HappeningTonight(),
       ),
-       GoRoute(
+      GoRoute(
         path: "/happening_nearby",
         builder: (context, state) => const HappeningNearby(),
       ),
