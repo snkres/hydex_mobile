@@ -19,7 +19,7 @@ class VendorNotifier extends _$VendorNotifier {
 
     final isFavorited = currentEvent.isFavorited;
     final updatedEvent = currentEvent.copyWith(isFavorited: !isFavorited);
-
+    
     // Update the state optimistically
     state = AsyncData(updatedEvent);
 

@@ -1,9 +1,9 @@
 import 'dart:developer';
 
-import 'package:fast_contacts/fast_contacts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/country_picker_provider.dart';
@@ -12,6 +12,7 @@ import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/features/booking/data/guest.dart';
 import 'package:hydex/src/features/booking/domain/guests_repo.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class GuestForm extends ConsumerStatefulWidget {
   const GuestForm({
@@ -29,7 +30,7 @@ class GuestForm extends ConsumerStatefulWidget {
 }
 
 class _GuestFormState extends ConsumerState<GuestForm> {
-  final key = GlobalKey<FormState>();
+  final formkey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final instagramController = TextEditingController();
   final phoneController = TextEditingController();
@@ -68,7 +69,7 @@ class _GuestFormState extends ConsumerState<GuestForm> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Form(
-        key: key,
+        key: formkey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 12,
@@ -240,18 +241,18 @@ class _GuestFormState extends ConsumerState<GuestForm> {
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            12,
-                          ), // <-- rounded rectangle
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         padding: EdgeInsets.all(12),
                       ),
                       onPressed: () async {
-                        final selectedContact =
-                            await context.push("/contacts") as String;
-                        setState(() {
-                          phoneController.text = selectedContact.substring(3);
-                        });
+                        if (await Permission.contacts.request().isGranted) {
+                          final selectedContact =
+                              await context.push("/contacts") as String;
+                          setState(() {
+                            phoneController.text = selectedContact.substring(3);
+                          });
+                        }
                       },
                       child: Icon(Icons.person_outline),
                     ),
@@ -288,14 +289,8 @@ class _GuestFormState extends ConsumerState<GuestForm> {
 
             PrimaryButton(
               onTap: () async {
-                if (selectedGender == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Please select your gender")),
-                  );
-                  return;
-                }
-
-                if (key.currentState!.validate()) {
+                if (formkey.currentState!.validate() &&
+                    selectedGender != null) {
                   final guest = Guest(
                     name: nameController.text,
                     age: int.parse(ageController.text),
@@ -304,8 +299,7 @@ class _GuestFormState extends ConsumerState<GuestForm> {
                     instagram: instagramController.text,
                     gender: selectedGender!,
                   );
-
-                  ref
+                  await ref
                       .read(guestFormProvider(widget.totalGuests).notifier)
                       .saveGuest(guest);
                   ref
@@ -320,6 +314,14 @@ class _GuestFormState extends ConsumerState<GuestForm> {
                     duration: Duration(milliseconds: 250),
                     curve: Curves.easeIn,
                   );
+                }
+                if (selectedGender == null) {
+                  Fluttertoast.showToast(
+                    msg: "Please select your gender",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                  );
+                  return;
                 }
               },
             ),

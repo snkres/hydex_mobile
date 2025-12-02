@@ -181,7 +181,7 @@ final class GetVendorsProvider
   }
 }
 
-String _$getVendorsHash() => r'1f1458aa0b5f42a6b79e0aba0756f6f148450538';
+String _$getVendorsHash() => r'703aad8c03d21aedb93e657dcbde0599a42ded26';
 
 final class GetVendorsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<Vendor>>, int> {
@@ -325,7 +325,7 @@ final class GetEventByIdProvider
   }
 }
 
-String _$getEventByIdHash() => r'3eb6110a41d26f41c26f49528e8669a1e46d40f3';
+String _$getEventByIdHash() => r'a1245a09d0541814cbc418229188521366013736';
 
 final class GetEventByIdFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Event>, String> {
@@ -394,7 +394,7 @@ final class GetVendorbyIDProvider
   }
 }
 
-String _$getVendorbyIDHash() => r'e4e049920d70ccb1895699d1ea670684d339f892';
+String _$getVendorbyIDHash() => r'9bd8c39b18b2874a076c76cb38cfe7d3b7be0b49';
 
 final class GetVendorbyIDFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Vendor>, String> {
@@ -420,11 +420,11 @@ const getEventByVendorProvider = GetEventByVendorFamily._();
 final class GetEventByVendorProvider
     extends
         $FunctionalProvider<
-          AsyncValue<List<Event>>,
-          List<Event>,
-          FutureOr<List<Event>>
+          AsyncValue<List<Event?>>,
+          List<Event?>,
+          FutureOr<List<Event?>>
         >
-    with $FutureModifier<List<Event>>, $FutureProvider<List<Event>> {
+    with $FutureModifier<List<Event?>>, $FutureProvider<List<Event?>> {
   const GetEventByVendorProvider._({
     required GetEventByVendorFamily super.from,
     required String super.argument,
@@ -448,12 +448,12 @@ final class GetEventByVendorProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<Event>> $createElement(
+  $FutureProviderElement<List<Event?>> $createElement(
     $ProviderPointer pointer,
   ) => $FutureProviderElement(pointer);
 
   @override
-  FutureOr<List<Event>> create(Ref ref) {
+  FutureOr<List<Event?>> create(Ref ref) {
     final argument = this.argument as String;
     return getEventByVendor(ref, vendorID: argument);
   }
@@ -469,10 +469,10 @@ final class GetEventByVendorProvider
   }
 }
 
-String _$getEventByVendorHash() => r'ea659d065c21b978eeb3dcb222454a79fe1d26f1';
+String _$getEventByVendorHash() => r'66c8069c39f6ccd8ff1035b8797f867e0161aa47';
 
 final class GetEventByVendorFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<List<Event>>, String> {
+    with $FunctionalFamilyOverride<FutureOr<List<Event?>>, String> {
   const GetEventByVendorFamily._()
     : super(
         retry: null,

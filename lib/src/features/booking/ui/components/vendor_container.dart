@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
-class VendorContainer extends StatelessWidget {
-  const VendorContainer({super.key});
+class VendorContainer extends ConsumerWidget {
+  const VendorContainer({super.key, required this.name});
+
+  final String name;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final guests = ref.watch(guestsProvider);
     return SmoothContainer(
       borderRadius: .circular(26),
       color: Color(0xff1E1E20),
@@ -26,7 +31,7 @@ class VendorContainer extends StatelessWidget {
           ),
           SizedBox(height: 4),
           Text(
-            "Cairo Jazz Club",
+            name,
             style: TextStyle(
               fontSize: AppTextStyles(context).accumulator * 16,
               fontWeight: .w600,
@@ -68,7 +73,7 @@ class VendorContainer extends StatelessWidget {
           ),
           SizedBox(height: 4),
           Text(
-            "3 VIP Experience",
+            "$guests VIP Experience",
             style: TextStyle(
               fontSize: AppTextStyles(context).accumulator * 16,
               fontWeight: .w600,

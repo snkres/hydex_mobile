@@ -13,13 +13,11 @@ class FirebaseNotifications {
       // Ensure iOS is registered for APNS
       final apnsToken = await _messaging.getAPNSToken();
       if (apnsToken == null) {
-        log("APNS token is not available yet. iOS may still be registering.");
         return;
       }
       log("APNS Token: $apnsToken");
     }
 
-    // Get FCM token (works on both iOS & Android)
     final token = await getToken();
     log("FCM Token: $token");
   }
@@ -27,5 +25,4 @@ class FirebaseNotifications {
   Future<String?> getToken() async {
     return _messaging.getToken();
   }
-
 }

@@ -1,18 +1,29 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
+import 'package:hydex/src/features/vibes/data/category.dart';
+import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:lottie/lottie.dart';
 
-class HappeningTonight extends StatelessWidget {
+class HappeningTonight extends ConsumerStatefulWidget {
   const HappeningTonight({super.key});
 
   @override
+  ConsumerState<HappeningTonight> createState() => _HappeningTonightState();
+}
+
+class _HappeningTonightState extends ConsumerState<HappeningTonight> {
+  String selectedCategory = "All";
+  @override
   Widget build(BuildContext context) {
+    final categories = ref.watch(getEventCategoriesProvider);
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -22,26 +33,36 @@ class HappeningTonight extends StatelessWidget {
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(54),
               child: SizedBox(
-                height: 54, // 2. Match the SizedBox height
-                child: ListView.builder(
-                  // 3. Significantly reduce vertical padding, or use symmetric(vertical)
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical:
-                        8, // Reduced from 16 to 8 (8px top + 8px bottom = 16px total padding)
-                  ),
-                  itemCount: 8,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.only(
-                      right: 8.0,
-                    ), // Add spacing between chips
-                    child: CustomChip(
-                      title: index == 0 ? "All" : "Category $index",
-                      isSelected: index == 0,
-                      onTap: () {},
-                    ),
-                  ),
+                height: 54,
+                child: categories.when(
+                  data: (data) {
+                    final categoriesWithAll = [
+                      EventCategory(id: "all", name: "All", description: ""),
+                      ...data,
+                    ];
+                    return ListView.builder(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      itemCount: categoriesWithAll.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) => Padding(
+                        padding: const .only(right: 8.0),
+                        child: CustomChip(
+                          title: categoriesWithAll[index].name,
+                          isSelected: selectedCategory == categoriesWithAll[index].name,
+                          onTap: () {
+                            setState(() {
+                              selectedCategory = categoriesWithAll[index].name;
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                  error: (e, s) => SizedBox.shrink(),
+                  loading: () => SizedBox.shrink(),
                 ),
               ),
             ),

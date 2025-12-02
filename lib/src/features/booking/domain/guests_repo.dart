@@ -19,14 +19,19 @@ class GuestFormNotifier extends _$GuestFormNotifier {
     return GuestFormState(guests: guests, currentIndex: 0);
   }
 
-  void saveGuest(Guest guest, {int? selectedIndex}) {
-    final current = state.value;
-    if (current == null) return;
-    final index = selectedIndex ?? current.currentIndex + 1;
-    log("Selected Index: $index");
-
+  Future<void> saveGuest(Guest guest, {int? selectedIndex}) async {
+    if (state.isLoading) {
+      await future; 
+    }
+    final current = state.requireValue;
+    log(
+      "Guest: ${guest.name}, Index: ${selectedIndex ?? current.currentIndex}",
+    );
+    final index = selectedIndex ?? (current.currentIndex + 1);
+    log("Saving guest at index: $index");
     final updatedGuests = [...current.guests];
     updatedGuests[index] = guest;
+    log("updatedGuests: ${updatedGuests.map((e) => e?.name).toList()}");
 
     state = AsyncData(current.copyWith(guests: updatedGuests));
   }

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,32 +17,6 @@ class LoadingScreen extends ConsumerStatefulWidget {
 }
 
 class _LoadingScreenState extends ConsumerState<LoadingScreen> {
-  @override
-  void initState() {
-    super.initState();
-
-    _checkUserStatus();
-  }
-
-  Future<void> _checkUserStatus() async {
-    if (kReleaseMode) {
-      ref.read(authServiceProvider).sendFCMNotification();
-
-      final user = await ref.read(currentUserProvider.future);
-      final status = user?.status;
-
-      if (status != null && status == UserStatus.active) {
-        if (mounted) context.go("/");
-      } else {
-        if (mounted) context.go("/waitlist");
-      }
-    } else {
-      ref.read(authServiceProvider).sendFCMNotification();
-
-      context.go("/");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: Center(child: CircularProgressIndicator.adaptive()));

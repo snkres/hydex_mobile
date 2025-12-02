@@ -1,5 +1,4 @@
 import 'package:go_router/go_router.dart';
-import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/auth/reset_pass.dart';
 import 'package:hydex/src/features/auth/seeker.dart';
 import 'package:hydex/src/features/auth/ui/boarding.dart';
@@ -18,6 +17,7 @@ import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/features/auth/ui/ugo.dart';
 import 'package:hydex/src/features/auth/ui/waitlist.dart';
 import 'package:hydex/src/features/booking/data/create_book.dart';
+import 'package:hydex/src/features/booking/ui/components/ban_hady.dart';
 import 'package:hydex/src/features/booking/ui/create_booking.dart';
 import 'package:hydex/src/features/booking/ui/summary.dart';
 import 'package:hydex/src/features/contact/ui/contacts.dart';
@@ -25,6 +25,7 @@ import 'package:hydex/src/features/loading/ui/loading.dart';
 import 'package:hydex/src/features/location/ui/location_screen.dart';
 import 'package:hydex/src/features/notifications/ui/notifications_screen.dart';
 import 'package:hydex/src/features/profile_summary/ui/profile_summary.dart';
+import 'package:hydex/src/features/splash/ui/splash.dart';
 import 'package:hydex/src/features/vibes/ui/components/event_details.dart';
 import 'package:hydex/src/features/vibes/ui/details_screen.dart';
 import 'package:hydex/src/features/vibes/ui/happening_nearby.dart';
@@ -38,24 +39,16 @@ class AppRoutes {
   Ref ref;
   AppRoutes(this.ref);
   final routes = GoRouter(
-    initialLocation: '/boarding',
-    redirect: (context, state) async {
-      final isAuthenticated = await DioHelper.getAccessToken() != null;
-      final currentRoute = state.uri.path;
-      if (isAuthenticated) {
-        if (currentRoute != "/boarding") {
-          return null;
-        }
-        return "/";
-      }
-      return null;
-    },
+    initialLocation: '/splash',
+
     routes: [
+      GoRoute(path: "/splash", builder: (context, state) => SplashScreen()),
       GoRoute(
         path: "/",
         builder: (context, state) =>
             BaseScreen(initialTab: state.extra as int?),
       ),
+
       GoRoute(
         path: "/boarding",
         builder: (context, state) => const BoardingScreen(),
@@ -157,6 +150,7 @@ class AppRoutes {
       ),
       GoRoute(
         path: "/event/:id",
+        name: "event_detail",
         builder: (context, state) =>
             EventDetailScreen(id: state.pathParameters["id"] as String),
       ),
@@ -165,6 +159,7 @@ class AppRoutes {
         builder: (context, state) =>
             VendorDetailsScreen(id: state.pathParameters["id"] as String),
       ),
+      GoRoute(path: "/hady", builder: (context, state) => BanHady()),
     ],
   );
 }

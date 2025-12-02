@@ -1,9 +1,7 @@
 import 'dart:developer';
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,13 +11,11 @@ import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/booking/data/create_book.dart';
 import 'package:hydex/src/features/booking/data/format_time.dart';
-import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:hydex/src/features/location/domain/location_service.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/data/location.dart';
 import 'package:hydex/src/features/vibes/data/vendor.dart';
 import 'package:hydex/src/features/vibes/domain/event_notifier.dart';
-import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/features/vibes/ui/components/nightlife.dart';
 import 'package:hydex/src/features/vibes/ui/components/ticket_widget.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
@@ -29,7 +25,6 @@ import 'package:maps_launcher/maps_launcher.dart';
 import 'package:readmore/readmore.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:smooth_corner/smooth_corner.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class EventDetailScreen extends ConsumerStatefulWidget {
   const EventDetailScreen({super.key, required this.id});
@@ -46,7 +41,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
   bool _isCollapsedFromSheet = false;
-  final double _collapseThreshold = 0.9;
+  final double _collapseThreshold = 0.85;
   double _sheetSize = 0.3;
 
   @override
@@ -59,7 +54,6 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
           _isCollapsedFromSheet = next;
         });
       }
-      // Update sheet size for image overlay opacity
       if (_sheetSize != _sheetController.size) {
         setState(() {
           _sheetSize = _sheetController.size;
@@ -80,7 +74,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     final eventAsync = ref.watch(eventProvider(widget.id));
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    final overlayOpacity = ((_sheetSize - 0.3) / (0.9 - 0.3) * 0.6).clamp(
+    final overlayOpacity = ((_sheetSize - 0.3) / (0.85 - 0.3) * 0.6).clamp(
       0.0,
       0.6,
     );
@@ -88,8 +82,12 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     return eventAsync.when(
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, st) =>
-          const Scaffold(body: Center(child: Text("Something went wrong"))),
+      error: (e, st) {
+        log("Event Detail Error", error: e, stackTrace: st);
+        return const Scaffold(
+          body: Center(child: Text("Something went wrong")),
+        );
+      },
       data: (event) {
         return Scaffold(
           floatingActionButtonLocation:
@@ -100,7 +98,12 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               bgColor: Colors.white,
               frColor: Colors.black,
               onTap: () async {
-                final book = CreateBook(name: event.name);
+                final book = CreateBook(
+                  name: event.name,
+                  passes: event.bookingExperience?.passes ?? [],
+                  startTime: DateTime.now(),
+                );
+                ref.read(createBookProvider.notifier).state = book;
                 context.push("/create-booking", extra: book);
               },
               title: "RSVP",
@@ -144,7 +147,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                       return;
 
                     final delta = -details.delta.dy / screenHeight;
-                    final newSize = (_sheetSize + delta).clamp(0.3, 0.9);
+                    final newSize = (_sheetSize + delta).clamp(0.3, 0.85);
 
                     if (_sheetController.isAttached) {
                       _sheetController.jumpTo(newSize);
@@ -156,7 +159,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
 
               DraggableScrollableSheet(
                 controller: _sheetController,
-                maxChildSize: 0.9,
+                maxChildSize: 0.85,
                 initialChildSize: 0.3,
                 minChildSize: 0.3,
                 builder: (context, scrollController) {
@@ -225,7 +228,6 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                           ),
                         ),
 
-                        // Action Buttons
                         IconButton.filled(
                           onPressed: () {
                             final formatter = DateFormat("EEE, MMM d • h:mm a");
@@ -337,8 +339,8 @@ class CollapsedEventContainer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final distance = ref.watch(
       calculateDistanceProvider(
-        endLatitude: location.coordinates.lat,
-        endLongitude: location.coordinates.lng,
+        endLatitude: location.coordinates.lat ?? 0,
+        endLongitude: location.coordinates.lng ?? 0,
       ),
     );
     return Column(
@@ -477,8 +479,8 @@ class CollapsedEventContainer extends ConsumerWidget {
                       GestureDetector(
                         onTap: () {
                           MapsLauncher.launchCoordinates(
-                            location.coordinates.lat,
-                            location.coordinates.lng,
+                            location.coordinates.lat ?? 0,
+                            location.coordinates.lng ?? 0,
                           );
                         },
                         child: Container(

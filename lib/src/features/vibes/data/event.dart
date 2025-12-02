@@ -55,10 +55,9 @@ class OperatingHours with OperatingHoursMappable {
 
 @MappableClass()
 class Experiences with ExperiencesMappable {
-  final String name;
   final String description;
-
-  Experiences({required this.name, required this.description});
+  final String? title;
+  Experiences({required this.description, this.title});
 }
 
 @MappableClass()
@@ -76,6 +75,7 @@ class Event with EventMappable {
   final List<Experiences> experiences;
   final EventCategory? category;
   final bool isFavorited;
+  final BookingExperience? bookingExperience;
 
   final Vendor vendor;
   final DateTime createdAt;
@@ -95,6 +95,42 @@ class Event with EventMappable {
     required this.experiences,
     required this.vendor,
     required this.createdAt,
+    this.bookingExperience,
     this.isFavorited = false,
   });
+}
+
+@MappableClass()
+class Passes with PassesMappable {
+  final String id;
+  final String name;
+  final String? benefits;
+  final double price;
+  final int maximumAmount;
+  final int currentBookings;
+  final bool isActive;
+  final int rouletteRemainingWins;
+  final int rouletteMaxWins;
+  final int? discountPercentage;
+
+  Passes({
+    required this.id,
+    required this.name,
+    required this.benefits,
+    required this.price,
+    required this.maximumAmount,
+    required this.currentBookings,
+    required this.isActive,
+    required this.rouletteRemainingWins,
+    required this.rouletteMaxWins,
+    required this.discountPercentage,
+  });
+}
+
+@MappableClass()
+class BookingExperience with BookingExperienceMappable {
+  final String id;
+  final List<Passes> passes;
+
+  BookingExperience({required this.id, required this.passes});
 }

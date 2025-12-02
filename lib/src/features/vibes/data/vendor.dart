@@ -12,7 +12,6 @@ class Vendor with VendorMappable {
   final String? logo;
   final String name;
   final String headline;
-  final String website;
   final String description;
   final Location location;
   final bool isFavorited;
@@ -25,18 +24,22 @@ class Vendor with VendorMappable {
   final List<String> gallery;
   final List<Detail> details;
   final String? detailsDescription;
-
+  final VendorCategory? category;
   final List<String> tags;
   final List<String> thingsToKnow;
+  final List<EventInsideVendor> events;
+  final BookingExperience? bookingExperience;
 
   Vendor({
     required this.id,
     required this.ownerId,
     this.logo,
+    this.bookingExperience,
+    this.category,
     required this.name,
     required this.headline,
-    required this.website,
     this.isFavorited = false,
+    this.events = const [],
     required this.description,
     required this.location,
     required this.priceType,
@@ -48,5 +51,20 @@ class Vendor with VendorMappable {
     this.detailsDescription,
     required this.tags,
     required this.thingsToKnow,
+  });
+}
+
+@MappableClass()
+class EventInsideVendor with EventInsideVendorMappable {
+  final String id;
+  final String? name;
+  final DateTime startTime;
+  final List<String>? media;
+
+  EventInsideVendor({
+    required this.id,
+    this.name,
+    this.media,
+    required this.startTime,
   });
 }

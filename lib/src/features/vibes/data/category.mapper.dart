@@ -21,8 +21,12 @@ class EventCategoryMapper extends ClassMapperBase<EventCategory> {
   @override
   final String id = 'EventCategory';
 
-  static String _$id(EventCategory v) => v.id;
-  static const Field<EventCategory, String> _f$id = Field('id', _$id);
+  static String? _$id(EventCategory v) => v.id;
+  static const Field<EventCategory, String> _f$id = Field(
+    'id',
+    _$id,
+    opt: true,
+  );
   static String _$description(EventCategory v) => v.description;
   static const Field<EventCategory, String> _f$description = Field(
     'description',
@@ -130,13 +134,13 @@ class _EventCategoryCopyWithImpl<$R, $Out>
       EventCategoryMapper.ensureInitialized();
   @override
   $R call({
-    String? id,
+    Object? id = $none,
     String? description,
     Object? image = $none,
     String? name,
   }) => $apply(
     FieldCopyWithData({
-      if (id != null) #id: id,
+      if (id != $none) #id: id,
       if (description != null) #description: description,
       if (image != $none) #image: image,
       if (name != null) #name: name,
@@ -154,5 +158,133 @@ class _EventCategoryCopyWithImpl<$R, $Out>
   EventCategoryCopyWith<$R2, EventCategory, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   ) => _EventCategoryCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class VendorCategoryMapper extends ClassMapperBase<VendorCategory> {
+  VendorCategoryMapper._();
+
+  static VendorCategoryMapper? _instance;
+  static VendorCategoryMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = VendorCategoryMapper._());
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'VendorCategory';
+
+  static String _$name(VendorCategory v) => v.name;
+  static const Field<VendorCategory, String> _f$name = Field('name', _$name);
+  static String? _$image(VendorCategory v) => v.image;
+  static const Field<VendorCategory, String> _f$image = Field(
+    'image',
+    _$image,
+    opt: true,
+  );
+
+  @override
+  final MappableFields<VendorCategory> fields = const {
+    #name: _f$name,
+    #image: _f$image,
+  };
+
+  static VendorCategory _instantiate(DecodingData data) {
+    return VendorCategory(name: data.dec(_f$name), image: data.dec(_f$image));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static VendorCategory fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<VendorCategory>(map);
+  }
+
+  static VendorCategory fromJson(String json) {
+    return ensureInitialized().decodeJson<VendorCategory>(json);
+  }
+}
+
+mixin VendorCategoryMappable {
+  String toJson() {
+    return VendorCategoryMapper.ensureInitialized().encodeJson<VendorCategory>(
+      this as VendorCategory,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return VendorCategoryMapper.ensureInitialized().encodeMap<VendorCategory>(
+      this as VendorCategory,
+    );
+  }
+
+  VendorCategoryCopyWith<VendorCategory, VendorCategory, VendorCategory>
+  get copyWith => _VendorCategoryCopyWithImpl<VendorCategory, VendorCategory>(
+    this as VendorCategory,
+    $identity,
+    $identity,
+  );
+  @override
+  String toString() {
+    return VendorCategoryMapper.ensureInitialized().stringifyValue(
+      this as VendorCategory,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return VendorCategoryMapper.ensureInitialized().equalsValue(
+      this as VendorCategory,
+      other,
+    );
+  }
+
+  @override
+  int get hashCode {
+    return VendorCategoryMapper.ensureInitialized().hashValue(
+      this as VendorCategory,
+    );
+  }
+}
+
+extension VendorCategoryValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, VendorCategory, $Out> {
+  VendorCategoryCopyWith<$R, VendorCategory, $Out> get $asVendorCategory =>
+      $base.as((v, t, t2) => _VendorCategoryCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class VendorCategoryCopyWith<$R, $In extends VendorCategory, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  $R call({String? name, String? image});
+  VendorCategoryCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  );
+}
+
+class _VendorCategoryCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, VendorCategory, $Out>
+    implements VendorCategoryCopyWith<$R, VendorCategory, $Out> {
+  _VendorCategoryCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<VendorCategory> $mapper =
+      VendorCategoryMapper.ensureInitialized();
+  @override
+  $R call({String? name, Object? image = $none}) => $apply(
+    FieldCopyWithData({
+      if (name != null) #name: name,
+      if (image != $none) #image: image,
+    }),
+  );
+  @override
+  VendorCategory $make(CopyWithData data) => VendorCategory(
+    name: data.get(#name, or: $value.name),
+    image: data.get(#image, or: $value.image),
+  );
+
+  @override
+  VendorCategoryCopyWith<$R2, VendorCategory, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  ) => _VendorCategoryCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 

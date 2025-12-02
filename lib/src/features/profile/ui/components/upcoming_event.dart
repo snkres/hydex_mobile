@@ -184,7 +184,7 @@ class UpcomingEventContainer extends StatelessWidget {
                   width: 15,
                 ),
                 Text(
-                  event.location.street,
+                  event.location.street ?? "Unknown location",
                   style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: AppTextStyles(context).accumulator * 14,

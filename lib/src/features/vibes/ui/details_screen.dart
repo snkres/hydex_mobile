@@ -12,8 +12,11 @@ import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/booking/data/create_book.dart';
+import 'package:hydex/src/features/booking/data/format_time.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
+import 'package:hydex/src/features/location/domain/location_service.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
+import 'package:hydex/src/features/vibes/domain/event_notifier.dart';
 import 'package:hydex/src/features/vibes/domain/vendor_notifier.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/features/vibes/ui/components/gallery.dart';
@@ -145,30 +148,42 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
   Widget build(BuildContext context) {
     final vendorAsync = ref.watch(vendorProvider(widget.id));
     final double screenHeight = MediaQuery.of(context).size.height;
-    final eventsAsync = ref.watch(
-      getEventByVendorProvider(vendorID: widget.id),
-    );
+
     // Logic for overlay opacity
     final overlayOpacity = ((_sheetSize - 0.3) / (0.9 - 0.3) * 0.6).clamp(
       0.0,
       0.6,
     );
+
     return Scaffold(
       floatingActionButtonLocation: .centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: PrimaryButton(
-          bgColor: Colors.white,
-          frColor: Colors.black,
-          onTap: () async {
-            final book = CreateBook(name: vendorAsync.requireValue.name);
-            context.push("/create-booking", extra: book);
-          },
-          title: "RSVP",
+      floatingActionButton: Visibility(
+        visible: vendorAsync.value?.bookingExperience != null,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: PrimaryButton(
+            bgColor: Colors.white,
+            frColor: Colors.black,
+            onTap: () async {
+              final book = CreateBook(
+                name: vendorAsync.requireValue.name,
+                operatingHours: vendorAsync.requireValue.operatingHours,
+                passes: [],
+              );
+              context.push("/create-booking", extra: book);
+            },
+            title: "RSVP",
+          ),
         ),
       ),
       body: vendorAsync.when(
         data: (vendor) {
+          final distance = ref.watch(
+            calculateDistanceProvider(
+              endLatitude: vendor.location.coordinates.lat ?? 0,
+              endLongitude: vendor.location.coordinates.lng ?? 0,
+            ),
+          );
           return Stack(
             children: [
               Positioned.fill(
@@ -318,7 +333,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                                 SizedBox(height: 12),
 
                                                 Text(
-                                                  "📍 ${vendor.location.street}, ${vendor.location.city}, ${vendor.location.country}",
+                                                  "📍 ${vendor.location.address}",
                                                   style: TextStyle(
                                                     fontSize:
                                                         AppTextStyles(
@@ -372,7 +387,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                         spacing: 10,
                                         children: [
                                           Text(
-                                            "1.5 KM away",
+                                            "${distance.value ?? "..."} KM away",
                                             style: TextStyle(
                                               fontSize:
                                                   AppTextStyles(
@@ -429,14 +444,60 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                                       : AppColors.textError,
                                                 ),
                                               ),
-                                              Text(
-                                                "6:30 PM to 03:29 AM",
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      AppTextStyles(
-                                                        context,
-                                                      ).accumulator *
-                                                      12,
+                                              GestureDetector(
+                                                onTap: () {
+                                                  showModalBottomSheet(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return Container(
+                                                        padding: EdgeInsets.all(
+                                                          16,
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: vendor.operatingHours.entries.map((
+                                                            entry,
+                                                          ) {
+                                                            final day =
+                                                                entry.key;
+                                                            final hours =
+                                                                entry.value;
+                                                            return Padding(
+                                                              padding:
+                                                                  const EdgeInsets.symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                  ),
+                                                              child: Text(
+                                                                "${day.capitalize()}: ${hours.open} - ${hours.close}",
+                                                                style: TextStyle(
+                                                                  fontSize:
+                                                                      AppTextStyles(
+                                                                        context,
+                                                                      ).accumulator *
+                                                                      14,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }).toList(),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: Text(
+                                                  "6:30 PM to 03:29 AM",
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        AppTextStyles(
+                                                          context,
+                                                        ).accumulator *
+                                                        12,
+                                                  ),
                                                 ),
                                               ),
                                             ],
@@ -444,8 +505,16 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                           GestureDetector(
                                             onTap: () {
                                               MapsLauncher.launchCoordinates(
-                                                vendor.location.coordinates.lat,
-                                                vendor.location.coordinates.lng,
+                                                vendor
+                                                        .location
+                                                        .coordinates
+                                                        .lat ??
+                                                    0,
+                                                vendor
+                                                        .location
+                                                        .coordinates
+                                                        .lng ??
+                                                    0,
                                               );
                                             },
                                             child: Container(
@@ -746,71 +815,65 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                       ),
                                     ),
 
-                                    eventsAsync.when(
-                                      data: (data) {
-                                        return Column(
-                                          crossAxisAlignment: .start,
-                                          children: [
-                                            SizedBox(height: 24),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 16,
-                                              ),
-                                              child: Text(
-                                                "Upcoming Events".toUpperCase(),
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  color:
-                                                      AppColors.textSecondary,
-                                                  fontSize:
-                                                      AppTextStyles(
-                                                        context,
-                                                      ).accumulator *
-                                                      16,
-                                                ),
-                                              ),
+                                    Column(
+                                      crossAxisAlignment: .start,
+                                      children: [
+                                        SizedBox(height: 24),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                          ),
+                                          child: Text(
+                                            "Upcoming Events".toUpperCase(),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              color: AppColors.textSecondary,
+                                              fontSize:
+                                                  AppTextStyles(
+                                                    context,
+                                                  ).accumulator *
+                                                  16,
                                             ),
-                                            SizedBox(height: 8),
-                                            SizedBox(
-                                              height: 202,
-                                              child: ListView.separated(
-                                                itemCount: 3,
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal: 16,
-                                                ),
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                separatorBuilder:
-                                                    (context, index) =>
-                                                        SizedBox(width: 8),
-                                                itemBuilder: (context, index) {
-                                                  return SizedBox(
-                                                    width: 330,
-                                                    child: EventContainer(
-                                                      heading:
-                                                          "Zeft Funk x Moenes x Jess ",
-                                                      image:
-                                                          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
-                                                      avatarImage:
-                                                          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww",
-                                                      date:
-                                                          "Sat, 4 Oct, 5:00PM",
-                                                    ),
-                                                  );
-                                                },
-                                              ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 8),
+                                        SizedBox(
+                                          height: 202,
+                                          child: ListView.separated(
+                                            itemCount: vendor.events.length,
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 16,
                                             ),
-                                          ],
-                                        );
-                                      },
-                                      error: (e, s) {
-                                        log("Event: ", error: e, stackTrace: s);
-                                        return SizedBox.shrink();
-                                      },
-                                      loading: () => Center(
-                                        child:
-                                            CircularProgressIndicator.adaptive(),
-                                      ),
+                                            scrollDirection: Axis.horizontal,
+                                            separatorBuilder:
+                                                (context, index) =>
+                                                    SizedBox(width: 8),
+                                            itemBuilder: (context, index) {
+                                              final event =
+                                                  vendor.events[index];
+                                              return SizedBox(
+                                                width: 330,
+                                                child: EventContainer(
+                                                  onView: () {
+                                                    context.pushNamed(
+                                                      "event_detail",
+                                                      pathParameters: {
+                                                        "id": event.id,
+                                                      },
+                                                    );
+                                                  },
+                                                  heading: event.name ?? "",
+                                                  image: event.media?.first,
+                                                  avatarImage:
+                                                      event.media?.first,
+                                                  date: event.startTime
+                                                      .toPrettyString(),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     SizedBox(height: 24),
                                     Padding(
@@ -1109,7 +1172,10 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
             ],
           );
         },
-        error: (e, s) => Center(child: Text("Error")),
+        error: (e, s) {
+          log("Vendor Error: ", error: e, stackTrace: s);
+          return Center(child: Text("Error"));
+        },
         loading: () => Center(child: CircularProgressIndicator.adaptive()),
       ),
     );

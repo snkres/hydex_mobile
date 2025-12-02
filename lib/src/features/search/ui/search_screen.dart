@@ -1,20 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
+import 'package:hydex/src/features/vibes/data/category.dart';
+import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:lottie/lottie.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
-class SearchScreen extends StatelessWidget {
-  SearchScreen({super.key});
+class SearchScreen extends ConsumerStatefulWidget {
+  const SearchScreen({super.key});
 
+  @override
+  ConsumerState<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends ConsumerState<SearchScreen> {
   final searchController = TextEditingController();
+  String selectedCategory = "All";
 
   @override
   Widget build(BuildContext context) {
+    final categories = ref.watch(getEventCategoriesProvider);
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -122,19 +133,34 @@ class SearchScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 12),
-            SizedBox(
-              height: 36,
-              child: ListView.separated(
-                scrollDirection: .horizontal,
-                itemCount: 8,
-                padding: .symmetric(horizontal: 16),
-                separatorBuilder: (_, _) => SizedBox(width: 8),
-                itemBuilder: (context, index) => CustomChip(
-                  title: "Nightlife",
-                  isSelected: false,
-                  onTap: () {},
-                ),
-              ),
+            categories.when(
+              data: (data) {
+                final categoriesWithAll = [
+                  EventCategory(id: "all", name: "All", description: ""),
+                  ...data,
+                ];
+                return SizedBox(
+                  height: 36,
+                  child: ListView.separated(
+                    scrollDirection: .horizontal,
+                    itemCount: categoriesWithAll.length,
+                    padding: .symmetric(horizontal: 16),
+                    separatorBuilder: (_, _) => SizedBox(width: 8),
+                    itemBuilder: (context, index) => CustomChip(
+                      title: categoriesWithAll[index].name,
+                      isSelected:
+                          selectedCategory == categoriesWithAll[index].name,
+                      onTap: () {
+                        setState(() {
+                          selectedCategory = categoriesWithAll[index].name;
+                        });
+                      },
+                    ),
+                  ),
+                );
+              },
+              error: (e, s) => SizedBox.shrink(),
+              loading: () => SizedBox.shrink(),
             ),
             Column(
               crossAxisAlignment: .start,

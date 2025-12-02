@@ -27,12 +27,30 @@ class LocationMapper extends ClassMapperBase<Location> {
     'coordinates',
     _$coordinates,
   );
-  static String _$city(Location v) => v.city;
-  static const Field<Location, String> _f$city = Field('city', _$city);
-  static String _$street(Location v) => v.street;
-  static const Field<Location, String> _f$street = Field('street', _$street);
-  static String _$country(Location v) => v.country;
-  static const Field<Location, String> _f$country = Field('country', _$country);
+  static String? _$city(Location v) => v.city;
+  static const Field<Location, String> _f$city = Field(
+    'city',
+    _$city,
+    opt: true,
+  );
+  static String? _$street(Location v) => v.street;
+  static const Field<Location, String> _f$street = Field(
+    'street',
+    _$street,
+    opt: true,
+  );
+  static String? _$country(Location v) => v.country;
+  static const Field<Location, String> _f$country = Field(
+    'country',
+    _$country,
+    opt: true,
+  );
+  static String? _$address(Location v) => v.address;
+  static const Field<Location, String> _f$address = Field(
+    'address',
+    _$address,
+    opt: true,
+  );
 
   @override
   final MappableFields<Location> fields = const {
@@ -40,6 +58,7 @@ class LocationMapper extends ClassMapperBase<Location> {
     #city: _f$city,
     #street: _f$street,
     #country: _f$country,
+    #address: _f$address,
   };
 
   static Location _instantiate(DecodingData data) {
@@ -48,6 +67,7 @@ class LocationMapper extends ClassMapperBase<Location> {
       city: data.dec(_f$city),
       street: data.dec(_f$street),
       country: data.dec(_f$country),
+      address: data.dec(_f$address),
     );
   }
 
@@ -114,6 +134,7 @@ abstract class LocationCopyWith<$R, $In extends Location, $Out>
     String? city,
     String? street,
     String? country,
+    String? address,
   });
   LocationCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -132,15 +153,17 @@ class _LocationCopyWithImpl<$R, $Out>
   @override
   $R call({
     Coordinates? coordinates,
-    String? city,
-    String? street,
-    String? country,
+    Object? city = $none,
+    Object? street = $none,
+    Object? country = $none,
+    Object? address = $none,
   }) => $apply(
     FieldCopyWithData({
       if (coordinates != null) #coordinates: coordinates,
-      if (city != null) #city: city,
-      if (street != null) #street: street,
-      if (country != null) #country: country,
+      if (city != $none) #city: city,
+      if (street != $none) #street: street,
+      if (country != $none) #country: country,
+      if (address != $none) #address: address,
     }),
   );
   @override
@@ -149,6 +172,7 @@ class _LocationCopyWithImpl<$R, $Out>
     city: data.get(#city, or: $value.city),
     street: data.get(#street, or: $value.street),
     country: data.get(#country, or: $value.country),
+    address: data.get(#address, or: $value.address),
   );
 
   @override

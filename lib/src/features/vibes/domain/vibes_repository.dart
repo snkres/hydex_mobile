@@ -10,32 +10,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'vibes_repository.g.dart';
 
-class VibesRepository {
-  Future<bool> createBooking(
-    String eventId,
-    String bookingDate,
-    int guests,
-  ) async {
-    try {
-      final response = await DioHelper.post(
-        '/bookings',
-        data: {
-          "eventId": eventId,
-
-          "bookingDate": bookingDate,
-
-          "numberOfGuests": guests,
-        },
-      );
-      return response.success;
-    } catch (e) {
-      throw Exception('Failed to create booking: $e');
-    }
-  }
-}
-
-final vibesProvider = Provider<VibesRepository>((ref) => VibesRepository());
-
 @Riverpod(keepAlive: true)
 Future<List<Banner>> getBanners(Ref ref, {required BannerType type}) async {
   try {
@@ -71,7 +45,6 @@ Future<List<Vendor>> getVendors(Ref ref, {int page = 1}) async {
     final answer = response.data['data'] as List<dynamic>;
 
     final eventsData = answer.first as List<dynamic>;
-    log("Vendors Data: ${eventsData.first}");
 
     return eventsData.map((e) => VendorMapper.fromMap(e)).toList();
   } catch (e) {
@@ -100,7 +73,7 @@ Future<Event> getEventById(Ref ref, {required String id}) async {
   try {
     final response = await DioHelper.get('/events/$id');
     final answer = response.data['data'] as Map<String, dynamic>;
-
+    log("Event Data: $answer");
     return EventMapper.fromMap(answer);
   } catch (e) {
     throw Exception('Failed to load events: $e');
@@ -112,7 +85,7 @@ Future<Vendor> getVendorbyID(Ref ref, {required String id}) async {
   try {
     final response = await DioHelper.get('/vendors/$id');
     final answer = response.data['data'] as Map<String, dynamic>;
-
+    log("getVendorbyID: $answer");
     return VendorMapper.fromMap(answer);
   } catch (e) {
     throw Exception('Failed to load events: $e');
@@ -120,14 +93,16 @@ Future<Vendor> getVendorbyID(Ref ref, {required String id}) async {
 }
 
 @riverpod
-Future<List<Event>> getEventByVendor(Ref ref, {required String vendorID}) async {
+Future<List<Event?>> getEventByVendor(
+  Ref ref, {
+  required String vendorID,
+}) async {
   try {
     final response = await DioHelper.get('/events/vendor/$vendorID');
     final answer = response.data['data'] as List<dynamic>;
 
     final eventsData = answer.first as List<dynamic>;
     return eventsData.map((e) => EventMapper.fromMap(e)).toList();
-
   } catch (e) {
     throw Exception('Failed to load events: $e');
   }

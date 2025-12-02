@@ -52,7 +52,7 @@ class NightLifeSection extends StatelessWidget {
                                     padding: EdgeInsets.all(8),
                                     color: AppColors.buttonSecondary,
                                     child: Text(
-                                      e.name,
+                                      e.title ?? "Title",
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize:

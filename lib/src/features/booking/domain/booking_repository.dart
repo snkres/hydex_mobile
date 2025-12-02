@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/booking/domain/guests_repo.dart';
+import 'package:hydex/src/features/booking/ui/components/access_container.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
+import 'package:intl/intl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'booking_repository.g.dart';
@@ -41,30 +43,52 @@ Future<List<Booking>> getBookings(Ref ref) async {
 
 @riverpod
 Future<bool> createBooking(Ref ref) async {
-  try {
-    final numberOfGuests = ref.read(guestsProvider);
-    final guestsFormState = await ref.read(
-      guestFormProvider(numberOfGuests).future,
-    );
-    final guests = guestsFormState.guests;
-    final List<Map<String, dynamic>> guestsData = guests
-        .map(
-          (e) => {
-            "fullName": e!.name,
-            "email": e.email,
-            "phone": e.phoneNumber,
-            "age": e.age,
-            "gender": e.gender,
-            "instagramLink": e.instagram,
-          },
-        )
-        .toList();
-    final response = await DioHelper.post(
-      "/bookings",
-      data: {"guests": guestsData},
-    );
-    return response.success;
-  } catch (e) {
-    throw Exception('Failed to load bookings: $e');
-  }
+  final numberOfGuests = ref.read(guestsProvider);
+  final guestsFormState = await ref.read(
+    guestFormProvider(numberOfGuests).future,
+  );
+  final guests = guestsFormState.guests;
+  final selectedPass = ref.read(selectedPassProvider);
+  final List<Map<String, dynamic>> guestsData = guests
+      .map(
+        (e) => {
+          "fullName": e!.name,
+          "email": e.email,
+          "phone": e.phoneNumber,
+          "age": e.age,
+          "gender": e.gender,
+          "instagramLink": "https://instagram.com/test",
+        },
+      )
+      .toList();
+  final response = await DioHelper.post(
+    "/bookings",
+    data: {"guests": guestsData, "passId": selectedPass?.id},
+  );
+  return response.success;
 }
+
+final totalPriceProvider = Provider<double>((ref) {
+  // Watch the dependencies: the selected pass and the guest count
+  final selectedPass = ref.watch(selectedPassProvider);
+  final guestCount = ref.watch(guestsProvider);
+
+  double totalPrice = 0;
+
+  // Perform the calculation only if a pass is selected and count is > 0
+  if (selectedPass != null && guestCount > 0) {
+    // NOTE: Ensure selectedPass.price is accessible and numeric (double/int)
+    final passPrice = selectedPass.price;
+    totalPrice = passPrice * guestCount;
+  }
+
+  return totalPrice;
+});
+
+final formattedTotalPriceProvider = Provider<String>((ref) {
+  final rawPrice = ref.watch(totalPriceProvider);
+
+  // Replace 'en_US' with your desired locale if different.
+  final formatter = NumberFormat('#,##0', 'en_US');
+  return formatter.format(rawPrice);
+});

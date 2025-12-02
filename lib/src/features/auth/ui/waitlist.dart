@@ -43,36 +43,40 @@ class _BaseScreenState extends State<BaseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: LiquidGlassLayer(
-          settings: LiquidGlassSettings(
-            ambientStrength: 0.5,
-            lightAngle: 0.5 * pi,
-            glassColor: Theme.of(
-              context,
-            ).colorScheme.surface.withValues(alpha: 0.4),
-            lightIntensity: 0.5,
-            blur: 20,
-          ),
-          child: LiquidGlass(
-            glassContainsChild: false,
-            shape: LiquidRoundedRectangle(borderRadius: 100),
-            child: Container(
-              width: AppTextStyles(context).accumulator * 327,
-              height: AppTextStyles(context).heightAccumulator * 56,
-              alignment: .center,
-              padding: .all(4),
-              child: NavBar(
-                items: navItems,
-                selectedIndex: currentIndex,
-                onTap: (index) {
-                  setState(() {
-                    currentIndex = index;
-                  });
-                },
+      floatingActionButton: Visibility(
+        visible: !isKeyboardOpen,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: LiquidGlassLayer(
+            settings: LiquidGlassSettings(
+              ambientStrength: 0.5,
+              lightAngle: 0.5 * pi,
+              glassColor: Theme.of(
+                context,
+              ).colorScheme.surface.withValues(alpha: 0.4),
+              lightIntensity: 0.5,
+              blur: 20,
+            ),
+            child: LiquidGlass(
+              glassContainsChild: false,
+              shape: LiquidRoundedRectangle(borderRadius: 100),
+              child: Container(
+                width: AppTextStyles(context).accumulator * 327,
+                height: AppTextStyles(context).heightAccumulator * 56,
+                alignment: .center,
+                padding: .all(4),
+                child: NavBar(
+                  items: navItems,
+                  selectedIndex: currentIndex,
+                  onTap: (index) {
+                    setState(() {
+                      currentIndex = index;
+                    });
+                  },
+                ),
               ),
             ),
           ),

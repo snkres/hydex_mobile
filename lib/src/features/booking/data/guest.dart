@@ -10,8 +10,9 @@ class Guest {
     required this.name,
     required this.email,
     required this.phoneNumber,
-    required this.instagram,
+    this.instagram =
+        "https://instagram.com/test", //If user doesn't have instagram , we set a default value
     required this.gender,
-    required this.age
+    required this.age,
   });
 }

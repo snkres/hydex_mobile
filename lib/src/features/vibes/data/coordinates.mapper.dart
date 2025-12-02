@@ -21,17 +21,19 @@ class CoordinatesMapper extends ClassMapperBase<Coordinates> {
   @override
   final String id = 'Coordinates';
 
-  static double _$lat(Coordinates v) => v.lat;
+  static double? _$lat(Coordinates v) => v.lat;
   static const Field<Coordinates, double> _f$lat = Field(
     'lat',
     _$lat,
     key: r'latitude',
+    opt: true,
   );
-  static double _$lng(Coordinates v) => v.lng;
+  static double? _$lng(Coordinates v) => v.lng;
   static const Field<Coordinates, double> _f$lng = Field(
     'lng',
     _$lng,
     key: r'longitude',
+    opt: true,
   );
 
   @override
@@ -114,8 +116,11 @@ class _CoordinatesCopyWithImpl<$R, $Out>
   late final ClassMapperBase<Coordinates> $mapper =
       CoordinatesMapper.ensureInitialized();
   @override
-  $R call({double? lat, double? lng}) => $apply(
-    FieldCopyWithData({if (lat != null) #lat: lat, if (lng != null) #lng: lng}),
+  $R call({Object? lat = $none, Object? lng = $none}) => $apply(
+    FieldCopyWithData({
+      if (lat != $none) #lat: lat,
+      if (lng != $none) #lng: lng,
+    }),
   );
   @override
   Coordinates $make(CopyWithData data) => Coordinates(

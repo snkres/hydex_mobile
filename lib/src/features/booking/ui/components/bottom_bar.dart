@@ -4,11 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/booking/domain/booking_repository.dart';
 import 'package:hydex/src/features/booking/ui/components/access_container.dart';
 
 import 'package:hydex/src/features/booking/ui/components/guest_form.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
+import 'package:intl/intl.dart';
 
 class BottomBar extends ConsumerStatefulWidget {
   const BottomBar({super.key});
@@ -34,7 +36,7 @@ class _BottomBarState extends ConsumerState<BottomBar> {
       child: AnimatedSize(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeInOut,
-        child: ref.watch(isAccessSelected) != 1
+        child: ref.watch(selectedPassProvider) == null
             ? PrimaryButton(
                 onTap: null,
                 title: "RSVP",
@@ -55,31 +57,7 @@ class _BottomBarState extends ConsumerState<BottomBar> {
                           color: AppColors.textSecondary,
                         ),
                       ),
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "\$5,100 ",
-                              style: AppTextStyles(context).secondaryBold
-                                  .copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize:
-                                        AppTextStyles(context).accumulator * 16,
-                                  ),
-                            ),
-                            TextSpan(
-                              text: "EGP",
-                              style: AppTextStyles(context).smallMedium
-                                  .copyWith(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize:
-                                        AppTextStyles(context).accumulator * 14,
-                                    color: AppColors.textSecondary,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      TotalPriceDisplay(),
                     ],
                   ),
                   Spacer(),
@@ -155,6 +133,35 @@ class _BottomBarState extends ConsumerState<BottomBar> {
                   ),
                 ],
               ),
+      ),
+    );
+  }
+}
+
+class TotalPriceDisplay extends ConsumerWidget {
+  const TotalPriceDisplay({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final finalPriceText = ref.watch(formattedTotalPriceProvider);
+
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: "\$$finalPriceText ",
+            style: AppTextStyles(context).secondaryBold.copyWith(
+              fontWeight: FontWeight.w600,
+              fontSize: AppTextStyles(context).accumulator * 16,
+            ),
+          ),
+          TextSpan(
+            text: "EGP", // Displays the currency
+            style: AppTextStyles(
+              context,
+            ).captionMedium.copyWith(color: AppColors.textSecondary),
+          ),
+        ],
       ),
     );
   }

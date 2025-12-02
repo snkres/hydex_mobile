@@ -4,19 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/booking/data/create_book.dart';
+import 'package:hydex/src/features/booking/data/format_time.dart';
 import 'package:hydex/src/features/booking/ui/components/access_container.dart';
 import 'package:hydex/src/features/booking/ui/components/bottom_bar.dart';
 import 'package:hydex/src/features/booking/ui/components/date_container.dart';
-import 'package:hydex/src/features/booking/ui/components/exclusive_perks.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
-import 'package:hydex/src/features/booking/ui/components/perk_container.dart';
 import 'package:hydex/src/features/booking/ui/components/slots_container.dart';
+import 'package:hydex/src/features/vibes/domain/event_notifier.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 
-class CreateBooking extends StatelessWidget {
+class CreateBooking extends StatefulWidget {
   const CreateBooking({super.key, required this.book});
 
   final CreateBook book;
+
+  @override
+  State<CreateBooking> createState() => _CreateBookingState();
+}
+
+class _CreateBookingState extends State<CreateBooking> {
+  DateTime selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -54,23 +61,26 @@ class CreateBooking extends StatelessWidget {
                       Row(
                         children: [
                           CustomBackButton(),
-                          Column(
-                            crossAxisAlignment: .start,
-                            children: [
-                              Text(
-                                "Plan Your Experience",
-                                style: TextStyle(
-                                  fontWeight: .w600,
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 16,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: .start,
+                              children: [
+                                Text(
+                                  widget.book.name,
+                                  style: TextStyle(
+                                    fontWeight: .w600,
+                                    fontSize:
+                                        AppTextStyles(context).accumulator * 16,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                book.name,
-                                style: AppTextStyles(context).primaryRegular
-                                    .copyWith(color: AppColors.textSecondary),
-                              ),
-                            ],
+                                Text(
+                                  widget.book.startTime?.toPrettyString() ??
+                                      "Date",
+                                  style: AppTextStyles(context).primaryRegular
+                                      .copyWith(color: AppColors.textSecondary),
+                                ),
+                              ],
+                            ),
                           ),
                           Spacer(),
                           CircleAvatar(),
@@ -79,16 +89,27 @@ class CreateBooking extends StatelessWidget {
                       ),
                       SizedBox(height: 6),
                       GuestsContainer(),
+                      // SizedBox(height: 24),
+                      // PerkContainer(),
                       SizedBox(height: 24),
-                      PerkContainer(),
+                      DateContainer(
+                        selectedDate: selectedDate,
+                        onDateSelected: (date) {
+                          setState(() {
+                            selectedDate = date;
+                          });
+                        },
+                      ),
                       SizedBox(height: 24),
-                      DateContainer(),
+                      SlotsContainer(
+                        selectedDate: selectedDate,
+                        operatingHours: widget.book.operatingHours,
+                        startTime: widget.book.startTime,
+                      ),
                       SizedBox(height: 24),
-                      SlotsContainer(),
-                      SizedBox(height: 24),
-                      AccessSection(),
-                      SizedBox(height: 24),
-                      ExclusivePerks(),
+                      AccessSection(passes: widget.book.passes),
+                      // SizedBox(height: 24),
+                      // ExclusivePerks(),
                       SizedBox(height: 100),
                     ],
                   ),
@@ -104,7 +125,7 @@ class CreateBooking extends StatelessWidget {
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
                 child: Container(
-                  height: 80,
+                  height: 90,
                   color: AppColors.backgroundBase.withOpacity(0.1),
                 ),
               ),

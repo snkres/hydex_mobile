@@ -4,17 +4,27 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
+import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 final vipCountProvider = StateProvider<int>((ref) => ref.watch(guestsProvider));
-final isAccessSelected = StateProvider<int>((ref) => -1);
+final selectedPassProvider = StateProvider<Passes?>((ref) => null);
+
+final ticketCountProvider = StateProvider<int>((ref) => 0);
 
 class AccessSection extends ConsumerWidget {
-  const AccessSection({super.key});
+  const AccessSection({super.key, required this.passes});
+
+  final List<Passes> passes;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedAccess = ref.watch(isAccessSelected);
+    // 1. Watch the specific pass selected
+    final selectedPass = ref.watch(selectedPassProvider);
+
+    // 2. Watch the global guest count directly
+    final guestCount = ref.watch(guestsProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -27,270 +37,59 @@ class AccessSection extends ConsumerWidget {
             ).secondaryBold.copyWith(fontWeight: FontWeight.w600),
           ),
         ),
-        SizedBox(height: 12),
-        GestureDetector(
-          onTap: () {
-            ref.read(isAccessSelected.notifier).update((state) => 0);
+        const SizedBox(height: 12),
+
+        ListView.separated(
+          itemCount: passes.length,
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          separatorBuilder: (context, index) => const SizedBox(height: 12),
+          itemBuilder: (context, index) {
+            final pass = passes[index];
+            final isSelected = selectedPass == pass;
+
+            return AccessContainer(
+              title: pass.name,
+              price: pass.price.toString(),
+              description: "Enjoy full access to the event.",
+              features: const ["Event access", "Welcome drink"],
+
+              isSelected: isSelected,
+
+              // CRITICAL CHANGE:
+              // If selected, show current guestCount.
+              // If not selected, we pass 0 (visual only, handled by !isSelected check in widget)
+              count: isSelected ? guestCount : 0,
+
+              onSelect: () {
+                // 1. Select this pass
+                ref.read(selectedPassProvider.notifier).state = pass;
+
+                // 2. Ensure Counter Logic:
+                // If count is 0 (fresh start), make it 1.
+                // If count is > 0 (e.g. 5 guests from previous screen), KEEP IT as 5.
+                if (ref.read(guestsProvider) == 0) {
+                  ref.read(guestsProvider.notifier).state = 1;
+                }
+              },
+
+              onIncrement: () {
+                // Directly update global guest provider
+                ref.read(guestsProvider.notifier).update((state) => state + 1);
+              },
+
+              onDecrement: () {
+                if (guestCount > 1) {
+                  // Standard decrease (Guest count remains > 0)
+                  ref
+                      .read(guestsProvider.notifier)
+                      .update((state) => state - 1);
+                } else {
+                  ref.read(selectedPassProvider.notifier).state = null;
+                }
+              },
+            );
           },
-          child: AnimatedContainer(
-            duration: Duration(milliseconds: 300),
-            padding: EdgeInsets.all(16),
-            margin: EdgeInsets.symmetric(horizontal: 16),
-            decoration: ShapeDecoration(
-              color: Color(0xff1E1E20),
-              shape: SmoothRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                smoothness: 1,
-                side: BorderSide(color: AppColors.borderDefault, width: 1),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Standard Access",
-                          style: AppTextStyles(context).secondaryBold,
-                        ),
-                        SizedBox(height: 4),
-                        Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: "1,700 ",
-                                style: AppTextStyles(context).smallBold,
-                              ),
-                              TextSpan(
-                                text: "EGP",
-                                style: AppTextStyles(context).captionMedium
-                                    .copyWith(color: AppColors.textSecondary),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    AddButton(onPressed: () {}),
-                  ],
-                ),
-                SizedBox(height: 8),
-
-                Text(
-                  "Enjoy full access to the event with general seating or entry.",
-                  style: AppTextStyles(
-                    context,
-                  ).captionRegular.copyWith(color: AppColors.textSecondary),
-                ),
-                SizedBox(height: 20),
-
-                Text(
-                  "Includes:",
-                  style: AppTextStyles(
-                    context,
-                  ).captionRegular.copyWith(color: AppColors.textSecondary),
-                ),
-                Text(
-                  "\u2022 Event access",
-                  style: AppTextStyles(
-                    context,
-                  ).captionRegular.copyWith(color: AppColors.textSecondary),
-                ),
-                Text(
-                  "\u2022 Complimentary welcome drink",
-                  style: AppTextStyles(
-                    context,
-                  ).captionRegular.copyWith(color: AppColors.textSecondary),
-                ),
-                Text(
-                  "\u2022 Standard seating area",
-                  style: AppTextStyles(
-                    context,
-                  ).captionRegular.copyWith(color: AppColors.textSecondary),
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: 10),
-        AnimatedContainer(
-          duration: Duration(milliseconds: 300),
-          padding: EdgeInsets.all(16),
-          margin: EdgeInsets.symmetric(horizontal: 16),
-          decoration: ShapeDecoration(
-            color: selectedAccess == 1
-                ? AppColors.signalBrandTint
-                : Color(0xff1E1E20),
-            shape: SmoothRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              smoothness: 1,
-              side: BorderSide(
-                color: selectedAccess == 1
-                    ? AppColors.signalBrandSolid
-                    : AppColors.borderDefault,
-                width: 1,
-              ),
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "VIP Experience",
-                        style: AppTextStyles(context).secondaryBold,
-                      ),
-                      SizedBox(height: 4),
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "1,700 ",
-                              style: AppTextStyles(context).smallBold,
-                            ),
-                            TextSpan(
-                              text: "EGP",
-                              style: AppTextStyles(context).captionMedium
-                                  .copyWith(color: AppColors.textSecondary),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Consumer(
-                    builder: (context, ref, _) {
-                      final vpCount = ref.watch(vipCountProvider);
-                      return Container(
-                        height: 40,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: selectedAccess != 1
-                            ? AddButton(
-                                onPressed: () {
-                                  ref
-                                      .read(isAccessSelected.notifier)
-                                      .update((state) => 1);
-                                },
-                              )
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      if (vpCount > 0) {
-                                        // Decrease VIP
-                                        ref
-                                            .read(vipCountProvider.notifier)
-                                            .update((state) => state - 1);
-
-                                        // Decrease guests but never below 1
-                                        ref
-                                            .read(guestsProvider.notifier)
-                                            .update((state) {
-                                              final newValue = state - 1;
-                                              return newValue < 1
-                                                  ? 1
-                                                  : newValue;
-                                            });
-                                      }
-                                    },
-                                    style: ButtonStyle(
-                                      backgroundColor: WidgetStatePropertyAll(
-                                        Colors.transparent,
-                                      ),
-                                    ),
-                                    icon: Transform.translate(
-                                      offset: const Offset(0, -6), // move up
-                                      child: const Icon(
-                                        Icons.minimize,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    vpCount.toString(),
-                                    style: AppTextStyles(
-                                      context,
-                                    ).smallMedium.copyWith(color: Colors.black),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      // Increase VIP
-                                      ref
-                                          .read(vipCountProvider.notifier)
-                                          .update((state) => state + 1);
-
-                                      // Increase guests
-                                      ref
-                                          .read(guestsProvider.notifier)
-                                          .update((state) => state + 1);
-                                    },
-                                    style: ButtonStyle(
-                                      backgroundColor: WidgetStatePropertyAll(
-                                        Colors.transparent,
-                                      ),
-                                    ),
-                                    icon: const Icon(
-                                      Icons.add,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-              SizedBox(height: 8),
-
-              Text(
-                "Enjoy full access to the event with general seating or entry.",
-                style: AppTextStyles(
-                  context,
-                ).captionRegular.copyWith(color: AppColors.textSecondary),
-              ),
-              SizedBox(height: 20),
-
-              Text(
-                "Includes:",
-                style: AppTextStyles(
-                  context,
-                ).captionRegular.copyWith(color: AppColors.textSecondary),
-              ),
-              Text(
-                "\u2022 Event access",
-                style: AppTextStyles(
-                  context,
-                ).captionRegular.copyWith(color: AppColors.textSecondary),
-              ),
-              Text(
-                "\u2022 Complimentary welcome drink",
-                style: AppTextStyles(
-                  context,
-                ).captionRegular.copyWith(color: AppColors.textSecondary),
-              ),
-              Text(
-                "\u2022 Standard seating area",
-                style: AppTextStyles(
-                  context,
-                ).captionRegular.copyWith(color: AppColors.textSecondary),
-              ),
-            ],
-          ),
         ),
       ],
     );
@@ -316,6 +115,158 @@ class AddButton extends StatelessWidget {
             fontSize: AppTextStyles(context).accumulator * 13,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class AccessContainer extends StatelessWidget {
+  final String title;
+  final String price;
+  final String? description;
+  final List<String> features;
+  final bool isSelected;
+  final int count;
+  final VoidCallback onSelect;
+  final VoidCallback onIncrement;
+  final VoidCallback onDecrement;
+
+  const AccessContainer({
+    super.key,
+    required this.title,
+    required this.price,
+    required this.isSelected,
+    required this.count,
+    required this.onSelect,
+    required this.onIncrement,
+    required this.onDecrement,
+    this.description,
+    this.features = const [],
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: ShapeDecoration(
+        color: isSelected ? AppColors.signalBrandTint : const Color(0xff1E1E20),
+        shape: SmoothRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          smoothness: 1,
+          side: BorderSide(
+            color: isSelected
+                ? AppColors.signalBrandSolid
+                : AppColors.borderDefault,
+            width: 1,
+          ),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: AppTextStyles(context).secondaryBold),
+                  const SizedBox(height: 4),
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "$price ",
+                          style: AppTextStyles(context).smallBold,
+                        ),
+                        TextSpan(
+                          text: "EGP",
+                          style: AppTextStyles(context).captionMedium.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                height: 40,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: !isSelected
+                    ? AddButton(onPressed: onSelect)
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            onPressed: onDecrement,
+                            style: const ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(
+                                Colors.transparent,
+                              ),
+                            ),
+                            icon: Transform.translate(
+                              offset: const Offset(0, -6),
+                              child: const Icon(
+                                Icons.minimize,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            count.toString(),
+                            style: AppTextStyles(
+                              context,
+                            ).smallMedium.copyWith(color: Colors.black),
+                          ),
+                          IconButton(
+                            onPressed: onIncrement,
+                            style: const ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(
+                                Colors.transparent,
+                              ),
+                            ),
+                            icon: const Icon(Icons.add, color: Colors.black),
+                          ),
+                        ],
+                      ),
+              ),
+            ],
+          ),
+          if (description != null || features.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            if (description != null)
+              Text(
+                description!,
+                style: AppTextStyles(
+                  context,
+                ).captionRegular.copyWith(color: AppColors.textSecondary),
+              ),
+            const SizedBox(height: 20),
+            if (features.isNotEmpty) ...[
+              Text(
+                "Includes:",
+                style: AppTextStyles(
+                  context,
+                ).captionRegular.copyWith(color: AppColors.textSecondary),
+              ),
+              ...features.map(
+                (f) => Text(
+                  "\u2022 $f",
+                  style: AppTextStyles(
+                    context,
+                  ).captionRegular.copyWith(color: AppColors.textSecondary),
+                ),
+              ),
+            ],
+          ],
+        ],
       ),
     );
   }

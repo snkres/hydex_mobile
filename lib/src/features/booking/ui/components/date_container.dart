@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 class DateContainer extends StatefulWidget {
-  const DateContainer({super.key});
+  const DateContainer({
+    super.key,
+    required this.selectedDate,
+    this.onDateSelected,
+  });
+
+  final DateTime selectedDate;
+  final Function(DateTime)? onDateSelected;
 
   @override
   State<DateContainer> createState() => _DateContainerState();
 }
 
 class _DateContainerState extends State<DateContainer> {
-  DateTime selectedDate = DateTime.now();
-
   final List<DateTime> dates = List.generate(
     7,
     (index) => DateTime.now().add(Duration(days: index)),
@@ -40,9 +46,9 @@ class _DateContainerState extends State<DateContainer> {
   }
 
   bool isSelected(DateTime date) {
-    return date.day == selectedDate.day &&
-        date.month == selectedDate.month &&
-        date.year == selectedDate.year;
+    return date.day == widget.selectedDate.day &&
+        date.month == widget.selectedDate.month &&
+        date.year == widget.selectedDate.year;
   }
 
   final List<String> monthNames = [
@@ -83,7 +89,7 @@ class _DateContainerState extends State<DateContainer> {
             Transform.rotate(
               angle: -3.14 / 2,
               child: Text(
-                monthNames[selectedDate.month - 1],
+                monthNames[widget.selectedDate.month - 1],
                 style: TextStyle(
                   fontSize: AppTextStyles(context).accumulator * 16,
                   fontWeight: FontWeight.bold,
@@ -99,9 +105,7 @@ class _DateContainerState extends State<DateContainer> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        setState(() {
-                          selectedDate = dates[index];
-                        });
+                        widget.onDateSelected?.call(dates[index]);
                       },
                       child: AnimatedContainer(
                         duration: Duration(milliseconds: 300),

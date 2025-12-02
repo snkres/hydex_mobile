@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/booking/data/create_book.dart';
 import 'package:hydex/src/features/booking/domain/booking_repository.dart';
+import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_summary.dart';
 import 'package:hydex/src/features/booking/ui/components/vendor_container.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:lottie/lottie.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
-class SummaryBooking extends StatelessWidget {
+class SummaryBooking extends ConsumerWidget {
   const SummaryBooking({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final totalGuests = ref.watch(guestsProvider);
+    final totalPrice = ref.watch(formattedTotalPriceProvider);
+    final booking = ref.watch(createBookProvider);
+
     return Scaffold(
       floatingActionButtonLocation: .centerDocked,
       floatingActionButton: Padding(
@@ -45,7 +52,7 @@ class SummaryBooking extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 26),
-                  VendorContainer(),
+                  VendorContainer(name: booking?.name ?? ""),
                   SizedBox(height: 24),
                   SmoothContainer(
                     borderRadius: .circular(26),
@@ -66,7 +73,7 @@ class SummaryBooking extends StatelessWidget {
                           children: [
                             Text("Total Price"),
                             Text(
-                              "Fees for 3 passes",
+                              "Fees for $totalGuests passes",
                               style: AppTextStyles(context).captionRegular
                                   .copyWith(color: AppColors.textSecondary),
                             ),
@@ -75,7 +82,7 @@ class SummaryBooking extends StatelessWidget {
                         Spacer(),
                         Text.rich(
                           TextSpan(
-                            text: "5,100 ",
+                            text: "$totalPrice ",
                             style: TextStyle(
                               fontSize: AppTextStyles(context).accumulator * 17,
                               fontWeight: .w600,
@@ -114,7 +121,7 @@ class SummaryBooking extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "After submission, {Vendor/Influencer} will review your booking. You’ll get a payment link once it’s approved.",
+                          "After submission, Influencer will review your booking. You’ll get a payment link once it’s approved.",
                           style: TextStyle(
                             fontSize: AppTextStyles(context).accumulator * 12,
                             color: AppColors.textSecondary,
@@ -192,6 +199,7 @@ class _LoadingFloatingButtonState extends ConsumerState<LoadingFloatingButton> {
         setState(() {
           loading = true;
         });
+
         final status = await ref.read(createBookingProvider.future).catchError((
           e,
         ) {
@@ -203,6 +211,36 @@ class _LoadingFloatingButtonState extends ConsumerState<LoadingFloatingButton> {
 
           return false;
         });
+        if (status && context.mounted) {
+          showModalBottomSheet(
+            context: context,
+            builder: (context) => Center(
+              child: Column(
+                mainAxisAlignment: .center,
+                children: [
+                  LottieBuilder.asset(
+                    "json/success.json",
+                    package: "assets",
+                    width: 150,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Request Submitted!",
+                    style: AppTextStyles(context).primaryBold,
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    "We’ll let you know soon if you and your plus one made the list 🤞 spots are limited, so booking a ticket’s still your best bet.",
+                    textAlign: .center,
+                    style: AppTextStyles(
+                      context,
+                    ).smallRegular.copyWith(color: AppColors.textSecondary),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
         setState(() {
           loading = false;
         });

@@ -6,8 +6,6 @@ class AppTheme {
   static ThemeData darkTheme() {
     return ThemeData(
       snackBarTheme: SnackBarThemeData(
-        width: 250,
-        insetPadding: EdgeInsets.all(100),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(99),
         ),

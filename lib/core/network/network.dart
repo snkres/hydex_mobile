@@ -852,7 +852,7 @@ class DioHelper {
           return ApiException('An unexpected error occurred: ${error.message}');
 
         default:
-          return ApiException('An unexpected error occurred.');
+          return ApiException('An unexpected error occurred.',);
       }
     }
 

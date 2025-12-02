@@ -79,4 +79,4 @@ final class CreateBookingProvider
   }
 }
 
-String _$createBookingHash() => r'0a494e9244bae55101fe4a59659c7dcb22753ddb';
+String _$createBookingHash() => r'2a5c3902f8088460cab4be45b7619afb04926dc4';

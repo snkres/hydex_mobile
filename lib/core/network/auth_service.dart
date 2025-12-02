@@ -14,7 +14,7 @@ class AuthService {
   Ref ref;
   AuthService(this.ref);
   static void initialize() {
-    DioHelper().init(defaultHeaders: {});
+    DioHelper().init();
   }
 
   Future<User?> login(String email, String password) async {
@@ -388,13 +388,14 @@ enum OTPType { phone, email }
 
 @Riverpod(keepAlive: true)
 Future<User?> currentUser(Ref ref) async {
-  final userState = ref.watch(userProvider);
-
+  final userState = ref.read(userProvider);
+  print(userState);
   if (userState != null) {
     return userState;
   }
 
   // If no user in state, fetch from auth
-  final authNotifier = ref.watch(authServiceProvider);
+  final authNotifier = ref.read(authServiceProvider);
+  print(await authNotifier.currentUser());
   return await authNotifier.currentUser();
 }

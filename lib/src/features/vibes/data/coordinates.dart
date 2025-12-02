@@ -5,10 +5,10 @@ part 'coordinates.mapper.dart';
 @MappableClass()
 class Coordinates with CoordinatesMappable {
   @MappableField(key: "latitude")
-  final double lat;
+  final double? lat;
 
   @MappableField(key: "longitude")
-  final double lng;
+  final double? lng;
 
-  Coordinates({required this.lat, required this.lng});
+  Coordinates({this.lat, this.lng});
 }

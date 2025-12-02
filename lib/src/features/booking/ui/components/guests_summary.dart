@@ -36,7 +36,6 @@ class GuestsSummary extends ConsumerWidget {
           SizedBox(height: 12),
           currentGuests.when(
             data: (data) {
-              log("Guests: ${data.guests}");
               return Wrap(
                 spacing: 8,
                 runSpacing: 8,
@@ -44,7 +43,7 @@ class GuestsSummary extends ConsumerWidget {
                 children: data.guests
                     .mapIndexed(
                       (index, guest) =>
-                          GuestDetail(guest: guest!, number: index + 1),
+                          GuestDetail(guest: guest, number: index + 1),
                     )
                     .toList(),
               );
@@ -72,7 +71,7 @@ class GuestsSummary extends ConsumerWidget {
 
 class GuestDetail extends StatelessWidget {
   const GuestDetail({super.key, required this.guest, required this.number});
-  final Guest guest;
+  final Guest? guest;
   final int number;
 
   @override
@@ -110,11 +109,11 @@ class GuestDetail extends StatelessWidget {
                           GuestFormPopup(
                             guestNumber: number,
                             totalGuests: 3,
-                            initialName: guest.name,
-                            initialPhone: guest.phoneNumber,
-                            initialEmail: guest.email,
-                            initialInstagram: guest.instagram,
-                            initialGender: guest.gender,
+                            initialName: guest?.name,
+                            initialPhone: guest?.phoneNumber,
+                            initialEmail: guest?.email,
+                            initialInstagram: guest?.instagram,
+                            initialGender: guest?.gender,
                             selectedGuestIndex: number - 1,
                           ),
                         ],
@@ -131,7 +130,7 @@ class GuestDetail extends StatelessWidget {
             ],
           ),
           SizedBox(height: 12),
-          Text(guest.name, style: AppTextStyles(context).smallSemibold),
+          Text(guest?.name ?? "", style: AppTextStyles(context).smallSemibold),
           SizedBox(height: 2),
 
           Text(
