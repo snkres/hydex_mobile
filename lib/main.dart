@@ -35,8 +35,8 @@ void main() async {
   }
 
   AuthService.initialize();
-  unawaited(
-    Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
-  );
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   unawaited(FirebaseNotifications().init());
 }

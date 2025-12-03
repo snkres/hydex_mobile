@@ -131,25 +131,27 @@ class UpcomingEventContainer extends StatelessWidget {
                   mainAxisAlignment: .spaceBetween,
                   crossAxisAlignment: .start,
                   children: [
-                    Column(
-                      crossAxisAlignment: .start,
-                      mainAxisAlignment: .spaceBetween,
-                      children: [
-                        Text(
-                          event.name,
-                          style: TextStyle(
-                            fontSize: AppTextStyles(context).accumulator * 16,
-                            fontWeight: .w600,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: .start,
+                        mainAxisAlignment: .spaceBetween,
+                        children: [
+                          Text(
+                            event.name,
+                            style: TextStyle(
+                              fontSize: AppTextStyles(context).accumulator * 16,
+                              fontWeight: .w600,
+                            ),
                           ),
-                        ),
-                        Text(
-                          "${formatDate(event.date)} • ${event.time}",
-                          style: TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: AppTextStyles(context).accumulator * 14,
+                          Text(
+                            "${formatDate(event.date)} • ${event.time}",
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: AppTextStyles(context).accumulator * 14,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     Container(
                       padding: .symmetric(horizontal: 12, vertical: 4),
@@ -215,7 +217,7 @@ class UpcomingEventContainer extends StatelessWidget {
         SizedBox(height: 16),
         PrimaryButton(
           onTap: () async {
-            context.push("/profile-summary");
+            context.push("/profile-summary", extra: event);
           },
           title: "View details",
           frColor: AppColors.buttonPrimary,

@@ -25,8 +25,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
     _tabController.addListener(checkIfUserInHistory);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   void checkIfUserInHistory() {
@@ -47,211 +53,209 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     return Scaffold(
       body: currentUser.when(
         data: (data) {
-          return DefaultTabController(
-            length: 3,
-            child: NestedScrollView(
-              headerSliverBuilder: (context, builder) {
-                return [
-                  SliverAppBar(
-                    toolbarHeight: isUserInHistory ? 330 : 220,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Color(0xFFA25BFF),
-                                  Color(0xFF251343),
-                                  Colors.transparent,
-                                ],
-                              ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.topCenter,
-                            child: SvgPicture.asset(
-                              "img/svg/pattern.svg",
-                              fit: BoxFit.cover,
-                              package: "assets",
-                              width: .infinity,
-                              color: AppColors.backgroundBase.withValues(
-                                alpha: 0.1,
-                              ),
-                            ),
-                          ),
-                          SafeArea(
-                            child: Column(
-                              children: [
-                                SizedBox(height: 36),
-                                SmoothContainer(
-                                  width: 67,
-                                  height: 67,
-                                  color: Colors.red,
-                                  borderRadius: .circular(16),
-                                  smoothness: 1,
-                                ),
-                                SizedBox(height: 16),
-                                Text(
-                                  data?.fullName ?? "",
-                                  style: TextStyle(
-                                    fontSize:
-                                        AppTextStyles(context).accumulator * 24,
-                                    fontWeight: .w600,
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  data?.role ?? "",
-                                  style: TextStyle(
-                                    fontSize:
-                                        AppTextStyles(context).accumulator * 14,
-                                    color: AppColors.textSecondary,
-                                  ),
-                                ),
-                                SizedBox(height: 36),
-                                Visibility(
-                                  visible: isUserInHistory,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                    ),
-                                    child: Row(
-                                      spacing: 8,
-                                      children: [
-                                        Expanded(
-                                          child: SmoothContainer(
-                                            borderRadius: .circular(16),
-                                            side: BorderSide(
-                                              color: AppColors.borderDefault,
-                                            ),
-                                            smoothness: 1,
-                                            padding: .all(12),
-                                            child: Column(
-                                              crossAxisAlignment: .start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      "Upcoming",
-                                                      style: TextStyle(
-                                                        fontSize:
-                                                            AppTextStyles(
-                                                              context,
-                                                            ).accumulator *
-                                                            14,
-                                                        color: AppColors
-                                                            .textSecondary,
-                                                      ),
-                                                    ),
-                                                    SvgPicture.asset(
-                                                      "img/svg/calendar.svg",
-                                                      package: "assets",
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 16),
-                                                Text(
-                                                  "3",
-                                                  style: TextStyle(
-                                                    fontWeight: .w600,
-                                                    fontSize:
-                                                        AppTextStyles(
-                                                          context,
-                                                        ).accumulator *
-                                                        18,
-                                                    color:
-                                                        AppColors.textPrimary,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: SmoothContainer(
-                                            borderRadius: .circular(16),
-                                            side: BorderSide(
-                                              color: AppColors.borderDefault,
-                                            ),
-                                            smoothness: 1,
-                                            padding: .all(12),
-                                            child: Column(
-                                              crossAxisAlignment: .start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      "Invites",
-                                                      style: TextStyle(
-                                                        fontSize:
-                                                            AppTextStyles(
-                                                              context,
-                                                            ).accumulator *
-                                                            14,
-                                                        color: AppColors
-                                                            .textSecondary,
-                                                      ),
-                                                    ),
-                                                    SvgPicture.asset(
-                                                      "img/svg/invites.svg",
-                                                      package: "assets",
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 16),
-                                                Text(
-                                                  "15",
-                                                  style: TextStyle(
-                                                    fontWeight: .w600,
-                                                    fontSize:
-                                                        AppTextStyles(
-                                                          context,
-                                                        ).accumulator *
-                                                        18,
-                                                    color:
-                                                        AppColors.textPrimary,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+          return NestedScrollView(
+            headerSliverBuilder: (context, builder) {
+              return [
+                SliverAppBar(
+                  toolbarHeight: isUserInHistory ? 330 : 220,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color(0xFFA25BFF),
+                                Color(0xFF251343),
+                                Colors.transparent,
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    bottom: TabBar(
-                      dividerColor: Colors.transparent,
-                      unselectedLabelColor: AppColors.textSecondary,
-                      labelColor: Colors.white,
-                      indicatorColor: AppColors.signalBrandSolid,
-                      controller: _tabController,
-                      tabs: [
-                        Tab(text: "Upcoming Events"),
-                        Tab(text: "History"),
-                        Tab(text: "Passport"),
+                        ),
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: SvgPicture.asset(
+                            "img/svg/pattern.svg",
+                            fit: BoxFit.cover,
+                            package: "assets",
+                            width: .infinity,
+                            color: AppColors.backgroundBase.withValues(
+                              alpha: 0.1,
+                            ),
+                          ),
+                        ),
+                        SafeArea(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 36),
+                              SmoothContainer(
+                                width: 67,
+                                height: 67,
+                                color: Colors.red,
+                                borderRadius: .circular(16),
+                                smoothness: 1,
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                data?.fullName ?? "",
+                                style: TextStyle(
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 24,
+                                  fontWeight: .w600,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                data?.role ?? "",
+                                style: TextStyle(
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 14,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                              SizedBox(height: 36),
+                              Visibility(
+                                visible: isUserInHistory,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: Row(
+                                    spacing: 8,
+                                    children: [
+                                      Expanded(
+                                        child: SmoothContainer(
+                                          borderRadius: .circular(16),
+                                          side: BorderSide(
+                                            color: AppColors.borderDefault,
+                                          ),
+                                          smoothness: 1,
+                                          padding: .all(12),
+                                          child: Column(
+                                            crossAxisAlignment: .start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "Upcoming",
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          AppTextStyles(
+                                                            context,
+                                                          ).accumulator *
+                                                          14,
+                                                      color: AppColors
+                                                          .textSecondary,
+                                                    ),
+                                                  ),
+                                                  SvgPicture.asset(
+                                                    "img/svg/calendar.svg",
+                                                    package: "assets",
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 16),
+                                              Text(
+                                                "3",
+                                                style: TextStyle(
+                                                  fontWeight: .w600,
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      18,
+                                                  color: AppColors.textPrimary,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: SmoothContainer(
+                                          borderRadius: .circular(16),
+                                          side: BorderSide(
+                                            color: AppColors.borderDefault,
+                                          ),
+                                          smoothness: 1,
+                                          padding: .all(12),
+                                          child: Column(
+                                            crossAxisAlignment: .start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "Invites",
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          AppTextStyles(
+                                                            context,
+                                                          ).accumulator *
+                                                          14,
+                                                      color: AppColors
+                                                          .textSecondary,
+                                                    ),
+                                                  ),
+                                                  SvgPicture.asset(
+                                                    "img/svg/invites.svg",
+                                                    package: "assets",
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 16),
+                                              Text(
+                                                "15",
+                                                style: TextStyle(
+                                                  fontWeight: .w600,
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      18,
+                                                  color: AppColors.textPrimary,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                ];
-              },
-              body: TabBarView(
-                children: [UpcomingEventSection(), History(), Passport()],
-              ),
+                  bottom: TabBar(
+                    dividerColor: Colors.transparent,
+                    unselectedLabelColor: AppColors.textSecondary,
+                    labelColor: Colors.white,
+                    indicatorColor: AppColors.signalBrandSolid,
+                    controller: _tabController,
+
+                    tabs: [
+                      Tab(text: "Upcoming Events"),
+                      Tab(text: "History"),
+                      Tab(text: "Passport"),
+                    ],
+                  ),
+                ),
+              ];
+            },
+            body: TabBarView(
+              controller: _tabController,
+
+              children: [UpcomingEventSection(), History(), Passport()],
             ),
           );
         },

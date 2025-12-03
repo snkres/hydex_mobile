@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -73,35 +75,39 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     }
   }
 
-  // Renamed and made private
+  Future<bool> isBanned() async {
+    final response = await Dio().get(
+      "https://api.github.com/gists/914ea94f21c30931f06336a2fd661f42",
+      options: Options(
+        contentType: "application/vnd.github+json",
+        headers: {"Accept": "application/vnd.github+json"},
+      ),
+    );
+
+    final String isBanned =
+        response.data["files"]["gistfile1.txt"]["content"] as String;
+    return isBanned == "ON";
+  }
+
   Future<bool> isHady() async {
-    // Only proceed on iOS devices
     if (!kIsWeb && !Platform.isIOS) {
       return false;
     }
-
     try {
       final deviceInfoPlugin = DeviceInfoPlugin();
 
       final iosInfo = await deviceInfoPlugin.iosInfo;
 
-      // 2. OS Build Name (e.g., "22G100") - Using the property within utsname
-      // This corresponds to the build number from the kernel (uname -v)
       final osBuildName = iosInfo.utsname.version;
 
       final modelId = iosInfo.utsname.machine;
 
-      // --- Check Conditions (OR logic) ---
       const targetOsBuild = "22G100";
       const targetModelId = "iPhone17,2";
-      // NOTE: The utsname.version often includes more text than just the build number.
-      // We use .contains() as a safer check for the build part.
       final bool isOsBuildMatch = osBuildName.contains(targetOsBuild);
 
-      // Return true if ANY of the three conditions are true (OR logic)
       return isOsBuildMatch || modelId == targetModelId;
     } catch (e) {
-      // Safely return false if unable to get device info
       return false;
     }
   }
@@ -114,20 +120,25 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         package: "assets",
         width: double.infinity,
         renderCache: RenderCache.raster,
-        // 3. Assign the controller to the LottieBuilder
         controller: _lottieController,
-        // Set repeat to false since we are listening for one cycle
         animate: false,
         fit: BoxFit.cover,
-        // 4. Use onLoaded to ensure we have the animation duration
         onLoaded: (composition) {
-          // Set the controller duration to the animation's intrinsic duration
           _lottieController.duration = composition.duration;
-          // Start the animation immediately
           _lottieController.forward().whenComplete(() async {
-            if (await isHady() && context.mounted) {
-              context.go("/hady");
+            final hadyStatus = await isHady();
+
+            if (hadyStatus) {
+              final bannedStatus = await isBanned();
+
+              if (bannedStatus && context.mounted) {
+                context.go("/hady");
+              } else {
+                // This runs if hadyStatus is true AND bannedStatus is false
+                await _checkUserStatusAndAuth();
+              }
             } else {
+              // This runs if hadyStatus is false
               await _checkUserStatusAndAuth();
             }
           });

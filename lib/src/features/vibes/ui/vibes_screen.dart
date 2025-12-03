@@ -21,6 +21,7 @@ import 'package:hydex/src/features/vibes/ui/components/event_details.dart';
 import 'package:hydex/src/features/vibes/ui/details_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:video_player/video_player.dart';
@@ -61,9 +62,15 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
       body: LocationRequired(
         child: RefreshIndicator(
           onRefresh: () async {
-            ref.invalidate(getBannersProvider(type: BannerType.featured));
-            ref.invalidate(getBannersProvider(type: BannerType.promotional));
-            ref.invalidate(getEventCategoriesProvider);
+            await ref.refresh(
+              getBannersProvider(type: BannerType.featured).future,
+            );
+
+            await ref.refresh(
+              getBannersProvider(type: BannerType.promotional).future,
+            );
+
+            await ref.refresh(getEventCategoriesProvider.future);
           },
           child: SingleChildScrollView(
             child: Column(
@@ -74,6 +81,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                     if (data.isEmpty) {
                       return SizedBox(height: 100);
                     }
+
                     return Stack(
                       children: [
                         LayoutBuilder(
@@ -300,8 +308,11 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                     );
                   },
                   error: (e, s) => Center(child: Text("Error")),
-                  loading: () =>
-                      Center(child: CircularProgressIndicator.adaptive()),
+                  loading: () => Shimmer.fromColors(
+                    baseColor: AppColors.backgroundOverlay,
+                    highlightColor: AppColors.buttonSecondary,
+                    child: Container(color: Colors.red, height: 350),
+                  ),
                 ),
                 Transform.translate(
                   offset: Offset(0, -45),
@@ -666,9 +677,29 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                     return Text("Error");
                                   },
                                   loading: () {
-                                    return Center(
-                                      child:
-                                          CircularProgressIndicator.adaptive(),
+                                    return SizedBox(
+                                      height: 300,
+                                      child: ListView.separated(
+                                        itemCount: 4,
+                                        separatorBuilder: (_, _) =>
+                                            SizedBox(height: 12),
+                                        padding: .symmetric(horizontal: 16),
+                                        itemBuilder: (context, index) =>
+                                            Shimmer.fromColors(
+                                              baseColor:
+                                                  AppColors.backgroundOverlay,
+                                              highlightColor:
+                                                  AppColors.buttonSecondary,
+                                              child: SmoothContainer(
+                                                smoothness: 1,
+                                                width: double.infinity,
+                                                color:
+                                                    AppColors.backgroundOverlay,
+                                                borderRadius:
+                                                    BorderRadius.circular(24),
+                                              ),
+                                            ),
+                                      ),
                                     );
                                   },
                                 ),
@@ -783,7 +814,30 @@ class AllVendorsWidget extends ConsumerWidget {
             log("Error Vendor:", error: e, stackTrace: s);
             return Text("Error");
           },
-          loading: () => SizedBox.shrink(),
+          loading: () {
+            return SizedBox(
+              height: 160,
+              child: ListView.separated(
+                scrollDirection: .horizontal,
+                separatorBuilder: (context, index) => SizedBox(width: 12),
+
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                itemCount: 3,
+                itemBuilder: (context, index) {
+                  return Shimmer.fromColors(
+                    baseColor: AppColors.backgroundOverlay,
+                    highlightColor: AppColors.buttonSecondary,
+                    child: SmoothContainer(
+                      color: Colors.green,
+                      width: 240,
+                      borderRadius: BorderRadius.circular(24),
+                      smoothness: 1,
+                    ),
+                  );
+                },
+              ),
+            );
+          },
         ),
       ],
     );
@@ -798,114 +852,183 @@ class AllEventsWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final eventsAsync = ref.watch(getEventsProvider(page: 1));
     final user = ref.watch(currentUserProvider);
-    return eventsAsync.when(
-      data: (events) {
-        if (events.isEmpty) {
-          return SizedBox.shrink();
-        }
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 32),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      children: [
+        eventsAsync.when(
+          data: (events) {
+            if (events.isEmpty) {
+              return SizedBox.shrink();
+            }
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 32),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      user.when(
-                        skipError: true,
-                        error: (error, stackTrace) => Text("Error Name"),
-                        loading: () => Container(),
-                        data: (data) => Text.rich(
-                          TextSpan(
-                            text: "${data?.fullName}, ",
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 18,
-                              fontWeight: FontWeight.w700,
-                            ),
-                            children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          user.when(
+                            skipError: true,
+                            error: (error, stackTrace) => Text("Error Name"),
+                            loading: () => Container(),
+                            data: (data) => Text.rich(
                               TextSpan(
-                                text: "Your Picks",
+                                text: "${data?.fullName}, ",
                                 style: TextStyle(
-                                  color: AppColors.textSecondary,
-                                  fontWeight: FontWeight.w400,
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 18,
+                                  fontWeight: FontWeight.w700,
                                 ),
+                                children: [
+                                  TextSpan(
+                                    text: "Your Picks",
+                                    style: TextStyle(
+                                      color: AppColors.textSecondary,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
+                          ),
+                          Text(
+                            "Personalized plans just for you",
+                            style: TextStyle(
+                              fontSize: AppTextStyles(context).accumulator * 14,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      TextButton(
+                        style: ButtonStyle(
+                          foregroundColor: WidgetStatePropertyAll(
+                            AppColors.textPrimary,
                           ),
                         ),
-                      ),
-                      Text(
-                        "Personalized plans just for you",
-                        style: TextStyle(
-                          fontSize: AppTextStyles(context).accumulator * 14,
-                          color: AppColors.textSecondary,
+                        onPressed: () {},
+                        child: Text(
+                          "Discover all",
+                          style: TextStyle(
+                            fontSize: AppTextStyles(context).accumulator * 12,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  TextButton(
-                    style: ButtonStyle(
-                      foregroundColor: WidgetStatePropertyAll(
-                        AppColors.textPrimary,
-                      ),
+                ),
+                SizedBox(height: 16),
+
+                SizedBox(
+                  height: MediaQuery.sizeOf(context).height * 0.28,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.only(left: 16),
+                    itemCount: events.length,
+                    itemBuilder: (context, index) {
+                      final event = events[index];
+                      return OpenContainer(
+                        openBuilder: (context, _) =>
+                            EventDetailScreen(id: event.id),
+                        closedColor: Colors.transparent,
+                        closedElevation: 0,
+                        closedBuilder: (context, _) => Padding(
+                          padding: const EdgeInsets.only(right: 16),
+                          child: EventContainer(
+                            tag: event.tags.firstOrNull!.capitalize(),
+                            avatarImage: event.media.first,
+                            date: event.createdAt.formatDate(),
+                            heading: event.name,
+                            image: event.media.firstOrNull,
+                            description: event.description,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+          loading: () {
+            return Padding(
+              padding: const EdgeInsets.only(top: 32),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: .spaceBetween,
+                      children: [
+                        Shimmer.fromColors(
+                          baseColor: AppColors.backgroundOverlay,
+                          highlightColor: AppColors.buttonSecondary,
+
+                          child: Container(
+                            height: 35,
+                            width: 200,
+                            decoration: ShapeDecoration(
+                              color: AppColors.backgroundOverlay,
+                              shape: RoundedSuperellipseBorder(
+                                borderRadius: .circular(12),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Shimmer.fromColors(
+                          baseColor: AppColors.backgroundOverlay,
+                          highlightColor: AppColors.buttonSecondary,
+
+                          child: Container(
+                            height: 35,
+                            width: 70,
+                            decoration: BoxDecoration(
+                              color: AppColors.backgroundOverlay,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    onPressed: () {},
-                    child: Text(
-                      "Discover all",
-                      style: TextStyle(
-                        fontSize: AppTextStyles(context).accumulator * 12,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  ),
+                  SizedBox(height: 16),
+                  SizedBox(
+                    height: 240,
+                    child: ListView.separated(
+                      scrollDirection: .horizontal,
+                      separatorBuilder: (context, index) => SizedBox(width: 12),
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: 3,
+                      itemBuilder: (context, index) {
+                        return Shimmer.fromColors(
+                          baseColor: AppColors.backgroundOverlay,
+                          highlightColor: AppColors.buttonSecondary,
+                          child: SmoothContainer(
+                            color: Colors.green,
+                            width: 330,
+                            borderRadius: BorderRadius.circular(24),
+                            smoothness: 1,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
               ),
-            ),
-            SizedBox(height: 16),
-            SizedBox(
-              height: MediaQuery.sizeOf(context).height * 0.28,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.only(left: 16),
-                itemCount: events.length,
-                itemBuilder: (context, index) {
-                  final event = events[index];
-                  return OpenContainer(
-                    openBuilder: (context, _) =>
-                        EventDetailScreen(id: event.id),
-                    closedColor: Colors.transparent,
-                    closedElevation: 0,
-                    closedBuilder: (context, _) => Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: EventContainer(
-                        tag: event.tags.firstOrNull!.capitalize(),
-                        avatarImage: event.media.first,
-                        date: event.createdAt.formatDate(),
-                        heading: event.name,
-                        image: event.media.firstOrNull,
-                        description: event.description,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        );
-      },
-      loading: () => SizedBox.shrink(),
-      error: (e, s) {
-        return SmoothContainer(
-          borderRadius: BorderRadius.circular(24),
-          smoothness: 1,
-          width: 312,
-          color: AppColors.surfaceContainerLighter,
-        );
-      },
+            );
+          },
+          error: (e, s) {
+            log("Events Error", error: e, stackTrace: s);
+            return Text("Error");
+          },
+        ),
+      ],
     );
   }
 }
@@ -1024,13 +1147,6 @@ class CuratedContainer extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Text(
-                            //   text,
-                            //   style: TextStyle(
-                            //     fontSize: AppTextStyles(context).accumulator * 14,
-                            //     fontWeight: FontWeight.w100,
-                            //   ),
-                            // ),
                             Text(
                               heading,
                               style: TextStyle(
@@ -1069,13 +1185,6 @@ class CuratedContainer extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Text(
-                            //   text,
-                            //   style: TextStyle(
-                            //     fontSize: AppTextStyles(context).accumulator * 14,
-                            //     fontWeight: FontWeight.w100,
-                            //   ),
-                            // ),
                             Expanded(
                               child: Text(
                                 heading,

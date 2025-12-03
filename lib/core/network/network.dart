@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 // Custom exception classes for better error handling
 class ApiException implements Exception {
@@ -339,15 +340,6 @@ class DioHelper {
                 'Bearer ${_tokenPair!.accessToken}';
           }
 
-          // Log request in debug mode
-          if (kDebugMode) {
-            print('🚀 REQUEST: ${options.method} ${options.uri}');
-            print('📤 Headers: ${options.headers}');
-            if (options.data != null) {
-              print('📤 Data: ${options.data}');
-            }
-          }
-
           handler.next(options);
         },
         onResponse: (response, handler) {
@@ -416,18 +408,18 @@ class DioHelper {
       ),
     );
 
-    // Add pretty logger interceptor for debug mode
-    if (kDebugMode) {
-      _dio.interceptors.add(
-        LogInterceptor(
-          requestBody: true,
-          responseBody: true,
-          requestHeader: true,
-          responseHeader: false,
-          error: true,
-        ),
-      );
-    }
+    _dio.interceptors.add(
+      PrettyDioLogger(
+        requestBody: true,
+        responseBody: true,
+        requestHeader: false,
+        enabled: kDebugMode,
+        compact: true,
+        maxWidth: 100,
+        responseHeader: false,
+        error: true,
+      ),
+    );
   }
 
   static Future<void> setTokensFromAuthResponse(
@@ -852,7 +844,7 @@ class DioHelper {
           return ApiException('An unexpected error occurred: ${error.message}');
 
         default:
-          return ApiException('An unexpected error occurred.',);
+          return ApiException('An unexpected error occurred.');
       }
     }
 

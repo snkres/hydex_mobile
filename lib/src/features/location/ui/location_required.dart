@@ -1,56 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/src/features/location/domain/location_notifier.dart';
 import 'package:hydex/src/features/location/domain/location_service.dart';
 
-class LocationRequired extends StatefulWidget {
+class LocationRequired extends ConsumerWidget {
   final Widget child;
   const LocationRequired({super.key, required this.child});
 
-  @override
-  State<LocationRequired> createState() => _LocationRequiredState();
-}
-
-class _LocationRequiredState extends State<LocationRequired>
-    with WidgetsBindingObserver {
-  LocationPermission? _permissionStatus;
-  bool _isLoading = true;
-  bool _hasUserInteracted =
-      false; // Track if user has attempted to grant permission
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    checkStatus();
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  // Re-check permission when app resumes (user returns from settings)
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && _hasUserInteracted) {
-      checkStatus();
-    }
-  }
-
-  Future<void> checkStatus() async {
-    final status = await LocationService().locationPermission();
-    print(status);
-    if (!mounted) return;
-    setState(() {
-      _permissionStatus = status;
-      _isLoading = false;
-    });
-  }
-
-  Widget _buildLocationDeniedWidget() {
+  Widget _buildLocationDeniedWidget(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: Center(
         child: Padding(
@@ -77,9 +37,9 @@ class _LocationRequiredState extends State<LocationRequired>
               const SizedBox(height: 24),
               ElevatedButton.icon(
                 onPressed: () async {
-                  setState(() => _hasUserInteracted = true);
-                  await LocationService().requestLocationPermission();
-                  await checkStatus();
+                  await ref
+                      .read(locationCheckerProvider.notifier)
+                      .requestPermissionAndUpdate();
                 },
                 icon: const Icon(Icons.location_on),
                 label: const Text('Enable Location'),
@@ -97,7 +57,7 @@ class _LocationRequiredState extends State<LocationRequired>
     );
   }
 
-  Widget _buildLocationPermanentlyDeniedWidget() {
+  Widget _buildLocationPermanentlyDeniedWidget(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Padding(
@@ -143,23 +103,22 @@ class _LocationRequiredState extends State<LocationRequired>
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+  Widget build(BuildContext context, WidgetRef ref) {
+    final permissionStatus = ref.watch(locationCheckerProvider).value;
+
+
+    if (permissionStatus == LocationPermission.denied) {
+      // Logic for permission denied
+      // You would call locationNotifier.requestPermissionAndUpdate() on button press
+      return _buildLocationDeniedWidget(context, ref);
     }
 
-    // Show regular "Enable Location" for first-time denied
-    if (_permissionStatus == LocationPermission.denied && !_hasUserInteracted) {
-      return _buildLocationDeniedWidget();
-    }
-
-    // Show "Open Settings" only if user denied after interaction or deniedForever
-    if (_permissionStatus == LocationPermission.denied && _hasUserInteracted ||
-        _permissionStatus == LocationPermission.deniedForever) {
-      return _buildLocationPermanentlyDeniedWidget();
+    if (permissionStatus == LocationPermission.deniedForever) {
+      // Logic for permanently denied
+      return _buildLocationPermanentlyDeniedWidget(context);
     }
 
     // Permission granted
-    return widget.child;
+    return child;
   }
 }

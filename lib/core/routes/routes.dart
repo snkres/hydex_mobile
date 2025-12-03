@@ -24,6 +24,7 @@ import 'package:hydex/src/features/contact/ui/contacts.dart';
 import 'package:hydex/src/features/loading/ui/loading.dart';
 import 'package:hydex/src/features/location/ui/location_screen.dart';
 import 'package:hydex/src/features/notifications/ui/notifications_screen.dart';
+import 'package:hydex/src/features/profile/data/upcoming_event.dart';
 import 'package:hydex/src/features/profile_summary/ui/profile_summary.dart';
 import 'package:hydex/src/features/splash/ui/splash.dart';
 import 'package:hydex/src/features/vibes/ui/components/event_details.dart';
@@ -97,7 +98,7 @@ class AppRoutes {
       ),
       GoRoute(
         path: '/profile-summary',
-        builder: (context, state) => ProfileSummary(),
+        builder: (context, state) => ProfileSummary(event: state.extra as UpcomingEvent,),
       ),
       GoRoute(
         path: '/forgot-password',

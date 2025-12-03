@@ -16,7 +16,6 @@ import 'package:hydex/src/features/booking/data/format_time.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:hydex/src/features/location/domain/location_service.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
-import 'package:hydex/src/features/vibes/domain/event_notifier.dart';
 import 'package:hydex/src/features/vibes/domain/vendor_notifier.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/features/vibes/ui/components/gallery.dart';
@@ -47,7 +46,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
   bool _isCollapsedFromSheet = false;
-  final double _collapseThreshold = 0.9;
+  final double _collapseThreshold = 0.85;
   double _sheetSize = 0.3;
 
   @override
@@ -150,7 +149,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     // Logic for overlay opacity
-    final overlayOpacity = ((_sheetSize - 0.3) / (0.9 - 0.3) * 0.6).clamp(
+    final overlayOpacity = ((_sheetSize - 0.3) / (0.85 - 0.3) * 0.6).clamp(
       0.0,
       0.6,
     );
@@ -217,14 +216,13 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onVerticalDragUpdate: (details) {
-                    // 1. Stop dragging if sheet is already full (let the sheet scroll instead)
                     if (_sheetSize >= _collapseThreshold &&
                         details.delta.dy < 0)
                       return;
 
                     // 2. Calculate new size
                     final delta = -details.delta.dy / screenHeight;
-                    final newSize = (_sheetSize + delta).clamp(0.3, 0.9);
+                    final newSize = (_sheetSize + delta).clamp(0.3, 0.85);
 
                     // 3. Move sheet
                     if (_sheetController.isAttached) {
@@ -333,7 +331,10 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                                 SizedBox(height: 12),
 
                                                 Text(
-                                                  "📍 ${vendor.location.address}",
+                                                  vendor.location.address !=
+                                                          null
+                                                      ? "📍 ${vendor.location.address}"
+                                                      : "${vendor.location.street}, ${vendor.location.city}, ${vendor.location.country}",
                                                   style: TextStyle(
                                                     fontSize:
                                                         AppTextStyles(
@@ -815,65 +816,68 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                       ),
                                     ),
 
-                                    Column(
-                                      crossAxisAlignment: .start,
-                                      children: [
-                                        SizedBox(height: 24),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                          ),
-                                          child: Text(
-                                            "Upcoming Events".toUpperCase(),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColors.textSecondary,
-                                              fontSize:
-                                                  AppTextStyles(
-                                                    context,
-                                                  ).accumulator *
-                                                  16,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 8),
-                                        SizedBox(
-                                          height: 202,
-                                          child: ListView.separated(
-                                            itemCount: vendor.events.length,
+                                    Visibility(
+                                      visible: vendor.events.isNotEmpty,
+                                      child: Column(
+                                        crossAxisAlignment: .start,
+                                        children: [
+                                          SizedBox(height: 24),
+                                          Padding(
                                             padding: EdgeInsets.symmetric(
                                               horizontal: 16,
                                             ),
-                                            scrollDirection: Axis.horizontal,
-                                            separatorBuilder:
-                                                (context, index) =>
-                                                    SizedBox(width: 8),
-                                            itemBuilder: (context, index) {
-                                              final event =
-                                                  vendor.events[index];
-                                              return SizedBox(
-                                                width: 330,
-                                                child: EventContainer(
-                                                  onView: () {
-                                                    context.pushNamed(
-                                                      "event_detail",
-                                                      pathParameters: {
-                                                        "id": event.id,
-                                                      },
-                                                    );
-                                                  },
-                                                  heading: event.name ?? "",
-                                                  image: event.media?.first,
-                                                  avatarImage:
-                                                      event.media?.first,
-                                                  date: event.startTime
-                                                      .toPrettyString(),
-                                                ),
-                                              );
-                                            },
+                                            child: Text(
+                                              "Upcoming Events".toUpperCase(),
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                color: AppColors.textSecondary,
+                                                fontSize:
+                                                    AppTextStyles(
+                                                      context,
+                                                    ).accumulator *
+                                                    16,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                          SizedBox(height: 8),
+                                          SizedBox(
+                                            height: 202,
+                                            child: ListView.separated(
+                                              itemCount: vendor.events.length,
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 16,
+                                              ),
+                                              scrollDirection: Axis.horizontal,
+                                              separatorBuilder:
+                                                  (context, index) =>
+                                                      SizedBox(width: 8),
+                                              itemBuilder: (context, index) {
+                                                final event =
+                                                    vendor.events[index];
+                                                return SizedBox(
+                                                  width: 330,
+                                                  child: EventContainer(
+                                                    onView: () {
+                                                      context.pushNamed(
+                                                        "event_detail",
+                                                        pathParameters: {
+                                                          "id": event.id,
+                                                        },
+                                                      );
+                                                    },
+                                                    heading: event.name ?? "",
+                                                    image: event.media?.first,
+                                                    avatarImage:
+                                                        event.media?.first,
+                                                    date: event.startTime
+                                                        .toPrettyString(),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                     SizedBox(height: 24),
                                     Padding(

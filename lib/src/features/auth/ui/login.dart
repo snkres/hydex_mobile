@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
+import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/country_picker_provider.dart';
 import 'package:hydex/src/features/auth/ui/components/country_picker.dart';
@@ -223,6 +225,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                           right: 8,
                                         ),
                                         child: IconButton(
+                                          style: ButtonStyle(
+                                            backgroundColor: .all(
+                                              Colors.transparent,
+                                            ),
+                                          ),
                                           onPressed: () {
                                             setState(() {
                                               hidePassword = !hidePassword;
@@ -275,32 +282,24 @@ class _LoginScreenState extends State<LoginScreen> {
                                 padding: const EdgeInsets.only(bottom: 24),
                                 child: PrimaryButton(
                                   onTap: () async {
-                                    if (formKey.currentState!.validate()) {
+                                    if (!formKey.currentState!.validate())
+                                      return;
+                                    try {
                                       await ref
                                           .read(authServiceProvider)
                                           .login(
                                             phoneNumber!,
                                             passwordController.text,
-                                          )
-                                          .catchError((error) {
-                                            if (context.mounted) {
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                SnackBar(
-                                                  content: Column(
-                                                    children: [
-                                                      Text(
-                                                        "❌ ${error.message}",
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                          });
+                                          );
+
+                                      if (context.mounted) context.go("/");
+                                    } on ApiException catch (error) {
                                       if (context.mounted) {
-                                        context.go("/");
+                                        Fluttertoast.showToast(
+                                          msg: error.message,
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.BOTTOM,
+                                        );
                                       }
                                     }
                                   },

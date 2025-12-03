@@ -48,7 +48,7 @@ final class GetUpcomingEventsProvider
   }
 }
 
-String _$getUpcomingEventsHash() => r'8ee31532a1a1b1b562bcfef3acbf89763e4776d0';
+String _$getUpcomingEventsHash() => r'ae2f01741823d18b74344133c922d7a8ff65e69f';
 
 @ProviderFor(getHistory)
 const getHistoryProvider = GetHistoryProvider._();
@@ -89,4 +89,4 @@ final class GetHistoryProvider
   }
 }
 
-String _$getHistoryHash() => r'eccbdb8096a839847a61ababca2401359e61e4f2';
+String _$getHistoryHash() => r'892d9e56a85dc3174b4ec14701c8549a71902c82';

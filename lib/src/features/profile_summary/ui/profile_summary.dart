@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_summary.dart';
 import 'package:hydex/src/features/booking/ui/components/vendor_container.dart';
+import 'package:hydex/src/features/profile/data/upcoming_event.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/custom_radio.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
+import 'package:intl/intl.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 class ProfileSummary extends StatelessWidget {
-  const ProfileSummary({super.key});
-  
+  const ProfileSummary({super.key, required this.event});
+
+  final UpcomingEvent event;
+
+  String formatDateTimeToCustomString(DateTime dt) {
+    final datePart = DateFormat('E, MMM d').format(dt);
+
+    final timePart = DateFormat('h:mm a').format(dt);
+
+    return '$datePart • $timePart';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,27 +36,28 @@ class ProfileSummary extends StatelessWidget {
               Row(
                 children: [
                   CustomBackButton(),
-                  Column(
-                    crossAxisAlignment: .start,
-
-                    children: [
-                      Text(
-                        "[Event Name]",
-                        style: AppTextStyles(context).secondaryRegular,
-                      ),
-                      Text(
-                        "Sat, Nov 16 • 10:00 PM",
-                        style: TextStyle(
-                          fontSize: AppTextStyles(context).accumulator * 14,
-                          color: AppColors.textSecondary,
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: .start,
+                      children: [
+                        Text(
+                          event.name,
+                          style: AppTextStyles(context).secondaryRegular,
                         ),
-                      ),
-                    ],
+                        Text(
+                          formatDateTimeToCustomString(event.date),
+                          style: TextStyle(
+                            fontSize: AppTextStyles(context).accumulator * 14,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
               SizedBox(height: 26),
-              VenueContainer(),
+              VenueContainer(event: event),
               SizedBox(height: 16),
               SmoothContainer(
                 borderRadius: .circular(26),
@@ -65,7 +78,7 @@ class ProfileSummary extends StatelessWidget {
                       children: [
                         Text("Total Price"),
                         Text(
-                          "Fees for 3 passes",
+                          "Fees for ${event.numberOfGuests} passes",
                           style: AppTextStyles(context).captionRegular.copyWith(
                             color: AppColors.textSecondary,
                           ),
@@ -223,6 +236,7 @@ class ProfileSummary extends StatelessWidget {
                       onPressed: () {
                         showModalBottomSheet(
                           context: context,
+                          isScrollControlled: true,
                           builder: (context) {
                             return CancelationWidget();
                           },
@@ -292,70 +306,94 @@ class _CancelationWidgetState extends State<CancelationWidget> {
   String? selectedReason;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Column(
-        crossAxisAlignment: .start,
-        children: [
-          Center(
-            child: Container(
-              height: 4,
-              width: 44,
-              decoration: BoxDecoration(
-                color: Color(0xffDEDEDE),
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
+    return Wrap(
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+            12,
+            12,
+            12,
+            MediaQuery.of(context).viewInsets.bottom + 12,
           ),
-          SizedBox(height: 28),
-
-          Text(
-            "Request Cancellation",
-            style: TextStyle(
-              fontSize: AppTextStyles(context).accumulator * 22,
-              fontWeight: .w700,
-            ),
-          ),
-          SizedBox(height: 12),
-
-          Text(
-            "Please select the reason for cancelling your booking.",
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: AppTextStyles(context).accumulator * 14,
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              padding: .zero,
-              itemBuilder: (context, index) => ListTile(
-                onTap: () {
-                  setState(() {
-                    selectedReason = cancelReasons[index];
-                  });
-                },
-                contentPadding: .zero,
-                leading: CustomRadio(
-                  isSelected: selectedReason == cancelReasons[index],
-                ),
-                title: Text(
-                  cancelReasons[index],
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: AppTextStyles(context).accumulator * 14,
+          child: Column(
+            crossAxisAlignment: .start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Container(
+                  height: 4,
+                  width: 44,
+                  decoration: BoxDecoration(
+                    color: Color(0xffDEDEDE),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                 ),
               ),
+              SizedBox(height: 28),
 
-              itemCount: cancelReasons.length,
-            ),
+              Text(
+                "Request Cancellation",
+                style: TextStyle(
+                  fontSize: AppTextStyles(context).accumulator * 22,
+                  fontWeight: .w700,
+                ),
+              ),
+              SizedBox(height: 12),
+
+              Text(
+                "Please select the reason for cancelling your booking.",
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: AppTextStyles(context).accumulator * 14,
+                ),
+              ),
+              ListView.builder(
+                padding: .zero,
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (context, index) => ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+
+                  // 2. Make the ripple a soft brand color (10% opacity)
+                  splashColor: AppColors.signalBrandSolid.withValues(
+                    alpha: 0.1,
+                  ),
+
+                  onTap: () {
+                    setState(() {
+                      selectedReason = cancelReasons[index];
+                    });
+                  },
+                  contentPadding: .zero,
+                  leading: CustomRadio(
+                    isSelected: selectedReason == cancelReasons[index],
+                  ),
+                  title: Text(
+                    cancelReasons[index],
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: AppTextStyles(context).accumulator * 14,
+                    ),
+                  ),
+                ),
+
+                itemCount: cancelReasons.length,
+              ),
+              const SizedBox(height: 16),
+              PrimaryButton(
+                onTap: selectedReason != null
+                    ? () async {
+                        context.pop();
+                      }
+                    : null,
+                title: "Submit Request",
+              ),
+            ],
           ),
-          PrimaryButton(
-            onTap: selectedReason != null ? () async {} : null,
-            title: "Submit Request",
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

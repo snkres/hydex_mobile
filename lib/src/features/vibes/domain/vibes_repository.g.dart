@@ -64,7 +64,7 @@ final class GetBannersProvider
   }
 }
 
-String _$getBannersHash() => r'c95a267fb110cf92f9d2d1e9d8fdb970e2ec9a78';
+String _$getBannersHash() => r'7bca1e56a0badd901beb4636e96a84a13bfd6371';
 
 final class GetBannersFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<Banner>>, BannerType> {
@@ -103,7 +103,7 @@ final class GetEventCategoriesProvider
         argument: null,
         retry: null,
         name: r'getEventCategoriesProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -124,7 +124,7 @@ final class GetEventCategoriesProvider
 }
 
 String _$getEventCategoriesHash() =>
-    r'd272d6434ad7b55a31a0b3c89e1f2fd2334de188';
+    r'1841020833a8fab5eb61264b440d45ad3172b643';
 
 @ProviderFor(getVendors)
 const getVendorsProvider = GetVendorsFamily._();
@@ -181,7 +181,7 @@ final class GetVendorsProvider
   }
 }
 
-String _$getVendorsHash() => r'703aad8c03d21aedb93e657dcbde0599a42ded26';
+String _$getVendorsHash() => r'e52ec41abb87369dff1439c557931bb2952ef6a8';
 
 final class GetVendorsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<Vendor>>, int> {
@@ -256,7 +256,7 @@ final class GetEventsProvider
   }
 }
 
-String _$getEventsHash() => r'f0c90457b060d89d08b71b8d88dd6e4d3a6ef453';
+String _$getEventsHash() => r'ac1202de9df3569aa6fbdea0e2c9141fa3f22f67';
 
 final class GetEventsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<Event>>, int> {
@@ -325,7 +325,7 @@ final class GetEventByIdProvider
   }
 }
 
-String _$getEventByIdHash() => r'a1245a09d0541814cbc418229188521366013736';
+String _$getEventByIdHash() => r'4540a31ce6c349588bdf8dba392937ce5c738a9e';
 
 final class GetEventByIdFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Event>, String> {
@@ -394,7 +394,7 @@ final class GetVendorbyIDProvider
   }
 }
 
-String _$getVendorbyIDHash() => r'9bd8c39b18b2874a076c76cb38cfe7d3b7be0b49';
+String _$getVendorbyIDHash() => r'43d2db302eff0d6f3426f0da7e9909c95ed02910';
 
 final class GetVendorbyIDFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Vendor>, String> {
@@ -412,79 +412,4 @@ final class GetVendorbyIDFamily extends $Family
 
   @override
   String toString() => r'getVendorbyIDProvider';
-}
-
-@ProviderFor(getEventByVendor)
-const getEventByVendorProvider = GetEventByVendorFamily._();
-
-final class GetEventByVendorProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<List<Event?>>,
-          List<Event?>,
-          FutureOr<List<Event?>>
-        >
-    with $FutureModifier<List<Event?>>, $FutureProvider<List<Event?>> {
-  const GetEventByVendorProvider._({
-    required GetEventByVendorFamily super.from,
-    required String super.argument,
-  }) : super(
-         retry: null,
-         name: r'getEventByVendorProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
-
-  @override
-  String debugGetCreateSourceHash() => _$getEventByVendorHash();
-
-  @override
-  String toString() {
-    return r'getEventByVendorProvider'
-        ''
-        '($argument)';
-  }
-
-  @$internal
-  @override
-  $FutureProviderElement<List<Event?>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<List<Event?>> create(Ref ref) {
-    final argument = this.argument as String;
-    return getEventByVendor(ref, vendorID: argument);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is GetEventByVendorProvider && other.argument == argument;
-  }
-
-  @override
-  int get hashCode {
-    return argument.hashCode;
-  }
-}
-
-String _$getEventByVendorHash() => r'66c8069c39f6ccd8ff1035b8797f867e0161aa47';
-
-final class GetEventByVendorFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<List<Event?>>, String> {
-  const GetEventByVendorFamily._()
-    : super(
-        retry: null,
-        name: r'getEventByVendorProvider',
-        dependencies: null,
-        $allTransitiveDependencies: null,
-        isAutoDispose: true,
-      );
-
-  GetEventByVendorProvider call({required String vendorID}) =>
-      GetEventByVendorProvider._(argument: vendorID, from: this);
-
-  @override
-  String toString() => r'getEventByVendorProvider';
 }

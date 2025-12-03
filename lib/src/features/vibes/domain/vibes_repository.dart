@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart' hide Banner;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/network.dart';
@@ -12,10 +14,26 @@ part 'vibes_repository.g.dart';
 
 @Riverpod(keepAlive: true)
 Future<List<Banner>> getBanners(Ref ref, {required BannerType type}) async {
+  final link = ref.keepAlive();
+  Timer? timer;
+  final cancelToken = CancelToken();
+  ref.onDispose(() {
+    timer?.cancel();
+    cancelToken.cancel();
+  });
+  ref.onCancel(() {
+    timer = Timer(const Duration(seconds: 30), () {
+      link.close();
+    });
+  });
+  ref.onResume(() {
+    timer?.cancel();
+  });
   try {
     final response = await DioHelper.get(
       '/banners',
       queryParameters: {"type": type.toValue()},
+      cancelToken: cancelToken,
     );
     final eventsData = response.data['data'] as List<dynamic>;
     return eventsData.map((e) => BannerMapper.fromMap(e)).toList();
@@ -24,7 +42,7 @@ Future<List<Banner>> getBanners(Ref ref, {required BannerType type}) async {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 Future<List<EventCategory>> getEventCategories(Ref ref) async {
   try {
     final response = await DioHelper.get('/categories');
@@ -37,10 +55,26 @@ Future<List<EventCategory>> getEventCategories(Ref ref) async {
 
 @riverpod
 Future<List<Vendor>> getVendors(Ref ref, {int page = 1}) async {
+  final link = ref.keepAlive();
+  Timer? timer;
+  final cancelToken = CancelToken();
+  ref.onDispose(() {
+    timer?.cancel();
+    cancelToken.cancel();
+  });
+  ref.onCancel(() {
+    timer = Timer(const Duration(seconds: 30), () {
+      link.close();
+    });
+  });
+  ref.onResume(() {
+    timer?.cancel();
+  });
   try {
     final response = await DioHelper.get(
       '/vendors',
       queryParameters: {"page": page, "limit": 10},
+      cancelToken: cancelToken,
     );
     final answer = response.data['data'] as List<dynamic>;
 
@@ -54,10 +88,26 @@ Future<List<Vendor>> getVendors(Ref ref, {int page = 1}) async {
 
 @riverpod
 Future<List<Event>> getEvents(Ref ref, {int page = 1}) async {
+  final link = ref.keepAlive();
+  Timer? timer;
+  final cancelToken = CancelToken();
+  ref.onDispose(() {
+    timer?.cancel();
+    cancelToken.cancel();
+  });
+  ref.onCancel(() {
+    timer = Timer(const Duration(seconds: 30), () {
+      link.close();
+    });
+  });
+  ref.onResume(() {
+    timer?.cancel();
+  });
   try {
     final response = await DioHelper.get(
       '/events',
       queryParameters: {"page": page, "limit": 10},
+      cancelToken: cancelToken,
     );
     final answer = response.data['data'] as List<dynamic>;
 
@@ -70,8 +120,26 @@ Future<List<Event>> getEvents(Ref ref, {int page = 1}) async {
 
 @riverpod
 Future<Event> getEventById(Ref ref, {required String id}) async {
+  final link = ref.keepAlive();
+  Timer? timer;
+  final cancelToken = CancelToken();
+  ref.onDispose(() {
+    timer?.cancel();
+    cancelToken.cancel();
+  });
+  ref.onCancel(() {
+    timer = Timer(const Duration(seconds: 30), () {
+      link.close();
+    });
+  });
+  ref.onResume(() {
+    timer?.cancel();
+  });
   try {
-    final response = await DioHelper.get('/events/$id');
+    final response = await DioHelper.get(
+      '/events/$id',
+      cancelToken: cancelToken,
+    );
     final answer = response.data['data'] as Map<String, dynamic>;
     log("Event Data: $answer");
     return EventMapper.fromMap(answer);
@@ -82,27 +150,28 @@ Future<Event> getEventById(Ref ref, {required String id}) async {
 
 @riverpod
 Future<Vendor> getVendorbyID(Ref ref, {required String id}) async {
+  final link = ref.keepAlive();
+  Timer? timer;
+  final cancelToken = CancelToken();
+  ref.onDispose(() {
+    timer?.cancel();
+    cancelToken.cancel();
+  });
+  ref.onCancel(() {
+    timer = Timer(const Duration(seconds: 30), () {
+      link.close();
+    });
+  });
+  ref.onResume(() {
+    timer?.cancel();
+  });
   try {
-    final response = await DioHelper.get('/vendors/$id');
+    final response = await DioHelper.get(
+      '/vendors/$id',
+      cancelToken: cancelToken,
+    );
     final answer = response.data['data'] as Map<String, dynamic>;
-    log("getVendorbyID: $answer");
     return VendorMapper.fromMap(answer);
-  } catch (e) {
-    throw Exception('Failed to load events: $e');
-  }
-}
-
-@riverpod
-Future<List<Event?>> getEventByVendor(
-  Ref ref, {
-  required String vendorID,
-}) async {
-  try {
-    final response = await DioHelper.get('/events/vendor/$vendorID');
-    final answer = response.data['data'] as List<dynamic>;
-
-    final eventsData = answer.first as List<dynamic>;
-    return eventsData.map((e) => EventMapper.fromMap(e)).toList();
   } catch (e) {
     throw Exception('Failed to load events: $e');
   }

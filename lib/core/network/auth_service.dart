@@ -17,7 +17,7 @@ class AuthService {
     DioHelper().init();
   }
 
-  Future<User?> login(String email, String password) async {
+  Future<void> login(String email, String password) async {
     try {
       // Use the enhanced login method that handles tokens automatically
       final responseData = await DioHelper.authenticate('/auth/login', {
@@ -29,13 +29,6 @@ class AuthService {
       final userData = responseData['data']['user'] as Map<String, dynamic>;
       final user = UserMapper.fromMap(userData);
       ref.read(userProvider.notifier).setUser(user);
-      if (kDebugMode) {
-        print('✅ Login successful for user: ${user.email}');
-        print('🔐 Access token stored from response data');
-        print('🍪 Refresh token stored from cookies');
-      }
-
-      return user;
     } catch (e) {
       if (kDebugMode) {
         print('❌ Login failed: $e');
@@ -388,14 +381,13 @@ enum OTPType { phone, email }
 
 @Riverpod(keepAlive: true)
 Future<User?> currentUser(Ref ref) async {
+  
   final userState = ref.read(userProvider);
-  print(userState);
   if (userState != null) {
     return userState;
   }
 
   // If no user in state, fetch from auth
   final authNotifier = ref.read(authServiceProvider);
-  print(await authNotifier.currentUser());
   return await authNotifier.currentUser();
 }

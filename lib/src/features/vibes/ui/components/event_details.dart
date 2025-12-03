@@ -397,7 +397,10 @@ class CollapsedEventContainer extends ConsumerWidget {
                       SizedBox(height: 12),
 
                       Text(
-                        "📍 ${location.street}",
+                        location.address != null
+                            ? "📍 ${location.address}"
+                            : "${location.street}, ${location.city}, ${location.country}",
+
                         style: TextStyle(
                           fontSize: AppTextStyles(context).accumulator * 12,
                           color: AppColors.textSecondary,

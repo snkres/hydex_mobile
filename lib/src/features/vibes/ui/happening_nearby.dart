@@ -82,32 +82,34 @@ class _HappeningNearbyState extends ConsumerState<HappeningNearby> {
               title: Row(
                 mainAxisAlignment: .spaceBetween,
                 children: [
-                  Column(
-                    spacing: 8,
-                    crossAxisAlignment: .start,
-                    mainAxisSize: .min,
-                    children: [
-                      Text(
-                        "Happening Nearby",
-                        style: TextStyle(
-                          color: Colors
-                              .white, // Ensure text contrasts with the purple
-                          fontWeight: FontWeight.w900,
-                          fontSize:
-                              AppTextStyles(context).accumulator *
-                              16, // Size will scale automatically
+                  Expanded(
+                    child: Column(
+                      spacing: 8,
+                      crossAxisAlignment: .start,
+                      mainAxisSize: .min,
+                      children: [
+                        Text(
+                          "Happening Nearby",
+                          style: TextStyle(
+                            color: Colors
+                                .white, // Ensure text contrasts with the purple
+                            fontWeight: FontWeight.w900,
+                            fontSize:
+                                AppTextStyles(context).accumulator *
+                                16, // Size will scale automatically
+                          ),
                         ),
-                      ),
-                      Text(
-                        "Discover experiences happening within reach.",
-                        style: TextStyle(
-                          color: AppColors
-                              .textSecondary, // Ensure text contrasts with the purple
+                        Text(
+                          "Discover experiences happening within reach.",
+                          style: TextStyle(
+                            color: AppColors
+                                .textSecondary, // Ensure text contrasts with the purple
 
-                          fontSize: AppTextStyles(context).accumulator * 9,
+                            fontSize: AppTextStyles(context).accumulator * 9,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   LottieBuilder.asset(
                     "json/location_anim.json",
