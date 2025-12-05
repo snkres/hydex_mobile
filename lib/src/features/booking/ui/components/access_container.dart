@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/booking/data/create_book.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 final vipCountProvider = StateProvider<int>((ref) => ref.watch(guestsProvider));
-final selectedPassProvider = StateProvider<Passes?>((ref) => null);
 
 final ticketCountProvider = StateProvider<int>((ref) => 0);
 
@@ -19,10 +19,10 @@ class AccessSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 1. Watch the specific pass selected
-    final selectedPass = ref.watch(selectedPassProvider);
+    final selectedPass = ref.watch(
+      createBookProvider.select((v) => v?.selectedPasses),
+    );
 
-    // 2. Watch the global guest count directly
     final guestCount = ref.watch(guestsProvider);
 
     return Column(
@@ -53,39 +53,27 @@ class AccessSection extends ConsumerWidget {
               price: pass.price.toString(),
               description: "Enjoy full access to the event.",
               features: const ["Event access", "Welcome drink"],
-
               isSelected: isSelected,
-
-              // CRITICAL CHANGE:
-              // If selected, show current guestCount.
-              // If not selected, we pass 0 (visual only, handled by !isSelected check in widget)
               count: isSelected ? guestCount : 0,
 
               onSelect: () {
-                // 1. Select this pass
-                ref.read(selectedPassProvider.notifier).state = pass;
-
-                // 2. Ensure Counter Logic:
-                // If count is 0 (fresh start), make it 1.
-                // If count is > 0 (e.g. 5 guests from previous screen), KEEP IT as 5.
+                ref.read(createBookProvider.notifier).selectPasses(pass);
                 if (ref.read(guestsProvider) == 0) {
                   ref.read(guestsProvider.notifier).state = 1;
                 }
               },
 
               onIncrement: () {
-                // Directly update global guest provider
                 ref.read(guestsProvider.notifier).update((state) => state + 1);
               },
 
               onDecrement: () {
                 if (guestCount > 1) {
-                  // Standard decrease (Guest count remains > 0)
                   ref
                       .read(guestsProvider.notifier)
                       .update((state) => state - 1);
                 } else {
-                  ref.read(selectedPassProvider.notifier).state = null;
+                  ref.read(createBookProvider.notifier).clearSelectedPass();
                 }
               },
             );

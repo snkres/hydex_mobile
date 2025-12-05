@@ -282,8 +282,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 padding: const EdgeInsets.only(bottom: 24),
                                 child: PrimaryButton(
                                   onTap: () async {
-                                    if (!formKey.currentState!.validate())
+                                    if (!formKey.currentState!.validate()) {
                                       return;
+                                    }
                                     try {
                                       await ref
                                           .read(authServiceProvider)

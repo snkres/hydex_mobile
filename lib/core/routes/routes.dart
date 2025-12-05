@@ -157,6 +157,7 @@ class AppRoutes {
       ),
       GoRoute(
         path: "/vendor/:id",
+        name: "vendor_detail",
         builder: (context, state) =>
             VendorDetailsScreen(id: state.pathParameters["id"] as String),
       ),

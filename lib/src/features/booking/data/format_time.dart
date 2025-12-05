@@ -11,6 +11,10 @@ extension FormatTime on DateTime {
     return DateFormat('d MMM, h:mm a').format(this);
   }
 
+  String toTime() => DateFormat('h:mm a').format(this);
+
+  String toFullTime() => DateFormat('h:mm:ss a').format(this);
+
   String toPrettyString() {
     const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const months = [

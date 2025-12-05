@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
-import 'package:hydex/src/features/booking/ui/components/guests_summary.dart';
 import 'package:hydex/src/features/booking/ui/components/vendor_container.dart';
 import 'package:hydex/src/features/profile/data/upcoming_event.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
@@ -351,30 +350,31 @@ class _CancelationWidgetState extends State<CancelationWidget> {
                 padding: .zero,
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemBuilder: (context, index) => ListTile(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-
-                  // 2. Make the ripple a soft brand color (10% opacity)
-                  splashColor: AppColors.signalBrandSolid.withValues(
-                    alpha: 0.1,
-                  ),
-
+                itemBuilder: (context, index) => GestureDetector(
                   onTap: () {
                     setState(() {
                       selectedReason = cancelReasons[index];
                     });
                   },
-                  contentPadding: .zero,
-                  leading: CustomRadio(
-                    isSelected: selectedReason == cancelReasons[index],
-                  ),
-                  title: Text(
-                    cancelReasons[index],
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: AppTextStyles(context).accumulator * 14,
+                  child: ListTile(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+
+                    splashColor: AppColors.signalBrandSolid.withValues(
+                      alpha: 0.1,
+                    ),
+
+                    contentPadding: .zero,
+                    leading: CustomRadio(
+                      isSelected: selectedReason == cancelReasons[index],
+                    ),
+                    title: Text(
+                      cancelReasons[index],
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: AppTextStyles(context).accumulator * 14,
+                      ),
                     ),
                   ),
                 ),

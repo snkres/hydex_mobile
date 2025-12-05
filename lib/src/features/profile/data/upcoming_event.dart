@@ -38,3 +38,43 @@ enum UpcomingEventStatus {
   @MappableValue('Cancelled')
   cancelled,
 }
+
+@MappableClass()
+class HistoryData with HistoryDataMappable {
+  final String id;
+  final String name;
+  final DateTime date;
+  final String time;
+  final Location location;
+  final HistoryStatus status;
+  final String? cancellationReason;
+
+  HistoryData({
+    required this.id,
+    required this.name,
+    required this.date,
+    required this.time,
+    required this.location,
+    this.cancellationReason,
+    required this.status,
+  });
+}
+
+@MappableEnum()
+enum HistoryStatus {
+  @MappableValue('Cancelled')
+  cancelled,
+
+  @MappableValue('Rejected')
+  rejected,
+
+  @MappableValue('Confirmed')
+  confirmed,
+}
+
+@MappableClass()
+class PassportData with PassportDataMappable {
+  final int totalExperiences;
+
+  PassportData({required this.totalExperiences});
+}

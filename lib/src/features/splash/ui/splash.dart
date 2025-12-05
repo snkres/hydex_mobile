@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -8,16 +6,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/network/user/user.dart';
-import 'package:hydex/src/features/auth/ui/boarding.dart';
-import 'package:hydex/src/features/auth/ui/waitlist.dart';
-import 'package:hydex/src/features/loading/ui/loading.dart';
 import 'package:lottie/lottie.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});

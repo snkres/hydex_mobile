@@ -3,8 +3,9 @@ import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
+import 'package:hydex/src/features/booking/data/create_book.dart';
+import 'package:hydex/src/features/booking/data/format_time.dart';
 import 'package:hydex/src/features/booking/domain/guests_repo.dart';
-import 'package:hydex/src/features/booking/ui/components/access_container.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:intl/intl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -44,33 +45,51 @@ Future<List<Booking>> getBookings(Ref ref) async {
 @riverpod
 Future<bool> createBooking(Ref ref) async {
   final numberOfGuests = ref.read(guestsProvider);
+
   final guestsFormState = await ref.read(
     guestFormProvider(numberOfGuests).future,
   );
-  final guests = guestsFormState.guests;
-  final selectedPass = ref.read(selectedPassProvider);
-  final List<Map<String, dynamic>> guestsData = guests
-      .map(
-        (e) => {
-          "fullName": e!.name,
-          "email": e.email,
-          "phone": e.phoneNumber,
-          "age": e.age,
-          "gender": e.gender,
-          "instagramLink": "https://instagram.com/test",
-        },
-      )
-      .toList();
-  final response = await DioHelper.post(
-    "/bookings",
-    data: {"guests": guestsData, "passId": selectedPass?.id},
-  );
+
+  final booking = ref.watch(createBookProvider);
+  final isVendor = booking?.isVendor ?? false;
+
+  final formGuests = guestsFormState.guests;
+
+  final guests = formGuests.skip(1).toList();
+
+  final List<Map<String, dynamic>> guestsData = guests.map((e) {
+    final guestMap = {
+      "fullName": e!.name,
+      "email": e.email,
+      "phone": e.phoneNumber,
+      "age": e.age,
+      "gender": e.gender,
+    };
+
+    if (e.instagram != null && e.instagram!.isNotEmpty) {
+      guestMap["instagramLink"] = e.instagram!;
+    }
+
+    return guestMap;
+  }).toList();
+
+  final data = {"guests": guestsData, "passId": booking!.selectedPasses?.id};
+  if (isVendor) {
+    data["date"] = booking.selectedDate?.toIso8601String();
+    data["timeSlot"] = booking.selectedSlot?.toFullTime();
+  }
+  log(data.toString());
+
+  final response = await DioHelper.post("/bookings", data: data);
+  log(response.toString());
   return response.success;
 }
 
 final totalPriceProvider = Provider<double>((ref) {
   // Watch the dependencies: the selected pass and the guest count
-  final selectedPass = ref.watch(selectedPassProvider);
+  final selectedPass = ref.read(
+    createBookProvider.select((v) => v?.selectedPasses),
+  );
   final guestCount = ref.watch(guestsProvider);
 
   double totalPrice = 0;

@@ -41,7 +41,7 @@ class _GalleryState extends State<Gallery> {
             Spacer(),
             Center(
               child: Text(
-                "< ${selectedIndex ?? 0 + 1} / ${widget.gallery.length} >",
+                "${selectedIndex ?? 0 + 1} / ${widget.gallery.length}",
               ),
             ),
             SizedBox(height: 24),

@@ -53,6 +53,52 @@ extension BannerTypeMapperExtension on BannerType {
   }
 }
 
+class AssignmentStatusMapper extends EnumMapper<AssignmentStatus> {
+  AssignmentStatusMapper._();
+
+  static AssignmentStatusMapper? _instance;
+  static AssignmentStatusMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = AssignmentStatusMapper._());
+    }
+    return _instance!;
+  }
+
+  static AssignmentStatus fromValue(dynamic value) {
+    ensureInitialized();
+    return MapperContainer.globals.fromValue(value);
+  }
+
+  @override
+  AssignmentStatus decode(dynamic value) {
+    switch (value) {
+      case 'VENDOR':
+        return AssignmentStatus.vendor;
+      case 'EVENT':
+        return AssignmentStatus.event;
+      default:
+        throw MapperException.unknownEnumValue(value);
+    }
+  }
+
+  @override
+  dynamic encode(AssignmentStatus self) {
+    switch (self) {
+      case AssignmentStatus.vendor:
+        return 'VENDOR';
+      case AssignmentStatus.event:
+        return 'EVENT';
+    }
+  }
+}
+
+extension AssignmentStatusMapperExtension on AssignmentStatus {
+  dynamic toValue() {
+    AssignmentStatusMapper.ensureInitialized();
+    return MapperContainer.globals.toValue<AssignmentStatus>(this);
+  }
+}
+
 class BannerMapper extends ClassMapperBase<Banner> {
   BannerMapper._();
 
@@ -61,6 +107,7 @@ class BannerMapper extends ClassMapperBase<Banner> {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = BannerMapper._());
       BannerTypeMapper.ensureInitialized();
+      AssignmentMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -104,6 +151,11 @@ class BannerMapper extends ClassMapperBase<Banner> {
     'campaignEndDate',
     _$campaignEndDate,
   );
+  static Assignment _$assignment(Banner v) => v.assignment;
+  static const Field<Banner, Assignment> _f$assignment = Field(
+    'assignment',
+    _$assignment,
+  );
 
   @override
   final MappableFields<Banner> fields = const {
@@ -115,6 +167,7 @@ class BannerMapper extends ClassMapperBase<Banner> {
     #video: _f$video,
     #campaignStartDate: _f$campaignStartDate,
     #campaignEndDate: _f$campaignEndDate,
+    #assignment: _f$assignment,
   };
 
   static Banner _instantiate(DecodingData data) {
@@ -127,6 +180,7 @@ class BannerMapper extends ClassMapperBase<Banner> {
       video: data.dec(_f$video),
       campaignStartDate: data.dec(_f$campaignStartDate),
       campaignEndDate: data.dec(_f$campaignEndDate),
+      assignment: data.dec(_f$assignment),
     );
   }
 
@@ -176,6 +230,7 @@ extension BannerValueCopy<$R, $Out> on ObjectCopyWith<$R, Banner, $Out> {
 
 abstract class BannerCopyWith<$R, $In extends Banner, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
+  AssignmentCopyWith<$R, Assignment, Assignment> get assignment;
   $R call({
     String? id,
     BannerType? type,
@@ -185,6 +240,7 @@ abstract class BannerCopyWith<$R, $In extends Banner, $Out>
     String? video,
     DateTime? campaignStartDate,
     DateTime? campaignEndDate,
+    Assignment? assignment,
   });
   BannerCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -196,6 +252,9 @@ class _BannerCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Banner, $Out>
   @override
   late final ClassMapperBase<Banner> $mapper = BannerMapper.ensureInitialized();
   @override
+  AssignmentCopyWith<$R, Assignment, Assignment> get assignment =>
+      $value.assignment.copyWith.$chain((v) => call(assignment: v));
+  @override
   $R call({
     String? id,
     BannerType? type,
@@ -205,6 +264,7 @@ class _BannerCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Banner, $Out>
     Object? video = $none,
     DateTime? campaignStartDate,
     DateTime? campaignEndDate,
+    Assignment? assignment,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -215,6 +275,7 @@ class _BannerCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Banner, $Out>
       if (video != $none) #video: video,
       if (campaignStartDate != null) #campaignStartDate: campaignStartDate,
       if (campaignEndDate != null) #campaignEndDate: campaignEndDate,
+      if (assignment != null) #assignment: assignment,
     }),
   );
   @override
@@ -230,6 +291,7 @@ class _BannerCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Banner, $Out>
       or: $value.campaignStartDate,
     ),
     campaignEndDate: data.get(#campaignEndDate, or: $value.campaignEndDate),
+    assignment: data.get(#assignment, or: $value.assignment),
   );
 
   @override
@@ -237,107 +299,514 @@ class _BannerCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Banner, $Out>
       _BannerCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
-class DetailMapper extends ClassMapperBase<Detail> {
-  DetailMapper._();
+class AssignmentMapper extends ClassMapperBase<Assignment> {
+  AssignmentMapper._();
 
-  static DetailMapper? _instance;
-  static DetailMapper ensureInitialized() {
+  static AssignmentMapper? _instance;
+  static AssignmentMapper ensureInitialized() {
     if (_instance == null) {
-      MapperContainer.globals.use(_instance = DetailMapper._());
+      MapperContainer.globals.use(_instance = AssignmentMapper._());
+      AssignmentStatusMapper.ensureInitialized();
+      VendorMapper.ensureInitialized();
     }
     return _instance!;
   }
 
   @override
-  final String id = 'Detail';
+  final String id = 'Assignment';
 
-  static String _$image(Detail v) => v.image;
-  static const Field<Detail, String> _f$image = Field('image', _$image);
-  static String _$title(Detail v) => v.title;
-  static const Field<Detail, String> _f$title = Field('title', _$title);
+  static String _$id(Assignment v) => v.id;
+  static const Field<Assignment, String> _f$id = Field('id', _$id);
+  static AssignmentStatus _$targetType(Assignment v) => v.targetType;
+  static const Field<Assignment, AssignmentStatus> _f$targetType = Field(
+    'targetType',
+    _$targetType,
+  );
+  static Vendor _$vendor(Assignment v) => v.vendor;
+  static const Field<Assignment, Vendor> _f$vendor = Field('vendor', _$vendor);
 
   @override
-  final MappableFields<Detail> fields = const {
-    #image: _f$image,
-    #title: _f$title,
+  final MappableFields<Assignment> fields = const {
+    #id: _f$id,
+    #targetType: _f$targetType,
+    #vendor: _f$vendor,
   };
 
-  static Detail _instantiate(DecodingData data) {
-    return Detail(image: data.dec(_f$image), title: data.dec(_f$title));
+  static Assignment _instantiate(DecodingData data) {
+    return Assignment(
+      id: data.dec(_f$id),
+      targetType: data.dec(_f$targetType),
+      vendor: data.dec(_f$vendor),
+    );
   }
 
   @override
   final Function instantiate = _instantiate;
 
-  static Detail fromMap(Map<String, dynamic> map) {
-    return ensureInitialized().decodeMap<Detail>(map);
+  static Assignment fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<Assignment>(map);
   }
 
-  static Detail fromJson(String json) {
-    return ensureInitialized().decodeJson<Detail>(json);
+  static Assignment fromJson(String json) {
+    return ensureInitialized().decodeJson<Assignment>(json);
   }
 }
 
-mixin DetailMappable {
+mixin AssignmentMappable {
   String toJson() {
-    return DetailMapper.ensureInitialized().encodeJson<Detail>(this as Detail);
+    return AssignmentMapper.ensureInitialized().encodeJson<Assignment>(
+      this as Assignment,
+    );
   }
 
   Map<String, dynamic> toMap() {
-    return DetailMapper.ensureInitialized().encodeMap<Detail>(this as Detail);
+    return AssignmentMapper.ensureInitialized().encodeMap<Assignment>(
+      this as Assignment,
+    );
   }
 
-  DetailCopyWith<Detail, Detail, Detail> get copyWith =>
-      _DetailCopyWithImpl<Detail, Detail>(this as Detail, $identity, $identity);
+  AssignmentCopyWith<Assignment, Assignment, Assignment> get copyWith =>
+      _AssignmentCopyWithImpl<Assignment, Assignment>(
+        this as Assignment,
+        $identity,
+        $identity,
+      );
   @override
   String toString() {
-    return DetailMapper.ensureInitialized().stringifyValue(this as Detail);
+    return AssignmentMapper.ensureInitialized().stringifyValue(
+      this as Assignment,
+    );
   }
 
   @override
   bool operator ==(Object other) {
-    return DetailMapper.ensureInitialized().equalsValue(this as Detail, other);
+    return AssignmentMapper.ensureInitialized().equalsValue(
+      this as Assignment,
+      other,
+    );
   }
 
   @override
   int get hashCode {
-    return DetailMapper.ensureInitialized().hashValue(this as Detail);
+    return AssignmentMapper.ensureInitialized().hashValue(this as Assignment);
   }
 }
 
-extension DetailValueCopy<$R, $Out> on ObjectCopyWith<$R, Detail, $Out> {
-  DetailCopyWith<$R, Detail, $Out> get $asDetail =>
-      $base.as((v, t, t2) => _DetailCopyWithImpl<$R, $Out>(v, t, t2));
+extension AssignmentValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, Assignment, $Out> {
+  AssignmentCopyWith<$R, Assignment, $Out> get $asAssignment =>
+      $base.as((v, t, t2) => _AssignmentCopyWithImpl<$R, $Out>(v, t, t2));
 }
 
-abstract class DetailCopyWith<$R, $In extends Detail, $Out>
+abstract class AssignmentCopyWith<$R, $In extends Assignment, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  $R call({String? image, String? title});
-  DetailCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+  VendorCopyWith<$R, Vendor, Vendor> get vendor;
+  $R call({String? id, AssignmentStatus? targetType, Vendor? vendor});
+  AssignmentCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
-class _DetailCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Detail, $Out>
-    implements DetailCopyWith<$R, Detail, $Out> {
-  _DetailCopyWithImpl(super.value, super.then, super.then2);
+class _AssignmentCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, Assignment, $Out>
+    implements AssignmentCopyWith<$R, Assignment, $Out> {
+  _AssignmentCopyWithImpl(super.value, super.then, super.then2);
 
   @override
-  late final ClassMapperBase<Detail> $mapper = DetailMapper.ensureInitialized();
+  late final ClassMapperBase<Assignment> $mapper =
+      AssignmentMapper.ensureInitialized();
   @override
-  $R call({String? image, String? title}) => $apply(
+  VendorCopyWith<$R, Vendor, Vendor> get vendor =>
+      $value.vendor.copyWith.$chain((v) => call(vendor: v));
+  @override
+  $R call({String? id, AssignmentStatus? targetType, Vendor? vendor}) => $apply(
     FieldCopyWithData({
-      if (image != null) #image: image,
-      if (title != null) #title: title,
+      if (id != null) #id: id,
+      if (targetType != null) #targetType: targetType,
+      if (vendor != null) #vendor: vendor,
     }),
   );
   @override
-  Detail $make(CopyWithData data) => Detail(
-    image: data.get(#image, or: $value.image),
-    title: data.get(#title, or: $value.title),
+  Assignment $make(CopyWithData data) => Assignment(
+    id: data.get(#id, or: $value.id),
+    targetType: data.get(#targetType, or: $value.targetType),
+    vendor: data.get(#vendor, or: $value.vendor),
   );
 
   @override
-  DetailCopyWith<$R2, Detail, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
-      _DetailCopyWithImpl<$R2, $Out2>($value, $cast, t);
+  AssignmentCopyWith<$R2, Assignment, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  ) => _AssignmentCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class BookingExperienceMapper extends ClassMapperBase<BookingExperience> {
+  BookingExperienceMapper._();
+
+  static BookingExperienceMapper? _instance;
+  static BookingExperienceMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = BookingExperienceMapper._());
+      PassesMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'BookingExperience';
+
+  static String _$id(BookingExperience v) => v.id;
+  static const Field<BookingExperience, String> _f$id = Field('id', _$id);
+  static List<Passes> _$passes(BookingExperience v) => v.passes;
+  static const Field<BookingExperience, List<Passes>> _f$passes = Field(
+    'passes',
+    _$passes,
+  );
+  static bool _$requireReservationApproval(BookingExperience v) =>
+      v.requireReservationApproval;
+  static const Field<BookingExperience, bool> _f$requireReservationApproval =
+      Field(
+        'requireReservationApproval',
+        _$requireReservationApproval,
+        opt: true,
+        def: false,
+      );
+
+  @override
+  final MappableFields<BookingExperience> fields = const {
+    #id: _f$id,
+    #passes: _f$passes,
+    #requireReservationApproval: _f$requireReservationApproval,
+  };
+
+  static BookingExperience _instantiate(DecodingData data) {
+    return BookingExperience(
+      id: data.dec(_f$id),
+      passes: data.dec(_f$passes),
+      requireReservationApproval: data.dec(_f$requireReservationApproval),
+    );
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static BookingExperience fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<BookingExperience>(map);
+  }
+
+  static BookingExperience fromJson(String json) {
+    return ensureInitialized().decodeJson<BookingExperience>(json);
+  }
+}
+
+mixin BookingExperienceMappable {
+  String toJson() {
+    return BookingExperienceMapper.ensureInitialized()
+        .encodeJson<BookingExperience>(this as BookingExperience);
+  }
+
+  Map<String, dynamic> toMap() {
+    return BookingExperienceMapper.ensureInitialized()
+        .encodeMap<BookingExperience>(this as BookingExperience);
+  }
+
+  BookingExperienceCopyWith<
+    BookingExperience,
+    BookingExperience,
+    BookingExperience
+  >
+  get copyWith =>
+      _BookingExperienceCopyWithImpl<BookingExperience, BookingExperience>(
+        this as BookingExperience,
+        $identity,
+        $identity,
+      );
+  @override
+  String toString() {
+    return BookingExperienceMapper.ensureInitialized().stringifyValue(
+      this as BookingExperience,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return BookingExperienceMapper.ensureInitialized().equalsValue(
+      this as BookingExperience,
+      other,
+    );
+  }
+
+  @override
+  int get hashCode {
+    return BookingExperienceMapper.ensureInitialized().hashValue(
+      this as BookingExperience,
+    );
+  }
+}
+
+extension BookingExperienceValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, BookingExperience, $Out> {
+  BookingExperienceCopyWith<$R, BookingExperience, $Out>
+  get $asBookingExperience => $base.as(
+    (v, t, t2) => _BookingExperienceCopyWithImpl<$R, $Out>(v, t, t2),
+  );
+}
+
+abstract class BookingExperienceCopyWith<
+  $R,
+  $In extends BookingExperience,
+  $Out
+>
+    implements ClassCopyWith<$R, $In, $Out> {
+  ListCopyWith<$R, Passes, PassesCopyWith<$R, Passes, Passes>> get passes;
+  $R call({String? id, List<Passes>? passes, bool? requireReservationApproval});
+  BookingExperienceCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  );
+}
+
+class _BookingExperienceCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, BookingExperience, $Out>
+    implements BookingExperienceCopyWith<$R, BookingExperience, $Out> {
+  _BookingExperienceCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<BookingExperience> $mapper =
+      BookingExperienceMapper.ensureInitialized();
+  @override
+  ListCopyWith<$R, Passes, PassesCopyWith<$R, Passes, Passes>> get passes =>
+      ListCopyWith(
+        $value.passes,
+        (v, t) => v.copyWith.$chain(t),
+        (v) => call(passes: v),
+      );
+  @override
+  $R call({
+    String? id,
+    List<Passes>? passes,
+    bool? requireReservationApproval,
+  }) => $apply(
+    FieldCopyWithData({
+      if (id != null) #id: id,
+      if (passes != null) #passes: passes,
+      if (requireReservationApproval != null)
+        #requireReservationApproval: requireReservationApproval,
+    }),
+  );
+  @override
+  BookingExperience $make(CopyWithData data) => BookingExperience(
+    id: data.get(#id, or: $value.id),
+    passes: data.get(#passes, or: $value.passes),
+    requireReservationApproval: data.get(
+      #requireReservationApproval,
+      or: $value.requireReservationApproval,
+    ),
+  );
+
+  @override
+  BookingExperienceCopyWith<$R2, BookingExperience, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  ) => _BookingExperienceCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class PassesMapper extends ClassMapperBase<Passes> {
+  PassesMapper._();
+
+  static PassesMapper? _instance;
+  static PassesMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = PassesMapper._());
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'Passes';
+
+  static String _$id(Passes v) => v.id;
+  static const Field<Passes, String> _f$id = Field('id', _$id);
+  static String _$name(Passes v) => v.name;
+  static const Field<Passes, String> _f$name = Field('name', _$name);
+  static String? _$benefits(Passes v) => v.benefits;
+  static const Field<Passes, String> _f$benefits = Field(
+    'benefits',
+    _$benefits,
+  );
+  static double _$price(Passes v) => v.price;
+  static const Field<Passes, double> _f$price = Field('price', _$price);
+  static int _$maximumAmount(Passes v) => v.maximumAmount;
+  static const Field<Passes, int> _f$maximumAmount = Field(
+    'maximumAmount',
+    _$maximumAmount,
+  );
+  static int _$currentBookings(Passes v) => v.currentBookings;
+  static const Field<Passes, int> _f$currentBookings = Field(
+    'currentBookings',
+    _$currentBookings,
+  );
+  static bool _$isActive(Passes v) => v.isActive;
+  static const Field<Passes, bool> _f$isActive = Field('isActive', _$isActive);
+  static int? _$rouletteRemainingWins(Passes v) => v.rouletteRemainingWins;
+  static const Field<Passes, int> _f$rouletteRemainingWins = Field(
+    'rouletteRemainingWins',
+    _$rouletteRemainingWins,
+    opt: true,
+  );
+  static int? _$rouletteMaxWins(Passes v) => v.rouletteMaxWins;
+  static const Field<Passes, int> _f$rouletteMaxWins = Field(
+    'rouletteMaxWins',
+    _$rouletteMaxWins,
+    opt: true,
+  );
+  static int? _$discountPercentage(Passes v) => v.discountPercentage;
+  static const Field<Passes, int> _f$discountPercentage = Field(
+    'discountPercentage',
+    _$discountPercentage,
+  );
+
+  @override
+  final MappableFields<Passes> fields = const {
+    #id: _f$id,
+    #name: _f$name,
+    #benefits: _f$benefits,
+    #price: _f$price,
+    #maximumAmount: _f$maximumAmount,
+    #currentBookings: _f$currentBookings,
+    #isActive: _f$isActive,
+    #rouletteRemainingWins: _f$rouletteRemainingWins,
+    #rouletteMaxWins: _f$rouletteMaxWins,
+    #discountPercentage: _f$discountPercentage,
+  };
+
+  static Passes _instantiate(DecodingData data) {
+    return Passes(
+      id: data.dec(_f$id),
+      name: data.dec(_f$name),
+      benefits: data.dec(_f$benefits),
+      price: data.dec(_f$price),
+      maximumAmount: data.dec(_f$maximumAmount),
+      currentBookings: data.dec(_f$currentBookings),
+      isActive: data.dec(_f$isActive),
+      rouletteRemainingWins: data.dec(_f$rouletteRemainingWins),
+      rouletteMaxWins: data.dec(_f$rouletteMaxWins),
+      discountPercentage: data.dec(_f$discountPercentage),
+    );
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static Passes fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<Passes>(map);
+  }
+
+  static Passes fromJson(String json) {
+    return ensureInitialized().decodeJson<Passes>(json);
+  }
+}
+
+mixin PassesMappable {
+  String toJson() {
+    return PassesMapper.ensureInitialized().encodeJson<Passes>(this as Passes);
+  }
+
+  Map<String, dynamic> toMap() {
+    return PassesMapper.ensureInitialized().encodeMap<Passes>(this as Passes);
+  }
+
+  PassesCopyWith<Passes, Passes, Passes> get copyWith =>
+      _PassesCopyWithImpl<Passes, Passes>(this as Passes, $identity, $identity);
+  @override
+  String toString() {
+    return PassesMapper.ensureInitialized().stringifyValue(this as Passes);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return PassesMapper.ensureInitialized().equalsValue(this as Passes, other);
+  }
+
+  @override
+  int get hashCode {
+    return PassesMapper.ensureInitialized().hashValue(this as Passes);
+  }
+}
+
+extension PassesValueCopy<$R, $Out> on ObjectCopyWith<$R, Passes, $Out> {
+  PassesCopyWith<$R, Passes, $Out> get $asPasses =>
+      $base.as((v, t, t2) => _PassesCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class PassesCopyWith<$R, $In extends Passes, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  $R call({
+    String? id,
+    String? name,
+    String? benefits,
+    double? price,
+    int? maximumAmount,
+    int? currentBookings,
+    bool? isActive,
+    int? rouletteRemainingWins,
+    int? rouletteMaxWins,
+    int? discountPercentage,
+  });
+  PassesCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+}
+
+class _PassesCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Passes, $Out>
+    implements PassesCopyWith<$R, Passes, $Out> {
+  _PassesCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<Passes> $mapper = PassesMapper.ensureInitialized();
+  @override
+  $R call({
+    String? id,
+    String? name,
+    Object? benefits = $none,
+    double? price,
+    int? maximumAmount,
+    int? currentBookings,
+    bool? isActive,
+    Object? rouletteRemainingWins = $none,
+    Object? rouletteMaxWins = $none,
+    Object? discountPercentage = $none,
+  }) => $apply(
+    FieldCopyWithData({
+      if (id != null) #id: id,
+      if (name != null) #name: name,
+      if (benefits != $none) #benefits: benefits,
+      if (price != null) #price: price,
+      if (maximumAmount != null) #maximumAmount: maximumAmount,
+      if (currentBookings != null) #currentBookings: currentBookings,
+      if (isActive != null) #isActive: isActive,
+      if (rouletteRemainingWins != $none)
+        #rouletteRemainingWins: rouletteRemainingWins,
+      if (rouletteMaxWins != $none) #rouletteMaxWins: rouletteMaxWins,
+      if (discountPercentage != $none) #discountPercentage: discountPercentage,
+    }),
+  );
+  @override
+  Passes $make(CopyWithData data) => Passes(
+    id: data.get(#id, or: $value.id),
+    name: data.get(#name, or: $value.name),
+    benefits: data.get(#benefits, or: $value.benefits),
+    price: data.get(#price, or: $value.price),
+    maximumAmount: data.get(#maximumAmount, or: $value.maximumAmount),
+    currentBookings: data.get(#currentBookings, or: $value.currentBookings),
+    isActive: data.get(#isActive, or: $value.isActive),
+    rouletteRemainingWins: data.get(
+      #rouletteRemainingWins,
+      or: $value.rouletteRemainingWins,
+    ),
+    rouletteMaxWins: data.get(#rouletteMaxWins, or: $value.rouletteMaxWins),
+    discountPercentage: data.get(
+      #discountPercentage,
+      or: $value.discountPercentage,
+    ),
+  );
+
+  @override
+  PassesCopyWith<$R2, Passes, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+      _PassesCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
 class OperatingHoursMapper extends ClassMapperBase<OperatingHours> {
@@ -462,6 +931,109 @@ class _OperatingHoursCopyWithImpl<$R, $Out>
   OperatingHoursCopyWith<$R2, OperatingHours, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   ) => _OperatingHoursCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class DetailMapper extends ClassMapperBase<Detail> {
+  DetailMapper._();
+
+  static DetailMapper? _instance;
+  static DetailMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = DetailMapper._());
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'Detail';
+
+  static String _$image(Detail v) => v.image;
+  static const Field<Detail, String> _f$image = Field('image', _$image);
+  static String _$title(Detail v) => v.title;
+  static const Field<Detail, String> _f$title = Field('title', _$title);
+
+  @override
+  final MappableFields<Detail> fields = const {
+    #image: _f$image,
+    #title: _f$title,
+  };
+
+  static Detail _instantiate(DecodingData data) {
+    return Detail(image: data.dec(_f$image), title: data.dec(_f$title));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static Detail fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<Detail>(map);
+  }
+
+  static Detail fromJson(String json) {
+    return ensureInitialized().decodeJson<Detail>(json);
+  }
+}
+
+mixin DetailMappable {
+  String toJson() {
+    return DetailMapper.ensureInitialized().encodeJson<Detail>(this as Detail);
+  }
+
+  Map<String, dynamic> toMap() {
+    return DetailMapper.ensureInitialized().encodeMap<Detail>(this as Detail);
+  }
+
+  DetailCopyWith<Detail, Detail, Detail> get copyWith =>
+      _DetailCopyWithImpl<Detail, Detail>(this as Detail, $identity, $identity);
+  @override
+  String toString() {
+    return DetailMapper.ensureInitialized().stringifyValue(this as Detail);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return DetailMapper.ensureInitialized().equalsValue(this as Detail, other);
+  }
+
+  @override
+  int get hashCode {
+    return DetailMapper.ensureInitialized().hashValue(this as Detail);
+  }
+}
+
+extension DetailValueCopy<$R, $Out> on ObjectCopyWith<$R, Detail, $Out> {
+  DetailCopyWith<$R, Detail, $Out> get $asDetail =>
+      $base.as((v, t, t2) => _DetailCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class DetailCopyWith<$R, $In extends Detail, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  $R call({String? image, String? title});
+  DetailCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+}
+
+class _DetailCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Detail, $Out>
+    implements DetailCopyWith<$R, Detail, $Out> {
+  _DetailCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<Detail> $mapper = DetailMapper.ensureInitialized();
+  @override
+  $R call({String? image, String? title}) => $apply(
+    FieldCopyWithData({
+      if (image != null) #image: image,
+      if (title != null) #title: title,
+    }),
+  );
+  @override
+  Detail $make(CopyWithData data) => Detail(
+    image: data.get(#image, or: $value.image),
+    title: data.get(#title, or: $value.title),
+  );
+
+  @override
+  DetailCopyWith<$R2, Detail, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+      _DetailCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
 class ExperiencesMapper extends ClassMapperBase<Experiences> {
@@ -918,351 +1490,5 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
   @override
   EventCopyWith<$R2, Event, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
       _EventCopyWithImpl<$R2, $Out2>($value, $cast, t);
-}
-
-class BookingExperienceMapper extends ClassMapperBase<BookingExperience> {
-  BookingExperienceMapper._();
-
-  static BookingExperienceMapper? _instance;
-  static BookingExperienceMapper ensureInitialized() {
-    if (_instance == null) {
-      MapperContainer.globals.use(_instance = BookingExperienceMapper._());
-      PassesMapper.ensureInitialized();
-    }
-    return _instance!;
-  }
-
-  @override
-  final String id = 'BookingExperience';
-
-  static String _$id(BookingExperience v) => v.id;
-  static const Field<BookingExperience, String> _f$id = Field('id', _$id);
-  static List<Passes> _$passes(BookingExperience v) => v.passes;
-  static const Field<BookingExperience, List<Passes>> _f$passes = Field(
-    'passes',
-    _$passes,
-  );
-
-  @override
-  final MappableFields<BookingExperience> fields = const {
-    #id: _f$id,
-    #passes: _f$passes,
-  };
-
-  static BookingExperience _instantiate(DecodingData data) {
-    return BookingExperience(id: data.dec(_f$id), passes: data.dec(_f$passes));
-  }
-
-  @override
-  final Function instantiate = _instantiate;
-
-  static BookingExperience fromMap(Map<String, dynamic> map) {
-    return ensureInitialized().decodeMap<BookingExperience>(map);
-  }
-
-  static BookingExperience fromJson(String json) {
-    return ensureInitialized().decodeJson<BookingExperience>(json);
-  }
-}
-
-mixin BookingExperienceMappable {
-  String toJson() {
-    return BookingExperienceMapper.ensureInitialized()
-        .encodeJson<BookingExperience>(this as BookingExperience);
-  }
-
-  Map<String, dynamic> toMap() {
-    return BookingExperienceMapper.ensureInitialized()
-        .encodeMap<BookingExperience>(this as BookingExperience);
-  }
-
-  BookingExperienceCopyWith<
-    BookingExperience,
-    BookingExperience,
-    BookingExperience
-  >
-  get copyWith =>
-      _BookingExperienceCopyWithImpl<BookingExperience, BookingExperience>(
-        this as BookingExperience,
-        $identity,
-        $identity,
-      );
-  @override
-  String toString() {
-    return BookingExperienceMapper.ensureInitialized().stringifyValue(
-      this as BookingExperience,
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return BookingExperienceMapper.ensureInitialized().equalsValue(
-      this as BookingExperience,
-      other,
-    );
-  }
-
-  @override
-  int get hashCode {
-    return BookingExperienceMapper.ensureInitialized().hashValue(
-      this as BookingExperience,
-    );
-  }
-}
-
-extension BookingExperienceValueCopy<$R, $Out>
-    on ObjectCopyWith<$R, BookingExperience, $Out> {
-  BookingExperienceCopyWith<$R, BookingExperience, $Out>
-  get $asBookingExperience => $base.as(
-    (v, t, t2) => _BookingExperienceCopyWithImpl<$R, $Out>(v, t, t2),
-  );
-}
-
-abstract class BookingExperienceCopyWith<
-  $R,
-  $In extends BookingExperience,
-  $Out
->
-    implements ClassCopyWith<$R, $In, $Out> {
-  ListCopyWith<$R, Passes, PassesCopyWith<$R, Passes, Passes>> get passes;
-  $R call({String? id, List<Passes>? passes});
-  BookingExperienceCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
-    Then<$Out2, $R2> t,
-  );
-}
-
-class _BookingExperienceCopyWithImpl<$R, $Out>
-    extends ClassCopyWithBase<$R, BookingExperience, $Out>
-    implements BookingExperienceCopyWith<$R, BookingExperience, $Out> {
-  _BookingExperienceCopyWithImpl(super.value, super.then, super.then2);
-
-  @override
-  late final ClassMapperBase<BookingExperience> $mapper =
-      BookingExperienceMapper.ensureInitialized();
-  @override
-  ListCopyWith<$R, Passes, PassesCopyWith<$R, Passes, Passes>> get passes =>
-      ListCopyWith(
-        $value.passes,
-        (v, t) => v.copyWith.$chain(t),
-        (v) => call(passes: v),
-      );
-  @override
-  $R call({String? id, List<Passes>? passes}) => $apply(
-    FieldCopyWithData({
-      if (id != null) #id: id,
-      if (passes != null) #passes: passes,
-    }),
-  );
-  @override
-  BookingExperience $make(CopyWithData data) => BookingExperience(
-    id: data.get(#id, or: $value.id),
-    passes: data.get(#passes, or: $value.passes),
-  );
-
-  @override
-  BookingExperienceCopyWith<$R2, BookingExperience, $Out2> $chain<$R2, $Out2>(
-    Then<$Out2, $R2> t,
-  ) => _BookingExperienceCopyWithImpl<$R2, $Out2>($value, $cast, t);
-}
-
-class PassesMapper extends ClassMapperBase<Passes> {
-  PassesMapper._();
-
-  static PassesMapper? _instance;
-  static PassesMapper ensureInitialized() {
-    if (_instance == null) {
-      MapperContainer.globals.use(_instance = PassesMapper._());
-    }
-    return _instance!;
-  }
-
-  @override
-  final String id = 'Passes';
-
-  static String _$id(Passes v) => v.id;
-  static const Field<Passes, String> _f$id = Field('id', _$id);
-  static String _$name(Passes v) => v.name;
-  static const Field<Passes, String> _f$name = Field('name', _$name);
-  static String? _$benefits(Passes v) => v.benefits;
-  static const Field<Passes, String> _f$benefits = Field(
-    'benefits',
-    _$benefits,
-  );
-  static double _$price(Passes v) => v.price;
-  static const Field<Passes, double> _f$price = Field('price', _$price);
-  static int _$maximumAmount(Passes v) => v.maximumAmount;
-  static const Field<Passes, int> _f$maximumAmount = Field(
-    'maximumAmount',
-    _$maximumAmount,
-  );
-  static int _$currentBookings(Passes v) => v.currentBookings;
-  static const Field<Passes, int> _f$currentBookings = Field(
-    'currentBookings',
-    _$currentBookings,
-  );
-  static bool _$isActive(Passes v) => v.isActive;
-  static const Field<Passes, bool> _f$isActive = Field('isActive', _$isActive);
-  static int _$rouletteRemainingWins(Passes v) => v.rouletteRemainingWins;
-  static const Field<Passes, int> _f$rouletteRemainingWins = Field(
-    'rouletteRemainingWins',
-    _$rouletteRemainingWins,
-  );
-  static int _$rouletteMaxWins(Passes v) => v.rouletteMaxWins;
-  static const Field<Passes, int> _f$rouletteMaxWins = Field(
-    'rouletteMaxWins',
-    _$rouletteMaxWins,
-  );
-  static int? _$discountPercentage(Passes v) => v.discountPercentage;
-  static const Field<Passes, int> _f$discountPercentage = Field(
-    'discountPercentage',
-    _$discountPercentage,
-  );
-
-  @override
-  final MappableFields<Passes> fields = const {
-    #id: _f$id,
-    #name: _f$name,
-    #benefits: _f$benefits,
-    #price: _f$price,
-    #maximumAmount: _f$maximumAmount,
-    #currentBookings: _f$currentBookings,
-    #isActive: _f$isActive,
-    #rouletteRemainingWins: _f$rouletteRemainingWins,
-    #rouletteMaxWins: _f$rouletteMaxWins,
-    #discountPercentage: _f$discountPercentage,
-  };
-
-  static Passes _instantiate(DecodingData data) {
-    return Passes(
-      id: data.dec(_f$id),
-      name: data.dec(_f$name),
-      benefits: data.dec(_f$benefits),
-      price: data.dec(_f$price),
-      maximumAmount: data.dec(_f$maximumAmount),
-      currentBookings: data.dec(_f$currentBookings),
-      isActive: data.dec(_f$isActive),
-      rouletteRemainingWins: data.dec(_f$rouletteRemainingWins),
-      rouletteMaxWins: data.dec(_f$rouletteMaxWins),
-      discountPercentage: data.dec(_f$discountPercentage),
-    );
-  }
-
-  @override
-  final Function instantiate = _instantiate;
-
-  static Passes fromMap(Map<String, dynamic> map) {
-    return ensureInitialized().decodeMap<Passes>(map);
-  }
-
-  static Passes fromJson(String json) {
-    return ensureInitialized().decodeJson<Passes>(json);
-  }
-}
-
-mixin PassesMappable {
-  String toJson() {
-    return PassesMapper.ensureInitialized().encodeJson<Passes>(this as Passes);
-  }
-
-  Map<String, dynamic> toMap() {
-    return PassesMapper.ensureInitialized().encodeMap<Passes>(this as Passes);
-  }
-
-  PassesCopyWith<Passes, Passes, Passes> get copyWith =>
-      _PassesCopyWithImpl<Passes, Passes>(this as Passes, $identity, $identity);
-  @override
-  String toString() {
-    return PassesMapper.ensureInitialized().stringifyValue(this as Passes);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return PassesMapper.ensureInitialized().equalsValue(this as Passes, other);
-  }
-
-  @override
-  int get hashCode {
-    return PassesMapper.ensureInitialized().hashValue(this as Passes);
-  }
-}
-
-extension PassesValueCopy<$R, $Out> on ObjectCopyWith<$R, Passes, $Out> {
-  PassesCopyWith<$R, Passes, $Out> get $asPasses =>
-      $base.as((v, t, t2) => _PassesCopyWithImpl<$R, $Out>(v, t, t2));
-}
-
-abstract class PassesCopyWith<$R, $In extends Passes, $Out>
-    implements ClassCopyWith<$R, $In, $Out> {
-  $R call({
-    String? id,
-    String? name,
-    String? benefits,
-    double? price,
-    int? maximumAmount,
-    int? currentBookings,
-    bool? isActive,
-    int? rouletteRemainingWins,
-    int? rouletteMaxWins,
-    int? discountPercentage,
-  });
-  PassesCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
-}
-
-class _PassesCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Passes, $Out>
-    implements PassesCopyWith<$R, Passes, $Out> {
-  _PassesCopyWithImpl(super.value, super.then, super.then2);
-
-  @override
-  late final ClassMapperBase<Passes> $mapper = PassesMapper.ensureInitialized();
-  @override
-  $R call({
-    String? id,
-    String? name,
-    Object? benefits = $none,
-    double? price,
-    int? maximumAmount,
-    int? currentBookings,
-    bool? isActive,
-    int? rouletteRemainingWins,
-    int? rouletteMaxWins,
-    Object? discountPercentage = $none,
-  }) => $apply(
-    FieldCopyWithData({
-      if (id != null) #id: id,
-      if (name != null) #name: name,
-      if (benefits != $none) #benefits: benefits,
-      if (price != null) #price: price,
-      if (maximumAmount != null) #maximumAmount: maximumAmount,
-      if (currentBookings != null) #currentBookings: currentBookings,
-      if (isActive != null) #isActive: isActive,
-      if (rouletteRemainingWins != null)
-        #rouletteRemainingWins: rouletteRemainingWins,
-      if (rouletteMaxWins != null) #rouletteMaxWins: rouletteMaxWins,
-      if (discountPercentage != $none) #discountPercentage: discountPercentage,
-    }),
-  );
-  @override
-  Passes $make(CopyWithData data) => Passes(
-    id: data.get(#id, or: $value.id),
-    name: data.get(#name, or: $value.name),
-    benefits: data.get(#benefits, or: $value.benefits),
-    price: data.get(#price, or: $value.price),
-    maximumAmount: data.get(#maximumAmount, or: $value.maximumAmount),
-    currentBookings: data.get(#currentBookings, or: $value.currentBookings),
-    isActive: data.get(#isActive, or: $value.isActive),
-    rouletteRemainingWins: data.get(
-      #rouletteRemainingWins,
-      or: $value.rouletteRemainingWins,
-    ),
-    rouletteMaxWins: data.get(#rouletteMaxWins, or: $value.rouletteMaxWins),
-    discountPercentage: data.get(
-      #discountPercentage,
-      or: $value.discountPercentage,
-    ),
-  );
-
-  @override
-  PassesCopyWith<$R2, Passes, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
-      _PassesCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 

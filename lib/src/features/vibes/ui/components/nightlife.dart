@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
-import 'package:hydex/src/features/vibes/ui/components/sports_section.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 class NightLifeSection extends StatelessWidget {

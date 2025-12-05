@@ -3,18 +3,32 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/booking/data/create_book.dart';
+import 'package:hydex/src/features/booking/data/format_time.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:hydex/src/features/profile/data/upcoming_event.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 class VendorContainer extends ConsumerWidget {
-  const VendorContainer({super.key, required this.name});
+  const VendorContainer({
+    super.key,
+    required this.name,
+    required this.date,
+    required this.time,
+    required this.location,
+  });
 
-  final String name;
+  final String name, location;
+  final DateTime date, time;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final guests = ref.watch(guestsProvider);
+    final selectedPass = ref.read(
+      createBookProvider.select((v) => v?.selectedPasses),
+    );
+
     return SmoothContainer(
       borderRadius: .circular(26),
       color: Color(0xff1E1E20),
@@ -40,7 +54,7 @@ class VendorContainer extends ConsumerWidget {
           ),
           SizedBox(height: 4),
           Text(
-            "📍 197, 26th of July Street, Agouza, Giza",
+            "📍 $location",
             style: AppTextStyles(
               context,
             ).captionRegular.copyWith(color: AppColors.textSecondary),
@@ -56,13 +70,12 @@ class VendorContainer extends ConsumerWidget {
           ),
           SizedBox(height: 4),
           Text(
-            "25 Oct at 9:00 PM",
+            "${date.day} ${date.month.toMonthName()} at ${time.toTime()}",
             style: TextStyle(
               fontSize: AppTextStyles(context).accumulator * 16,
               fontWeight: .w600,
             ),
           ),
-
           SizedBox(height: 16),
           Divider(),
           SizedBox(height: 16),
@@ -74,7 +87,7 @@ class VendorContainer extends ConsumerWidget {
           ),
           SizedBox(height: 4),
           Text(
-            "$guests VIP Experience",
+            "$guests ${selectedPass?.name}",
             style: TextStyle(
               fontSize: AppTextStyles(context).accumulator * 16,
               fontWeight: .w600,
@@ -138,7 +151,12 @@ class VenueContainer extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  MapsLauncher.launchCoordinates(
+                    event.location.coordinates.lat ?? 0,
+                    event.location.coordinates.lng ?? 0,
+                  );
+                },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
@@ -186,5 +204,27 @@ class VenueContainer extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+extension MonthNameX on int {
+  String toMonthName() {
+    const names = [
+      "JAN",
+      "FEB",
+      "MAR",
+      "APR",
+      "MAY",
+      "JUN",
+      "JUL",
+      "AUG",
+      "SEP",
+      "OCT",
+      "NOV",
+      "DEC",
+    ];
+
+    if (this < 1 || this > 12) return "";
+    return names[this - 1];
   }
 }

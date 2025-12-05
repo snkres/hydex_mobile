@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +24,7 @@ import 'package:maps_launcher/maps_launcher.dart';
 import 'package:readmore/readmore.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:smooth_corner/smooth_corner.dart';
+import 'package:soft_edge_blur/soft_edge_blur.dart';
 
 class EventDetailScreen extends ConsumerStatefulWidget {
   const EventDetailScreen({super.key, required this.id});
@@ -100,191 +100,209 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               onTap: () async {
                 final book = CreateBook(
                   name: event.name,
+                  location: event.location.address ??
+                      "${event.location.street}, ${event.location.city}, ${event.location.country}",
+
                   passes: event.bookingExperience?.passes ?? [],
-                  startTime: DateTime.now(),
+                  startTime: event.startTime,
                 );
-                ref.read(createBookProvider.notifier).state = book;
+                ref.read(createBookProvider.notifier).updateBook(book);
                 context.push("/create-booking", extra: book);
               },
               title: "RSVP",
             ),
           ),
-          body: Stack(
-            children: [
-              Positioned.fill(
-                child: PageView.builder(
-                  controller: pageController,
-                  itemCount: event.media.length,
-                  itemBuilder: (_, i) {
-                    return Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: event.media[i],
-                          fit: BoxFit.cover,
-                          alignment: Alignment.topCenter,
-                          placeholder: (_, __) =>
-                              const Center(child: CircularProgressIndicator()),
-                          errorWidget: (_, __, ___) =>
-                              const Center(child: Icon(Icons.error)),
+          body: SoftEdgeBlur(
+            edges: event.bookingExperience != null
+                ? [
+                    EdgeBlur(
+                      type: EdgeType.bottomEdge,
+                      size: 100,
+                      sigma: 30,
+                      tintColor: AppColors.backgroundBase,
+                      controlPoints: [
+                        ControlPoint(
+                          position: 0.4,
+                          type: ControlPointType.visible,
                         ),
-                        // The darkening overlay
-                        Container(
-                          color: Colors.black.withOpacity(overlayOpacity),
+                        ControlPoint(
+                          position: 1,
+                          type: ControlPointType.transparent,
                         ),
                       ],
-                    );
-                  },
-                ),
-              ),
-
-              Positioned.fill(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onVerticalDragUpdate: (details) {
-                    if (_sheetSize >= _collapseThreshold &&
-                        details.delta.dy < 0)
-                      return;
-
-                    final delta = -details.delta.dy / screenHeight;
-                    final newSize = (_sheetSize + delta).clamp(0.3, 0.85);
-
-                    if (_sheetController.isAttached) {
-                      _sheetController.jumpTo(newSize);
-                    }
-                  },
-                  child: Container(color: Colors.transparent),
-                ),
-              ),
-
-              DraggableScrollableSheet(
-                controller: _sheetController,
-                maxChildSize: 0.85,
-                initialChildSize: 0.3,
-                minChildSize: 0.3,
-                builder: (context, scrollController) {
-                  return Material(
-                    color: Colors.transparent,
-                    child: SmoothClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(32),
-                      ),
-                      smoothness: 1,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.transparent,
-                        ), // Or your bg color
-                        child: SingleChildScrollView(
-                          controller: scrollController,
-                          // Ensure content is scrollable even if short
-                          physics: const ClampingScrollPhysics(),
-                          child: CollapsedEventContainer(
-                            experiences: event.experiences,
-                            name: event.name,
-                            createdTime: event.createdAt,
-                            thingsToKnow: const ["Mawkoos"],
-                            description: event.description,
-                            endTime: event.endTime,
-                            startTime: event.startTime,
-                            tags: event.tags,
-                            location: event.location,
-                            pricing: event.priceType,
-                            owner: event.vendor,
-                          ),
-                        ),
-                      ),
                     ),
-                  );
-                },
-              ),
-
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: SafeArea(
-                  child: SizedBox(
-                    height: 70,
-                    child: Row(
-                      children: [
-                        CustomBackButton(),
-                        Expanded(
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 220),
-                            switchInCurve: Curves.easeOut,
-                            switchOutCurve: Curves.easeIn,
-                            child: _isCollapsedFromSheet
-                                ? Text(
-                                    event.name,
-                                    key: const ValueKey('title'),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  )
-                                : const SizedBox.shrink(key: ValueKey('empty')),
+                  ]
+                : [],
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: PageView.builder(
+                    controller: pageController,
+                    itemCount: event.media.length,
+                    itemBuilder: (_, i) {
+                      return Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          CachedNetworkImage(
+                            imageUrl: event.media[i],
+                            fit: BoxFit.cover,
+                            alignment: Alignment.topCenter,
+                            placeholder: (_, __) => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            errorWidget: (_, __, ___) =>
+                                const Center(child: Icon(Icons.error)),
                           ),
-                        ),
-
-                        IconButton.filled(
-                          onPressed: () {
-                            final formatter = DateFormat("EEE, MMM d • h:mm a");
-                            final start = formatter.format(event.startTime);
-
-                            final shareText =
-                                "I'm going to ${event.name} on $start!\n"
-                                "Join me: https://app.hyde-x.com/event/${event.id}";
-
-                            SharePlus.instance.share(
-                              ShareParams(text: shareText),
-                            );
-                          },
-                          icon: SvgPicture.asset(
-                            "img/svg/share.svg",
-                            package: "assets",
+                          // The darkening overlay
+                          Container(
+                            color: Colors.black.withOpacity(overlayOpacity),
                           ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+
+                Positioned.fill(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onVerticalDragUpdate: (details) {
+                      if (_sheetSize >= _collapseThreshold &&
+                          details.delta.dy < 0) {
+                        return;
+                      }
+
+                      final delta = -details.delta.dy / screenHeight;
+                      final newSize = (_sheetSize + delta).clamp(0.3, 0.85);
+
+                      if (_sheetController.isAttached) {
+                        _sheetController.jumpTo(newSize);
+                      }
+                    },
+                    child: Container(color: Colors.transparent),
+                  ),
+                ),
+
+                DraggableScrollableSheet(
+                  controller: _sheetController,
+                  maxChildSize: 0.85,
+                  initialChildSize: 0.3,
+                  minChildSize: 0.3,
+                  builder: (context, scrollController) {
+                    return Material(
+                      color: Colors.transparent,
+                      child: SmoothClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(32),
                         ),
-                        const SizedBox(width: 9),
-                        IconButton.filled(
-                          onPressed: () async {
-                            await ref
-                                .read(eventProvider(widget.id).notifier)
-                                .toggleFavorite();
-                          },
-                          icon: SvgPicture.asset(
-                            "img/svg/favorite.svg",
-                            package: "assets",
-                            colorFilter: .mode(
-                              event.isFavorited
-                                  ? Colors.red
-                                  : AppColors.textPrimary,
-                              .srcIn,
+                        smoothness: 1,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                          ), // Or your bg color
+                          child: SingleChildScrollView(
+                            controller: scrollController,
+                            // Ensure content is scrollable even if short
+                            physics: const ClampingScrollPhysics(),
+                            child: CollapsedEventContainer(
+                              experiences: event.experiences,
+                              name: event.name,
+                              createdTime: event.createdAt,
+                              thingsToKnow: const ["Mawkoos"],
+                              category: event.category?.name,
+                              description: event.description,
+                              endTime: event.endTime,
+                              startTime: event.startTime,
+                              tags: event.tags,
+                              location: event.location,
+                              pricing: event.priceType,
+                              owner: event.vendor,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 16),
-                      ],
+                      ),
+                    );
+                  },
+                ),
+
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: SafeArea(
+                    child: SizedBox(
+                      height: 70,
+                      child: Row(
+                        children: [
+                          CustomBackButton(),
+                          Expanded(
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 220),
+                              switchInCurve: Curves.easeOut,
+                              switchOutCurve: Curves.easeIn,
+                              child: _isCollapsedFromSheet
+                                  ? Text(
+                                      event.name,
+                                      key: const ValueKey('title'),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    )
+                                  : const SizedBox.shrink(
+                                      key: ValueKey('empty'),
+                                    ),
+                            ),
+                          ),
+
+                          IconButton.filled(
+                            onPressed: () {
+                              final formatter = DateFormat(
+                                "EEE, MMM d • h:mm a",
+                              );
+                              final start = formatter.format(event.startTime);
+
+                              final shareText =
+                                  "I'm going to ${event.name} on $start!\n"
+                                  "Join me: https://app.hyde-x.com/event/${event.id}";
+
+                              SharePlus.instance.share(
+                                ShareParams(text: shareText),
+                              );
+                            },
+                            icon: SvgPicture.asset(
+                              "img/svg/share.svg",
+                              package: "assets",
+                            ),
+                          ),
+                          const SizedBox(width: 9),
+                          IconButton.filled(
+                            onPressed: () async {
+                              await ref
+                                  .read(eventProvider(widget.id).notifier)
+                                  .toggleFavorite();
+                            },
+                            icon: SvgPicture.asset(
+                              "img/svg/favorite.svg",
+                              package: "assets",
+                              colorFilter: .mode(
+                                event.isFavorited
+                                    ? Colors.red
+                                    : AppColors.textPrimary,
+                                .srcIn,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
-                    child: Container(
-                      height: 90,
-                      color: AppColors.backgroundBase.withOpacity(0.1),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -306,11 +324,13 @@ class CollapsedEventContainer extends ConsumerWidget {
     required this.createdTime,
     required this.thingsToKnow,
     required this.experiences,
+    required this.category,
   });
   final String name, description, pricing;
   final Location location;
   final List<String> tags, thingsToKnow;
   final List<Experiences> experiences;
+  final String? category;
   final DateTime startTime, endTime, createdTime;
   final locationService = LocationService();
   final Vendor owner;
@@ -343,6 +363,7 @@ class CollapsedEventContainer extends ConsumerWidget {
         endLongitude: location.coordinates.lng ?? 0,
       ),
     );
+    final tagsWithCategory = [category, ...tags];
     return Column(
       children: [
         SizedBox(height: 15),
@@ -362,7 +383,7 @@ class CollapsedEventContainer extends ConsumerWidget {
                   child: Wrap(
                     spacing: 6,
                     runSpacing: 6,
-                    children: tags.map((tag) {
+                    children: tagsWithCategory.map((tag) {
                       return Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
@@ -373,7 +394,7 @@ class CollapsedEventContainer extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(100),
                         ),
                         child: Text(
-                          tag.capitalize(),
+                          tag != null ? tag.capitalize() : "",
                           style: TextStyle(
                             fontSize: AppTextStyles(context).accumulator * 12,
                           ),
@@ -424,11 +445,10 @@ class CollapsedEventContainer extends ConsumerWidget {
                             color: AppColors.textSecondary,
                           ),
                         ),
-                        loading: () => SizedBox(
-                          width: 12,
-                          height: 12,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
+                        loading: () => Text(
+                          "Calculating...",
+                          style: TextStyle(
+                            fontSize: AppTextStyles(context).accumulator * 12,
                             color: AppColors.textSecondary,
                           ),
                         ),
@@ -518,106 +538,125 @@ class CollapsedEventContainer extends ConsumerWidget {
                   ),
                 ),
                 SizedBox(height: 16),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    "HYDEX PERKS",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textSecondary,
-                      fontSize: AppTextStyles(context).accumulator * 16,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 8),
+                Visibility(
+                  visible: false,
+                  child: Column(
+                    crossAxisAlignment: .start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          "HYDEX PERKS",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textSecondary,
+                            fontSize: AppTextStyles(context).accumulator * 16,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 8),
 
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: TicketWidget(
-                    width: (MediaQuery.widthOf(context) / 375) * 282,
-                    height: (MediaQuery.heightOf(context) / 710) * 137,
-                    color: Colors.red,
-                    isCornerRounded: true,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 12),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: TicketWidget(
+                          width: (MediaQuery.widthOf(context) / 375) * 282,
+                          height: (MediaQuery.heightOf(context) / 710) * 137,
+                          color: Colors.red,
+                          isCornerRounded: true,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 12),
 
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            "Complimentary",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: AppTextStyles(context).accumulator * 10,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            "Drinks",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: AppTextStyles(context).accumulator * 20,
-                            ),
-                          ),
-                        ),
-                        Spacer(),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            "7:30pm to 10:00pm today",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: AppTextStyles(context).accumulator * 11,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Padding(
+                              Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16),
                                 child: Text(
-                                  "Lorem ipsum dolor sit amet,Lorem",
+                                  "Complimentary",
                                   style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize:
+                                        AppTextStyles(context).accumulator * 10,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  "Drinks",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize:
+                                        AppTextStyles(context).accumulator * 20,
+                                  ),
+                                ),
+                              ),
+                              Spacer(),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  "7:30pm to 10:00pm today",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
                                     fontSize:
                                         AppTextStyles(context).accumulator * 11,
                                   ),
                                 ),
                               ),
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  "Book",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize:
-                                        AppTextStyles(context).accumulator * 11,
+                              SizedBox(height: 4),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                      ),
+                                      child: Text(
+                                        "Lorem ipsum dolor sit amet,Lorem",
+                                        style: TextStyle(
+                                          fontSize:
+                                              AppTextStyles(
+                                                context,
+                                              ).accumulator *
+                                              11,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: 4),
-                                SvgPicture.asset(
-                                  "img/svg/book_ticket.svg",
-                                  package: "assets",
-                                  width: 10,
-                                  height: 10,
-                                ),
-                                SizedBox(width: 11),
-                              ],
-                            ),
-                          ],
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Book",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize:
+                                              AppTextStyles(
+                                                context,
+                                              ).accumulator *
+                                              11,
+                                        ),
+                                      ),
+                                      SizedBox(width: 4),
+                                      SvgPicture.asset(
+                                        "img/svg/book_ticket.svg",
+                                        package: "assets",
+                                        width: 10,
+                                        height: 10,
+                                      ),
+                                      SizedBox(width: 11),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 16),
+                            ],
+                          ),
                         ),
-                        SizedBox(height: 12),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 16),
 
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
@@ -860,14 +899,14 @@ class CollapsedEventContainer extends ConsumerWidget {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 8,
                         children: [
                           SmoothContainer(
                             width: 32,
                             height: 32,
-                            color: Colors.red,
                             smoothness: 1,
+                            color: Colors.red,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           Expanded(
@@ -875,11 +914,11 @@ class CollapsedEventContainer extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Cairo Jazz Club",
+                                  owner.name,
                                   style: AppTextStyles(context).smallBold,
                                 ),
                                 Text(
-                                  "This is a description for cairojazz club",
+                                  owner.description,
                                   style: AppTextStyles(context).captionRegular
                                       .copyWith(color: AppColors.textSecondary),
                                 ),
@@ -915,18 +954,27 @@ class CollapsedEventContainer extends ConsumerWidget {
                     SizedBox(
                       height: 180,
                       child: ListView.separated(
-                        itemCount: 3,
+                        itemCount: owner.media.length,
                         scrollDirection: Axis.horizontal,
                         padding: EdgeInsets.symmetric(horizontal: 16),
                         physics: BouncingScrollPhysics(),
                         separatorBuilder: (context, index) =>
                             SizedBox(width: 8),
                         itemBuilder: (context, index) {
-                          return SmoothContainer(
-                            width: 180,
-                            color: Colors.red,
+                          return SmoothClipRRect(
                             borderRadius: BorderRadius.circular(16),
+                            smoothness: 1,
+                            child: CachedNetworkImage(
+                              imageUrl: owner.media[index],
+                              width: 180,
+                              fit: .cover,
+                            ),
                           );
+                          // return SmoothContainer(
+                          //   width: 180,
+                          //   color: Colors.red,
+                          //   borderRadius: BorderRadius.circular(16),
+                          // );
                         },
                       ),
                     ),

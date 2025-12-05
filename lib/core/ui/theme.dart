@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hydex/core/ui/colors.dart';
 
 class AppTheme {

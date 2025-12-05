@@ -242,6 +242,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                     labelColor: Colors.white,
                     indicatorColor: AppColors.signalBrandSolid,
                     controller: _tabController,
+                    overlayColor: .all(Colors.transparent),
 
                     tabs: [
                       Tab(text: "Upcoming Events"),

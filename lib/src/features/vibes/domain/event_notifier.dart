@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';

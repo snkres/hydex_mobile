@@ -99,112 +99,139 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                   });
                                 },
                                 itemBuilder: (context, index) {
-                                  return Stack(
-                                    children: [
-                                      ImageOrVideoWidget(
-                                        videoURL: data[index].video,
-                                        imageURL: data[index].image,
-                                      ),
-                                      Container(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.3,
+                                  return GestureDetector(
+                                    onTap: () {
+                                      if (data[index].assignment.targetType
+                                              .toValue() ==
+                                          AssignmentStatus.vendor.toValue()) {
+                                        context.pushNamed(
+                                          "vendor_detail",
+                                          pathParameters: {
+                                            "id": data[index]
+                                                .assignment
+                                                .vendor
+                                                .id,
+                                          },
+                                        );
+                                      } else {
+                                        context.pushNamed(
+                                          "event_detail",
+                                          pathParameters: {
+                                            "id": data[index]
+                                                .assignment
+                                                .vendor
+                                                .id,
+                                          },
+                                        );
+                                      }
+                                    },
+                                    child: Stack(
+                                      children: [
+                                        ImageOrVideoWidget(
+                                          videoURL: data[index].video,
+                                          imageURL: data[index].image,
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 60,
+                                        Container(
+                                          color: Colors.black.withValues(
+                                            alpha: 0.3,
+                                          ),
                                         ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              data[index].subtitle,
-                                              textAlign: TextAlign.start,
-                                              style: TextStyle(
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    12,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w300,
-                                              ),
-                                            ),
-                                            SizedBox(height: 4),
-                                            Text(
-                                              data[index].headline,
-                                              style: TextStyle(
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    20,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  formatDateTime(
-                                                    data[index]
-                                                        .campaignStartDate,
-                                                  ),
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize:
-                                                        AppTextStyles(
-                                                          context,
-                                                        ).accumulator *
-                                                        12,
-                                                  ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 60,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                data[index].subtitle,
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      12,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w300,
                                                 ),
-                                                ElevatedButton(
-                                                  onPressed: () {},
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                        backgroundColor:
-                                                            Colors.white,
-                                                        foregroundColor:
-                                                            Colors.black,
-                                                        padding:
-                                                            EdgeInsets.symmetric(
-                                                              horizontal: 16,
-                                                            ),
-                                                      ),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.add,
-                                                        color: AppColors
-                                                            .textInverse,
-                                                      ),
-                                                      SizedBox(width: 4),
-                                                      Text(
-                                                        "Reserve",
-                                                        style: AppTextStyles(context)
-                                                            .smallSemibold
-                                                            .copyWith(
-                                                              color: AppColors
-                                                                  .textInverse,
-                                                            ),
-                                                      ),
-                                                    ],
-                                                  ),
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                data[index].headline,
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      20,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w700,
                                                 ),
-                                              ],
-                                            ),
-                                          ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    formatDateTime(
+                                                      data[index]
+                                                          .campaignStartDate,
+                                                    ),
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize:
+                                                          AppTextStyles(
+                                                            context,
+                                                          ).accumulator *
+                                                          12,
+                                                    ),
+                                                  ),
+                                                  // ElevatedButton(
+                                                  //   onPressed: () {},
+                                                  //   style:
+                                                  //       ElevatedButton.styleFrom(
+                                                  //         backgroundColor:
+                                                  //             Colors.white,
+                                                  //         foregroundColor:
+                                                  //             Colors.black,
+                                                  //         padding:
+                                                  //             EdgeInsets.symmetric(
+                                                  //               horizontal: 16,
+                                                  //             ),
+                                                  //       ),
+                                                  //   child: Row(
+                                                  //     children: [
+                                                  //       Icon(
+                                                  //         Icons.add,
+                                                  //         color: AppColors
+                                                  //             .textInverse,
+                                                  //       ),
+                                                  //       SizedBox(width: 4),
+                                                  //       Text(
+                                                  //         "Reserve",
+                                                  //         style: AppTextStyles(context)
+                                                  //             .smallSemibold
+                                                  //             .copyWith(
+                                                  //               color: AppColors
+                                                  //                   .textInverse,
+                                                  //             ),
+                                                  //       ),
+                                                  //     ],
+                                                  //   ),
+                                                  // ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   );
                                 },
                               ),
@@ -459,44 +486,51 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                         ),
                                       ),
                                       SizedBox(width: 6),
-                                      SmoothContainer(
-                                        width: 150,
-                                        height: 130,
-                                        color: AppColors.surfaceContainer,
+                                      GestureDetector(
+                                        onTap: () =>
+                                            context.push("/", extra: 1),
+                                        child: SmoothContainer(
+                                          width: 150,
+                                          height: 130,
+                                          color: AppColors.surfaceContainer,
 
-                                        smoothness: 1,
-                                        padding: EdgeInsets.all(12),
-                                        borderRadius: BorderRadius.circular(24),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Spacer(),
-                                            Text(
-                                              "Search &",
-                                              style: TextStyle(
-                                                color: AppColors.textSecondary,
+                                          smoothness: 1,
+                                          padding: EdgeInsets.all(12),
+                                          borderRadius: BorderRadius.circular(
+                                            24,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Spacer(),
+                                              Text(
+                                                "Search &",
+                                                style: TextStyle(
+                                                  color:
+                                                      AppColors.textSecondary,
 
-                                                fontWeight: FontWeight.w100,
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    12,
+                                                  fontWeight: FontWeight.w100,
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      12,
+                                                ),
                                               ),
-                                            ),
-                                            Text(
-                                              "Explore",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    18,
+                                              Text(
+                                                "Explore",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      18,
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -799,7 +833,7 @@ class AllVendorsWidget extends ConsumerWidget {
                               data[index].category?.name ??
                               data[index].tags.first,
                           avatarImage: data[index].logo,
-                          date: "date",
+                          date: data[index].location.address!,
                         ),
                       );
                     },
@@ -941,7 +975,9 @@ class AllEventsWidget extends ConsumerWidget {
                         closedBuilder: (context, _) => Padding(
                           padding: const EdgeInsets.only(right: 16),
                           child: EventContainer(
-                            tag: event.tags.firstOrNull!.capitalize(),
+                            tag:
+                                event.category?.name ??
+                                event.tags.first.capitalize(),
                             avatarImage: event.media.first,
                             date: event.createdAt.formatDate(),
                             heading: event.name,
@@ -1397,13 +1433,18 @@ class EventContainer extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    date,
-                                    style: TextStyle(
-                                      color: AppColors.textBrand,
-                                      fontSize:
-                                          AppTextStyles(context).accumulator *
-                                          11,
+                                  SizedBox(
+                                    width: 150,
+                                    child: Text(
+                                      date,
+                                      maxLines: 1,
+                                      overflow: .ellipsis,
+                                      style: TextStyle(
+                                        color: AppColors.textBrand,
+                                        fontSize:
+                                            AppTextStyles(context).accumulator *
+                                            11,
+                                      ),
                                     ),
                                   ),
                                   GestureDetector(

@@ -1,6 +1,5 @@
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
-import 'package:hydex/src/features/vibes/data/coordinates.dart';
 import 'package:hydex/src/features/vibes/data/location.dart';
 import 'package:hydex/src/features/vibes/data/vendor.dart';
 
@@ -24,6 +23,7 @@ class Banner with BannerMappable {
   String? video;
   final DateTime campaignStartDate;
   final DateTime campaignEndDate;
+  final Assignment assignment;
 
   Banner({
     required this.id,
@@ -34,6 +34,7 @@ class Banner with BannerMappable {
     this.video,
     required this.campaignStartDate,
     required this.campaignEndDate,
+    required this.assignment
   });
 }
 
@@ -51,6 +52,20 @@ class OperatingHours with OperatingHoursMappable {
   final String close;
 
   OperatingHours({required this.open, required this.close});
+}
+
+extension OperatingHoursX on OperatingHours {
+  DateTime toOpenDateTime() {
+    final currentDate = DateTime.now();
+    final parts = open.split(':');
+    return DateTime(
+      currentDate.year,
+      currentDate.month,
+      currentDate.day,
+      int.parse(parts[0]),
+      int.parse(parts[1]),
+    );
+  }
 }
 
 @MappableClass()
@@ -109,8 +124,8 @@ class Passes with PassesMappable {
   final int maximumAmount;
   final int currentBookings;
   final bool isActive;
-  final int rouletteRemainingWins;
-  final int rouletteMaxWins;
+  final int? rouletteRemainingWins;
+  final int? rouletteMaxWins;
   final int? discountPercentage;
 
   Passes({
@@ -121,8 +136,8 @@ class Passes with PassesMappable {
     required this.maximumAmount,
     required this.currentBookings,
     required this.isActive,
-    required this.rouletteRemainingWins,
-    required this.rouletteMaxWins,
+    this.rouletteRemainingWins,
+    this.rouletteMaxWins,
     required this.discountPercentage,
   });
 }
@@ -131,6 +146,32 @@ class Passes with PassesMappable {
 class BookingExperience with BookingExperienceMappable {
   final String id;
   final List<Passes> passes;
+  final bool requireReservationApproval;
 
-  BookingExperience({required this.id, required this.passes});
+  BookingExperience({
+    required this.id,
+    required this.passes,
+    this.requireReservationApproval = false,
+  });
+}
+
+@MappableClass()
+class Assignment with AssignmentMappable {
+  final String id;
+  final AssignmentStatus targetType;
+  final Vendor vendor;
+
+  Assignment({
+    required this.id,
+    required this.targetType,
+    required this.vendor,
+  });
+}
+
+@MappableEnum()
+enum AssignmentStatus {
+  @MappableValue('VENDOR')
+  vendor,
+  @MappableValue('EVENT')
+  event,
 }

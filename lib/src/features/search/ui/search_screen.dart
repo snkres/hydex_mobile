@@ -8,7 +8,6 @@ import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
-import 'package:lottie/lottie.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {

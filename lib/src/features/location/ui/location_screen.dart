@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
-import 'package:hydex/src/features/auth/data/country.dart';
 import 'package:hydex/src/features/auth/provider/cities_service.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 

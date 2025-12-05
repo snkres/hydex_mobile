@@ -7,8 +7,6 @@ import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/profile/data/upcoming_event.dart';
 import 'package:hydex/src/features/profile/domain/profile_providers.dart';
-import 'package:hydex/src/features/vibes/data/coordinates.dart';
-import 'package:hydex/src/features/vibes/data/location.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:intl/intl.dart';
 import 'package:smooth_corner/smooth_corner.dart';

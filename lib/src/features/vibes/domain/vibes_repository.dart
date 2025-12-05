@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart' hide Banner;
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';

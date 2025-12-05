@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 // Custom exception classes for better error handling
 class ApiException implements Exception {
@@ -405,19 +404,6 @@ class DioHelper {
 
           handler.next(error);
         },
-      ),
-    );
-
-    _dio.interceptors.add(
-      PrettyDioLogger(
-        requestBody: true,
-        responseBody: true,
-        requestHeader: false,
-        enabled: kDebugMode,
-        compact: true,
-        maxWidth: 100,
-        responseHeader: false,
-        error: true,
       ),
     );
   }

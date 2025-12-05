@@ -1,29 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
-import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 class DateContainer extends StatefulWidget {
   const DateContainer({
     super.key,
-    required this.selectedDate,
+    this.selectedDate,
     this.onDateSelected,
+    required this.availableDates,
   });
 
-  final DateTime selectedDate;
+  final DateTime? selectedDate;
   final Function(DateTime)? onDateSelected;
+  final List<DateTime> availableDates;
 
   @override
   State<DateContainer> createState() => _DateContainerState();
 }
 
 class _DateContainerState extends State<DateContainer> {
-  final List<DateTime> dates = List.generate(
-    7,
-    (index) => DateTime.now().add(Duration(days: index)),
-  );
-
   String getDayName(int weekday) {
     switch (weekday) {
       case 1:
@@ -45,10 +41,12 @@ class _DateContainerState extends State<DateContainer> {
     }
   }
 
-  bool isSelected(DateTime date) {
-    return date.day == widget.selectedDate.day &&
-        date.month == widget.selectedDate.month &&
-        date.year == widget.selectedDate.year;
+  bool isSelected(DateTime? date) {
+    if (widget.selectedDate == null) return false;
+
+    return date?.day == widget.selectedDate!.day &&
+        date?.month == widget.selectedDate!.month &&
+        date?.year == widget.selectedDate!.year;
   }
 
   final List<String> monthNames = [
@@ -68,6 +66,8 @@ class _DateContainerState extends State<DateContainer> {
 
   @override
   Widget build(BuildContext context) {
+    final int currentMonth = widget.selectedDate?.month ?? DateTime.now().month;
+    final int monthIndex = currentMonth - 1;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -89,7 +89,7 @@ class _DateContainerState extends State<DateContainer> {
             Transform.rotate(
               angle: -3.14 / 2,
               child: Text(
-                monthNames[widget.selectedDate.month - 1],
+                monthNames[monthIndex],
                 style: TextStyle(
                   fontSize: AppTextStyles(context).accumulator * 16,
                   fontWeight: FontWeight.bold,
@@ -105,7 +105,9 @@ class _DateContainerState extends State<DateContainer> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        widget.onDateSelected?.call(dates[index]);
+                        widget.onDateSelected?.call(
+                          widget.availableDates[index],
+                        );
                       },
                       child: AnimatedContainer(
                         duration: Duration(milliseconds: 300),
@@ -115,7 +117,7 @@ class _DateContainerState extends State<DateContainer> {
                         decoration: ShapeDecoration(
                           shape: SmoothRectangleBorder(
                             side: BorderSide(
-                              color: isSelected(dates[index])
+                              color: isSelected(widget.availableDates[index])
                                   ? AppColors.borderBrand
                                   : Colors.transparent,
                               width: 1,
@@ -123,7 +125,7 @@ class _DateContainerState extends State<DateContainer> {
                             borderRadius: BorderRadius.circular(16),
                             smoothness: 1,
                           ),
-                          color: isSelected(dates[index])
+                          color: isSelected(widget.availableDates[index])
                               ? AppColors.signalBrandTint
                               : AppColors.surfaceContainerLighter,
                         ),
@@ -132,24 +134,25 @@ class _DateContainerState extends State<DateContainer> {
                           spacing: 4,
                           children: [
                             Text(
-                              dates[index].day.toString(),
+                              widget.availableDates[index].day.toString(),
                               style: TextStyle(
                                 fontSize:
                                     AppTextStyles(context).accumulator * 18,
-                                color: isSelected(dates[index])
+                                color: isSelected(widget.availableDates[index])
                                     ? AppColors.signalBrandSolid
                                     : Colors.white,
-                                fontWeight: isSelected(dates[index])
+                                fontWeight:
+                                    isSelected(widget.availableDates[index])
                                     ? FontWeight.w700
                                     : FontWeight.w500,
                               ),
                             ),
                             Text(
-                              getDayName(dates[index].weekday),
+                              getDayName(widget.availableDates[index].weekday),
                               style: TextStyle(
                                 fontSize:
                                     AppTextStyles(context).accumulator * 14,
-                                color: isSelected(dates[index])
+                                color: isSelected(widget.availableDates[index])
                                     ? AppColors.signalBrandSolid
                                     : AppColors.textSecondary,
                               ),
@@ -160,7 +163,7 @@ class _DateContainerState extends State<DateContainer> {
                     );
                   },
                   separatorBuilder: (context, index) => SizedBox(width: 8),
-                  itemCount: dates.length,
+                  itemCount: widget.availableDates.length,
                 ),
               ),
             ),
