@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,6 +23,7 @@ import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:intl/intl.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:readmore/readmore.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 import 'package:soft_edge_blur/soft_edge_blur.dart';
@@ -84,6 +86,9 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
           const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, st) {
         log("Event Detail Error", error: e, stackTrace: st);
+
+        Sentry.captureException(e, stackTrace: st);
+
         return const Scaffold(
           body: Center(child: Text("Something went wrong")),
         );
@@ -100,7 +105,8 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               onTap: () async {
                 final book = CreateBook(
                   name: event.name,
-                  location: event.location.address ??
+                  location:
+                      event.location.address ??
                       "${event.location.street}, ${event.location.city}, ${event.location.country}",
 
                   passes: event.bookingExperience?.passes ?? [],
