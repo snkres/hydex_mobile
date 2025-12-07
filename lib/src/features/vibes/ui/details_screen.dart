@@ -58,7 +58,6 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
           _isCollapsedFromSheet = next;
         });
       }
-      // Update sheet size for image overlay opacity
       if (_sheetSize != _sheetController.size) {
         setState(() {
           _sheetSize = _sheetController.size;
@@ -164,11 +163,12 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
               try {
                 final vendor = vendorAsync.requireValue;
                 final book = CreateBook(
+                  image: vendor.logo ?? "",
                   location:
                       vendor.location.address ??
                       "${vendor.location.street}, ${vendor.location.city}, ${vendor.location.country}",
                   name: vendor.name,
-                  operatingHours: vendor.operatingHours.values.toList(),
+                  operatingHours: vendor.operatingHours.toOpenDateTimes(),
                   requiresApproval:
                       vendorAsync
                           .requireValue
@@ -443,7 +443,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                               ),
                                             ),
                                             Text(
-                                              "${vendor.priceType} (\$\$\$)",
+                                              vendor.priceType.label,
                                               style: TextStyle(
                                                 fontSize:
                                                     AppTextStyles(
@@ -1169,18 +1169,18 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                             ),
                           ),
                           const SizedBox(width: 9),
-                          IconButton.filled(
-                            onPressed: () async {
-                              await ref
-                                  .read(vendorProvider(widget.id).notifier)
-                                  .toggleFavorite();
-                            },
-                            icon: SvgPicture.asset(
-                              "img/svg/favorite.svg",
-                              package: "assets",
-                            ),
-                          ),
-                          const SizedBox(width: 16),
+                          // IconButton.filled(
+                          //   onPressed: () async {
+                          //     await ref
+                          //         .read(vendorProvider(widget.id).notifier)
+                          //         .toggleFavorite();
+                          //   },
+                          //   icon: SvgPicture.asset(
+                          //     "img/svg/favorite.svg",
+                          //     package: "assets",
+                          //   ),
+                          // ),
+                          // const SizedBox(width: 16),
                         ],
                       ),
                     ),

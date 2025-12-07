@@ -20,7 +20,7 @@ class UpcomingEvent with UpcomingEventMappable {
     required this.time,
     required this.location,
     required this.status,
-    required this.numberOfGuests,
+    this.numberOfGuests = 0,
   });
 }
 
@@ -39,38 +39,38 @@ enum UpcomingEventStatus {
   cancelled,
 }
 
-@MappableClass()
-class HistoryData with HistoryDataMappable {
-  final String id;
-  final String name;
-  final DateTime date;
-  final String time;
-  final Location location;
-  final HistoryStatus status;
-  final String? cancellationReason;
+// @MappableClass()
+// class HistoryData with HistoryDataMappable {
+//   final String id;
+//   final String name;
+//   final DateTime date;
+//   final String time;
+//   final Location location;
+//   final HistoryStatus status;
+//   final String? cancellationReason;
 
-  HistoryData({
-    required this.id,
-    required this.name,
-    required this.date,
-    required this.time,
-    required this.location,
-    this.cancellationReason,
-    required this.status,
-  });
-}
+//   HistoryData({
+//     required this.id,
+//     required this.name,
+//     required this.date,
+//     required this.time,
+//     required this.location,
+//     this.cancellationReason,
+//     required this.status,
+//   });
+// }
 
-@MappableEnum()
-enum HistoryStatus {
-  @MappableValue('Cancelled')
-  cancelled,
+// @MappableEnum()
+// enum HistoryStatus {
+//   @MappableValue('Cancelled')
+//   cancelled,
 
-  @MappableValue('Rejected')
-  rejected,
+//   @MappableValue('Rejected')
+//   rejected,
 
-  @MappableValue('Confirmed')
-  confirmed,
-}
+//   @MappableValue('Confirmed')
+//   confirmed,
+// }
 
 @MappableClass()
 class PassportData with PassportDataMappable {

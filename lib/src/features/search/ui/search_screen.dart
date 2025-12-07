@@ -227,7 +227,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                 return TrendContainer(
                                   name: event.name,
                                   image: event.media.first,
-                                  priceType: event.priceType,
+                                  priceType: event.priceType.label,
                                   category: event.category.name,
                                   location: event.location.address ?? "",
                                   onTap: () => context.pushNamed(
@@ -276,7 +276,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                 return TrendContainer(
                                   name: vendor.name,
                                   category: vendor.category?.name ?? "",
-                                  priceType: vendor.priceType,
+                                  priceType: vendor.priceType.label,
                                   location: vendor.location.address ?? "",
                                   image: vendor.media.first,
                                   onTap: () => context.pushNamed(
@@ -333,7 +333,6 @@ class TrendContainer extends StatelessWidget {
             SmoothClipRRect(
               smoothness: 1,
               borderRadius: .circular(16),
-
               child: CachedNetworkImage(
                 imageUrl: image,
                 width: 65,
@@ -386,17 +385,21 @@ class TrendContainer extends StatelessWidget {
                   ),
 
                   Text(
-                    "$priceType (\$\$\$\$)",
+                    priceType,
                     style: TextStyle(
                       fontSize: AppTextStyles(context).accumulator * 11,
                       color: AppColors.textBrand,
                     ),
                   ),
-                  Text(
-                    location,
-                    style: TextStyle(
-                      fontSize: AppTextStyles(context).accumulator * 12,
-                      color: AppColors.textSecondary,
+                  SizedBox(
+                    width: 200,
+                    child: Text(
+                      location,
+                      maxLines: 2,
+                      style: TextStyle(
+                        fontSize: AppTextStyles(context).accumulator * 12,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ),
                   // Row(

@@ -18,6 +18,7 @@ class VendorMapper extends ClassMapperBase<Vendor> {
       VendorCategoryMapper.ensureInitialized();
       EventInsideVendorMapper.ensureInitialized();
       LocationMapper.ensureInitialized();
+      PriceTypeMapper.ensureInitialized();
       OperatingHoursMapper.ensureInitialized();
       DetailMapper.ensureInitialized();
     }
@@ -75,8 +76,8 @@ class VendorMapper extends ClassMapperBase<Vendor> {
     'location',
     _$location,
   );
-  static String _$priceType(Vendor v) => v.priceType;
-  static const Field<Vendor, String> _f$priceType = Field(
+  static PriceType _$priceType(Vendor v) => v.priceType;
+  static const Field<Vendor, PriceType> _f$priceType = Field(
     'priceType',
     _$priceType,
   );
@@ -242,7 +243,7 @@ abstract class VendorCopyWith<$R, $In extends Vendor, $Out>
     List<EventInsideVendor>? events,
     String? description,
     Location? location,
-    String? priceType,
+    PriceType? priceType,
     Map<String, OperatingHours>? operatingHours,
     List<String>? experiences,
     List<String>? media,
@@ -349,7 +350,7 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
     List<EventInsideVendor>? events,
     String? description,
     Location? location,
-    String? priceType,
+    PriceType? priceType,
     Map<String, OperatingHours>? operatingHours,
     List<String>? experiences,
     List<String>? media,

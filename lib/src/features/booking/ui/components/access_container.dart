@@ -55,7 +55,7 @@ class AccessSection extends ConsumerWidget {
               features: const ["Event access", "Welcome drink"],
               isSelected: isSelected,
               count: isSelected ? guestCount : 0,
-
+              discount: pass.discountPercentage,
               onSelect: () {
                 ref.read(createBookProvider.notifier).selectPasses(pass);
                 if (ref.read(guestsProvider) == 0) {
@@ -118,6 +118,7 @@ class AccessContainer extends StatelessWidget {
   final VoidCallback onSelect;
   final VoidCallback onIncrement;
   final VoidCallback onDecrement;
+  final int? discount;
 
   const AccessContainer({
     super.key,
@@ -125,12 +126,22 @@ class AccessContainer extends StatelessWidget {
     required this.price,
     required this.isSelected,
     required this.count,
+    this.discount,
+
     required this.onSelect,
     required this.onIncrement,
     required this.onDecrement,
     this.description,
     this.features = const [],
   });
+
+  String calculateDiscount(String price) {
+    final princeInt = int.parse(price);
+
+    final discountMultiplier = 1.0 - ((discount ?? 0) / 100.0);
+
+    return (princeInt * discountMultiplier).toStringAsFixed(0);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -167,8 +178,19 @@ class AccessContainer extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: "$price ",
-                          style: AppTextStyles(context).smallBold,
+                          style: discount != null
+                              ? AppTextStyles(context).smallBold.copyWith(
+                                  decoration: .lineThrough,
+                                  color: AppColors.textSecondary,
+                                )
+                              : AppTextStyles(context).smallBold,
                         ),
+                        discount != null
+                            ? TextSpan(
+                                text: "${calculateDiscount(price)} ",
+                                style: AppTextStyles(context).smallBold,
+                              )
+                            : TextSpan(),
                         TextSpan(
                           text: "EGP",
                           style: AppTextStyles(context).captionMedium.copyWith(

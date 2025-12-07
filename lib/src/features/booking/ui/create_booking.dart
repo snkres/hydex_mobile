@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/ui/colors.dart';
@@ -31,9 +32,8 @@ class _CreateBookingState extends ConsumerState<CreateBooking> {
 
   @override
   void initState() {
-    vendorAvailable = widget.book.operatingHours
-        .map((e) => e.toOpenDateTime())
-        .toList();
+    vendorAvailable = widget.book.operatingHours;
+
     selectedDate = isEvent ? widget.book.startTime : vendorAvailable.first;
 
     super.initState();
@@ -49,15 +49,7 @@ class _CreateBookingState extends ConsumerState<CreateBooking> {
       floatingActionButton:
           (selectedPass != null && selectedDate != null && selectedSlot != null)
           ? BottomBar(selectedDate: selectedDate, selectedSlot: selectedSlot)
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: PrimaryButton(
-                onTap: null,
-                title: "RSVP",
-                frColor: Colors.black,
-                bgColor: AppColors.buttonPrimaryDisabled,
-              ),
-            ),
+          : SizedBox.shrink(),
       body: SoftEdgeBlur(
         edges:
             (selectedPass != null &&
@@ -136,7 +128,11 @@ class _CreateBookingState extends ConsumerState<CreateBooking> {
                           ],
                         ),
                         Spacer(),
-                        CircleAvatar(),
+                        CircleAvatar(
+                          backgroundImage: CachedNetworkImageProvider(
+                            widget.book.image,
+                          ),
+                        ),
                         SizedBox(width: 16),
                       ],
                     ),
@@ -160,9 +156,8 @@ class _CreateBookingState extends ConsumerState<CreateBooking> {
                     SizedBox(height: 24),
                     SlotsContainer(
                       selectedDate: selectedDate,
-                      operatingHours: widget.book.operatingHours
-                          .map((e) => e.toOpenDateTime())
-                          .toList(),
+                      operatingHours: widget.book.operatingHours,
+
                       startTime: widget.book.startTime,
                       selectedSlot: selectedSlot,
                       onSelectSlot: (slot) {

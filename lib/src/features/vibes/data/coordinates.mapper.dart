@@ -25,14 +25,12 @@ class CoordinatesMapper extends ClassMapperBase<Coordinates> {
   static const Field<Coordinates, double> _f$lat = Field(
     'lat',
     _$lat,
-    key: r'latitude',
     opt: true,
   );
   static double? _$lng(Coordinates v) => v.lng;
   static const Field<Coordinates, double> _f$lng = Field(
     'lng',
     _$lng,
-    key: r'longitude',
     opt: true,
   );
 

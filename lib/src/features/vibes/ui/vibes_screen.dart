@@ -127,9 +127,14 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                     },
                                     child: Stack(
                                       children: [
-                                        ImageOrVideoWidget(
-                                          videoURL: data[index].video,
-                                          imageURL: data[index].image,
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: ImageOrVideoWidget(
+                                            url:
+                                                data[index].video ??
+                                                data[index].image ??
+                                                "",
+                                          ),
                                         ),
                                         Container(
                                           color: Colors.black.withValues(
@@ -834,8 +839,7 @@ class AllVendorsWidget extends ConsumerWidget {
                               data[index].category?.name ??
                               data[index].tags.first,
                           avatarImage: data[index].logo,
-                          date:
-                              "${data[index].priceType.capitalize()} (\$\$\$\$)",
+                          date: data[index].priceType.label,
                         ),
                       );
                     },
@@ -980,8 +984,9 @@ class AllEventsWidget extends ConsumerWidget {
                             tag:
                                 event.category?.name ??
                                 event.tags.first.capitalize(),
-                            avatarImage: event.media.first,
-                            date: event.createdAt.formatDate(),
+                            avatarImage: event.vendor.logo,
+
+                            date: event.startTime.formatDate(),
                             heading: event.name,
                             image: event.media.firstOrNull,
                             description: event.description,
@@ -1072,31 +1077,35 @@ class AllEventsWidget extends ConsumerWidget {
 }
 
 class ImageOrVideoWidget extends StatefulWidget {
-  const ImageOrVideoWidget({super.key, this.videoURL, this.imageURL});
-  final String? videoURL;
-  final String? imageURL;
+  const ImageOrVideoWidget({super.key, required this.url});
+
+  final String url;
 
   @override
   State<ImageOrVideoWidget> createState() => _ImageOrVideoWidgetState();
 }
 
 class _ImageOrVideoWidgetState extends State<ImageOrVideoWidget> {
-  late final VideoPlayerController _videoController;
+  VideoPlayerController? _videoController;
   bool _isVideoInitialized = false;
+
+  bool get isVideo {
+    return widget.url.toLowerCase().endsWith('.mp4');
+  }
 
   @override
   void initState() {
     super.initState();
-    if (widget.videoURL != null) {
-      _videoController = VideoPlayerController.networkUrl(
-        Uri.parse(widget.videoURL!),
-      );
-      _videoController.setLooping(true);
-      _videoController.setVolume(0);
-      _videoController.initialize().then((_) {
+
+    if (isVideo) {
+      _videoController = VideoPlayerController.networkUrl(Uri.parse(widget.url))
+        ..setLooping(true)
+        ..setVolume(0);
+
+      _videoController!.initialize().then((_) {
         setState(() {
           _isVideoInitialized = true;
-          _videoController.play();
+          _videoController!.play();
         });
       });
     }
@@ -1104,28 +1113,26 @@ class _ImageOrVideoWidgetState extends State<ImageOrVideoWidget> {
 
   @override
   void dispose() {
-    if (widget.videoURL != null) {
-      _videoController.dispose();
-    }
+    _videoController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.videoURL != null) {
+    if (isVideo) {
       return _isVideoInitialized
-          ? VideoPlayer(_videoController)
+          ? FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: _videoController!.value.size.width,
+                height: _videoController!.value.size.height,
+                child: VideoPlayer(_videoController!),
+              ),
+            )
           : const Center(child: CircularProgressIndicator());
     }
 
-    if (widget.imageURL != null) {
-      return SizedBox(
-        height: double.infinity,
-        child: _buildImage(widget.imageURL!),
-      );
-    }
-
-    return SizedBox.shrink();
+    return SizedBox(height: double.infinity, child: _buildImage(widget.url));
   }
 }
 
@@ -1449,12 +1456,15 @@ class EventContainer extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  GestureDetector(
-                                    onTap: () {},
-                                    child: SvgPicture.asset(
-                                      "img/svg/favorite.svg",
-                                      package: "assets",
-                                      width: 18,
+                                  Visibility(
+                                    visible: false,
+                                    child: GestureDetector(
+                                      onTap: () {},
+                                      child: SvgPicture.asset(
+                                        "img/svg/favorite.svg",
+                                        package: "assets",
+                                        width: 18,
+                                      ),
                                     ),
                                   ),
                                 ],

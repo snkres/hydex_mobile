@@ -87,7 +87,8 @@ Future<bool> createBooking(Ref ref) async {
 
 final totalPriceProvider = Provider<double>((ref) {
   // Watch the dependencies: the selected pass and the guest count
-  final selectedPass = ref.read(
+  final selectedPass = ref.watch(
+    // Changed to watch for recalculation if selectedPass changes
     createBookProvider.select((v) => v?.selectedPasses),
   );
   final guestCount = ref.watch(guestsProvider);
@@ -96,9 +97,16 @@ final totalPriceProvider = Provider<double>((ref) {
 
   // Perform the calculation only if a pass is selected and count is > 0
   if (selectedPass != null && guestCount > 0) {
-    // NOTE: Ensure selectedPass.price is accessible and numeric (double/int)
+    // 1. Calculate the base price
     final passPrice = selectedPass.price;
-    totalPrice = passPrice * guestCount;
+    double basePrice = passPrice * guestCount;
+
+    final discountPercentage = selectedPass.discountPercentage ?? 0.0;
+
+    final discountMultiplier = 1.0 - (discountPercentage / 100.0);
+
+    // 4. Apply the discount to the base price
+    totalPrice = basePrice * discountMultiplier;
   }
 
   return totalPrice;

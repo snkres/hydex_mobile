@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -33,7 +35,10 @@ class History extends ConsumerWidget {
           ),
         );
       },
-      error: (e, s) => Center(child: Text("Error")),
+      error: (e, s) {
+        log("History Error", error: e, stackTrace: s);
+        return Center(child: Text("Error"));
+      },
       loading: () => Center(child: CircularProgressIndicator.adaptive()),
     );
   }
@@ -42,7 +47,7 @@ class History extends ConsumerWidget {
 class HistoryContainer extends StatelessWidget {
   const HistoryContainer({super.key, required this.event});
 
-  final HistoryData event;
+  final UpcomingEvent event;
 
   String formatDate(DateTime time) {
     final date = DateTime.parse("2025-12-25T00:30:00.000Z");
@@ -54,8 +59,8 @@ class HistoryContainer extends StatelessWidget {
     return DateFormat('EEE').format(date);
   }
 
-  String? getStatus(HistoryStatus status) {
-    if (status == HistoryStatus.confirmed) {
+  String? getStatus(UpcomingEventStatus status) {
+    if (status == UpcomingEventStatus.confirmed) {
       return null;
     }
     return status.name.capitalize();

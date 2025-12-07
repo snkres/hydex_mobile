@@ -18,6 +18,7 @@ import 'package:hydex/src/features/vibes/data/vendor.dart';
 import 'package:hydex/src/features/vibes/domain/event_notifier.dart';
 import 'package:hydex/src/features/vibes/ui/components/nightlife.dart';
 import 'package:hydex/src/features/vibes/ui/components/ticket_widget.dart';
+import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:intl/intl.dart';
@@ -105,6 +106,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               onTap: () async {
                 final book = CreateBook(
                   name: event.name,
+                  image: event.vendor.logo ?? "",
                   location:
                       event.location.address ??
                       "${event.location.street}, ${event.location.city}, ${event.location.country}",
@@ -149,17 +151,8 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                       return Stack(
                         fit: StackFit.expand,
                         children: [
-                          CachedNetworkImage(
-                            imageUrl: event.media[i],
-                            fit: BoxFit.cover,
-                            alignment: Alignment.topCenter,
-                            placeholder: (_, __) => const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                            errorWidget: (_, __, ___) =>
-                                const Center(child: Icon(Icons.error)),
-                          ),
-                          // The darkening overlay
+                          ImageOrVideoWidget(url: event.media[i]),
+
                           Container(
                             color: Colors.black.withOpacity(overlayOpacity),
                           ),
@@ -221,7 +214,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                               startTime: event.startTime,
                               tags: event.tags,
                               location: event.location,
-                              pricing: event.priceType,
+                              pricing: event.priceType.label,
                               owner: event.vendor,
                               title: event.detailsTitle,
                             ),
@@ -285,24 +278,24 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                             ),
                           ),
                           const SizedBox(width: 9),
-                          IconButton.filled(
-                            onPressed: () async {
-                              await ref
-                                  .read(eventProvider(widget.id).notifier)
-                                  .toggleFavorite();
-                            },
-                            icon: SvgPicture.asset(
-                              "img/svg/favorite.svg",
-                              package: "assets",
-                              colorFilter: .mode(
-                                event.isFavorited
-                                    ? Colors.red
-                                    : AppColors.textPrimary,
-                                .srcIn,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
+                          // IconButton.filled(
+                          //   onPressed: () async {
+                          //     await ref
+                          //         .read(eventProvider(widget.id).notifier)
+                          //         .toggleFavorite();
+                          //   },
+                          //   icon: SvgPicture.asset(
+                          //     "img/svg/favorite.svg",
+                          //     package: "assets",
+                          //     colorFilter: .mode(
+                          //       event.isFavorited
+                          //           ? Colors.red
+                          //           : AppColors.textPrimary,
+                          //       .srcIn,
+                          //     ),
+                          //   ),
+                          // ),
+                          // const SizedBox(width: 16),
                         ],
                       ),
                     ),
@@ -474,7 +467,7 @@ class CollapsedEventContainer extends ConsumerWidget {
                         },
                       ),
                       Text(
-                        "${pricing.capitalize()} (\$\$\$)",
+                        pricing,
                         style: TextStyle(
                           fontSize: AppTextStyles(context).accumulator * 11,
                           color: AppColors.textBrand,
@@ -511,10 +504,14 @@ class CollapsedEventContainer extends ConsumerWidget {
                       ),
                       GestureDetector(
                         onTap: () {
-                          MapsLauncher.launchCoordinates(
-                            location.coordinates.lat ?? 0,
-                            location.coordinates.lng ?? 0,
-                          );
+                          try {
+                            MapsLauncher.launchCoordinates(
+                              location.coordinates.lat ?? 0,
+                              location.coordinates.lng ?? 0,
+                            );
+                          } catch (e, st) {
+                            Sentry.captureException(e, stackTrace: st);
+                          }
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(
@@ -738,12 +735,18 @@ class CollapsedEventContainer extends ConsumerWidget {
                                   spacing: 17,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SmoothContainer(
-                                      width: 47,
-                                      height: 47,
+                                    SmoothClipRRect(
                                       smoothness: 1,
-                                      color: Colors.amber,
                                       borderRadius: BorderRadius.circular(12),
+                                      child: CachedNetworkImage(
+                                        fit: .cover,
+                                        width: 47,
+                                        height: 47,
+                                        imageUrl: owner.logo ?? "",
+                                        errorWidget: (_, _, _) => Center(
+                                          child: Icon(Icons.broken_image),
+                                        ),
+                                      ),
                                     ),
                                     Text(
                                       owner.name,
@@ -912,13 +915,19 @@ class CollapsedEventContainer extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 8,
                         children: [
-                          SmoothContainer(
-                            width: 32,
-                            height: 32,
+                          SmoothClipRRect(
                             smoothness: 1,
-                            color: Colors.red,
                             borderRadius: BorderRadius.circular(8),
+                            child: CachedNetworkImage(
+                              fit: .cover,
+                              width: 32,
+                              height: 32,
+                              imageUrl: owner.logo ?? "",
+                              errorWidget: (_, _, _) =>
+                                  Center(child: Icon(Icons.broken_image)),
+                            ),
                           ),
+
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

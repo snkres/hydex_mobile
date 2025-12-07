@@ -56,13 +56,13 @@ const getHistoryProvider = GetHistoryProvider._();
 final class GetHistoryProvider
     extends
         $FunctionalProvider<
-          AsyncValue<List<HistoryData>>,
-          List<HistoryData>,
-          FutureOr<List<HistoryData>>
+          AsyncValue<List<UpcomingEvent>>,
+          List<UpcomingEvent>,
+          FutureOr<List<UpcomingEvent>>
         >
     with
-        $FutureModifier<List<HistoryData>>,
-        $FutureProvider<List<HistoryData>> {
+        $FutureModifier<List<UpcomingEvent>>,
+        $FutureProvider<List<UpcomingEvent>> {
   const GetHistoryProvider._()
     : super(
         from: null,
@@ -79,17 +79,17 @@ final class GetHistoryProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<HistoryData>> $createElement(
+  $FutureProviderElement<List<UpcomingEvent>> $createElement(
     $ProviderPointer pointer,
   ) => $FutureProviderElement(pointer);
 
   @override
-  FutureOr<List<HistoryData>> create(Ref ref) {
+  FutureOr<List<UpcomingEvent>> create(Ref ref) {
     return getHistory(ref);
   }
 }
 
-String _$getHistoryHash() => r'1329cc1a15b990ad3812469bb4acfa4128de6057';
+String _$getHistoryHash() => r'cd9043f5704895ac5bf579336d7ac4dfed878070';
 
 @ProviderFor(getPassport)
 const getPassportProvider = GetPassportProvider._();

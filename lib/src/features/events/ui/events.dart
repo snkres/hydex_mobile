@@ -100,22 +100,37 @@ class _AllEventsState extends ConsumerState<AllEvents> {
                 fontWeight: .w900,
               ),
             ),
-            centerTitle: true,
             flexibleSpace: FlexibleSpaceBar(
               title: Column(
                 spacing: 8,
                 crossAxisAlignment: .start,
                 mainAxisSize: .min,
                 children: [
-                  Text(
-                    "${userName?.fullName}, your picks",
-                    style: TextStyle(
-                      color:
-                          Colors.white, // Ensure text contrasts with the purple
-                      fontWeight: FontWeight.w900,
-                      fontSize:
-                          AppTextStyles(context).accumulator *
-                          16, // Size will scale automatically
+                  Flexible(
+                    child: Row(
+                      crossAxisAlignment: .start,
+                      children: [
+                        Text(
+                          "${userName?.fullName} ",
+                          maxLines: 1,
+                          style: TextStyle(
+                            color: Colors
+                                .white, // Ensure text contrasts with the purple
+                            fontWeight: FontWeight.w900,
+                            fontSize:
+                                AppTextStyles(context).accumulator *
+                                16, // Size will scale automatically
+                          ),
+                        ),
+                        Text(
+                          ",your picks",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            fontSize: AppTextStyles(context).accumulator * 16,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Text(

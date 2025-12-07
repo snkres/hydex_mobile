@@ -15,7 +15,7 @@ class Vendor with VendorMappable {
   final Location location;
   final bool isFavorited;
 
-  final String priceType;
+  final PriceType priceType;
   final Map<String, OperatingHours> operatingHours;
   final List<String> experiences;
   final List<String> media;

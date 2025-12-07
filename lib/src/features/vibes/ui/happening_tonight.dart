@@ -101,7 +101,6 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
                 fontWeight: .w900,
               ),
             ),
-            centerTitle: true,
             flexibleSpace: FlexibleSpaceBar(
               title: Row(
                 mainAxisAlignment: .spaceBetween,

@@ -177,6 +177,7 @@ class SearchEventMapper extends ClassMapperBase<SearchEvent> {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = SearchEventMapper._());
       CategoryNoDescMapper.ensureInitialized();
+      PriceTypeMapper.ensureInitialized();
       LocationMapper.ensureInitialized();
     }
     return _instance!;
@@ -199,8 +200,8 @@ class SearchEventMapper extends ClassMapperBase<SearchEvent> {
     'category',
     _$category,
   );
-  static String _$priceType(SearchEvent v) => v.priceType;
-  static const Field<SearchEvent, String> _f$priceType = Field(
+  static PriceType _$priceType(SearchEvent v) => v.priceType;
+  static const Field<SearchEvent, PriceType> _f$priceType = Field(
     'priceType',
     _$priceType,
   );
@@ -306,7 +307,7 @@ abstract class SearchEventCopyWith<$R, $In extends SearchEvent, $Out>
     String? name,
     String? description,
     CategoryNoDesc? category,
-    String? priceType,
+    PriceType? priceType,
     Location? location,
     List<String>? media,
   });
@@ -340,7 +341,7 @@ class _SearchEventCopyWithImpl<$R, $Out>
     String? name,
     String? description,
     CategoryNoDesc? category,
-    String? priceType,
+    PriceType? priceType,
     Location? location,
     List<String>? media,
   }) => $apply(

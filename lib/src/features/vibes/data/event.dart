@@ -54,17 +54,67 @@ class OperatingHours with OperatingHoursMappable {
   OperatingHours({required this.open, required this.close});
 }
 
-extension OperatingHoursX on OperatingHours {
-  DateTime toOpenDateTime() {
-    final currentDate = DateTime.now();
-    final parts = open.split(':');
-    return DateTime(
-      currentDate.year,
-      currentDate.month,
-      currentDate.day,
-      int.parse(parts[0]),
-      int.parse(parts[1]),
-    );
+extension ScheduleParser on Map<String, OperatingHours> {
+  List<DateTime> toOpenDateTimes() {
+    final now = DateTime.now();
+    final List<DateTime> result = [];
+
+    // Map of day names to Dart weekday integers (Monday=1 ... Sunday=7)
+    final dayMap = {
+      "monday": DateTime.monday,
+      "tuesday": DateTime.tuesday,
+      "wednesday": DateTime.wednesday,
+      "thursday": DateTime.thursday,
+      "friday": DateTime.friday,
+      "saturday": DateTime.saturday,
+      "sunday": DateTime.sunday,
+    };
+
+    forEach((key, value) {
+      // Clean the key (trim whitespace, lower case) to ensure matching
+      final normalizedDay = key.trim().toLowerCase();
+
+      if (dayMap.containsKey(normalizedDay)) {
+        final targetWeekday = dayMap[normalizedDay]!;
+
+        // --- Date Calculation Logic ---
+        // We cannot just put 'targetWeekday' into the day field of DateTime
+        // because the 1st of the month isn't necessarily a Monday.
+        // Instead, we find the date of that weekday in the *current week*.
+
+        // 1. Find the Monday of the current week
+        final mondayOfCurrentWeek = now.subtract(
+          Duration(days: now.weekday - 1),
+        );
+
+        // 2. Add the offset to get the specific day
+        final targetDate = mondayOfCurrentWeek.add(
+          Duration(days: targetWeekday - 1),
+        );
+
+        // --- Time Parsing Logic ---
+        // Parse "9:00" -> hour: 9, minute: 0
+        final timeParts = value.open.split(":");
+        final int hour = int.parse(timeParts[0]);
+        final int minute = int.parse(timeParts[1]);
+
+        // Combine Date and Time
+        final dateTime = DateTime(
+          targetDate.year,
+          targetDate.month,
+          targetDate.day,
+          hour,
+          minute,
+        );
+
+        result.add(dateTime);
+      }
+    });
+
+    // Optional: Sort the list by date/time
+    result.sort((a, b) => a.compareTo(b));
+
+    return result;
   }
 }
 
@@ -92,7 +142,7 @@ class Event with EventMappable {
   final List<String> media, tags;
   final Location location;
   final List<Detail> details;
-  final String priceType;
+  final PriceType priceType;
   final String? detailsTitle;
   final List<Experiences> experiences;
   final List<String>? thingsToKnow;
@@ -196,4 +246,19 @@ enum PriceType {
   premium,
   @MappableValue('LUXURY')
   luxury,
+}
+
+extension PriceTypeX on PriceType {
+  String get label {
+    switch (this) {
+      case PriceType.casual:
+        return r"Casual ($)";
+      case PriceType.moderate:
+        return r"Moderate ($$)";
+      case PriceType.premium:
+        return r"Premium ($$$)";
+      case PriceType.luxury:
+        return r"Luxury ($$$$)";
+    }
+  }
 }

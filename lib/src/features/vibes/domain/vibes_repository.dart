@@ -101,21 +101,6 @@ Future<List<Event>> getEvents(
   bool? happeningTonight,
   bool? nearby,
 }) async {
-  final link = ref.keepAlive();
-  Timer? timer;
-  final cancelToken = CancelToken();
-  ref.onDispose(() {
-    timer?.cancel();
-    cancelToken.cancel();
-  });
-  ref.onCancel(() {
-    timer = Timer(const Duration(seconds: 30), () {
-      link.close();
-    });
-  });
-  ref.onResume(() {
-    timer?.cancel();
-  });
   final Map<String, dynamic> data = {"page": page, "limit": 10};
   if (categoryId != null) {
     data["categoryId"] = categoryId;
@@ -132,11 +117,7 @@ Future<List<Event>> getEvents(
   }
 
   try {
-    final response = await DioHelper.get(
-      '/events',
-      queryParameters: data,
-      cancelToken: cancelToken,
-    );
+    final response = await DioHelper.get('/events', queryParameters: data);
     final answer = response.data['data'] as List<dynamic>;
 
     final eventsData = answer.first as List<dynamic>;

@@ -148,10 +148,10 @@ class ProfileSummary extends StatelessWidget {
                       ],
                     ),
                     Spacer(),
-                    ElevatedButton(
-                      onPressed: () async {},
-                      child: Text("View Pass"),
-                    ),
+                    // ElevatedButton(
+                    //   onPressed: () async {},
+                    //   child: Text("View Pass"),
+                    // ),
                   ],
                 ),
               ),

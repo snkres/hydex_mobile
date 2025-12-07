@@ -37,7 +37,7 @@ Future<List<UpcomingEvent>> getUpcomingEvents(Ref ref) async {
 }
 
 @riverpod
-Future<List<HistoryData>> getHistory(Ref ref) async {
+Future<List<UpcomingEvent>> getHistory(Ref ref) async {
   final link = ref.keepAlive();
   Timer? timer;
   final cancelToken = CancelToken();
@@ -59,7 +59,7 @@ Future<List<HistoryData>> getHistory(Ref ref) async {
       cancelToken: cancelToken,
     );
     final data = response.data['data'] as List<dynamic>;
-    return data.map((e) => HistoryDataMapper.fromMap(e)).toList();
+    return data.map((e) => UpcomingEventMapper.fromMap(e)).toList();
   } catch (e) {
     throw Exception('Failed to load history: $e');
   }

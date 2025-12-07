@@ -15,7 +15,8 @@ class SearchData with SearchDataMappable {
 
 @MappableClass()
 class SearchEvent with SearchEventMappable {
-  final String id, name, description, priceType;
+  final String id, name, description;
+  final PriceType priceType;
   final CategoryNoDesc category;
   final Location location;
   final List<String> media;

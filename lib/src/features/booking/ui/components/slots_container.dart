@@ -93,6 +93,11 @@ class _SlotsContainerState extends State<SlotsContainer> {
               ),
             ]
           : widget.operatingHours
+                // --- [START OF CHANGE] ---
+                // We filter the list to only include slots where the Year, Month, and Day
+                // match the widget.selectedDate.
+                .where((slot) => isSameDate(widget.selectedDate, slot))
+                // --- [END OF CHANGE] ---
                 .map(
                   (e) => GestureDetector(
                     onTap: () {
@@ -104,6 +109,7 @@ class _SlotsContainerState extends State<SlotsContainer> {
                       duration: const Duration(milliseconds: 300),
                       alignment: Alignment.center,
                       decoration: ShapeDecoration(
+                        // Note: checks if this specific slot is the "selected" one
                         color: isSameDate(widget.selectedSlot, e)
                             ? AppColors.signalBrandTint
                             : Colors.transparent,

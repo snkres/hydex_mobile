@@ -101,32 +101,35 @@ class _AllVendorsState extends ConsumerState<AllVendors> {
                 fontWeight: .w900,
               ),
             ),
-            centerTitle: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Column(
-                spacing: 8,
-                crossAxisAlignment: .start,
-                mainAxisSize: .min,
+              title: Row(
                 children: [
-                  Text(
-                    "Explore our vendors",
-                    style: TextStyle(
-                      color:
-                          Colors.white, // Ensure text contrasts with the purple
-                      fontWeight: FontWeight.w900,
-                      fontSize:
-                          AppTextStyles(context).accumulator *
-                          16, // Size will scale automatically
-                    ),
-                  ),
-                  Text(
-                    "Unforgettable places. Trusted hosts",
-                    style: TextStyle(
-                      color: AppColors
-                          .textSecondary, // Ensure text contrasts with the purple
+                  Column(
+                    spacing: 8,
+                    crossAxisAlignment: .start,
+                    mainAxisSize: .min,
+                    children: [
+                      Text(
+                        "Explore our vendors",
+                        style: TextStyle(
+                          color: Colors
+                              .white, // Ensure text contrasts with the purple
+                          fontWeight: FontWeight.w900,
+                          fontSize:
+                              AppTextStyles(context).accumulator *
+                              16, // Size will scale automatically
+                        ),
+                      ),
+                      Text(
+                        "Unforgettable places. Trusted hosts",
+                        style: TextStyle(
+                          color: AppColors
+                              .textSecondary, // Ensure text contrasts with the purple
 
-                      fontSize: AppTextStyles(context).accumulator * 9,
-                    ),
+                          fontSize: AppTextStyles(context).accumulator * 9,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -196,7 +199,7 @@ class _AllVendorsState extends ConsumerState<AllVendors> {
                           "vendor_detail",
                           pathParameters: {"id": item.id},
                         ),
-                        date: "${item.priceType.capitalize()} (\$\$\$\$)",
+                        date: item.priceType.label,
                       ),
                     ),
                   ),

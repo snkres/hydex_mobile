@@ -1350,6 +1350,7 @@ class EventMapper extends ClassMapperBase<Event> {
       MapperContainer.globals.use(_instance = EventMapper._());
       LocationMapper.ensureInitialized();
       DetailMapper.ensureInitialized();
+      PriceTypeMapper.ensureInitialized();
       CategoryNoDescMapper.ensureInitialized();
       ExperiencesMapper.ensureInitialized();
       VendorMapper.ensureInitialized();
@@ -1389,8 +1390,8 @@ class EventMapper extends ClassMapperBase<Event> {
     'details',
     _$details,
   );
-  static String _$priceType(Event v) => v.priceType;
-  static const Field<Event, String> _f$priceType = Field(
+  static PriceType _$priceType(Event v) => v.priceType;
+  static const Field<Event, PriceType> _f$priceType = Field(
     'priceType',
     _$priceType,
   );
@@ -1555,7 +1556,7 @@ abstract class EventCopyWith<$R, $In extends Event, $Out>
     List<String>? media,
     Location? location,
     List<Detail>? details,
-    String? priceType,
+    PriceType? priceType,
     List<String>? tags,
     CategoryNoDesc? category,
     List<Experiences>? experiences,
@@ -1640,7 +1641,7 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
     List<String>? media,
     Location? location,
     List<Detail>? details,
-    String? priceType,
+    PriceType? priceType,
     List<String>? tags,
     Object? category = $none,
     List<Experiences>? experiences,
