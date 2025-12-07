@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
+import 'package:hydex/src/features/profile/data/upcoming_event.dart';
 import 'package:hydex/src/features/profile/domain/profile_providers.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
@@ -19,13 +20,17 @@ class Passport extends ConsumerStatefulWidget {
 }
 
 class _PassportState extends ConsumerState<Passport> {
-  String? selectedCategory = "All";
+  PassportCategory selectedCategory = PassportCategory(categoryName: "All");
+
   @override
   Widget build(BuildContext context) {
-    final categories = ref.watch(getEventCategoriesProvider);
     final passport = ref.watch(getPassportProvider);
     return passport.when(
       data: (data) {
+        final dataWithAll = [
+          PassportCategory(categoryName: "All"),
+          ...data.categories,
+        ];
         return Column(
           children: [
             Padding(
@@ -57,36 +62,28 @@ class _PassportState extends ConsumerState<Passport> {
               ),
             ),
             SizedBox(height: 16),
-            categories.when(
-              loading: () => SizedBox.shrink(),
-              error: (e, s) => Text("Error"),
-              data: (data) {
-                final dataWithAll = [
-                  EventCategory(description: "All", name: "All"),
-                  ...data,
-                ];
-                return SizedBox(
-                  height: 37,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
+            SizedBox(
+              height: 37,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
 
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    itemBuilder: (context, index) {
-                      return CustomChip(
-                        title: dataWithAll[index].name,
-                        isSelected: selectedCategory == dataWithAll[index].name,
-                        onTap: () {
-                          setState(() {
-                            selectedCategory = dataWithAll[index].name;
-                          });
-                        },
-                      );
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                itemBuilder: (context, index) {
+                  return CustomChip(
+                    title: dataWithAll[index].categoryName,
+                    isSelected:
+                        selectedCategory.categoryName ==
+                        dataWithAll[index].categoryName,
+                    onTap: () {
+                      setState(() {
+                        selectedCategory = dataWithAll[index];
+                      });
                     },
-                    separatorBuilder: (context, index) => SizedBox(width: 10),
-                    itemCount: dataWithAll.length,
-                  ),
-                );
-              },
+                  );
+                },
+                separatorBuilder: (context, index) => SizedBox(width: 10),
+                itemCount: dataWithAll.length,
+              ),
             ),
             SizedBox(height: 16),
             Padding(
@@ -129,56 +126,65 @@ class _PassportState extends ConsumerState<Passport> {
                       ),
                     ),
 
-                    // foreground content
-                    SmoothContainer(
-                      padding: EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CircleAvatar(),
-                          SizedBox(height: 32),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Column(
+                      children: [
+                        SmoothContainer(
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "Cairo Jazz Club",
-                                style: TextStyle(
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 18,
-                                  fontWeight: FontWeight.w900,
-                                ),
+                              CircleAvatar(),
+                              SizedBox(height: 32),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Cairo Jazz Club",
+                                    style: TextStyle(
+                                      fontSize:
+                                          AppTextStyles(context).accumulator *
+                                          18,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                  Text(
+                                    "01",
+                                    style: TextStyle(
+                                      fontSize:
+                                          AppTextStyles(context).accumulator *
+                                          18,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                "01",
-                                style: TextStyle(
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 18,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Nightlife",
+                                    style: TextStyle(
+                                      fontSize:
+                                          AppTextStyles(context).accumulator *
+                                          14,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Visit(s)",
+                                    style: TextStyle(
+                                      fontSize:
+                                          AppTextStyles(context).accumulator *
+                                          14,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Nightlife",
-                                style: TextStyle(
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 14,
-                                ),
-                              ),
-                              Text(
-                                "Visit(s)",
-                                style: TextStyle(
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

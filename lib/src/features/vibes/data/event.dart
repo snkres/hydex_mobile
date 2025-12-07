@@ -34,7 +34,7 @@ class Banner with BannerMappable {
     this.video,
     required this.campaignStartDate,
     required this.campaignEndDate,
-    required this.assignment
+    required this.assignment,
   });
 }
 
@@ -76,19 +76,27 @@ class Experiences with ExperiencesMappable {
 }
 
 @MappableClass()
+class CategoryNoDesc with CategoryNoDescMappable {
+  final String id;
+  final String name;
+  CategoryNoDesc({required this.id, required this.name});
+}
+
+@MappableClass()
 class Event with EventMappable {
   final String id;
   final String name;
   final String description;
   final DateTime startTime;
   final DateTime endTime;
-  final List<String> media;
+  final List<String> media, tags;
   final Location location;
   final List<Detail> details;
   final String priceType;
-  final List<String> tags;
+  final String? detailsTitle;
   final List<Experiences> experiences;
-  final EventCategory? category;
+  final List<String>? thingsToKnow;
+  final CategoryNoDesc? category;
   final bool isFavorited;
   final BookingExperience? bookingExperience;
 
@@ -110,8 +118,10 @@ class Event with EventMappable {
     required this.experiences,
     required this.vendor,
     required this.createdAt,
+    this.thingsToKnow,
     this.bookingExperience,
     this.isFavorited = false,
+    this.detailsTitle,
   });
 }
 
@@ -174,4 +184,16 @@ enum AssignmentStatus {
   vendor,
   @MappableValue('EVENT')
   event,
+}
+
+@MappableEnum()
+enum PriceType {
+  @MappableValue('CASUAL')
+  casual,
+  @MappableValue('MODERATE')
+  moderate,
+  @MappableValue('PREMIUM')
+  premium,
+  @MappableValue('LUXURY')
+  luxury,
 }

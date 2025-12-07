@@ -795,7 +795,8 @@ class AllVendorsWidget extends ConsumerWidget {
                     AppColors.textPrimary,
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () => context.push("/vendors"),
+
                 child: Text(
                   "Explore all",
                   style: TextStyle(
@@ -833,7 +834,8 @@ class AllVendorsWidget extends ConsumerWidget {
                               data[index].category?.name ??
                               data[index].tags.first,
                           avatarImage: data[index].logo,
-                          date: data[index].location.address!,
+                          date:
+                              "${data[index].priceType.capitalize()} (\$\$\$\$)",
                         ),
                       );
                     },
@@ -945,7 +947,7 @@ class AllEventsWidget extends ConsumerWidget {
                             AppColors.textPrimary,
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () => context.push("/events"),
                         child: Text(
                           "Discover all",
                           style: TextStyle(

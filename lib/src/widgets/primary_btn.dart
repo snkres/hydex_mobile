@@ -34,10 +34,9 @@ class _PrimaryButtonState extends State<PrimaryButton> {
             loading = true;
           });
           try {
-            await widget.onTap?.call(); // Wait for the async operation
+            await widget.onTap?.call(); 
           } finally {
             if (mounted) {
-              // Check if widget is still mounted
               setState(() {
                 loading = false;
               });

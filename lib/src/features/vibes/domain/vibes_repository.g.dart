@@ -139,7 +139,7 @@ final class GetVendorsProvider
     with $FutureModifier<List<Vendor>>, $FutureProvider<List<Vendor>> {
   const GetVendorsProvider._({
     required GetVendorsFamily super.from,
-    required int super.argument,
+    required ({int page, String? categoryId}) super.argument,
   }) : super(
          retry: null,
          name: r'getVendorsProvider',
@@ -155,7 +155,7 @@ final class GetVendorsProvider
   String toString() {
     return r'getVendorsProvider'
         ''
-        '($argument)';
+        '$argument';
   }
 
   @$internal
@@ -166,8 +166,12 @@ final class GetVendorsProvider
 
   @override
   FutureOr<List<Vendor>> create(Ref ref) {
-    final argument = this.argument as int;
-    return getVendors(ref, page: argument);
+    final argument = this.argument as ({int page, String? categoryId});
+    return getVendors(
+      ref,
+      page: argument.page,
+      categoryId: argument.categoryId,
+    );
   }
 
   @override
@@ -181,10 +185,14 @@ final class GetVendorsProvider
   }
 }
 
-String _$getVendorsHash() => r'e52ec41abb87369dff1439c557931bb2952ef6a8';
+String _$getVendorsHash() => r'fd8787e470400b587057331516c95f46a9f4117b';
 
 final class GetVendorsFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<List<Vendor>>, int> {
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<List<Vendor>>,
+          ({int page, String? categoryId})
+        > {
   const GetVendorsFamily._()
     : super(
         retry: null,
@@ -194,8 +202,11 @@ final class GetVendorsFamily extends $Family
         isAutoDispose: true,
       );
 
-  GetVendorsProvider call({int page = 1}) =>
-      GetVendorsProvider._(argument: page, from: this);
+  GetVendorsProvider call({int page = 1, String? categoryId}) =>
+      GetVendorsProvider._(
+        argument: (page: page, categoryId: categoryId),
+        from: this,
+      );
 
   @override
   String toString() => r'getVendorsProvider';
@@ -214,7 +225,13 @@ final class GetEventsProvider
     with $FutureModifier<List<Event>>, $FutureProvider<List<Event>> {
   const GetEventsProvider._({
     required GetEventsFamily super.from,
-    required int super.argument,
+    required ({
+      int page,
+      String? categoryId,
+      bool? happeningTonight,
+      bool? nearby,
+    })
+    super.argument,
   }) : super(
          retry: null,
          name: r'getEventsProvider',
@@ -230,7 +247,7 @@ final class GetEventsProvider
   String toString() {
     return r'getEventsProvider'
         ''
-        '($argument)';
+        '$argument';
   }
 
   @$internal
@@ -241,8 +258,21 @@ final class GetEventsProvider
 
   @override
   FutureOr<List<Event>> create(Ref ref) {
-    final argument = this.argument as int;
-    return getEvents(ref, page: argument);
+    final argument =
+        this.argument
+            as ({
+              int page,
+              String? categoryId,
+              bool? happeningTonight,
+              bool? nearby,
+            });
+    return getEvents(
+      ref,
+      page: argument.page,
+      categoryId: argument.categoryId,
+      happeningTonight: argument.happeningTonight,
+      nearby: argument.nearby,
+    );
   }
 
   @override
@@ -256,10 +286,14 @@ final class GetEventsProvider
   }
 }
 
-String _$getEventsHash() => r'ac1202de9df3569aa6fbdea0e2c9141fa3f22f67';
+String _$getEventsHash() => r'e157df031c2cf309b90109eb1d5996a6101d2ae9';
 
 final class GetEventsFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<List<Event>>, int> {
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<List<Event>>,
+          ({int page, String? categoryId, bool? happeningTonight, bool? nearby})
+        > {
   const GetEventsFamily._()
     : super(
         retry: null,
@@ -269,8 +303,20 @@ final class GetEventsFamily extends $Family
         isAutoDispose: true,
       );
 
-  GetEventsProvider call({int page = 1}) =>
-      GetEventsProvider._(argument: page, from: this);
+  GetEventsProvider call({
+    int page = 1,
+    String? categoryId,
+    bool? happeningTonight,
+    bool? nearby,
+  }) => GetEventsProvider._(
+    argument: (
+      page: page,
+      categoryId: categoryId,
+      happeningTonight: happeningTonight,
+      nearby: nearby,
+    ),
+    from: this,
+  );
 
   @override
   String toString() => r'getEventsProvider';

@@ -8,7 +8,6 @@ part 'vendor.mapper.dart';
 @MappableClass()
 class Vendor with VendorMappable {
   final String id;
-  final String ownerId;
   final String? logo;
   final String name;
   final String headline;
@@ -32,7 +31,6 @@ class Vendor with VendorMappable {
 
   Vendor({
     required this.id,
-    required this.ownerId,
     this.logo,
     this.bookingExperience,
     this.category,

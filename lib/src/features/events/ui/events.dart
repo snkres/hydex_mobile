@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
@@ -14,14 +16,14 @@ import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:lottie/lottie.dart';
 
-class HappeningTonight extends ConsumerStatefulWidget {
-  const HappeningTonight({super.key});
+class AllEvents extends ConsumerStatefulWidget {
+  const AllEvents({super.key});
 
   @override
-  ConsumerState<HappeningTonight> createState() => _HappeningTonightState();
+  ConsumerState<AllEvents> createState() => _AllEventsState();
 }
 
-class _HappeningTonightState extends ConsumerState<HappeningTonight> {
+class _AllEventsState extends ConsumerState<AllEvents> {
   EventCategory selectedCategory = EventCategory(
     description: "all",
     name: "All",
@@ -31,11 +33,7 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
     getNextPageKey: (state) =>
         state.lastPageIsEmpty ? null : state.nextIntPageKey,
     fetchPage: (pageKey) async => ref.watch(
-      getEventsProvider(
-        page: pageKey,
-        categoryId: selectedCategory.id,
-        happeningTonight: true,
-      ).future,
+      getEventsProvider(page: pageKey, categoryId: selectedCategory.id).future,
     ),
   );
 
@@ -48,13 +46,14 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
   @override
   Widget build(BuildContext context) {
     final categories = ref.watch(getEventCategoriesProvider);
-
+    final userName = ref.watch(currentUserProvider).requireValue;
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           SliverAppBar.large(
             pinned: true,
             collapsedHeight: 150,
+
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(54),
               child: SizedBox(
@@ -73,13 +72,13 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
                       itemCount: categoriesWithAll.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) => Padding(
-                        padding: const .only(right: 8.0),
+                        padding: const EdgeInsets.only(right: 8.0),
                         child: CustomChip(
                           title: categoriesWithAll[index].name,
                           isSelected:
                               selectedCategory.name ==
                               categoriesWithAll[index].name,
-                          onTap: () {
+                          onTap: () async {
                             setState(() {
                               selectedCategory = categoriesWithAll[index];
                             });
@@ -95,7 +94,7 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
               ),
             ),
             title: Text(
-              "Happening Tonight",
+              "${userName?.fullName}, your picks",
               style: TextStyle(
                 fontSize: AppTextStyles(context).accumulator * 15,
                 fontWeight: .w900,
@@ -103,40 +102,30 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
             ),
             centerTitle: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Row(
-                mainAxisAlignment: .spaceBetween,
+              title: Column(
+                spacing: 8,
+                crossAxisAlignment: .start,
+                mainAxisSize: .min,
                 children: [
-                  Column(
-                    spacing: 8,
-                    crossAxisAlignment: .start,
-                    mainAxisSize: .min,
-                    children: [
-                      Text(
-                        "Happening Tonight",
-                        style: TextStyle(
-                          color: Colors
-                              .white, // Ensure text contrasts with the purple
-                          fontWeight: FontWeight.w900,
-                          fontSize:
-                              AppTextStyles(context).accumulator *
-                              16, // Size will scale automatically
-                        ),
-                      ),
-                      Text(
-                        "Tonight’s hottest events. Don’t miss the action.",
-                        style: TextStyle(
-                          color: AppColors
-                              .textSecondary, // Ensure text contrasts with the purple
-
-                          fontSize: AppTextStyles(context).accumulator * 9,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    "${userName?.fullName}, your picks",
+                    style: TextStyle(
+                      color:
+                          Colors.white, // Ensure text contrasts with the purple
+                      fontWeight: FontWeight.w900,
+                      fontSize:
+                          AppTextStyles(context).accumulator *
+                          16, // Size will scale automatically
+                    ),
                   ),
-                  LottieBuilder.asset(
-                    "json/fire.json",
-                    package: "assets",
-                    height: 40,
+                  Text(
+                    "Personalized plans just for you",
+                    style: TextStyle(
+                      color: AppColors
+                          .textSecondary, // Ensure text contrasts with the purple
+
+                      fontSize: AppTextStyles(context).accumulator * 9,
+                    ),
                   ),
                 ],
               ),
@@ -179,7 +168,6 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
               ),
             ),
           ),
-
           SliverPadding(
             padding: .only(top: 10, left: 16, right: 16),
             sliver: PagingListener(

@@ -50,7 +50,7 @@ class AccessSection extends ConsumerWidget {
 
             return AccessContainer(
               title: pass.name,
-              price: pass.price.toString(),
+              price: (pass.price.toInt()).toString(),
               description: "Enjoy full access to the event.",
               features: const ["Event access", "Welcome drink"],
               isSelected: isSelected,

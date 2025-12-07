@@ -63,7 +63,7 @@ final class CalculateDistanceProvider
   }
 }
 
-String _$calculateDistanceHash() => r'4b31a9a53c10f90010da21e58dade1e1378b77df';
+String _$calculateDistanceHash() => r'5a76ae3a142f823e4b7572977def82b44711d2bb';
 
 final class CalculateDistanceFamily extends $Family
     with

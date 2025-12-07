@@ -77,7 +77,6 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
     final now = DateTime.now();
     final weekday = _weekdayName(now.weekday);
 
-    // If today has no hours → Closed
     if (!hours.containsKey(weekday)) return "Closed";
 
     final today = hours[weekday]!;
@@ -388,32 +387,36 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                                 ],
                                               ),
                                             ),
-                                            SmoothContainer(
-                                              padding: EdgeInsets.all(6),
-                                              color: AppColors.signalFunSuccess,
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                              smoothness: 1,
-                                              child: Row(
-                                                spacing: 6,
-                                                children: [
-                                                  Text(
-                                                    "4.5",
-                                                    style:
-                                                        AppTextStyles(
-                                                          context,
-                                                        ).captionBold.copyWith(
-                                                          color: AppColors
-                                                              .textSuccess,
-                                                        ),
-                                                  ),
-                                                  Icon(
-                                                    Icons.star,
-                                                    size: 11,
-                                                    color:
-                                                        AppColors.textSuccess,
-                                                  ),
-                                                ],
+                                            Visibility(
+                                              visible: false, // Rating
+                                              child: SmoothContainer(
+                                                padding: EdgeInsets.all(6),
+                                                color:
+                                                    AppColors.signalFunSuccess,
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                smoothness: 1,
+                                                child: Row(
+                                                  spacing: 6,
+                                                  children: [
+                                                    Text(
+                                                      "4.5",
+                                                      style:
+                                                          AppTextStyles(
+                                                            context,
+                                                          ).captionBold.copyWith(
+                                                            color: AppColors
+                                                                .textSuccess,
+                                                          ),
+                                                    ),
+                                                    Icon(
+                                                      Icons.star,
+                                                      size: 11,
+                                                      color:
+                                                          AppColors.textSuccess,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -440,7 +443,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                               ),
                                             ),
                                             Text(
-                                              "Casual ${vendor.priceType} (\$\$\$)",
+                                              "${vendor.priceType} (\$\$\$)",
                                               style: TextStyle(
                                                 fontSize:
                                                     AppTextStyles(
@@ -454,49 +457,30 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                         ),
                                       ),
                                       SizedBox(height: 12),
-
                                       Padding(
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                           horizontal: 16,
                                         ),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Row(
-                                              spacing: 10,
-                                              children: [
-                                                Text(
-                                                  isOpenNow(
-                                                    vendor.operatingHours,
-                                                  ),
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        AppTextStyles(
-                                                          context,
-                                                        ).accumulator *
-                                                        12,
-                                                    color:
-                                                        isOpenNow(
-                                                              vendor
-                                                                  .operatingHours,
-                                                            ) ==
-                                                            "Open"
-                                                        ? AppColors.textSuccess
-                                                        : AppColors.textError,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "6:30 PM to 03:29 AM",
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        AppTextStyles(
-                                                          context,
-                                                        ).accumulator *
-                                                        12,
-                                                  ),
-                                                ),
-                                              ],
+                                            Text(
+                                              isOpenNow(vendor.operatingHours),
+                                              style: TextStyle(
+                                                fontSize:
+                                                    AppTextStyles(
+                                                      context,
+                                                    ).accumulator *
+                                                    12,
+                                                color:
+                                                    isOpenNow(
+                                                          vendor.operatingHours,
+                                                        ) ==
+                                                        "Open"
+                                                    ? AppColors.textSuccess
+                                                    : AppColors.textError,
+                                              ),
                                             ),
                                             GestureDetector(
                                               onTap: () {

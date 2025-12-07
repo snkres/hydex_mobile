@@ -99,6 +99,60 @@ extension AssignmentStatusMapperExtension on AssignmentStatus {
   }
 }
 
+class PriceTypeMapper extends EnumMapper<PriceType> {
+  PriceTypeMapper._();
+
+  static PriceTypeMapper? _instance;
+  static PriceTypeMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = PriceTypeMapper._());
+    }
+    return _instance!;
+  }
+
+  static PriceType fromValue(dynamic value) {
+    ensureInitialized();
+    return MapperContainer.globals.fromValue(value);
+  }
+
+  @override
+  PriceType decode(dynamic value) {
+    switch (value) {
+      case 'CASUAL':
+        return PriceType.casual;
+      case 'MODERATE':
+        return PriceType.moderate;
+      case 'PREMIUM':
+        return PriceType.premium;
+      case 'LUXURY':
+        return PriceType.luxury;
+      default:
+        throw MapperException.unknownEnumValue(value);
+    }
+  }
+
+  @override
+  dynamic encode(PriceType self) {
+    switch (self) {
+      case PriceType.casual:
+        return 'CASUAL';
+      case PriceType.moderate:
+        return 'MODERATE';
+      case PriceType.premium:
+        return 'PREMIUM';
+      case PriceType.luxury:
+        return 'LUXURY';
+    }
+  }
+}
+
+extension PriceTypeMapperExtension on PriceType {
+  dynamic toValue() {
+    PriceTypeMapper.ensureInitialized();
+    return MapperContainer.globals.toValue<PriceType>(this);
+  }
+}
+
 class BannerMapper extends ClassMapperBase<Banner> {
   BannerMapper._();
 
@@ -1166,6 +1220,127 @@ class _ExperiencesCopyWithImpl<$R, $Out>
   ) => _ExperiencesCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
+class CategoryNoDescMapper extends ClassMapperBase<CategoryNoDesc> {
+  CategoryNoDescMapper._();
+
+  static CategoryNoDescMapper? _instance;
+  static CategoryNoDescMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = CategoryNoDescMapper._());
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'CategoryNoDesc';
+
+  static String _$id(CategoryNoDesc v) => v.id;
+  static const Field<CategoryNoDesc, String> _f$id = Field('id', _$id);
+  static String _$name(CategoryNoDesc v) => v.name;
+  static const Field<CategoryNoDesc, String> _f$name = Field('name', _$name);
+
+  @override
+  final MappableFields<CategoryNoDesc> fields = const {
+    #id: _f$id,
+    #name: _f$name,
+  };
+
+  static CategoryNoDesc _instantiate(DecodingData data) {
+    return CategoryNoDesc(id: data.dec(_f$id), name: data.dec(_f$name));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static CategoryNoDesc fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<CategoryNoDesc>(map);
+  }
+
+  static CategoryNoDesc fromJson(String json) {
+    return ensureInitialized().decodeJson<CategoryNoDesc>(json);
+  }
+}
+
+mixin CategoryNoDescMappable {
+  String toJson() {
+    return CategoryNoDescMapper.ensureInitialized().encodeJson<CategoryNoDesc>(
+      this as CategoryNoDesc,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return CategoryNoDescMapper.ensureInitialized().encodeMap<CategoryNoDesc>(
+      this as CategoryNoDesc,
+    );
+  }
+
+  CategoryNoDescCopyWith<CategoryNoDesc, CategoryNoDesc, CategoryNoDesc>
+  get copyWith => _CategoryNoDescCopyWithImpl<CategoryNoDesc, CategoryNoDesc>(
+    this as CategoryNoDesc,
+    $identity,
+    $identity,
+  );
+  @override
+  String toString() {
+    return CategoryNoDescMapper.ensureInitialized().stringifyValue(
+      this as CategoryNoDesc,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return CategoryNoDescMapper.ensureInitialized().equalsValue(
+      this as CategoryNoDesc,
+      other,
+    );
+  }
+
+  @override
+  int get hashCode {
+    return CategoryNoDescMapper.ensureInitialized().hashValue(
+      this as CategoryNoDesc,
+    );
+  }
+}
+
+extension CategoryNoDescValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, CategoryNoDesc, $Out> {
+  CategoryNoDescCopyWith<$R, CategoryNoDesc, $Out> get $asCategoryNoDesc =>
+      $base.as((v, t, t2) => _CategoryNoDescCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class CategoryNoDescCopyWith<$R, $In extends CategoryNoDesc, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  $R call({String? id, String? name});
+  CategoryNoDescCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  );
+}
+
+class _CategoryNoDescCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, CategoryNoDesc, $Out>
+    implements CategoryNoDescCopyWith<$R, CategoryNoDesc, $Out> {
+  _CategoryNoDescCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<CategoryNoDesc> $mapper =
+      CategoryNoDescMapper.ensureInitialized();
+  @override
+  $R call({String? id, String? name}) => $apply(
+    FieldCopyWithData({if (id != null) #id: id, if (name != null) #name: name}),
+  );
+  @override
+  CategoryNoDesc $make(CopyWithData data) => CategoryNoDesc(
+    id: data.get(#id, or: $value.id),
+    name: data.get(#name, or: $value.name),
+  );
+
+  @override
+  CategoryNoDescCopyWith<$R2, CategoryNoDesc, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  ) => _CategoryNoDescCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
 class EventMapper extends ClassMapperBase<Event> {
   EventMapper._();
 
@@ -1175,7 +1350,7 @@ class EventMapper extends ClassMapperBase<Event> {
       MapperContainer.globals.use(_instance = EventMapper._());
       LocationMapper.ensureInitialized();
       DetailMapper.ensureInitialized();
-      EventCategoryMapper.ensureInitialized();
+      CategoryNoDescMapper.ensureInitialized();
       ExperiencesMapper.ensureInitialized();
       VendorMapper.ensureInitialized();
       BookingExperienceMapper.ensureInitialized();
@@ -1221,8 +1396,8 @@ class EventMapper extends ClassMapperBase<Event> {
   );
   static List<String> _$tags(Event v) => v.tags;
   static const Field<Event, List<String>> _f$tags = Field('tags', _$tags);
-  static EventCategory? _$category(Event v) => v.category;
-  static const Field<Event, EventCategory> _f$category = Field(
+  static CategoryNoDesc? _$category(Event v) => v.category;
+  static const Field<Event, CategoryNoDesc> _f$category = Field(
     'category',
     _$category,
   );
@@ -1238,6 +1413,12 @@ class EventMapper extends ClassMapperBase<Event> {
     'createdAt',
     _$createdAt,
   );
+  static List<String>? _$thingsToKnow(Event v) => v.thingsToKnow;
+  static const Field<Event, List<String>> _f$thingsToKnow = Field(
+    'thingsToKnow',
+    _$thingsToKnow,
+    opt: true,
+  );
   static BookingExperience? _$bookingExperience(Event v) => v.bookingExperience;
   static const Field<Event, BookingExperience> _f$bookingExperience = Field(
     'bookingExperience',
@@ -1250,6 +1431,12 @@ class EventMapper extends ClassMapperBase<Event> {
     _$isFavorited,
     opt: true,
     def: false,
+  );
+  static String? _$detailsTitle(Event v) => v.detailsTitle;
+  static const Field<Event, String> _f$detailsTitle = Field(
+    'detailsTitle',
+    _$detailsTitle,
+    opt: true,
   );
 
   @override
@@ -1268,8 +1455,10 @@ class EventMapper extends ClassMapperBase<Event> {
     #experiences: _f$experiences,
     #vendor: _f$vendor,
     #createdAt: _f$createdAt,
+    #thingsToKnow: _f$thingsToKnow,
     #bookingExperience: _f$bookingExperience,
     #isFavorited: _f$isFavorited,
+    #detailsTitle: _f$detailsTitle,
   };
 
   static Event _instantiate(DecodingData data) {
@@ -1288,8 +1477,10 @@ class EventMapper extends ClassMapperBase<Event> {
       experiences: data.dec(_f$experiences),
       vendor: data.dec(_f$vendor),
       createdAt: data.dec(_f$createdAt),
+      thingsToKnow: data.dec(_f$thingsToKnow),
       bookingExperience: data.dec(_f$bookingExperience),
       isFavorited: data.dec(_f$isFavorited),
+      detailsTitle: data.dec(_f$detailsTitle),
     );
   }
 
@@ -1343,7 +1534,7 @@ abstract class EventCopyWith<$R, $In extends Event, $Out>
   LocationCopyWith<$R, Location, Location> get location;
   ListCopyWith<$R, Detail, DetailCopyWith<$R, Detail, Detail>> get details;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get tags;
-  EventCategoryCopyWith<$R, EventCategory, EventCategory>? get category;
+  CategoryNoDescCopyWith<$R, CategoryNoDesc, CategoryNoDesc>? get category;
   ListCopyWith<
     $R,
     Experiences,
@@ -1351,6 +1542,8 @@ abstract class EventCopyWith<$R, $In extends Event, $Out>
   >
   get experiences;
   VendorCopyWith<$R, Vendor, Vendor> get vendor;
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>?
+  get thingsToKnow;
   BookingExperienceCopyWith<$R, BookingExperience, BookingExperience>?
   get bookingExperience;
   $R call({
@@ -1364,12 +1557,14 @@ abstract class EventCopyWith<$R, $In extends Event, $Out>
     List<Detail>? details,
     String? priceType,
     List<String>? tags,
-    EventCategory? category,
+    CategoryNoDesc? category,
     List<Experiences>? experiences,
     Vendor? vendor,
     DateTime? createdAt,
+    List<String>? thingsToKnow,
     BookingExperience? bookingExperience,
     bool? isFavorited,
+    String? detailsTitle,
   });
   EventCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -1405,7 +1600,7 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
         (v) => call(tags: v),
       );
   @override
-  EventCategoryCopyWith<$R, EventCategory, EventCategory>? get category =>
+  CategoryNoDescCopyWith<$R, CategoryNoDesc, CategoryNoDesc>? get category =>
       $value.category?.copyWith.$chain((v) => call(category: v));
   @override
   ListCopyWith<
@@ -1421,6 +1616,15 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
   @override
   VendorCopyWith<$R, Vendor, Vendor> get vendor =>
       $value.vendor.copyWith.$chain((v) => call(vendor: v));
+  @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>?
+  get thingsToKnow => $value.thingsToKnow != null
+      ? ListCopyWith(
+          $value.thingsToKnow!,
+          (v, t) => ObjectCopyWith(v, $identity, t),
+          (v) => call(thingsToKnow: v),
+        )
+      : null;
   @override
   BookingExperienceCopyWith<$R, BookingExperience, BookingExperience>?
   get bookingExperience => $value.bookingExperience?.copyWith.$chain(
@@ -1442,8 +1646,10 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
     List<Experiences>? experiences,
     Vendor? vendor,
     DateTime? createdAt,
+    Object? thingsToKnow = $none,
     Object? bookingExperience = $none,
     bool? isFavorited,
+    Object? detailsTitle = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -1460,8 +1666,10 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
       if (experiences != null) #experiences: experiences,
       if (vendor != null) #vendor: vendor,
       if (createdAt != null) #createdAt: createdAt,
+      if (thingsToKnow != $none) #thingsToKnow: thingsToKnow,
       if (bookingExperience != $none) #bookingExperience: bookingExperience,
       if (isFavorited != null) #isFavorited: isFavorited,
+      if (detailsTitle != $none) #detailsTitle: detailsTitle,
     }),
   );
   @override
@@ -1480,11 +1688,13 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
     experiences: data.get(#experiences, or: $value.experiences),
     vendor: data.get(#vendor, or: $value.vendor),
     createdAt: data.get(#createdAt, or: $value.createdAt),
+    thingsToKnow: data.get(#thingsToKnow, or: $value.thingsToKnow),
     bookingExperience: data.get(
       #bookingExperience,
       or: $value.bookingExperience,
     ),
     isFavorited: data.get(#isFavorited, or: $value.isFavorited),
+    detailsTitle: data.get(#detailsTitle, or: $value.detailsTitle),
   );
 
   @override

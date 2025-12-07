@@ -75,6 +75,38 @@ enum HistoryStatus {
 @MappableClass()
 class PassportData with PassportDataMappable {
   final int totalExperiences;
+  final List<PassportCategory> categories;
 
-  PassportData({required this.totalExperiences});
+  const PassportData({
+    required this.totalExperiences,
+    required this.categories,
+  });
+}
+
+@MappableClass()
+class PassportCategory with PassportCategoryMappable {
+  final String? categoryId;
+  final String categoryName;
+  final int? count;
+  final List<PassportVendor>? vendors;
+
+  PassportCategory({
+    this.categoryId,
+    required this.categoryName,
+    this.count,
+    this.vendors,
+  });
+}
+
+@MappableClass()
+class PassportVendor with PassportVendorMappable {
+  final String vendorId;
+  final int visitCount;
+  final String vendorName;
+
+  PassportVendor({
+    required this.vendorId,
+    required this.visitCount,
+    required this.vendorName,
+  });
 }

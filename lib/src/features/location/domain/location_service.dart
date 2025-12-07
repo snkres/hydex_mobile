@@ -3,7 +3,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'location_service.g.dart';
 
-
 class LocationService {
   Future<bool> get isLocationEnabled async =>
       await Geolocator.isLocationServiceEnabled();
@@ -18,8 +17,7 @@ class LocationService {
       await Geolocator.openLocationSettings();
 
   Future<Position> getCurrentPosition() async =>
-      await Geolocator.getCurrentPosition(
-      );
+      await Geolocator.getCurrentPosition();
 
   Future<String?> getCountry() async {
     try {
@@ -59,6 +57,6 @@ Future<String> calculateDistance(
     endLatitude,
     endLongitude,
   );
-  final distanceInKm = distanceInMeters / 1000;
-  return distanceInKm.toStringAsFixed(2);
+  final distanceInKm = (distanceInMeters / 1000).round();
+  return distanceInKm.toString();
 }

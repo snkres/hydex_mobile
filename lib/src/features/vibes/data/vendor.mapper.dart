@@ -29,8 +29,6 @@ class VendorMapper extends ClassMapperBase<Vendor> {
 
   static String _$id(Vendor v) => v.id;
   static const Field<Vendor, String> _f$id = Field('id', _$id);
-  static String _$ownerId(Vendor v) => v.ownerId;
-  static const Field<Vendor, String> _f$ownerId = Field('ownerId', _$ownerId);
   static String? _$logo(Vendor v) => v.logo;
   static const Field<Vendor, String> _f$logo = Field('logo', _$logo, opt: true);
   static BookingExperience? _$bookingExperience(Vendor v) =>
@@ -120,7 +118,6 @@ class VendorMapper extends ClassMapperBase<Vendor> {
   @override
   final MappableFields<Vendor> fields = const {
     #id: _f$id,
-    #ownerId: _f$ownerId,
     #logo: _f$logo,
     #bookingExperience: _f$bookingExperience,
     #category: _f$category,
@@ -144,7 +141,6 @@ class VendorMapper extends ClassMapperBase<Vendor> {
   static Vendor _instantiate(DecodingData data) {
     return Vendor(
       id: data.dec(_f$id),
-      ownerId: data.dec(_f$ownerId),
       logo: data.dec(_f$logo),
       bookingExperience: data.dec(_f$bookingExperience),
       category: data.dec(_f$category),
@@ -237,7 +233,6 @@ abstract class VendorCopyWith<$R, $In extends Vendor, $Out>
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get thingsToKnow;
   $R call({
     String? id,
-    String? ownerId,
     String? logo,
     BookingExperience? bookingExperience,
     VendorCategory? category,
@@ -345,7 +340,6 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
   @override
   $R call({
     String? id,
-    String? ownerId,
     Object? logo = $none,
     Object? bookingExperience = $none,
     Object? category = $none,
@@ -367,7 +361,6 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
-      if (ownerId != null) #ownerId: ownerId,
       if (logo != $none) #logo: logo,
       if (bookingExperience != $none) #bookingExperience: bookingExperience,
       if (category != $none) #category: category,
@@ -391,7 +384,6 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
   @override
   Vendor $make(CopyWithData data) => Vendor(
     id: data.get(#id, or: $value.id),
-    ownerId: data.get(#ownerId, or: $value.ownerId),
     logo: data.get(#logo, or: $value.logo),
     bookingExperience: data.get(
       #bookingExperience,

@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -5,9 +8,15 @@ import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
+import 'package:hydex/src/features/search/data/search_data.dart';
+import 'package:hydex/src/features/search/domain/search_repository.dart';
+import 'package:hydex/src/features/search/ui/components/not_found.dart';
+import 'package:hydex/src/features/search/ui/viewmodel.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
+import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
+import 'package:lottie/lottie.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
@@ -19,12 +28,15 @@ class SearchScreen extends ConsumerStatefulWidget {
 
 class _SearchScreenState extends ConsumerState<SearchScreen> {
   final searchController = TextEditingController();
-  String selectedCategory = "All";
+  EventCategory selectedCategory = EventCategory(
+    description: "all",
+    name: "All",
+  );
 
   @override
   Widget build(BuildContext context) {
     final categories = ref.watch(getEventCategoriesProvider);
-
+    final searchAsync = ref.watch(searchViewModelProvider);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -39,12 +51,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   Expanded(
                     child: StatefulBuilder(
                       builder: (context, setState) {
-                        searchController.addListener(() {
-                          setState(() {}); // refresh to show/hide clear button
-                        });
-
                         return TextField(
                           controller: searchController,
+                          onChanged: (value) {
+                            ref
+                                .read(searchViewModelProvider.notifier)
+                                .setQuery(value);
+                          },
                           decoration: InputDecoration(
                             fillColor: AppColors.containerDim,
                             border: UnderlineInputBorder(
@@ -60,7 +73,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                               ),
                             ),
 
-                            // 👇 Show only when text is not empty
                             suffixIcon: searchController.text.isNotEmpty
                                 ? Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -79,6 +91,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                       icon: const Icon(Icons.close),
                                       onPressed: () {
                                         searchController.clear();
+                                        ref
+                                            .read(
+                                              searchViewModelProvider.notifier,
+                                            )
+                                            .setQuery(null);
                                         setState(() {});
                                       },
                                     ),
@@ -148,11 +165,15 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     itemBuilder: (context, index) => CustomChip(
                       title: categoriesWithAll[index].name,
                       isSelected:
-                          selectedCategory == categoriesWithAll[index].name,
+                          selectedCategory.name ==
+                          categoriesWithAll[index].name,
                       onTap: () {
                         setState(() {
-                          selectedCategory = categoriesWithAll[index].name;
+                          selectedCategory = categoriesWithAll[index];
                         });
+                        ref
+                            .read(searchViewModelProvider.notifier)
+                            .setCategory(categoriesWithAll[index].id);
                       },
                     ),
                   ),
@@ -161,56 +182,123 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               error: (e, s) => SizedBox.shrink(),
               loading: () => SizedBox.shrink(),
             ),
-            Column(
-              crossAxisAlignment: .start,
-              children: [
-                SizedBox(height: 24),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    "Trending Events",
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: AppTextStyles(context).accumulator * 16,
-                      fontWeight: .w500,
+            searchAsync.when(
+              data: (data) {
+                final allEmpty =
+                    (data.events?.isEmpty ?? false) &&
+                    (data.vendors?.isEmpty ?? false);
+                if (allEmpty) {
+                  return NotFoundWidget();
+                }
+                return Column(
+                  crossAxisAlignment: .start,
+                  children: [
+                    Visibility(
+                      visible: data.events?.isNotEmpty ?? true,
+                      child: Column(
+                        crossAxisAlignment: .start,
+                        children: [
+                          SizedBox(height: 24),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              "Trending Events",
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 16,
+                                fontWeight: .w500,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          SizedBox(
+                            height: 85,
+                            child: ListView.separated(
+                              scrollDirection: .horizontal,
+                              padding: .symmetric(horizontal: 16),
+                              separatorBuilder: (_, _) => SizedBox(width: 8),
+                              itemCount: data.events?.length ?? 0,
+                              itemBuilder: (context, index) {
+                                final event = data.events?[index];
+                                if (event == null) {
+                                  return SizedBox.shrink();
+                                }
+                                return TrendContainer(
+                                  name: event.name,
+                                  image: event.media.first,
+                                  priceType: event.priceType,
+                                  category: event.category.name,
+                                  location: event.location.address ?? "",
+                                  onTap: () => context.pushNamed(
+                                    "event_detail",
+                                    pathParameters: {"id": event.id},
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ),
-                SizedBox(height: 12),
-                SizedBox(
-                  height: 85,
-                  child: ListView.separated(
-                    scrollDirection: .horizontal,
-                    padding: .symmetric(horizontal: 16),
-                    separatorBuilder: (_, _) => SizedBox(width: 8),
-                    itemCount: 3,
-                    itemBuilder: (context, index) => TrendContainer(),
-                  ),
-                ),
-                SizedBox(height: 24),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    "Top Vendors",
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: AppTextStyles(context).accumulator * 16,
-                      fontWeight: .w500,
+                    SizedBox(height: 24),
+
+                    Visibility(
+                      visible: data.vendors?.isNotEmpty ?? true,
+                      child: Column(
+                        crossAxisAlignment: .start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              "Top Vendors",
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 16,
+                                fontWeight: .w500,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          SizedBox(
+                            height: 85,
+                            child: ListView.separated(
+                              scrollDirection: .horizontal,
+                              padding: .symmetric(horizontal: 16),
+                              separatorBuilder: (_, _) => SizedBox(width: 8),
+                              itemCount: data.vendors?.length ?? 0,
+                              itemBuilder: (context, index) {
+                                final vendor = data.vendors?[index];
+                                if (vendor == null) {
+                                  return SizedBox.shrink();
+                                }
+                                return TrendContainer(
+                                  name: vendor.name,
+                                  category: vendor.category?.name ?? "",
+                                  priceType: vendor.priceType,
+                                  location: vendor.location.address ?? "",
+                                  image: vendor.media.first,
+                                  onTap: () => context.pushNamed(
+                                    "vendor_detail",
+                                    pathParameters: {"id": vendor.id},
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ),
-                SizedBox(height: 12),
-                SizedBox(
-                  height: 85,
-                  child: ListView.separated(
-                    scrollDirection: .horizontal,
-                    padding: .symmetric(horizontal: 16),
-                    separatorBuilder: (_, _) => SizedBox(width: 8),
-                    itemCount: 3,
-                    itemBuilder: (context, index) => TrendContainer(),
-                  ),
-                ),
-              ],
+                  ],
+                );
+              },
+              error: (e, s) {
+                log("Search Error: ", error: e, stackTrace: s);
+                return Center(child: Text("Error"));
+              },
+              loading: () =>
+                  Expanded(child: Center(child: CircularProgressIndicator())),
             ),
           ],
         ),
@@ -220,109 +308,135 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 }
 
 class TrendContainer extends StatelessWidget {
-  const TrendContainer({super.key});
+  const TrendContainer({
+    super.key,
+    required this.name,
+    required this.category,
+    required this.priceType,
+    required this.location,
+    required this.image,
+    required this.onTap,
+  });
+  final String name, category, priceType, location, image;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 316,
-      child: Row(
-        spacing: 12,
-        crossAxisAlignment: .start,
-        children: [
-          SmoothContainer(
-            width: 65,
-            color: Colors.red,
-            smoothness: 1,
-            borderRadius: .circular(16),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: .start,
-              children: [
-                Row(
-                  mainAxisAlignment: .spaceBetween,
-                  children: [
-                    Text(
-                      "King Safari",
-                      style: TextStyle(
-                        fontSize: AppTextStyles(context).accumulator * 16,
-                        fontWeight: .w700,
-                      ),
-                    ),
-                    Container(
-                      padding: .symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.signalBrandTint,
-                        borderRadius: .circular(100),
-                      ),
-                      child: Text(
-                        "Adventure",
-                        style: TextStyle(color: AppColors.textBrand),
-                      ),
-                    ),
-                  ],
-                ),
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
+        width: 316,
+        child: Row(
+          spacing: 12,
+          crossAxisAlignment: .start,
+          children: [
+            SmoothClipRRect(
+              smoothness: 1,
+              borderRadius: .circular(16),
 
-                Text(
-                  "Luxury (\$\$\$\$)",
-                  style: TextStyle(
-                    fontSize: AppTextStyles(context).accumulator * 11,
-                    color: AppColors.textBrand,
+              child: CachedNetworkImage(
+                imageUrl: image,
+                width: 65,
+                height: .infinity,
+                fit: .cover,
+                errorWidget: (context, url, error) => Center(
+                  child: Container(
+                    width: double.infinity,
+                    height: .infinity,
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundOverlay,
+                    ),
+                    child: Icon(Icons.broken_image),
                   ),
                 ),
-                Text(
-                  "1.5 KM away - Barzil Street, Zamalek",
-                  style: TextStyle(
-                    fontSize: AppTextStyles(context).accumulator * 12,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "6 Hours",
-                      style: TextStyle(
-                        fontSize: AppTextStyles(context).accumulator * 12,
-                        color: AppColors.textSuccess,
-                        fontWeight: .w500,
-                      ),
-                    ),
-                    Text(
-                      "  \u2022  9:00 PM – 13 Oct, 3:00 AM",
-                      style: TextStyle(
-                        fontSize: AppTextStyles(context).accumulator * 12,
-                        fontWeight: .w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: .start,
+                children: [
+                  Row(
+                    mainAxisAlignment: .spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: 130,
+                        child: Text(
+                          name,
+                          maxLines: 1,
+                          overflow: .ellipsis,
+                          style: TextStyle(
+                            fontSize: AppTextStyles(context).accumulator * 16,
+                            fontWeight: .w700,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: .symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.signalBrandTint,
+                          borderRadius: .circular(100),
+                        ),
+                        child: Text(
+                          category,
+                          style: TextStyle(color: AppColors.textBrand),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Text(
+                    "$priceType (\$\$\$\$)",
+                    style: TextStyle(
+                      fontSize: AppTextStyles(context).accumulator * 11,
+                      color: AppColors.textBrand,
+                    ),
+                  ),
+                  Text(
+                    location,
+                    style: TextStyle(
+                      fontSize: AppTextStyles(context).accumulator * 12,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  // Row(
+                  //   children: [
+                  //     Text(
+                  //       "6 Hours",
+                  //       style: TextStyle(
+                  //         fontSize: AppTextStyles(context).accumulator * 12,
+                  //         color: AppColors.textSuccess,
+                  //         fontWeight: .w500,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class FiltersWidget extends StatefulWidget {
+class FiltersWidget extends ConsumerStatefulWidget {
   const FiltersWidget({super.key});
 
   @override
-  State<FiltersWidget> createState() => _FiltersWidgetState();
+  ConsumerState<FiltersWidget> createState() => _FiltersWidgetState();
 }
 
-class _FiltersWidgetState extends State<FiltersWidget> {
-  final filters = const ["Recommended", "Nearest", "Top Rated"];
+class _FiltersWidgetState extends ConsumerState<FiltersWidget> {
+  final filters = const ["Nearest"];
   final pricingFilters = const [
-    r"$ Casual",
-    r"$$ Casual",
-    r"$$$ Premium",
-    r"$$$$ Luxury",
+    PriceOption(type: PriceType.casual, label: r"$ Casual"),
+    PriceOption(type: PriceType.moderate, label: r"$$ Moderate"),
+    PriceOption(type: PriceType.premium, label: r"$$$ Premium"),
+    PriceOption(type: PriceType.luxury, label: r"$$$$ Luxury"),
   ];
 
-  String? selectedPriceFilter;
   String? selectedFilter;
 
   double selectedValue = 1;
@@ -330,6 +444,14 @@ class _FiltersWidgetState extends State<FiltersWidget> {
   bool isFeatureSelected = false;
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(
+      searchViewModelProvider.select((v) => v.isLoading),
+    );
+    final notifier = ref.read(searchViewModelProvider.notifier);
+    final selectedFilters = notifier.filters;
+    final resultsLength = ref
+        .watch(searchViewModelProvider.notifier)
+        .getLength();
     return Wrap(
       children: [
         Padding(
@@ -356,10 +478,11 @@ class _FiltersWidgetState extends State<FiltersWidget> {
                     "Filters",
                     style: TextStyle(
                       fontSize: AppTextStyles(context).accumulator * 22,
+                      fontWeight: .bold,
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () => notifier.reset(),
                     child: Text(
                       "Reset",
                       style: TextStyle(
@@ -380,18 +503,8 @@ class _FiltersWidgetState extends State<FiltersWidget> {
                     .map(
                       (e) => CustomChip(
                         title: e,
-                        isSelected: selectedFilter == e,
-                        onTap: () {
-                          if (selectedFilter == e) {
-                            setState(() {
-                              selectedFilter = null;
-                            });
-                          } else {
-                            setState(() {
-                              selectedFilter = e;
-                            });
-                          }
-                        },
+                        isSelected: selectedFilters.coordinates != null,
+                        onTap: () => notifier.toggleNearest(),
                       ),
                     )
                     .toList(),
@@ -415,17 +528,13 @@ class _FiltersWidgetState extends State<FiltersWidget> {
                 children: pricingFilters
                     .map(
                       (e) => CustomChip(
-                        title: e,
-                        isSelected: selectedPriceFilter == e,
+                        title: e.label,
+                        isSelected: selectedFilters.priceType == e.type,
                         onTap: () {
-                          if (selectedPriceFilter == e) {
-                            setState(() {
-                              selectedPriceFilter = null;
-                            });
+                          if (selectedFilters.priceType == e.type) {
+                            notifier.setPriceType(null);
                           } else {
-                            setState(() {
-                              selectedPriceFilter = e;
-                            });
+                            notifier.setPriceType(e.type);
                           }
                         },
                       ),
@@ -456,19 +565,16 @@ class _FiltersWidgetState extends State<FiltersWidget> {
               SizedBox(height: 17),
 
               Slider(
-                value: selectedValue,
+                value: (selectedFilters.distance ?? 1).toDouble(),
                 padding: .symmetric(horizontal: 16),
                 onChanged: (value) {
-                  setState(() {
-                    selectedValue = value;
-                  });
+                  notifier.setByDistance(value.toInt());
                 },
                 divisions: 5,
                 max: 50,
                 min: 1,
               ),
               SizedBox(height: 6),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
@@ -503,20 +609,45 @@ class _FiltersWidgetState extends State<FiltersWidget> {
 
               CustomChip(
                 title: "Open Now",
-                isSelected: isFeatureSelected,
+                isSelected: selectedFilters.openNow == true,
                 onTap: () {
-                  setState(() {
-                    isFeatureSelected = !isFeatureSelected;
-                  });
+                  final value = selectedFilters.openNow == true;
+                  ref.read(searchViewModelProvider.notifier).setOpenNow(!value);
                 },
               ),
               SizedBox(height: 24),
-              PrimaryButton(
-                onTap: () async {
-                  context.pop();
-                },
-                title: "Show (50) Results",
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: double.infinity,
+                  minHeight: 50,
+                ),
+
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: .all(AppColors.buttonPrimary),
+                    foregroundColor: .all(AppColors.textInverse),
+                  ),
+                  onPressed: () {
+                    context.pop();
+                  },
+                  child: isLoading
+                      ? LottieBuilder.asset(
+                          "json/dark_loading.json",
+                          package: "assets",
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        )
+                      : Text(
+                          "Show ($resultsLength) Results",
+                          style: TextStyle(
+                            fontSize: AppTextStyles(context).accumulator * 15,
+                            fontWeight: .w600,
+                          ),
+                        ),
+                ),
               ),
+
               SizedBox(height: 24),
             ],
           ),

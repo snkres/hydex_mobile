@@ -21,12 +21,13 @@ import 'package:hydex/src/features/booking/ui/components/ban_hady.dart';
 import 'package:hydex/src/features/booking/ui/create_booking.dart';
 import 'package:hydex/src/features/booking/ui/summary.dart';
 import 'package:hydex/src/features/contact/ui/contacts.dart';
-import 'package:hydex/src/features/loading/ui/loading.dart';
+import 'package:hydex/src/features/events/ui/events.dart';
 import 'package:hydex/src/features/location/ui/location_screen.dart';
 import 'package:hydex/src/features/notifications/ui/notifications_screen.dart';
 import 'package:hydex/src/features/profile/data/upcoming_event.dart';
 import 'package:hydex/src/features/profile_summary/ui/profile_summary.dart';
 import 'package:hydex/src/features/splash/ui/splash.dart';
+import 'package:hydex/src/features/vendors/ui/vendors.dart';
 import 'package:hydex/src/features/vibes/ui/components/event_details.dart';
 import 'package:hydex/src/features/vibes/ui/details_screen.dart';
 import 'package:hydex/src/features/vibes/ui/happening_nearby.dart';
@@ -98,7 +99,8 @@ class AppRoutes {
       ),
       GoRoute(
         path: '/profile-summary',
-        builder: (context, state) => ProfileSummary(event: state.extra as UpcomingEvent,),
+        builder: (context, state) =>
+            ProfileSummary(event: state.extra as UpcomingEvent),
       ),
       GoRoute(
         path: '/forgot-password',
@@ -124,10 +126,7 @@ class AppRoutes {
         path: "/waitlist",
         builder: (context, state) => const WaitlistScreen(),
       ),
-      GoRoute(
-        path: "/loading",
-        builder: (context, state) => const LoadingScreen(),
-      ),
+
       GoRoute(
         path: "/terms",
         builder: (context, state) => const TermsAndConditions(),
@@ -148,6 +147,11 @@ class AppRoutes {
       GoRoute(
         path: "/happening_nearby",
         builder: (context, state) => const HappeningNearby(),
+      ),
+      GoRoute(path: "/events", builder: (context, state) => const AllEvents()),
+      GoRoute(
+        path: "/vendors",
+        builder: (context, state) => const AllVendors(),
       ),
       GoRoute(
         path: "/event/:id",

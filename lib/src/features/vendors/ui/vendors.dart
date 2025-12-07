@@ -1,41 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
+import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/booking/data/format_time.dart';
 import 'package:hydex/src/features/search/ui/components/not_found.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
+import 'package:hydex/src/features/vibes/data/vendor.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:lottie/lottie.dart';
 
-class HappeningTonight extends ConsumerStatefulWidget {
-  const HappeningTonight({super.key});
+class AllVendors extends ConsumerStatefulWidget {
+  const AllVendors({super.key});
 
   @override
-  ConsumerState<HappeningTonight> createState() => _HappeningTonightState();
+  ConsumerState<AllVendors> createState() => _AllVendorsState();
 }
 
-class _HappeningTonightState extends ConsumerState<HappeningTonight> {
+class _AllVendorsState extends ConsumerState<AllVendors> {
   EventCategory selectedCategory = EventCategory(
     description: "all",
     name: "All",
   );
 
-  late final _pagingController = PagingController<int, Event>(
+  late final _pagingController = PagingController<int, Vendor>(
     getNextPageKey: (state) =>
         state.lastPageIsEmpty ? null : state.nextIntPageKey,
     fetchPage: (pageKey) async => ref.watch(
-      getEventsProvider(
-        page: pageKey,
-        categoryId: selectedCategory.id,
-        happeningTonight: true,
-      ).future,
+      getVendorsProvider(page: pageKey, categoryId: selectedCategory.id).future,
     ),
   );
 
@@ -48,13 +48,13 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
   @override
   Widget build(BuildContext context) {
     final categories = ref.watch(getEventCategoriesProvider);
-
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           SliverAppBar.large(
             pinned: true,
             collapsedHeight: 150,
+
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(54),
               child: SizedBox(
@@ -73,13 +73,13 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
                       itemCount: categoriesWithAll.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) => Padding(
-                        padding: const .only(right: 8.0),
+                        padding: const EdgeInsets.only(right: 8.0),
                         child: CustomChip(
                           title: categoriesWithAll[index].name,
                           isSelected:
                               selectedCategory.name ==
                               categoriesWithAll[index].name,
-                          onTap: () {
+                          onTap: () async {
                             setState(() {
                               selectedCategory = categoriesWithAll[index];
                             });
@@ -95,7 +95,7 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
               ),
             ),
             title: Text(
-              "Happening Tonight",
+              "Explore our vendors",
               style: TextStyle(
                 fontSize: AppTextStyles(context).accumulator * 15,
                 fontWeight: .w900,
@@ -103,40 +103,30 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
             ),
             centerTitle: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Row(
-                mainAxisAlignment: .spaceBetween,
+              title: Column(
+                spacing: 8,
+                crossAxisAlignment: .start,
+                mainAxisSize: .min,
                 children: [
-                  Column(
-                    spacing: 8,
-                    crossAxisAlignment: .start,
-                    mainAxisSize: .min,
-                    children: [
-                      Text(
-                        "Happening Tonight",
-                        style: TextStyle(
-                          color: Colors
-                              .white, // Ensure text contrasts with the purple
-                          fontWeight: FontWeight.w900,
-                          fontSize:
-                              AppTextStyles(context).accumulator *
-                              16, // Size will scale automatically
-                        ),
-                      ),
-                      Text(
-                        "Tonight’s hottest events. Don’t miss the action.",
-                        style: TextStyle(
-                          color: AppColors
-                              .textSecondary, // Ensure text contrasts with the purple
-
-                          fontSize: AppTextStyles(context).accumulator * 9,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    "Explore our vendors",
+                    style: TextStyle(
+                      color:
+                          Colors.white, // Ensure text contrasts with the purple
+                      fontWeight: FontWeight.w900,
+                      fontSize:
+                          AppTextStyles(context).accumulator *
+                          16, // Size will scale automatically
+                    ),
                   ),
-                  LottieBuilder.asset(
-                    "json/fire.json",
-                    package: "assets",
-                    height: 40,
+                  Text(
+                    "Unforgettable places. Trusted hosts",
+                    style: TextStyle(
+                      color: AppColors
+                          .textSecondary, // Ensure text contrasts with the purple
+
+                      fontSize: AppTextStyles(context).accumulator * 9,
+                    ),
                   ),
                 ],
               ),
@@ -179,13 +169,12 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
               ),
             ),
           ),
-
           SliverPadding(
             padding: .only(top: 10, left: 16, right: 16),
             sliver: PagingListener(
               controller: _pagingController,
               builder: (context, state, fetchNextPage) =>
-                  PagedSliverList<int, Event>.separated(
+                  PagedSliverList<int, Vendor>.separated(
                     state: state,
                     separatorBuilder: (context, index) => SizedBox(height: 10),
                     fetchNextPage: fetchNextPage,
@@ -194,6 +183,7 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
                         heading: "Hmm… nothing in here",
                         description: "Try exploring other categories",
                       ),
+
                       noMoreItemsIndicatorBuilder: (ctx) => SizedBox.shrink(),
 
                       itemBuilder: (context, item, index) => EventContainer(
@@ -201,12 +191,12 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
                         heading: item.name,
                         tag: item.category?.name,
                         image: item.media.first,
-                        avatarImage: item.media.first,
+                        avatarImage: item.logo,
                         onView: () => context.pushNamed(
-                          "event_detail",
+                          "vendor_detail",
                           pathParameters: {"id": item.id},
                         ),
-                        date: item.startTime.toPrettyString(),
+                        date: "${item.priceType.capitalize()} (\$\$\$\$)",
                       ),
                     ),
                   ),

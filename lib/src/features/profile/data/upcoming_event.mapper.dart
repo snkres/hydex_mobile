@@ -492,6 +492,7 @@ class PassportDataMapper extends ClassMapperBase<PassportData> {
   static PassportDataMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = PassportDataMapper._());
+      PassportCategoryMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -504,14 +505,21 @@ class PassportDataMapper extends ClassMapperBase<PassportData> {
     'totalExperiences',
     _$totalExperiences,
   );
+  static List<PassportCategory> _$categories(PassportData v) => v.categories;
+  static const Field<PassportData, List<PassportCategory>> _f$categories =
+      Field('categories', _$categories);
 
   @override
   final MappableFields<PassportData> fields = const {
     #totalExperiences: _f$totalExperiences,
+    #categories: _f$categories,
   };
 
   static PassportData _instantiate(DecodingData data) {
-    return PassportData(totalExperiences: data.dec(_f$totalExperiences));
+    return PassportData(
+      totalExperiences: data.dec(_f$totalExperiences),
+      categories: data.dec(_f$categories),
+    );
   }
 
   @override
@@ -576,7 +584,13 @@ extension PassportDataValueCopy<$R, $Out>
 
 abstract class PassportDataCopyWith<$R, $In extends PassportData, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  $R call({int? totalExperiences});
+  ListCopyWith<
+    $R,
+    PassportCategory,
+    PassportCategoryCopyWith<$R, PassportCategory, PassportCategory>
+  >
+  get categories;
+  $R call({int? totalExperiences, List<PassportCategory>? categories});
   PassportDataCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -589,19 +603,359 @@ class _PassportDataCopyWithImpl<$R, $Out>
   late final ClassMapperBase<PassportData> $mapper =
       PassportDataMapper.ensureInitialized();
   @override
-  $R call({int? totalExperiences}) => $apply(
-    FieldCopyWithData({
-      if (totalExperiences != null) #totalExperiences: totalExperiences,
-    }),
+  ListCopyWith<
+    $R,
+    PassportCategory,
+    PassportCategoryCopyWith<$R, PassportCategory, PassportCategory>
+  >
+  get categories => ListCopyWith(
+    $value.categories,
+    (v, t) => v.copyWith.$chain(t),
+    (v) => call(categories: v),
   );
+  @override
+  $R call({int? totalExperiences, List<PassportCategory>? categories}) =>
+      $apply(
+        FieldCopyWithData({
+          if (totalExperiences != null) #totalExperiences: totalExperiences,
+          if (categories != null) #categories: categories,
+        }),
+      );
   @override
   PassportData $make(CopyWithData data) => PassportData(
     totalExperiences: data.get(#totalExperiences, or: $value.totalExperiences),
+    categories: data.get(#categories, or: $value.categories),
   );
 
   @override
   PassportDataCopyWith<$R2, PassportData, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   ) => _PassportDataCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class PassportCategoryMapper extends ClassMapperBase<PassportCategory> {
+  PassportCategoryMapper._();
+
+  static PassportCategoryMapper? _instance;
+  static PassportCategoryMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = PassportCategoryMapper._());
+      PassportVendorMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'PassportCategory';
+
+  static String? _$categoryId(PassportCategory v) => v.categoryId;
+  static const Field<PassportCategory, String> _f$categoryId = Field(
+    'categoryId',
+    _$categoryId,
+    opt: true,
+  );
+  static String _$categoryName(PassportCategory v) => v.categoryName;
+  static const Field<PassportCategory, String> _f$categoryName = Field(
+    'categoryName',
+    _$categoryName,
+  );
+  static int? _$count(PassportCategory v) => v.count;
+  static const Field<PassportCategory, int> _f$count = Field(
+    'count',
+    _$count,
+    opt: true,
+  );
+  static List<PassportVendor>? _$vendors(PassportCategory v) => v.vendors;
+  static const Field<PassportCategory, List<PassportVendor>> _f$vendors = Field(
+    'vendors',
+    _$vendors,
+    opt: true,
+  );
+
+  @override
+  final MappableFields<PassportCategory> fields = const {
+    #categoryId: _f$categoryId,
+    #categoryName: _f$categoryName,
+    #count: _f$count,
+    #vendors: _f$vendors,
+  };
+
+  static PassportCategory _instantiate(DecodingData data) {
+    return PassportCategory(
+      categoryId: data.dec(_f$categoryId),
+      categoryName: data.dec(_f$categoryName),
+      count: data.dec(_f$count),
+      vendors: data.dec(_f$vendors),
+    );
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static PassportCategory fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<PassportCategory>(map);
+  }
+
+  static PassportCategory fromJson(String json) {
+    return ensureInitialized().decodeJson<PassportCategory>(json);
+  }
+}
+
+mixin PassportCategoryMappable {
+  String toJson() {
+    return PassportCategoryMapper.ensureInitialized()
+        .encodeJson<PassportCategory>(this as PassportCategory);
+  }
+
+  Map<String, dynamic> toMap() {
+    return PassportCategoryMapper.ensureInitialized()
+        .encodeMap<PassportCategory>(this as PassportCategory);
+  }
+
+  PassportCategoryCopyWith<PassportCategory, PassportCategory, PassportCategory>
+  get copyWith =>
+      _PassportCategoryCopyWithImpl<PassportCategory, PassportCategory>(
+        this as PassportCategory,
+        $identity,
+        $identity,
+      );
+  @override
+  String toString() {
+    return PassportCategoryMapper.ensureInitialized().stringifyValue(
+      this as PassportCategory,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return PassportCategoryMapper.ensureInitialized().equalsValue(
+      this as PassportCategory,
+      other,
+    );
+  }
+
+  @override
+  int get hashCode {
+    return PassportCategoryMapper.ensureInitialized().hashValue(
+      this as PassportCategory,
+    );
+  }
+}
+
+extension PassportCategoryValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, PassportCategory, $Out> {
+  PassportCategoryCopyWith<$R, PassportCategory, $Out>
+  get $asPassportCategory =>
+      $base.as((v, t, t2) => _PassportCategoryCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class PassportCategoryCopyWith<$R, $In extends PassportCategory, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  ListCopyWith<
+    $R,
+    PassportVendor,
+    PassportVendorCopyWith<$R, PassportVendor, PassportVendor>
+  >?
+  get vendors;
+  $R call({
+    String? categoryId,
+    String? categoryName,
+    int? count,
+    List<PassportVendor>? vendors,
+  });
+  PassportCategoryCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  );
+}
+
+class _PassportCategoryCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, PassportCategory, $Out>
+    implements PassportCategoryCopyWith<$R, PassportCategory, $Out> {
+  _PassportCategoryCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<PassportCategory> $mapper =
+      PassportCategoryMapper.ensureInitialized();
+  @override
+  ListCopyWith<
+    $R,
+    PassportVendor,
+    PassportVendorCopyWith<$R, PassportVendor, PassportVendor>
+  >?
+  get vendors => $value.vendors != null
+      ? ListCopyWith(
+          $value.vendors!,
+          (v, t) => v.copyWith.$chain(t),
+          (v) => call(vendors: v),
+        )
+      : null;
+  @override
+  $R call({
+    Object? categoryId = $none,
+    String? categoryName,
+    Object? count = $none,
+    Object? vendors = $none,
+  }) => $apply(
+    FieldCopyWithData({
+      if (categoryId != $none) #categoryId: categoryId,
+      if (categoryName != null) #categoryName: categoryName,
+      if (count != $none) #count: count,
+      if (vendors != $none) #vendors: vendors,
+    }),
+  );
+  @override
+  PassportCategory $make(CopyWithData data) => PassportCategory(
+    categoryId: data.get(#categoryId, or: $value.categoryId),
+    categoryName: data.get(#categoryName, or: $value.categoryName),
+    count: data.get(#count, or: $value.count),
+    vendors: data.get(#vendors, or: $value.vendors),
+  );
+
+  @override
+  PassportCategoryCopyWith<$R2, PassportCategory, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  ) => _PassportCategoryCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class PassportVendorMapper extends ClassMapperBase<PassportVendor> {
+  PassportVendorMapper._();
+
+  static PassportVendorMapper? _instance;
+  static PassportVendorMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = PassportVendorMapper._());
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'PassportVendor';
+
+  static String _$vendorId(PassportVendor v) => v.vendorId;
+  static const Field<PassportVendor, String> _f$vendorId = Field(
+    'vendorId',
+    _$vendorId,
+  );
+  static int _$visitCount(PassportVendor v) => v.visitCount;
+  static const Field<PassportVendor, int> _f$visitCount = Field(
+    'visitCount',
+    _$visitCount,
+  );
+  static String _$vendorName(PassportVendor v) => v.vendorName;
+  static const Field<PassportVendor, String> _f$vendorName = Field(
+    'vendorName',
+    _$vendorName,
+  );
+
+  @override
+  final MappableFields<PassportVendor> fields = const {
+    #vendorId: _f$vendorId,
+    #visitCount: _f$visitCount,
+    #vendorName: _f$vendorName,
+  };
+
+  static PassportVendor _instantiate(DecodingData data) {
+    return PassportVendor(
+      vendorId: data.dec(_f$vendorId),
+      visitCount: data.dec(_f$visitCount),
+      vendorName: data.dec(_f$vendorName),
+    );
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static PassportVendor fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<PassportVendor>(map);
+  }
+
+  static PassportVendor fromJson(String json) {
+    return ensureInitialized().decodeJson<PassportVendor>(json);
+  }
+}
+
+mixin PassportVendorMappable {
+  String toJson() {
+    return PassportVendorMapper.ensureInitialized().encodeJson<PassportVendor>(
+      this as PassportVendor,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return PassportVendorMapper.ensureInitialized().encodeMap<PassportVendor>(
+      this as PassportVendor,
+    );
+  }
+
+  PassportVendorCopyWith<PassportVendor, PassportVendor, PassportVendor>
+  get copyWith => _PassportVendorCopyWithImpl<PassportVendor, PassportVendor>(
+    this as PassportVendor,
+    $identity,
+    $identity,
+  );
+  @override
+  String toString() {
+    return PassportVendorMapper.ensureInitialized().stringifyValue(
+      this as PassportVendor,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return PassportVendorMapper.ensureInitialized().equalsValue(
+      this as PassportVendor,
+      other,
+    );
+  }
+
+  @override
+  int get hashCode {
+    return PassportVendorMapper.ensureInitialized().hashValue(
+      this as PassportVendor,
+    );
+  }
+}
+
+extension PassportVendorValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, PassportVendor, $Out> {
+  PassportVendorCopyWith<$R, PassportVendor, $Out> get $asPassportVendor =>
+      $base.as((v, t, t2) => _PassportVendorCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class PassportVendorCopyWith<$R, $In extends PassportVendor, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  $R call({String? vendorId, int? visitCount, String? vendorName});
+  PassportVendorCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  );
+}
+
+class _PassportVendorCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, PassportVendor, $Out>
+    implements PassportVendorCopyWith<$R, PassportVendor, $Out> {
+  _PassportVendorCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<PassportVendor> $mapper =
+      PassportVendorMapper.ensureInitialized();
+  @override
+  $R call({String? vendorId, int? visitCount, String? vendorName}) => $apply(
+    FieldCopyWithData({
+      if (vendorId != null) #vendorId: vendorId,
+      if (visitCount != null) #visitCount: visitCount,
+      if (vendorName != null) #vendorName: vendorName,
+    }),
+  );
+  @override
+  PassportVendor $make(CopyWithData data) => PassportVendor(
+    vendorId: data.get(#vendorId, or: $value.vendorId),
+    visitCount: data.get(#visitCount, or: $value.visitCount),
+    vendorName: data.get(#vendorName, or: $value.vendorName),
+  );
+
+  @override
+  PassportVendorCopyWith<$R2, PassportVendor, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  ) => _PassportVendorCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 

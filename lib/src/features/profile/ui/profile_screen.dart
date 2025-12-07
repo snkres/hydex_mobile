@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/profile/domain/profile_providers.dart';
 import 'package:hydex/src/features/profile/ui/components/history.dart';
 import 'package:hydex/src/features/profile/ui/components/passport.dart';
 import 'package:hydex/src/features/profile/ui/components/upcoming_event.dart';
@@ -50,6 +51,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   @override
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserProvider);
+    final upcoming = ref.watch(getUpcomingEventsProvider).value?.length ?? 0;
     return Scaffold(
       body: currentUser.when(
         data: (data) {
@@ -161,7 +163,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                               ),
                                               SizedBox(height: 16),
                                               Text(
-                                                "3",
+                                                upcoming.toString(),
                                                 style: TextStyle(
                                                   fontWeight: .w600,
                                                   fontSize:
@@ -211,7 +213,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                               ),
                                               SizedBox(height: 16),
                                               Text(
-                                                "15",
+                                                "0",
                                                 style: TextStyle(
                                                   fontWeight: .w600,
                                                   fontSize:

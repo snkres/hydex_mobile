@@ -208,13 +208,13 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                           ), // Or your bg color
                           child: SingleChildScrollView(
                             controller: scrollController,
-                            // Ensure content is scrollable even if short
                             physics: const ClampingScrollPhysics(),
                             child: CollapsedEventContainer(
                               experiences: event.experiences,
+                              details: event.details,
                               name: event.name,
                               createdTime: event.createdAt,
-                              thingsToKnow: const ["Mawkoos"],
+                              thingsToKnow: event.thingsToKnow ?? [],
                               category: event.category?.name,
                               description: event.description,
                               endTime: event.endTime,
@@ -223,6 +223,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                               location: event.location,
                               pricing: event.priceType,
                               owner: event.vendor,
+                              title: event.detailsTitle,
                             ),
                           ),
                         ),
@@ -331,15 +332,18 @@ class CollapsedEventContainer extends ConsumerWidget {
     required this.thingsToKnow,
     required this.experiences,
     required this.category,
+    required this.details,
+    required this.title,
   });
   final String name, description, pricing;
   final Location location;
   final List<String> tags, thingsToKnow;
   final List<Experiences> experiences;
-  final String? category;
+  final String? category, title;
   final DateTime startTime, endTime, createdTime;
   final locationService = LocationService();
   final Vendor owner;
+  final List<Detail> details;
 
   String getDurationString(DateTime start, DateTime end) {
     final duration = end.difference(start);
@@ -470,7 +474,7 @@ class CollapsedEventContainer extends ConsumerWidget {
                         },
                       ),
                       Text(
-                        "Casual ${pricing.capitalize()} (\$\$\$)",
+                        "${pricing.capitalize()} (\$\$\$)",
                         style: TextStyle(
                           fontSize: AppTextStyles(context).accumulator * 11,
                           color: AppColors.textBrand,
@@ -882,11 +886,11 @@ class CollapsedEventContainer extends ConsumerWidget {
                   ),
                 ),
                 SizedBox(height: 24),
-
-                NightLifeSection(experiences: experiences),
-                // SportsSection(),
-                // AdventureScreen(),
-                // ShowSection(),
+                NightLifeSection(
+                  experiences: experiences,
+                  details: details,
+                  title: title,
+                ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -976,55 +980,64 @@ class CollapsedEventContainer extends ConsumerWidget {
                               fit: .cover,
                             ),
                           );
-                          // return SmoothContainer(
-                          //   width: 180,
-                          //   color: Colors.red,
-                          //   borderRadius: BorderRadius.circular(16),
-                          // );
                         },
                       ),
                     ),
-                    SizedBox(height: 24),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
+                    Visibility(
+                      visible: thingsToKnow.isNotEmpty,
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: .start,
                         children: [
-                          Text(
-                            "Things to know".toUpperCase(),
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.textSecondary,
-                              fontSize: AppTextStyles(context).accumulator * 16,
-                            ),
-                          ),
-                          SizedBox(height: 12),
-                          ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: thingsToKnow.length,
-                            separatorBuilder: (_, __) => Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                              child: Divider(color: AppColors.borderDefault),
-                            ),
-                            itemBuilder: (_, index) {
-                              return ListTile(
-                                contentPadding: .zero,
+                          SizedBox(height: 24),
 
-                                leading: SvgPicture.asset(
-                                  "img/svg/ar_.svg",
-                                  width: 15,
-                                  height: 15,
-                                  package: "assets",
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Things to know".toUpperCase(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.textSecondary,
+                                    fontSize:
+                                        AppTextStyles(context).accumulator * 16,
+                                  ),
                                 ),
-                                title: Text(
-                                  thingsToKnow[index],
-                                  style: AppTextStyles(context).smallRegular,
+                                SizedBox(height: 12),
+                                ListView.separated(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: thingsToKnow.length,
+                                  separatorBuilder: (_, __) => Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: Divider(
+                                      color: AppColors.borderDefault,
+                                    ),
+                                  ),
+                                  itemBuilder: (_, index) {
+                                    return ListTile(
+                                      contentPadding: .zero,
+
+                                      leading: SvgPicture.asset(
+                                        "img/svg/ar_.svg",
+                                        width: 15,
+                                        height: 15,
+                                        package: "assets",
+                                      ),
+                                      title: Text(
+                                        thingsToKnow[index],
+                                        style: AppTextStyles(
+                                          context,
+                                        ).smallRegular,
+                                      ),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
+                              ],
+                            ),
                           ),
                         ],
                       ),

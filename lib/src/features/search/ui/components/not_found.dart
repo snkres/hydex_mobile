@@ -1,12 +1,16 @@
-
 import 'package:flutter/material.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:lottie/lottie.dart';
 
 class NotFoundWidget extends StatelessWidget {
-  const NotFoundWidget({super.key});
-
+  const NotFoundWidget({
+    super.key,
+    this.heading = "Hmm… nothing matches your search",
+    this.description =
+        "Try adjusting your filters or search with another word.",
+  });
+  final String heading, description;
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -22,7 +26,7 @@ class NotFoundWidget extends StatelessWidget {
           ),
           SizedBox(height: 4),
           Text(
-            "Hmm… nothing matches your search",
+            heading,
             style: TextStyle(
               fontSize: AppTextStyles(context).accumulator * 16,
               fontWeight: .w600,
@@ -33,7 +37,7 @@ class NotFoundWidget extends StatelessWidget {
           SizedBox(
             width: 245,
             child: Text(
-              "Try adjusting your filters or search with another word.",
+              description,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppColors.textSecondary,

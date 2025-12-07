@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
+import 'package:hydex/src/features/booking/data/format_time.dart';
+import 'package:hydex/src/features/search/ui/components/not_found.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
+import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:lottie/lottie.dart';
 
 class HappeningNearby extends ConsumerStatefulWidget {
@@ -18,7 +23,28 @@ class HappeningNearby extends ConsumerStatefulWidget {
 }
 
 class _HappeningNearbyState extends ConsumerState<HappeningNearby> {
-  String selectedCategory = "All";
+  EventCategory selectedCategory = EventCategory(
+    description: "all",
+    name: "All",
+  );
+
+  late final _pagingController = PagingController<int, Event>(
+    getNextPageKey: (state) =>
+        state.lastPageIsEmpty ? null : state.nextIntPageKey,
+    fetchPage: (pageKey) async => ref.watch(
+      getEventsProvider(
+        page: pageKey,
+        categoryId: selectedCategory.id,
+        nearby: true,
+      ).future,
+    ),
+  );
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +81,13 @@ class _HappeningNearbyState extends ConsumerState<HappeningNearby> {
                         child: CustomChip(
                           title: categoriesWithAll[index].name,
                           isSelected:
-                              selectedCategory == categoriesWithAll[index].name,
+                              selectedCategory.name ==
+                              categoriesWithAll[index].name,
                           onTap: () {
                             setState(() {
-                              selectedCategory = categoriesWithAll[index].name;
+                              selectedCategory = categoriesWithAll[index];
                             });
+                            _pagingController.refresh();
                           },
                         ),
                       ),
@@ -160,17 +188,33 @@ class _HappeningNearbyState extends ConsumerState<HappeningNearby> {
           ),
           SliverPadding(
             padding: .only(top: 10, left: 16, right: 16),
-            sliver: SliverList.separated(
-              separatorBuilder: (context, index) => SizedBox(height: 10),
-
-              itemBuilder: (context, index) => EventContainer(
-                width: double.infinity,
-                heading: "heading",
-                tag: "Night Life",
-                image: "image",
-                date: "Date",
-              ),
-              itemCount: 4,
+            sliver: PagingListener(
+              controller: _pagingController,
+              builder: (context, state, fetchNextPage) =>
+                  PagedSliverList<int, Event>.separated(
+                    state: state,
+                    separatorBuilder: (context, index) => SizedBox(height: 10),
+                    fetchNextPage: fetchNextPage,
+                    builderDelegate: PagedChildBuilderDelegate(
+                      noItemsFoundIndicatorBuilder: (context) => NotFoundWidget(
+                        heading: "Hmm… nothing happening nearby 😔",
+                        description: "Try exploring other categories",
+                      ),
+                      noMoreItemsIndicatorBuilder: (ctx) => SizedBox.shrink(),
+                      itemBuilder: (context, item, index) => EventContainer(
+                        width: double.infinity,
+                        heading: item.name,
+                        tag: item.category?.name,
+                        image: item.media.first,
+                        avatarImage: item.media.first,
+                        onView: () => context.pushNamed(
+                          "event_detail",
+                          pathParameters: {"id": item.id},
+                        ),
+                        date: item.startTime.toPrettyString(),
+                      ),
+                    ),
+                  ),
             ),
           ),
         ],

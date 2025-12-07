@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:hydex/core/network/network.dart';
+import 'package:hydex/src/features/location/domain/location_service.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/data/vendor.dart';
@@ -52,7 +53,11 @@ Future<List<EventCategory>> getEventCategories(Ref ref) async {
 }
 
 @riverpod
-Future<List<Vendor>> getVendors(Ref ref, {int page = 1}) async {
+Future<List<Vendor>> getVendors(
+  Ref ref, {
+  int page = 1,
+  String? categoryId,
+}) async {
   final link = ref.keepAlive();
   Timer? timer;
   final cancelToken = CancelToken();
@@ -69,9 +74,13 @@ Future<List<Vendor>> getVendors(Ref ref, {int page = 1}) async {
     timer?.cancel();
   });
   try {
+    final Map<String, dynamic> data = {"page": page, "limit": 10};
+    if (categoryId != null) {
+      data["categoryId"] = categoryId;
+    }
     final response = await DioHelper.get(
       '/vendors',
-      queryParameters: {"page": page, "limit": 10},
+      queryParameters: data,
       cancelToken: cancelToken,
     );
     final answer = response.data['data'] as List<dynamic>;
@@ -85,7 +94,13 @@ Future<List<Vendor>> getVendors(Ref ref, {int page = 1}) async {
 }
 
 @riverpod
-Future<List<Event>> getEvents(Ref ref, {int page = 1}) async {
+Future<List<Event>> getEvents(
+  Ref ref, {
+  int page = 1,
+  String? categoryId,
+  bool? happeningTonight,
+  bool? nearby,
+}) async {
   final link = ref.keepAlive();
   Timer? timer;
   final cancelToken = CancelToken();
@@ -101,16 +116,35 @@ Future<List<Event>> getEvents(Ref ref, {int page = 1}) async {
   ref.onResume(() {
     timer?.cancel();
   });
+  final Map<String, dynamic> data = {"page": page, "limit": 10};
+  if (categoryId != null) {
+    data["categoryId"] = categoryId;
+  }
+
+  if (happeningTonight != null) {
+    data["happeningToday"] = happeningTonight;
+  }
+
+  if (nearby != null) {
+    final userPosition = await LocationService().getCurrentPosition();
+    data["lat"] = userPosition.latitude.toString();
+    data["lng"] = userPosition.longitude.toString();
+  }
+
   try {
     final response = await DioHelper.get(
       '/events',
-      queryParameters: {"page": page, "limit": 10},
+      queryParameters: data,
       cancelToken: cancelToken,
     );
     final answer = response.data['data'] as List<dynamic>;
 
     final eventsData = answer.first as List<dynamic>;
-    return eventsData.map((e) => EventMapper.fromMap(e)).toList();
+
+    return eventsData.map((e) {
+      log("Data E: $e");
+      return EventMapper.fromMap(e);
+    }).toList();
   } catch (e) {
     throw Exception('Failed to load events: $e');
   }

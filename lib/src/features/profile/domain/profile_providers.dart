@@ -87,7 +87,7 @@ Future<PassportData> getPassport(Ref ref) async {
       "/profile/passport",
       cancelToken: cancelToken,
     );
-    final data = response.data['data'];
+    final data = response.data["data"];
     return PassportDataMapper.fromMap(data);
   } catch (e) {
     throw Exception('Failed to load passports: $e');
