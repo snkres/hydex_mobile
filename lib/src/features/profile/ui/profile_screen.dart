@@ -27,7 +27,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
-    _tabController.addListener(checkIfUserInHistory);
+    // _tabController.addListener(checkIfUserInHistory);
   }
 
   @override
@@ -51,7 +51,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   @override
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserProvider);
-    final upcoming = ref.watch(getUpcomingEventsProvider).value?.length ?? 0;
     return Scaffold(
       body: currentUser.when(
         data: (data) {
@@ -59,7 +58,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             headerSliverBuilder: (context, builder) {
               return [
                 SliverAppBar(
-                  toolbarHeight: isUserInHistory ? 330 : 220,
+                  automaticallyImplyLeading: false,
+                  toolbarHeight: isUserInHistory ? 330 : 120,
                   flexibleSpace: FlexibleSpaceBar(
                     background: Stack(
                       alignment: Alignment.center,
@@ -92,14 +92,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                         SafeArea(
                           child: Column(
                             children: [
-                              SizedBox(height: 36),
-                              SmoothContainer(
-                                width: 67,
-                                height: 67,
-                                color: Colors.red,
-                                borderRadius: .circular(16),
-                                smoothness: 1,
-                              ),
+                              // SizedBox(height: 36),
+                              // SmoothContainer(
+                              //   width: 67,
+                              //   height: 67,
+                              //   color: Colors.red,
+                              //   borderRadius: .circular(16),
+                              //   smoothness: 1,
+                              // ),
                               SizedBox(height: 16),
                               Text(
                                 data?.fullName ?? "",
@@ -119,119 +119,119 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                 ),
                               ),
                               SizedBox(height: 36),
-                              Visibility(
-                                visible: isUserInHistory,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  child: Row(
-                                    spacing: 8,
-                                    children: [
-                                      Expanded(
-                                        child: SmoothContainer(
-                                          borderRadius: .circular(16),
-                                          side: BorderSide(
-                                            color: AppColors.borderDefault,
-                                          ),
-                                          smoothness: 1,
-                                          padding: .all(12),
-                                          child: Column(
-                                            crossAxisAlignment: .start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    "Upcoming",
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                          AppTextStyles(
-                                                            context,
-                                                          ).accumulator *
-                                                          14,
-                                                      color: AppColors
-                                                          .textSecondary,
-                                                    ),
-                                                  ),
-                                                  SvgPicture.asset(
-                                                    "img/svg/calendar.svg",
-                                                    package: "assets",
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: 16),
-                                              Text(
-                                                upcoming.toString(),
-                                                style: TextStyle(
-                                                  fontWeight: .w600,
-                                                  fontSize:
-                                                      AppTextStyles(
-                                                        context,
-                                                      ).accumulator *
-                                                      18,
-                                                  color: AppColors.textPrimary,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: SmoothContainer(
-                                          borderRadius: .circular(16),
-                                          side: BorderSide(
-                                            color: AppColors.borderDefault,
-                                          ),
-                                          smoothness: 1,
-                                          padding: .all(12),
-                                          child: Column(
-                                            crossAxisAlignment: .start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    "Invites",
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                          AppTextStyles(
-                                                            context,
-                                                          ).accumulator *
-                                                          14,
-                                                      color: AppColors
-                                                          .textSecondary,
-                                                    ),
-                                                  ),
-                                                  SvgPicture.asset(
-                                                    "img/svg/invites.svg",
-                                                    package: "assets",
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: 16),
-                                              Text(
-                                                "0",
-                                                style: TextStyle(
-                                                  fontWeight: .w600,
-                                                  fontSize:
-                                                      AppTextStyles(
-                                                        context,
-                                                      ).accumulator *
-                                                      18,
-                                                  color: AppColors.textPrimary,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                              // Visibility(
+                              //   visible: isUserInHistory,
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.symmetric(
+                              //       horizontal: 16,
+                              //     ),
+                              //     child: Row(
+                              //       spacing: 8,
+                              //       children: [
+                              //         Expanded(
+                              //           child: SmoothContainer(
+                              //             borderRadius: .circular(16),
+                              //             side: BorderSide(
+                              //               color: AppColors.borderDefault,
+                              //             ),
+                              //             smoothness: 1,
+                              //             padding: .all(12),
+                              //             child: Column(
+                              //               crossAxisAlignment: .start,
+                              //               children: [
+                              //                 Row(
+                              //                   mainAxisAlignment:
+                              //                       .spaceBetween,
+                              //                   children: [
+                              //                     Text(
+                              //                       "Upcoming",
+                              //                       style: TextStyle(
+                              //                         fontSize:
+                              //                             AppTextStyles(
+                              //                               context,
+                              //                             ).accumulator *
+                              //                             14,
+                              //                         color: AppColors
+                              //                             .textSecondary,
+                              //                       ),
+                              //                     ),
+                              //                     SvgPicture.asset(
+                              //                       "img/svg/calendar.svg",
+                              //                       package: "assets",
+                              //                     ),
+                              //                   ],
+                              //                 ),
+                              //                 SizedBox(height: 16),
+                              //                 Text(
+                              //                   upcoming.toString(),
+                              //                   style: TextStyle(
+                              //                     fontWeight: .w600,
+                              //                     fontSize:
+                              //                         AppTextStyles(
+                              //                           context,
+                              //                         ).accumulator *
+                              //                         18,
+                              //                     color: AppColors.textPrimary,
+                              //                   ),
+                              //                 ),
+                              //               ],
+                              //             ),
+                              //           ),
+                              //         ),
+                              //         Expanded(
+                              //           child: SmoothContainer(
+                              //             borderRadius: .circular(16),
+                              //             side: BorderSide(
+                              //               color: AppColors.borderDefault,
+                              //             ),
+                              //             smoothness: 1,
+                              //             padding: .all(12),
+                              //             child: Column(
+                              //               crossAxisAlignment: .start,
+                              //               children: [
+                              //                 Row(
+                              //                   mainAxisAlignment:
+                              //                       .spaceBetween,
+                              //                   children: [
+                              //                     Text(
+                              //                       "Invites",
+                              //                       style: TextStyle(
+                              //                         fontSize:
+                              //                             AppTextStyles(
+                              //                               context,
+                              //                             ).accumulator *
+                              //                             14,
+                              //                         color: AppColors
+                              //                             .textSecondary,
+                              //                       ),
+                              //                     ),
+                              //                     SvgPicture.asset(
+                              //                       "img/svg/invites.svg",
+                              //                       package: "assets",
+                              //                     ),
+                              //                   ],
+                              //                 ),
+                              //                 SizedBox(height: 16),
+                              //                 Text(
+                              //                   "0",
+                              //                   style: TextStyle(
+                              //                     fontWeight: .w600,
+                              //                     fontSize:
+                              //                         AppTextStyles(
+                              //                           context,
+                              //                         ).accumulator *
+                              //                         18,
+                              //                     color: AppColors.textPrimary,
+                              //                   ),
+                              //                 ),
+                              //               ],
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),

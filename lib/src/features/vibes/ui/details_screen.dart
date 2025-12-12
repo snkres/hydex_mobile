@@ -153,7 +153,8 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
     return Scaffold(
       floatingActionButtonLocation: .centerDocked,
       floatingActionButton: Visibility(
-        visible: vendorAsync.value?.bookingExperience != null,
+        visible:
+            vendorAsync.value?.bookingExperience?.passes.isNotEmpty ?? false,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: PrimaryButton(

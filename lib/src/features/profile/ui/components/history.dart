@@ -25,7 +25,7 @@ class History extends ConsumerWidget {
           return Center(child: Text("Empty History"));
         }
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: ListView.separated(
             separatorBuilder: (_, _) =>
                 Column(children: [Divider(), SizedBox(height: 16)]),
@@ -174,7 +174,8 @@ class HistoryContainer extends StatelessWidget {
                   width: 130,
 
                   child: Text(
-                    event.location.address ?? "Unknown location",
+                    event.location.address ??
+                        "${event.location.street}, ${event.location.city}, ${event.location.country}",
                     maxLines: 2,
                     style: TextStyle(
                       color: AppColors.textSecondary,

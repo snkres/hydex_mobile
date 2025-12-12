@@ -23,7 +23,7 @@ class UpcomingEventSection extends ConsumerWidget {
           return Center(child: Text("No Upcoming Event"));
         }
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: ListView.separated(
             separatorBuilder: (_, _) =>
                 Column(children: [Divider(), SizedBox(height: 16)]),
@@ -183,11 +183,16 @@ class UpcomingEventContainer extends StatelessWidget {
                   package: "assets",
                   width: 15,
                 ),
-                Text(
-                  event.location.street ?? "Unknown location",
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: AppTextStyles(context).accumulator * 14,
+                SizedBox(
+                  width: 130,
+                  child: Text(
+                    event.location.address ??
+                        "${event.location.street}, ${event.location.city}, ${event.location.country}",
+                    maxLines: 2,
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: AppTextStyles(context).accumulator * 14,
+                    ),
                   ),
                 ),
               ],

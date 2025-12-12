@@ -81,113 +81,116 @@ class _CreateBookingState extends ConsumerState<CreateBooking> {
                 ),
               ]
             : [],
-        child: SingleChildScrollView(
-          child: Stack(
-            children: [
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  height: 195,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        AppColors.signalBrandSolid,
-                        AppColors.signalBrandSolid.withValues(alpha: 0.5),
-                        Colors.transparent,
-                      ],
+        child: SizedBox.expand(
+          child: SingleChildScrollView(
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 195,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          AppColors.signalBrandSolid,
+                          AppColors.signalBrandSolid.withValues(alpha: 0.5),
+                          Colors.transparent,
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SafeArea(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        CustomBackButton(),
-                        Column(
-                          crossAxisAlignment: .start,
-                          children: [
-                            SizedBox(
-                              width: 150,
-                              child: Text(
-                                widget.book.name,
-                                maxLines: 1,
-                                overflow: .ellipsis,
-                                style: TextStyle(
-                                  fontWeight: .w600,
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 16,
+                SafeArea(
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          CustomBackButton(),
+                          Column(
+                            crossAxisAlignment: .start,
+                            children: [
+                              SizedBox(
+                                width: 150,
+                                child: Text(
+                                  widget.book.name,
+                                  maxLines: 1,
+                                  overflow: .ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: .w600,
+                                    fontSize:
+                                        AppTextStyles(context).accumulator * 16,
+                                  ),
                                 ),
                               ),
-                            ),
-                            widget.book.startTime != null
-                                ? Text(
-                                    widget.book.startTime?.toPrettyString() ??
-                                        "",
-                                    style: AppTextStyles(context).primaryRegular
-                                        .copyWith(
-                                          color: AppColors.textSecondary,
-                                        ),
-                                  )
-                                : SizedBox.shrink(),
-                          ],
-                        ),
-                        Spacer(),
-                        CircleAvatar(
-                          backgroundImage: CachedNetworkImageProvider(
-                            widget.book.image,
+                              widget.book.startTime != null
+                                  ? Text(
+                                      widget.book.startTime?.toPrettyString() ??
+                                          "",
+                                      style: AppTextStyles(context)
+                                          .primaryRegular
+                                          .copyWith(
+                                            color: AppColors.textSecondary,
+                                          ),
+                                    )
+                                  : SizedBox.shrink(),
+                            ],
                           ),
-                        ),
-                        SizedBox(width: 16),
-                      ],
-                    ),
-                    SizedBox(height: 6),
-                    GuestsContainer(),
-                    // SizedBox(height: 24),
-                    // PerkContainer(),
-                    SizedBox(height: 24),
-                    DateContainer(
-                      availableDates: _uniqueDates,
-                      selectedDate: selectedDate,
-                      onDateSelected: (date) {
-                        setState(() {
-                          selectedDate = date;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 24),
-                    SlotsContainer(
-                      selectedDate: selectedDate,
-                      operatingHours: widget.book.operatingHours,
+                          Spacer(),
+                          CircleAvatar(
+                            backgroundImage: CachedNetworkImageProvider(
+                              widget.book.image,
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                        ],
+                      ),
+                      SizedBox(height: 6),
+                      GuestsContainer(),
+                      // SizedBox(height: 24),
+                      // PerkContainer(),
+                      SizedBox(height: 24),
+                      DateContainer(
+                        availableDates: _uniqueDates,
+                        selectedDate: selectedDate,
+                        onDateSelected: (date) {
+                          setState(() {
+                            selectedDate = date;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 24),
+                      SlotsContainer(
+                        selectedDate: selectedDate,
+                        operatingHours: widget.book.operatingHours,
 
-                      startTime: widget.book.startTime,
-                      selectedSlot: selectedSlot,
-                      onSelectSlot: (slot) {
-                        if (selectedSlot == slot) {
-                          setState(() {
-                            selectedSlot = null;
-                          });
-                        } else {
-                          setState(() {
-                            selectedSlot = slot;
-                          });
-                        }
-                      },
-                    ),
-                    SizedBox(height: 24),
-                    AccessSection(passes: widget.book.passes),
-                    // SizedBox(height: 24),
-                    // ExclusivePerks(),
-                    SizedBox(height: 100),
-                  ],
+                        startTime: widget.book.startTime,
+                        selectedSlot: selectedSlot,
+                        onSelectSlot: (slot) {
+                          if (selectedSlot == slot) {
+                            setState(() {
+                              selectedSlot = null;
+                            });
+                          } else {
+                            setState(() {
+                              selectedSlot = slot;
+                            });
+                          }
+                        },
+                      ),
+                      SizedBox(height: 24),
+                      AccessSection(passes: widget.book.passes),
+                      // SizedBox(height: 24),
+                      // ExclusivePerks(),
+                      SizedBox(height: 100),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

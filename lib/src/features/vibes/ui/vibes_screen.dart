@@ -380,7 +380,6 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                                 style: TextStyle(
                                                   color:
                                                       AppColors.textSecondary,
-                                                  fontWeight: FontWeight.w100,
                                                   fontSize:
                                                       AppTextStyles(
                                                         context,
@@ -434,7 +433,6 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                                   color:
                                                       AppColors.textSecondary,
 
-                                                  fontWeight: FontWeight.w100,
                                                   fontSize:
                                                       AppTextStyles(
                                                         context,
@@ -482,7 +480,6 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                                   color:
                                                       AppColors.textSecondary,
 
-                                                  fontWeight: FontWeight.w100,
                                                   fontSize:
                                                       AppTextStyles(
                                                         context,
@@ -612,7 +609,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                   Center(child: CircularProgressIndicator()),
                             ),
 
-                            SizedBox(height: 42),
+                            SizedBox(height: 43.5),
 
                             AllVendorsWidget(),
                             // Column(
@@ -751,10 +748,10 @@ class AllVendorsWidget extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Explore our vendors",
+                    "Discover Venues",
                     style: TextStyle(
                       fontSize: AppTextStyles(context).accumulator * 18,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                   Text(
@@ -775,7 +772,7 @@ class AllVendorsWidget extends ConsumerWidget {
                 onPressed: () => context.push("/vendors"),
 
                 child: Text(
-                  "Explore all",
+                  "Discover all",
                   style: TextStyle(
                     fontSize: AppTextStyles(context).accumulator * 12,
                     fontWeight: FontWeight.w600,

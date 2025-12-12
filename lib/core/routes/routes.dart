@@ -26,6 +26,7 @@ import 'package:hydex/src/features/events/ui/events.dart';
 import 'package:hydex/src/features/location/ui/location_screen.dart';
 import 'package:hydex/src/features/notifications/ui/notifications_screen.dart';
 import 'package:hydex/src/features/profile/data/upcoming_event.dart';
+import 'package:hydex/src/features/profile/ui/profile_screen.dart';
 import 'package:hydex/src/features/profile_summary/ui/profile_summary.dart';
 import 'package:hydex/src/features/splash/ui/splash.dart';
 import 'package:hydex/src/features/vendors/ui/vendors.dart';
@@ -51,6 +52,7 @@ class AppRoutes {
         builder: (context, state) =>
             BaseScreen(initialTab: state.extra as int?),
       ),
+      GoRoute(path: "/profile", builder: (context, state) => ProfileScreen()),
 
       GoRoute(
         path: "/boarding",
