@@ -249,7 +249,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                     tabs: [
                       Tab(text: "Upcoming Events"),
                       Tab(text: "History"),
-                      Tab(text: "Passport"),
+                      // Tab(text: "Passport"),
                     ],
                   ),
                 ),
@@ -258,7 +258,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             body: TabBarView(
               controller: _tabController,
 
-              children: [UpcomingEventSection(), History(), Passport()],
+              children: [UpcomingEventSection(), History()],
             ),
           );
         },

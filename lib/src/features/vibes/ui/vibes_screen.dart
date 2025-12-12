@@ -109,7 +109,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                           pathParameters: {
                                             "id": data[index]
                                                 .assignment
-                                                .vendor
+                                                .vendor!
                                                 .id,
                                           },
                                         );
@@ -119,7 +119,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                           pathParameters: {
                                             "id": data[index]
                                                 .assignment
-                                                .vendor
+                                                .event!
                                                 .id,
                                           },
                                         );
@@ -197,39 +197,6 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                                           12,
                                                     ),
                                                   ),
-                                                  // ElevatedButton(
-                                                  //   onPressed: () {},
-                                                  //   style:
-                                                  //       ElevatedButton.styleFrom(
-                                                  //         backgroundColor:
-                                                  //             Colors.white,
-                                                  //         foregroundColor:
-                                                  //             Colors.black,
-                                                  //         padding:
-                                                  //             EdgeInsets.symmetric(
-                                                  //               horizontal: 16,
-                                                  //             ),
-                                                  //       ),
-                                                  //   child: Row(
-                                                  //     children: [
-                                                  //       Icon(
-                                                  //         Icons.add,
-                                                  //         color: AppColors
-                                                  //             .textInverse,
-                                                  //       ),
-                                                  //       SizedBox(width: 4),
-                                                  //       Text(
-                                                  //         "Reserve",
-                                                  //         style: AppTextStyles(context)
-                                                  //             .smallSemibold
-                                                  //             .copyWith(
-                                                  //               color: AppColors
-                                                  //                   .textInverse,
-                                                  //             ),
-                                                  //       ),
-                                                  //     ],
-                                                  //   ),
-                                                  // ),
                                                 ],
                                               ),
                                             ],
@@ -280,44 +247,44 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                 Row(
                                   spacing: 12,
                                   children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        context.push("/location");
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 8,
-                                          horizontal: 12,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.2,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            100,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.keyboard_arrow_down,
-                                              size: 20,
-                                            ),
-                                            Text(
-                                              "Egypt",
-                                              style: TextStyle(
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    14,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                    // GestureDetector(
+                                    //   onTap: () {
+                                    //     context.push("/location");
+                                    //   },
+                                    //   child: Container(
+                                    //     padding: EdgeInsets.symmetric(
+                                    //       vertical: 8,
+                                    //       horizontal: 12,
+                                    //     ),
+                                    //     decoration: BoxDecoration(
+                                    //       color: Colors.white.withValues(
+                                    //         alpha: 0.2,
+                                    //       ),
+                                    //       borderRadius: BorderRadius.circular(
+                                    //         100,
+                                    //       ),
+                                    //     ),
+                                    //     child: Row(
+                                    //       children: [
+                                    //         Icon(
+                                    //           Icons.keyboard_arrow_down,
+                                    //           size: 20,
+                                    //         ),
+                                    //         Text(
+                                    //           "Egypt",
+                                    //           style: TextStyle(
+                                    //             fontSize:
+                                    //                 AppTextStyles(
+                                    //                   context,
+                                    //                 ).accumulator *
+                                    //                 14,
+                                    //             fontWeight: FontWeight.w500,
+                                    //           ),
+                                    //         ),
+                                    //       ],
+                                    //     ),
+                                    //   ),
+                                    // ),
                                     GestureDetector(
                                       onTap: () =>
                                           context.push("/notifications"),
@@ -556,35 +523,40 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                     CarouselSlider(
                                       items: data
                                           .map(
-                                            (e) => OpenContainer(
-                                              closedColor:
-                                                  AppColors.backgroundBase,
-                                              closedElevation: 0,
-                                              closedBuilder: (context, _) {
-                                                return SmoothClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(24),
-                                                  smoothness: 1,
-                                                  child: e.image != null
-                                                      ? Container(
-                                                          width: 320,
+                                            (e) => GestureDetector(
+                                              onTap: () {
+                                                if (e.assignment.targetType ==
+                                                    AssignmentStatus.event) {
+                                                  context.push(
+                                                    "/event/${e.assignment.event?.id}",
+                                                  );
+                                                } else {
+                                                  context.push(
+                                                    "/vendor/${e.assignment.vendor?.id}",
+                                                  );
+                                                }
+                                              },
+                                              child: SmoothClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(24),
+                                                smoothness: 1,
+                                                child: e.image != null
+                                                    ? Container(
+                                                        width: 320,
+                                                        color: AppColors
+                                                            .surfaceContainer,
+                                                        child: _buildImage(
+                                                          e.image!,
+                                                        ),
+                                                      )
+                                                    : Container(
+                                                        width: 320,
+                                                        decoration: BoxDecoration(
                                                           color: AppColors
                                                               .surfaceContainer,
-                                                          child: _buildImage(
-                                                            e.image!,
-                                                          ),
-                                                        )
-                                                      : Container(
-                                                          width: 320,
-                                                          decoration: BoxDecoration(
-                                                            color: AppColors
-                                                                .surfaceContainer,
-                                                          ),
                                                         ),
-                                                );
-                                              },
-                                              openBuilder: (context, _) =>
-                                                  SizedBox.shrink(),
+                                                      ),
+                                              ),
                                             ),
                                           )
                                           .toList(),
@@ -643,107 +615,107 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                             SizedBox(height: 42),
 
                             AllVendorsWidget(),
-                            Column(
-                              children: [
-                                categories.when(
-                                  data: (data) {
-                                    if (data.isEmpty) {
-                                      return SizedBox.shrink();
-                                    }
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                            // Column(
+                            //   children: [
+                            //     categories.when(
+                            //       data: (data) {
+                            //         if (data.isEmpty) {
+                            //           return SizedBox.shrink();
+                            //         }
+                            //         return Padding(
+                            //           padding: const EdgeInsets.symmetric(
+                            //             horizontal: 16,
+                            //           ),
+                            //           child: Column(
+                            //             crossAxisAlignment:
+                            //                 CrossAxisAlignment.start,
 
-                                        children: [
-                                          SizedBox(height: 41),
+                            //             children: [
+                            //               SizedBox(height: 41),
 
-                                          Text(
-                                            "HydeX Curated",
-                                            style: TextStyle(
-                                              fontSize:
-                                                  AppTextStyles(
-                                                    context,
-                                                  ).accumulator *
-                                                  24,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                          Text(
-                                            "The finest venues and events in one place.",
-                                            style: TextStyle(
-                                              fontSize:
-                                                  AppTextStyles(
-                                                    context,
-                                                  ).accumulator *
-                                                  14,
-                                              color: Color(0xff858585),
-                                            ),
-                                          ),
-                                          SizedBox(height: 15),
-                                          Column(
-                                            spacing: 12,
-                                            children: [
-                                              for (
-                                                int index = 0;
-                                                index < data.length;
-                                                index++
-                                              ) ...[
-                                                CuratedContainer(
-                                                  reverse: index % 2 == 0,
-                                                  heading: data[index].name,
-                                                  endText:
-                                                      data[index].description,
-                                                  image:
-                                                      data[index].image ?? "",
-                                                ),
-                                              ],
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                  error: (e, s) {
-                                    log(
-                                      "[Event Categories]",
-                                      error: e,
-                                      stackTrace: s,
-                                    );
-                                    return Text("Error");
-                                  },
-                                  loading: () {
-                                    return SizedBox(
-                                      height: 300,
-                                      child: ListView.separated(
-                                        itemCount: 4,
-                                        separatorBuilder: (_, _) =>
-                                            SizedBox(height: 12),
-                                        padding: .symmetric(horizontal: 16),
-                                        itemBuilder: (context, index) =>
-                                            Shimmer.fromColors(
-                                              baseColor:
-                                                  AppColors.backgroundOverlay,
-                                              highlightColor:
-                                                  AppColors.buttonSecondary,
-                                              child: SmoothContainer(
-                                                smoothness: 1,
-                                                width: double.infinity,
-                                                color:
-                                                    AppColors.backgroundOverlay,
-                                                borderRadius:
-                                                    BorderRadius.circular(24),
-                                              ),
-                                            ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
+                            //               Text(
+                            //                 "HydeX Curated",
+                            //                 style: TextStyle(
+                            //                   fontSize:
+                            //                       AppTextStyles(
+                            //                         context,
+                            //                       ).accumulator *
+                            //                       24,
+                            //                   fontWeight: FontWeight.w700,
+                            //                 ),
+                            //               ),
+                            //               Text(
+                            //                 "The finest venues and events in one place.",
+                            //                 style: TextStyle(
+                            //                   fontSize:
+                            //                       AppTextStyles(
+                            //                         context,
+                            //                       ).accumulator *
+                            //                       14,
+                            //                   color: Color(0xff858585),
+                            //                 ),
+                            //               ),
+                            //               SizedBox(height: 15),
+                            //               Column(
+                            //                 spacing: 12,
+                            //                 children: [
+                            //                   for (
+                            //                     int index = 0;
+                            //                     index < data.length;
+                            //                     index++
+                            //                   ) ...[
+                            //                     CuratedContainer(
+                            //                       reverse: index % 2 == 0,
+                            //                       heading: data[index].name,
+                            //                       endText:
+                            //                           data[index].description,
+                            //                       image:
+                            //                           data[index].image ?? "",
+                            //                     ),
+                            //                   ],
+                            //                 ],
+                            //               ),
+                            //             ],
+                            //           ),
+                            //         );
+                            //       },
+                            //       error: (e, s) {
+                            //         log(
+                            //           "[Event Categories]",
+                            //           error: e,
+                            //           stackTrace: s,
+                            //         );
+                            //         return Text("Error");
+                            //       },
+                            //       loading: () {
+                            //         return SizedBox(
+                            //           height: 300,
+                            //           child: ListView.separated(
+                            //             itemCount: 4,
+                            //             separatorBuilder: (_, _) =>
+                            //                 SizedBox(height: 12),
+                            //             padding: .symmetric(horizontal: 16),
+                            //             itemBuilder: (context, index) =>
+                            //                 Shimmer.fromColors(
+                            //                   baseColor:
+                            //                       AppColors.backgroundOverlay,
+                            //                   highlightColor:
+                            //                       AppColors.buttonSecondary,
+                            //                   child: SmoothContainer(
+                            //                     smoothness: 1,
+                            //                     width: double.infinity,
+                            //                     color:
+                            //                         AppColors.backgroundOverlay,
+                            //                     borderRadius:
+                            //                         BorderRadius.circular(24),
+                            //                   ),
+                            //                 ),
+                            //           ),
+                            //         );
+                            //       },
+                            //     ),
+                            //   ],
+                            // ),
                             SizedBox(height: 120),
                           ],
                         ),
@@ -1150,88 +1122,51 @@ class CuratedContainer extends StatelessWidget {
   final Color containerColor = AppColors.surfaceContainer;
   @override
   Widget build(BuildContext context) {
-    return SmoothClipRRect(
-      smoothness: 1,
-      borderRadius: BorderRadius.circular(24),
-      child: Container(
-        decoration: BoxDecoration(color: containerColor),
-        child: IntrinsicHeight(
-          child: reverse
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Stack(
-                      alignment: Alignment.centerLeft,
-                      children: [
-                        SizedBox(
-                          height: double.infinity,
-                          width: 134,
-                          child: _buildImage(image),
-                        ),
-                        Container(
-                          width: 134,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.transparent,
-                                containerColor.withValues(alpha: 0.5),
-                                containerColor,
-                              ],
+    return GestureDetector(
+      onTap: () => context.push("/category"),
+      child: SmoothClipRRect(
+        smoothness: 1,
+        borderRadius: BorderRadius.circular(24),
+        child: Container(
+          decoration: BoxDecoration(color: containerColor),
+          child: IntrinsicHeight(
+            child: reverse
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Stack(
+                        alignment: Alignment.centerLeft,
+                        children: [
+                          SizedBox(
+                            height: double.infinity,
+                            width: 134,
+                            child: _buildImage(image),
+                          ),
+                          Container(
+                            width: 134,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.transparent,
+                                  containerColor.withValues(alpha: 0.5),
+                                  containerColor,
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 20,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              heading,
-                              style: TextStyle(
-                                fontSize:
-                                    AppTextStyles(context).accumulator * 30,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            SizedBox(height: 12),
-                            Text(
-                              endText,
-                              maxLines: 1,
-                              style: TextStyle(
-                                fontSize:
-                                    AppTextStyles(context).accumulator * 14,
-                                fontWeight: FontWeight.w100,
-                              ),
-                            ),
-                          ],
-                        ),
+                        ],
                       ),
-                    ),
-                    SizedBox(width: 50),
-                  ],
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 20,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Text(
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 20,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
                                 heading,
                                 style: TextStyle(
                                   fontSize:
@@ -1239,48 +1174,88 @@ class CuratedContainer extends StatelessWidget {
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                            ),
-                            SizedBox(height: 12),
-
-                            Text(
-                              endText,
-                              style: TextStyle(
-                                fontSize:
-                                    AppTextStyles(context).accumulator * 14,
-                                fontWeight: FontWeight.w100,
+                              SizedBox(height: 12),
+                              Text(
+                                endText,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 14,
+                                  fontWeight: FontWeight.w100,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Stack(
-                      alignment: Alignment.centerLeft,
-                      children: [
-                        SizedBox(
-                          height: double.infinity,
-                          width: 134,
-                          child: _buildImage(image),
-                        ),
-                        Container(
-                          width: 134,
-
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.centerRight,
-                              end: Alignment.centerLeft,
-                              colors: [
-                                Colors.transparent,
-                                containerColor.withValues(alpha: 0.5),
-                                containerColor,
-                              ],
-                            ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                      SizedBox(width: 50),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 20,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  heading,
+                                  style: TextStyle(
+                                    fontSize:
+                                        AppTextStyles(context).accumulator * 30,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 12),
+
+                              Text(
+                                endText,
+                                style: TextStyle(
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 14,
+                                  fontWeight: FontWeight.w100,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Stack(
+                        alignment: Alignment.centerLeft,
+                        children: [
+                          SizedBox(
+                            height: double.infinity,
+                            width: 134,
+                            child: _buildImage(image),
+                          ),
+                          Container(
+                            width: 134,
+
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.centerRight,
+                                end: Alignment.centerLeft,
+                                colors: [
+                                  Colors.transparent,
+                                  containerColor.withValues(alpha: 0.5),
+                                  containerColor,
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+          ),
         ),
       ),
     );

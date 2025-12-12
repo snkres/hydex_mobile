@@ -20,6 +20,7 @@ import 'package:hydex/src/features/booking/data/create_book.dart';
 import 'package:hydex/src/features/booking/ui/components/ban_hady.dart';
 import 'package:hydex/src/features/booking/ui/create_booking.dart';
 import 'package:hydex/src/features/booking/ui/summary.dart';
+import 'package:hydex/src/features/category/ui/category_details.dart';
 import 'package:hydex/src/features/contact/ui/contacts.dart';
 import 'package:hydex/src/features/events/ui/events.dart';
 import 'package:hydex/src/features/location/ui/location_screen.dart';
@@ -166,6 +167,11 @@ class AppRoutes {
             VendorDetailsScreen(id: state.pathParameters["id"] as String),
       ),
       GoRoute(path: "/hady", builder: (context, state) => BanHady()),
+      GoRoute(
+        path: "/category",
+        name: "category_detail",
+        builder: (context, state) => CategoryDetails(),
+      ),
     ],
   );
 }

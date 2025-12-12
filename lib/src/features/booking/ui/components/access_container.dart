@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/booking/data/create_book.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
@@ -49,10 +50,9 @@ class AccessSection extends ConsumerWidget {
             final isSelected = selectedPass == pass;
 
             return AccessContainer(
-              title: pass.name,
+              title: pass.name.capitalize(),
               price: (pass.price.toInt()).toString(),
-              description: "Enjoy full access to the event.",
-              features: const ["Event access", "Welcome drink"],
+              description: pass.benefits,
               isSelected: isSelected,
               count: isSelected ? guestCount : 0,
               discount: pass.discountPercentage,

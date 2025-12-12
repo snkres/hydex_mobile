@@ -213,14 +213,14 @@ class UpcomingEventContainer extends StatelessWidget {
           ],
         ),
         SizedBox(height: 16),
-        PrimaryButton(
-          onTap: () async {
-            context.push("/profile-summary", extra: event);
-          },
-          title: "View details",
-          frColor: AppColors.buttonPrimary,
-          bgColor: AppColors.buttonTertiary,
-        ),
+        // PrimaryButton(
+        //   onTap: () async {
+        //     context.push("/profile-summary", extra: event);
+        //   },
+        //   title: "View details",
+        //   frColor: AppColors.buttonPrimary,
+        //   bgColor: AppColors.buttonTertiary,
+        // ),
         SizedBox(height: 16),
       ],
     );

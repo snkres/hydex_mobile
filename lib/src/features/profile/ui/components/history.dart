@@ -170,11 +170,16 @@ class HistoryContainer extends StatelessWidget {
                   package: "assets",
                   width: 15,
                 ),
-                Text(
-                  event.location.street ?? "Unknown location",
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: AppTextStyles(context).accumulator * 14,
+                SizedBox(
+                  width: 130,
+
+                  child: Text(
+                    event.location.address ?? "Unknown location",
+                    maxLines: 2,
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: AppTextStyles(context).accumulator * 14,
+                    ),
                   ),
                 ),
               ],
@@ -199,15 +204,15 @@ class HistoryContainer extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 16),
-        PrimaryButton(
-          onTap: () async {
-            context.push("/profile-summary", extra: event);
-          },
-          title: "View details",
-          frColor: AppColors.buttonPrimary,
-          bgColor: AppColors.buttonTertiary,
-        ),
+        // SizedBox(height: 16),
+        // // PrimaryButton(
+        // //   onTap: () async {
+        // //     context.push("/profile-summary", extra: event);
+        // //   },
+        // //   title: "View details",
+        // //   frColor: AppColors.buttonPrimary,
+        // //   bgColor: AppColors.buttonTertiary,
+        // // ),
         SizedBox(height: 16),
       ],
     );

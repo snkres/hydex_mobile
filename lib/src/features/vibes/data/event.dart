@@ -59,7 +59,6 @@ extension ScheduleParser on Map<String, OperatingHours> {
     final now = DateTime.now();
     final List<DateTime> result = [];
 
-    // Map of day names to Dart weekday integers (Monday=1 ... Sunday=7)
     final dayMap = {
       "monday": DateTime.monday,
       "tuesday": DateTime.tuesday,
@@ -77,11 +76,6 @@ extension ScheduleParser on Map<String, OperatingHours> {
       if (dayMap.containsKey(normalizedDay)) {
         final targetWeekday = dayMap[normalizedDay]!;
 
-        // --- Date Calculation Logic ---
-        // We cannot just put 'targetWeekday' into the day field of DateTime
-        // because the 1st of the month isn't necessarily a Monday.
-        // Instead, we find the date of that weekday in the *current week*.
-
         // 1. Find the Monday of the current week
         final mondayOfCurrentWeek = now.subtract(
           Duration(days: now.weekday - 1),
@@ -92,26 +86,43 @@ extension ScheduleParser on Map<String, OperatingHours> {
           Duration(days: targetWeekday - 1),
         );
 
-        // --- Time Parsing Logic ---
-        // Parse "9:00" -> hour: 9, minute: 0
-        final timeParts = value.open.split(":");
-        final int hour = int.parse(timeParts[0]);
-        final int minute = int.parse(timeParts[1]);
+        final openTimeParts = value.open.split(":");
+        final int openHour = int.parse(openTimeParts[0]);
+        final int openMinute = int.parse(openTimeParts[1]);
 
-        // Combine Date and Time
-        final dateTime = DateTime(
+        final startDateTime = DateTime(
           targetDate.year,
           targetDate.month,
           targetDate.day,
-          hour,
-          minute,
+          openHour,
+          openMinute,
         );
 
-        result.add(dateTime);
+        final closeTimeParts = value.close.split(":");
+        final int closeHour = int.parse(closeTimeParts[0]);
+        final int closeMinute = int.parse(closeTimeParts[1]);
+
+        var endDateTime = DateTime(
+          targetDate.year,
+          targetDate.month,
+          targetDate.day,
+          closeHour,
+          closeMinute,
+        );
+
+        // Handle closing time being on the next day (e.g., 23:00 to 02:00)
+        if (endDateTime.isBefore(startDateTime)) {
+          endDateTime = endDateTime.add(const Duration(days: 1));
+        }
+
+        // Generate 30-minute slots
+        var currentSlot = startDateTime;
+        while (currentSlot.isBefore(endDateTime)) {
+          result.add(currentSlot);
+          currentSlot = currentSlot.add(const Duration(minutes: 30));
+        }
       }
     });
-
-    // Optional: Sort the list by date/time
     result.sort((a, b) => a.compareTo(b));
 
     return result;
@@ -219,14 +230,24 @@ class BookingExperience with BookingExperienceMappable {
 class Assignment with AssignmentMappable {
   final String id;
   final AssignmentStatus targetType;
-  final Vendor vendor;
+  final AssignmentEvent? vendor;
+  final AssignmentEvent? event;
 
   Assignment({
     required this.id,
     required this.targetType,
-    required this.vendor,
+    this.vendor,
+    this.event,
   });
 }
+
+@MappableClass()
+class AssignmentEvent with AssignmentEventMappable {
+  final String id;
+
+  AssignmentEvent({required this.id});
+}
+
 
 @MappableEnum()
 enum AssignmentStatus {

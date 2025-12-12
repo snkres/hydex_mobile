@@ -10,9 +10,7 @@ import 'package:hydex/src/features/booking/ui/components/bottom_bar.dart';
 import 'package:hydex/src/features/booking/ui/components/date_container.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:hydex/src/features/booking/ui/components/slots_container.dart';
-import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
-import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:soft_edge_blur/soft_edge_blur.dart';
 
 class CreateBooking extends ConsumerStatefulWidget {
@@ -37,6 +35,18 @@ class _CreateBookingState extends ConsumerState<CreateBooking> {
     selectedDate = isEvent ? widget.book.startTime : vendorAvailable.first;
 
     super.initState();
+  }
+
+  List<DateTime> get _uniqueDates {
+    final seen = <String>{};
+    final List<DateTime> all = [
+      if (widget.book.startTime != null) widget.book.startTime!,
+      ...vendorAvailable,
+    ];
+    return all.where((d) {
+      final k = "${d.year}-${d.month}-${d.day}";
+      return seen.add(k);
+    }).toList();
   }
 
   @override
@@ -142,10 +152,7 @@ class _CreateBookingState extends ConsumerState<CreateBooking> {
                     // PerkContainer(),
                     SizedBox(height: 24),
                     DateContainer(
-                      availableDates: [
-                        ?widget.book.startTime,
-                        ...vendorAvailable,
-                      ],
+                      availableDates: _uniqueDates,
                       selectedDate: selectedDate,
                       onDateSelected: (date) {
                         setState(() {

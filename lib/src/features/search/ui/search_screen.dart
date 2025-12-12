@@ -9,13 +9,11 @@ import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/features/search/data/search_data.dart';
-import 'package:hydex/src/features/search/domain/search_repository.dart';
 import 'package:hydex/src/features/search/ui/components/not_found.dart';
 import 'package:hydex/src/features/search/ui/viewmodel.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
-import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:lottie/lottie.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
@@ -38,269 +36,334 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final categories = ref.watch(getEventCategoriesProvider);
     final searchAsync = ref.watch(searchViewModelProvider);
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: .start,
-          children: [
-            SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                spacing: 4,
-                children: [
-                  Expanded(
-                    child: StatefulBuilder(
-                      builder: (context, setState) {
-                        return TextField(
-                          controller: searchController,
-                          onChanged: (value) {
-                            ref
-                                .read(searchViewModelProvider.notifier)
-                                .setQuery(value);
-                          },
-                          decoration: InputDecoration(
-                            fillColor: AppColors.containerDim,
-                            border: UnderlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-
-                            prefixIcon: Padding(
-                              padding: const EdgeInsets.only(left: 16),
-                              child: SvgPicture.asset(
-                                "img/svg/search.svg",
-                                package: "assets",
-                              ),
-                            ),
-
-                            suffixIcon: searchController.text.isNotEmpty
-                                ? Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                    ),
-                                    child: IconButton(
-                                      style: ButtonStyle(
-                                        backgroundColor: .all(
-                                          Colors.transparent,
-                                        ),
-                                      ),
-                                      constraints: BoxConstraints(
-                                        minWidth: 10,
-                                        minHeight: 10,
-                                      ),
-                                      icon: const Icon(Icons.close),
-                                      onPressed: () {
-                                        searchController.clear();
-                                        ref
-                                            .read(
-                                              searchViewModelProvider.notifier,
-                                            )
-                                            .setQuery(null);
-                                        setState(() {});
-                                      },
-                                    ),
-                                  )
-                                : null,
-
-                            label: Row(
-                              spacing: 10,
-                              children: [
-                                Text(
-                                  "Search venues or events...",
-                                  style: AppTextStyles(context).smallRegular,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
-                  IconButton(
-                    color: AppColors.containerDim,
-                    constraints: BoxConstraints(minHeight: 50, minWidth: 50),
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (context) => FiltersWidget(),
-                      );
-                    },
-                    icon: SvgPicture.asset(
-                      width: 19,
-                      "img/svg/filter.svg",
-                      package: "assets",
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                "Popular Categories",
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: AppTextStyles(context).accumulator * 16,
-                  fontWeight: .w500,
-                ),
-              ),
-            ),
-            SizedBox(height: 12),
-            categories.when(
-              data: (data) {
-                final categoriesWithAll = [
-                  EventCategory(id: "all", name: "All", description: ""),
-                  ...data,
-                ];
-                return SizedBox(
-                  height: 36,
-                  child: ListView.separated(
-                    scrollDirection: .horizontal,
-                    itemCount: categoriesWithAll.length,
-                    padding: .symmetric(horizontal: 16),
-                    separatorBuilder: (_, _) => SizedBox(width: 8),
-                    itemBuilder: (context, index) => CustomChip(
-                      title: categoriesWithAll[index].name,
-                      isSelected:
-                          selectedCategory.name ==
-                          categoriesWithAll[index].name,
-                      onTap: () {
-                        setState(() {
-                          selectedCategory = categoriesWithAll[index];
-                        });
-                        ref
-                            .read(searchViewModelProvider.notifier)
-                            .setCategory(categoriesWithAll[index].id);
-                      },
-                    ),
-                  ),
-                );
-              },
-              error: (e, s) => SizedBox.shrink(),
-              loading: () => SizedBox.shrink(),
-            ),
-            searchAsync.when(
-              data: (data) {
-                final allEmpty =
-                    (data.events?.isEmpty ?? false) &&
-                    (data.vendors?.isEmpty ?? false);
-                if (allEmpty) {
-                  return NotFoundWidget();
-                }
-                return Column(
-                  crossAxisAlignment: .start,
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: .start,
+            children: [
+              SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  spacing: 4,
                   children: [
-                    Visibility(
-                      visible: data.events?.isNotEmpty ?? true,
-                      child: Column(
-                        crossAxisAlignment: .start,
-                        children: [
-                          SizedBox(height: 24),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              "Trending Events",
-                              style: TextStyle(
-                                color: AppColors.textSecondary,
-                                fontSize:
-                                    AppTextStyles(context).accumulator * 16,
-                                fontWeight: .w500,
-                              ),
+                    Expanded(
+                      child: TextField(
+                        controller: searchController,
+                        onChanged: (value) {
+                          ref
+                              .read(searchViewModelProvider.notifier)
+                              .setQuery(value);
+                        },
+                        decoration: InputDecoration(
+                          fillColor: AppColors.containerDim,
+                          border: UnderlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.only(left: 16),
+                            child: SvgPicture.asset(
+                              "img/svg/search.svg",
+                              package: "assets",
                             ),
                           ),
-                          SizedBox(height: 12),
-                          SizedBox(
-                            height: 85,
-                            child: ListView.separated(
-                              scrollDirection: .horizontal,
-                              padding: .symmetric(horizontal: 16),
-                              separatorBuilder: (_, _) => SizedBox(width: 8),
-                              itemCount: data.events?.length ?? 0,
-                              itemBuilder: (context, index) {
-                                final event = data.events?[index];
-                                if (event == null) {
-                                  return SizedBox.shrink();
-                                }
-                                return TrendContainer(
-                                  name: event.name,
-                                  image: event.media.first,
-                                  priceType: event.priceType.label,
-                                  category: event.category.name,
-                                  location: event.location.address ?? "",
-                                  onTap: () => context.pushNamed(
-                                    "event_detail",
-                                    pathParameters: {"id": event.id},
+
+                          suffixIcon: searchController.text.isNotEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
                                   ),
-                                );
-                              },
-                            ),
+                                  child: IconButton(
+                                    style: ButtonStyle(
+                                      backgroundColor: .all(Colors.transparent),
+                                    ),
+                                    constraints: BoxConstraints(
+                                      minWidth: 10,
+                                      minHeight: 10,
+                                    ),
+                                    icon: const Icon(Icons.close),
+                                    onPressed: () {
+                                      searchController.clear();
+                                      ref
+                                          .read(
+                                            searchViewModelProvider.notifier,
+                                          )
+                                          .setQuery(null);
+                                      setState(() {});
+                                    },
+                                  ),
+                                )
+                              : null,
+
+                          label: Row(
+                            spacing: 10,
+                            children: [
+                              Text(
+                                "Search venues or events...",
+                                style: AppTextStyles(context).smallRegular,
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                    SizedBox(height: 24),
 
-                    Visibility(
-                      visible: data.vendors?.isNotEmpty ?? true,
-                      child: Column(
-                        crossAxisAlignment: .start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              "Top Vendors",
-                              style: TextStyle(
-                                color: AppColors.textSecondary,
-                                fontSize:
-                                    AppTextStyles(context).accumulator * 16,
-                                fontWeight: .w500,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 12),
-                          SizedBox(
-                            height: 85,
-                            child: ListView.separated(
-                              scrollDirection: .horizontal,
-                              padding: .symmetric(horizontal: 16),
-                              separatorBuilder: (_, _) => SizedBox(width: 8),
-                              itemCount: data.vendors?.length ?? 0,
-                              itemBuilder: (context, index) {
-                                final vendor = data.vendors?[index];
-                                if (vendor == null) {
-                                  return SizedBox.shrink();
-                                }
-                                return TrendContainer(
-                                  name: vendor.name,
-                                  category: vendor.category?.name ?? "",
-                                  priceType: vendor.priceType.label,
-                                  location: vendor.location.address ?? "",
-                                  image: vendor.media.first,
-                                  onTap: () => context.pushNamed(
-                                    "vendor_detail",
-                                    pathParameters: {"id": vendor.id},
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
+                    IconButton(
+                      color: AppColors.containerDim,
+                      constraints: BoxConstraints(minHeight: 50, minWidth: 50),
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) => FiltersWidget(),
+                        );
+                      },
+                      icon: SvgPicture.asset(
+                        width: 19,
+                        "img/svg/filter.svg",
+                        package: "assets",
                       ),
                     ),
                   ],
-                );
-              },
-              error: (e, s) {
-                log("Search Error: ", error: e, stackTrace: s);
-                return Center(child: Text("Error"));
-              },
-              loading: () =>
-                  Expanded(child: Center(child: CircularProgressIndicator())),
-            ),
-          ],
+                ),
+              ),
+
+              SizedBox(height: 12),
+              categories.when(
+                data: (data) {
+                  final categoriesWithAll = [
+                    EventCategory(id: "all", name: "All", description: ""),
+                    ...data,
+                  ];
+                  return SizedBox(
+                    height: 36,
+                    child: ListView.separated(
+                      scrollDirection: .horizontal,
+                      itemCount: categoriesWithAll.length,
+                      padding: .symmetric(horizontal: 16),
+                      separatorBuilder: (_, _) => SizedBox(width: 8),
+                      itemBuilder: (context, index) => CustomChip(
+                        title: categoriesWithAll[index].name,
+                        isSelected:
+                            selectedCategory.name ==
+                            categoriesWithAll[index].name,
+                        onTap: () {
+                          setState(() {
+                            selectedCategory = categoriesWithAll[index];
+                          });
+                          ref
+                              .read(searchViewModelProvider.notifier)
+                              .setCategory(categoriesWithAll[index].id);
+                        },
+                      ),
+                    ),
+                  );
+                },
+                error: (e, s) => SizedBox.shrink(),
+                loading: () => SizedBox.shrink(),
+              ),
+              searchAsync.when(
+                data: (data) {
+                  final query = ref.watch(
+                    searchViewModelProvider.notifier.select(
+                      (v) => v.filters.query,
+                    ),
+                  );
+                  final allEmpty =
+                      (data.events?.isEmpty ?? false) &&
+                      (data.vendors?.isEmpty ?? false);
+                  if (allEmpty) return NotFoundWidget();
+
+                  if (query?.isNotEmpty ?? false) {
+                    return Column(
+                      crossAxisAlignment: .start,
+                      children: [
+                        Visibility(
+                          visible: data.events?.isNotEmpty ?? true,
+                          child: Column(
+                            crossAxisAlignment: .start,
+                            children: [
+                              SizedBox(height: 12),
+                              ListView.separated(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                padding: .symmetric(horizontal: 16),
+                                separatorBuilder: (_, _) => SizedBox(height: 8),
+                                itemCount: data.events?.length ?? 0,
+                                itemBuilder: (context, index) {
+                                  final event = data.events?[index];
+                                  if (event == null) {
+                                    return SizedBox.shrink();
+                                  }
+                                  return TrendContainer(
+                                    width: double.infinity,
+                                    name: event.name,
+                                    image: event.media.first,
+                                    priceType:
+                                        "Event - ${event.priceType.label}",
+                                    category: event.category.name,
+                                    location: event.location.address ?? "",
+                                    onTap: () => context.pushNamed(
+                                      "event_detail",
+                                      pathParameters: {"id": event.id},
+                                    ),
+                                  );
+                                },
+                              ),
+                              SizedBox(height: 8),
+
+                              ListView.separated(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                padding: .symmetric(horizontal: 16),
+                                separatorBuilder: (_, _) => SizedBox(height: 8),
+                                itemCount: data.vendors?.length ?? 0,
+                                itemBuilder: (context, index) {
+                                  final vendor = data.vendors?[index];
+                                  if (vendor == null) {
+                                    return SizedBox.shrink();
+                                  }
+                                  return TrendContainer(
+                                    width: double.infinity,
+                                    name: vendor.name,
+                                    image: vendor.media.first,
+                                    priceType: vendor.priceType.label,
+                                    category: vendor.category?.name ?? "",
+                                    location: vendor.location.address ?? "",
+                                    onTap: () => context.pushNamed(
+                                      "vendor_detail",
+                                      pathParameters: {"id": vendor.id},
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
+                  return Column(
+                    crossAxisAlignment: .start,
+                    children: [
+                      Visibility(
+                        visible: data.events?.isNotEmpty ?? true,
+                        child: Column(
+                          crossAxisAlignment: .start,
+                          children: [
+                            SizedBox(height: 24),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Text(
+                                "Trending Events",
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 16,
+                                  fontWeight: .w500,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 12),
+                            SizedBox(
+                              height: 85,
+                              child: ListView.separated(
+                                scrollDirection: .horizontal,
+                                padding: .symmetric(horizontal: 16),
+                                separatorBuilder: (_, _) => SizedBox(width: 8),
+                                itemCount: data.events?.length ?? 0,
+                                itemBuilder: (context, index) {
+                                  final event = data.events?[index];
+                                  if (event == null) {
+                                    return SizedBox.shrink();
+                                  }
+                                  return TrendContainer(
+                                    name: event.name,
+                                    image: event.media.first,
+                                    priceType: event.priceType.label,
+                                    category: event.category.name,
+                                    location: event.location.address ?? "",
+                                    onTap: () => context.pushNamed(
+                                      "event_detail",
+                                      pathParameters: {"id": event.id},
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 24),
+
+                      Visibility(
+                        visible: data.vendors?.isNotEmpty ?? true,
+                        child: Column(
+                          crossAxisAlignment: .start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Text(
+                                "Top Vendors",
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 16,
+                                  fontWeight: .w500,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 12),
+                            SizedBox(
+                              height: 85,
+                              child: ListView.separated(
+                                scrollDirection: .horizontal,
+                                padding: .symmetric(horizontal: 16),
+                                separatorBuilder: (_, _) => SizedBox(width: 8),
+                                itemCount: data.vendors?.length ?? 0,
+                                itemBuilder: (context, index) {
+                                  final vendor = data.vendors?[index];
+                                  if (vendor == null) {
+                                    return SizedBox.shrink();
+                                  }
+                                  return TrendContainer(
+                                    name: vendor.name,
+                                    category: vendor.category?.name ?? "",
+                                    priceType: vendor.priceType.label,
+                                    location: vendor.location.address ?? "",
+                                    image: vendor.media.first,
+                                    onTap: () => context.pushNamed(
+                                      "vendor_detail",
+                                      pathParameters: {"id": vendor.id},
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                },
+                error: (e, s) {
+                  log("Search Error: ", error: e, stackTrace: s);
+                  return Center(child: Text("Error"));
+                },
+                loading: () => Padding(
+                  padding: const EdgeInsets.only(top: 32),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -316,16 +379,19 @@ class TrendContainer extends StatelessWidget {
     required this.location,
     required this.image,
     required this.onTap,
+    this.width = 316,
   });
   final String name, category, priceType, location, image;
   final VoidCallback onTap;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
-        width: 316,
+        width: width,
+        height: 85,
         child: Row(
           spacing: 12,
           crossAxisAlignment: .start,
@@ -358,8 +424,7 @@ class TrendContainer extends StatelessWidget {
                   Row(
                     mainAxisAlignment: .spaceBetween,
                     children: [
-                      SizedBox(
-                        width: 130,
+                      Expanded(
                         child: Text(
                           name,
                           maxLines: 1,
@@ -391,15 +456,12 @@ class TrendContainer extends StatelessWidget {
                       color: AppColors.textBrand,
                     ),
                   ),
-                  SizedBox(
-                    width: 200,
-                    child: Text(
-                      location,
-                      maxLines: 2,
-                      style: TextStyle(
-                        fontSize: AppTextStyles(context).accumulator * 12,
-                        color: AppColors.textSecondary,
-                      ),
+                  Text(
+                    location,
+                    maxLines: 2,
+                    style: TextStyle(
+                      fontSize: AppTextStyles(context).accumulator * 12,
+                      color: AppColors.textSecondary,
                     ),
                   ),
                   // Row(
