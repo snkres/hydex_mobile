@@ -26,30 +26,12 @@ class _SlotsContainerState extends State<SlotsContainer> {
   bool _showAllSlots = false;
   bool isEvent() => widget.startTime != null && widget.operatingHours.isEmpty;
 
-  bool isSameDayAsEventStart() {
-    final startTime = widget.startTime;
-    final selectedDate = widget.selectedDate;
-
-    if (startTime == null) {
-      return false;
-    }
-
-    return selectedDate?.year == startTime.year &&
-        selectedDate?.month == startTime.month &&
-        selectedDate?.day == startTime.day;
-  }
-
   String _formatTime(DateTime time) {
     return DateFormat('h:mm a').format(time);
   }
 
   bool isSameDate(DateTime? selectedSlot, DateTime selectedTime) {
-    if (selectedSlot == null) {
-      return false;
-    }
-    return selectedSlot.year == selectedTime.year &&
-        selectedSlot.month == selectedTime.month &&
-        selectedSlot.day == selectedTime.day;
+    return selectedSlot == selectedTime;
   }
 
   @override
@@ -58,7 +40,7 @@ class _SlotsContainerState extends State<SlotsContainer> {
       return Wrap(
         spacing: 9,
         runSpacing: 11,
-        runAlignment: WrapAlignment.start,
+        runAlignment: WrapAlignment.center,
         children: [
           GestureDetector(
             onTap: () {
@@ -95,7 +77,7 @@ class _SlotsContainerState extends State<SlotsContainer> {
     }
 
     final filteredSlots = widget.operatingHours
-        .where((slot) => isSameDate(widget.selectedDate, slot))
+        .where((slot) => DateUtils.isSameDay(widget.selectedDate, slot))
         .toList();
 
     final visibleSlots = _showAllSlots
@@ -103,12 +85,12 @@ class _SlotsContainerState extends State<SlotsContainer> {
         : filteredSlots.take(6).toList();
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Wrap(
           spacing: 9,
           runSpacing: 11,
-          runAlignment: WrapAlignment.start,
+          runAlignment: WrapAlignment.center,
           children: visibleSlots
               .map(
                 (e) => GestureDetector(

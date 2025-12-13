@@ -214,7 +214,7 @@ class UpcomingEventContainer extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 16),
+        // SizedBox(height: 16),
         // PrimaryButton(
         //   onTap: () async {
         //     context.push("/profile-summary", extra: event);
