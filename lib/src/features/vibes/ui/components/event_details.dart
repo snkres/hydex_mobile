@@ -114,7 +114,8 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                   passes: event.bookingExperience?.passes ?? [],
                   startTime: event.startTime,
                 );
-              
+                ref.read(createBookProvider.notifier).updateBook(book);
+                context.push("/create-booking", extra: book);
               },
               title: "RSVP",
             ),

@@ -178,6 +178,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                       false,
                   passes: vendor.bookingExperience?.passes ?? [],
                 );
+
                 ref.read(createBookProvider.notifier).updateBook(book);
                 context.push("/create-booking", extra: book);
               } catch (e) {

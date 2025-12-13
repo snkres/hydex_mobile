@@ -43,11 +43,8 @@ class UpcomingEventContainer extends StatelessWidget {
   const UpcomingEventContainer({super.key, required this.event});
 
   final UpcomingEvent event;
-
   String formatDate(DateTime time) {
-    final date = DateTime.parse("2025-12-25T00:30:00.000Z");
-    final nice = DateFormat('MMM d').format(date);
-    return nice;
+    return DateFormat('MMM d').format(time);
   }
 
   String weekdayShort(DateTime date) {

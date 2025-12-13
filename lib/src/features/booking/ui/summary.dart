@@ -214,130 +214,83 @@ class _LoadingFloatingButtonState extends ConsumerState<LoadingFloatingButton> {
       onPressed: loading
           ? null
           : () async {
-              showModalBottomSheet(
-                context: context,
-                builder: (context) => Center(
-                  child: Column(
-                    mainAxisAlignment: .center,
-                    children: [
-                      LottieBuilder.asset(
-                        "json/success.json",
-                        package: "assets",
-                        width: 150,
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        "Your booking is confirmed",
-                        style: AppTextStyles(context).primaryBold,
-                      ),
-                      SizedBox(height: 12),
-                      Text(
-                        "Please arrive at least 15 minutes before the show. Reservations are held for 1 hour",
-                        textAlign: .center,
-                        style: AppTextStyles(
-                          context,
-                        ).smallRegular.copyWith(color: AppColors.textSecondary),
-                      ),
-                      SizedBox(height: 16),
+              setState(() {
+                loading = true;
+              });
 
-                      Row(
-                        spacing: 8,
-                        mainAxisAlignment: .center,
-                        children: [
-                          SvgPicture.asset(
-                            "img/svg/information.svg",
-                            package: "assets",
-                          ),
-                          Text(
-                            "Payment will be collected ondoor",
-                            style: TextStyle(
-                              fontWeight: .w700,
-                              fontSize: AppTextStyles(context).accumulator * 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 26),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: PrimaryButton(
-                          onTap: () async {
-                            context.push("/", extra: 2);
-                          },
-                          title: "View my Bookings",
+              final status = await ref
+                  .read(createBookingProvider.future)
+                  .catchError((e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(e.message)));
+                    }
+                    return false;
+                  });
+              if (status && context.mounted) {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => Center(
+                    child: Column(
+                      mainAxisAlignment: .center,
+                      children: [
+                        LottieBuilder.asset(
+                          "json/success.json",
+                          package: "assets",
+                          width: 150,
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 8),
+                        Text(
+                          "Your booking is confirmed",
+                          style: AppTextStyles(context).primaryBold,
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          "Please arrive at least 15 minutes before the show. Reservations are held for 1 hour",
+                          textAlign: .center,
+                          style: AppTextStyles(context).smallRegular.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                        SizedBox(height: 16),
+
+                        Row(
+                          spacing: 8,
+                          mainAxisAlignment: .center,
+                          children: [
+                            SvgPicture.asset(
+                              "img/svg/information.svg",
+                              package: "assets",
+                            ),
+                            Text(
+                              "Payment will be collected ondoor",
+                              style: TextStyle(
+                                fontWeight: .w700,
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 26),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: PrimaryButton(
+                            onTap: () async {
+                              context.push("/", extra: 2);
+                            },
+                            title: "View my Bookings",
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-              // setState(() {
-              //   loading = true;
-              // });
-
-              // final status = await ref
-              //     .read(createBookingProvider.future)
-              //     .catchError((e) {
-              //       if (context.mounted) {
-              //         ScaffoldMessenger.of(
-              //           context,
-              //         ).showSnackBar(SnackBar(content: Text(e.message)));
-              //       }
-              //       return false;
-              //     });
-              // if (status && context.mounted) {
-              //   showModalBottomSheet(
-              //     context: context,
-              //     builder: (context) => Center(
-              //       child: Column(
-              //         mainAxisAlignment: .center,
-              //         children: [
-              //           LottieBuilder.asset(
-              //             "json/success.json",
-              //             package: "assets",
-              //             width: 150,
-              //           ),
-              //           SizedBox(height: 8),
-              //           Text(
-              //             "Your booking is confirmed",
-              //             style: AppTextStyles(context).primaryBold,
-              //           ),
-              //           SizedBox(height: 12),
-              //           Text(
-              //             "Please arrive at least 15 minutes before the show. Reservations are held for 1 hour",
-              //             textAlign: .center,
-              //             style: AppTextStyles(context).smallRegular.copyWith(
-              //               color: AppColors.textSecondary,
-              //             ),
-              //           ),
-              //           SizedBox(height: 16),
-
-              //           Row(
-              //             spacing: 8,
-              //             mainAxisAlignment: .center,
-              //             children: [
-              //               SvgPicture.asset(
-              //                 "img/svg/information.svg",
-              //                 package: "assets",
-              //               ),
-              //               Text("Payment will be collected ondoor"),
-              //             ],
-              //           ),
-              //           SizedBox(height: 26),
-              //           PrimaryButton(
-              //             onTap: () async {
-              //               context.go("/", extra: 2);
-              //             },
-              //             title: "View my Bookings",
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   );
-              // }
-              // setState(() {
-              //   loading = false;
-              // });
+                );
+              }
+              setState(() {
+                loading = false;
+              });
             },
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
