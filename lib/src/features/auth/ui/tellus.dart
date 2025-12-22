@@ -8,7 +8,6 @@ import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/nationality_provider.dart';
-import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
 import 'package:hydex/src/features/auth/ui/verify_email.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/custom_radio.dart';
@@ -344,7 +343,7 @@ class _TellusState extends State<Tellus> {
                                   Consumer(
                                     builder: (context, ref, child) {
                                       final userType = ref.watch(
-                                        userTypeProvider,
+                                        userProvider.select((v) => v?.role),
                                       );
                                       return Visibility(
                                         visible: userType == Role.owner,

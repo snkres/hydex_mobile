@@ -18,6 +18,14 @@ void main() async {
 
   await CacheHelper.init();
   await AssetLottie('json/splash.json', package: "assets").load();
+  AuthService.initialize();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await (FirebaseNotifications().init());
+  } catch (e) {}
+
   if (kDebugMode) {
     runApp(
       DevicePreview(
@@ -33,10 +41,4 @@ void main() async {
       options.sendDefaultPii = true;
     }, appRunner: () => runApp(ProviderScope(child: const MyApp())));
   }
-
-  AuthService.initialize();
-
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  unawaited(FirebaseNotifications().init());
 }

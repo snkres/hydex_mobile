@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hydex/core/network/auth_service.dart';
+import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/profile/domain/profile_providers.dart';
@@ -111,7 +112,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                               ),
                               SizedBox(height: 8),
                               Text(
-                                data?.role ?? "",
+                                data?.role.name ?? Role.seeker.name,
                                 style: TextStyle(
                                   fontSize:
                                       AppTextStyles(context).accumulator * 14,

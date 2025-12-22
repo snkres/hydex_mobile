@@ -39,7 +39,7 @@ class User with UserMappable {
   final String? nationality;
   final UserStatus status;
   final DateTime? dateOfBirth;
-  final String role;
+  final Role role;
   final String? referralCode;
   final String? password;
   final List<String>? interests;

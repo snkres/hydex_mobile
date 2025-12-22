@@ -134,7 +134,7 @@ class AuthService {
         "phone": user?.phone,
         "password": user?.password,
         "fullName": user?.fullName,
-        "role": user?.role,
+        "role": user?.role.toValue(),
         "gender": user?.gender,
         "nationality": user?.nationality,
         "dateOfBirth": user?.dateOfBirth,
@@ -239,7 +239,7 @@ class AuthService {
           }
         : null;
     switch (user.role) {
-      case "SEEKER":
+      case Role.seeker:
         return {
           "preferences": {
             "interests": user.interests,
@@ -252,7 +252,7 @@ class AuthService {
 
           "socialLinks": socialLinks,
         };
-      case "AMBASSADOR":
+      case Role.ambassador:
         return {
           "preferences": {
             "contentNiches": user.contentNiches,
@@ -272,7 +272,7 @@ class AuthService {
 
           "socialLinks": socialLinks,
         };
-      case "OWNER":
+      case Role.owner:
         return {
           "businessName": user.businessName,
 
@@ -303,7 +303,7 @@ class UserNotifier extends _$UserNotifier {
     String? referralCode,
     String? fullName,
     String? password,
-    String? role,
+    Role? role,
     String? nationality,
     String? gender,
     String? dateOfBirth,
@@ -328,7 +328,7 @@ class UserNotifier extends _$UserNotifier {
         nationality: nationality ?? "",
         referralCode: referralCode ?? "",
         password: password ?? "",
-        role: role ?? "",
+        role: role ?? Role.seeker,
         interests: interests,
         contentNiches: contentNiches,
         audienceSizeRange: audienceSizeRange,
@@ -381,7 +381,6 @@ enum OTPType { phone, email }
 
 @Riverpod(keepAlive: true)
 Future<User?> currentUser(Ref ref) async {
-  
   final userState = ref.read(userProvider);
   if (userState != null) {
     return userState;

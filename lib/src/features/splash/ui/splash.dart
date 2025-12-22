@@ -38,33 +38,73 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 
   // Handles User Status (release mode logic) and final Authentication
-  Future<void> _checkUserStatusAndAuth() async {
-    // Use a variable to track the final destination based on all checks
-    String destinationPath = "/boarding";
-
+  // Returns the destination path to navigate to
+  Future<String> _checkUserStatusAndAuth() async {
     try {
-      // B. Final Authentication Check (Only reached if not redirected to /waitlist)
+      // Check if we have an access token
       final accessToken = await DioHelper.getAccessToken();
 
-      final isAuthenticated = accessToken != null;
-      if (isAuthenticated) {
-        final currentUser = await ref.read(currentUserProvider.future);
-        final isActive = currentUser?.status == UserStatus.active;
-        ref.read(authServiceProvider).sendFCMNotification();
-        if (!isActive) {
-          destinationPath = "/waitlist";
-        } else {
-          destinationPath = "/";
-        }
-      } else {
-        destinationPath = "/boarding";
+      if (accessToken == null) {
+        // No token, redirect to onboarding
+        return "/boarding";
       }
 
-      if (!mounted) return;
+      // We have a token, try to fetch current user
+      try {
+        final currentUser = await ref.read(currentUserProvider.future);
 
-      context.go(destinationPath);
+        if (currentUser == null) {
+          // User data is null, token might be invalid
+          await DioHelper.clearTokens();
+          return "/boarding";
+        }
+
+        final isActive = currentUser.status == UserStatus.active;
+
+        // Send FCM notification in background (don't await)
+        ref.read(authServiceProvider).sendFCMNotification().catchError((e) {
+          if (kDebugMode) {
+            print('⚠️ FCM notification failed: $e');
+          }
+        });
+
+        if (!isActive) {
+          return "/waitlist";
+        } else {
+          return "/";
+        }
+      } on UnauthorizedException catch (e) {
+        // Token is invalid or expired
+        if (kDebugMode) {
+          print('🚫 Unauthorized: $e');
+        }
+        await DioHelper.clearTokens();
+        return "/boarding";
+      } on TokenExpiredException catch (e) {
+        // Token refresh failed
+        if (kDebugMode) {
+          print('🚫 Token expired: $e');
+        }
+        await DioHelper.clearTokens();
+        return "/boarding";
+      } catch (e) {
+        // Any other error during user fetch (network, server, etc.)
+        if (kDebugMode) {
+          print('❌ Error fetching user: $e');
+        }
+        if (e is ApiException && e.statusCode == 401) {
+          await DioHelper.clearTokens();
+          return "/boarding";
+        }
+        // For other errors, still try to go to boarding as fallback
+        return "/boarding";
+      }
     } catch (e) {
-      if (mounted) context.go("/boarding"); // Fallback to safe screen
+      // Error checking token
+      if (kDebugMode) {
+        print('❌ Error in auth check: $e');
+      }
+      return "/boarding";
     }
   }
 
@@ -118,21 +158,42 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         fit: BoxFit.cover,
         onLoaded: (composition) {
           _lottieController.duration = composition.duration;
+
+          // Start all checks in parallel during the animation
+          Future<bool> hadyCheckFuture = isHady();
+          Future<String> authCheckFuture = _checkUserStatusAndAuth();
+
+          // Start animation and wait for it to complete
           _lottieController.forward().whenComplete(() async {
-            final hadyStatus = await isHady();
+            if (!context.mounted) return;
 
-            if (hadyStatus) {
-              final bannedStatus = await isBanned();
+            try {
+              // Wait for hady check to complete
+              final hadyStatus = await hadyCheckFuture;
 
-              if (bannedStatus && context.mounted) {
-                context.go("/hady");
-              } else {
-                // This runs if hadyStatus is true AND bannedStatus is false
-                await _checkUserStatusAndAuth();
+              if (hadyStatus) {
+                // If hady, check ban status
+                final bannedStatus = await isBanned();
+
+                if (bannedStatus) {
+                  if (!context.mounted) return;
+                  context.go("/hady");
+                  return;
+                }
               }
-            } else {
-              // This runs if hadyStatus is false
-              await _checkUserStatusAndAuth();
+
+              // Get the auth check result (should be ready by now)
+              final destination = await authCheckFuture;
+
+              if (!context.mounted) return;
+              context.go(destination);
+            } catch (e) {
+              // If any error occurs, fallback to boarding
+              if (kDebugMode) {
+                print('❌ Error during splash navigation: $e');
+              }
+              if (!context.mounted) return;
+              context.go("/boarding");
             }
           });
         },

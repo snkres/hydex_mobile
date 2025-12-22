@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
-import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:hydex/src/widgets/user_type_container.dart';
 
@@ -15,7 +15,8 @@ class PickUserType extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final currentType = ref.watch(userTypeProvider);
+        final currentType =
+            ref.watch(userProvider.select((v) => v?.role)) ?? Role.none;
         return Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -38,7 +39,7 @@ class PickUserType extends StatelessWidget {
                 UserTypeContainer<Role>(
                   emoji: "👩‍🎤",
                   onChanged: (v) {
-                    ref.read(userTypeProvider.notifier).change(v);
+                    ref.read(userProvider.notifier).create(role: v);
                   },
                   value: Role.seeker,
                   groupValue: currentType,
@@ -51,7 +52,7 @@ class PickUserType extends StatelessWidget {
                 UserTypeContainer<Role>(
                   emoji: "💫",
                   onChanged: (v) {
-                    ref.read(userTypeProvider.notifier).change(v);
+                    ref.read(userProvider.notifier).create(role: v);
                   },
                   value: Role.ambassador,
                   groupValue: currentType,
@@ -63,7 +64,7 @@ class PickUserType extends StatelessWidget {
                 UserTypeContainer<Role>(
                   emoji: "💼",
                   onChanged: (v) {
-                    ref.read(userTypeProvider.notifier).change(v);
+                    ref.read(userProvider.notifier).create(role: v);
                   },
                   value: Role.owner,
 
@@ -92,8 +93,8 @@ class PickUserType extends StatelessWidget {
                               curve: Curves.easeInOut,
                             );
                             ref
-                                .read(userTypeProvider.notifier)
-                                .change(currentType.toValue());
+                                .read(userProvider.notifier)
+                                .create(role: currentType);
                           }
                         : null,
                   );

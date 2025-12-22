@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/ui/type.dart';
-import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
@@ -103,8 +102,8 @@ class _SeekerScreenState extends State<SeekerScreen> {
                           padding: const EdgeInsets.only(top: 16),
                           child: Consumer(
                             builder: (context, ref, child) {
-                              final userType = ref.read(
-                                userTypeProvider,
+                              final userType = ref.watch(
+                                userProvider.select((v) => v?.role),
                               );
 
                               return PrimaryButton(

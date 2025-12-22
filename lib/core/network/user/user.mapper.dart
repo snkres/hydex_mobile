@@ -123,6 +123,7 @@ class UserMapper extends ClassMapperBase<User> {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = UserMapper._());
       UserStatusMapper.ensureInitialized();
+      RoleMapper.ensureInitialized();
       SocialLinksMapper.ensureInitialized();
     }
     return _instance!;
@@ -179,8 +180,8 @@ class UserMapper extends ClassMapperBase<User> {
     _$audienceSizeRange,
     opt: true,
   );
-  static String _$role(User v) => v.role;
-  static const Field<User, String> _f$role = Field('role', _$role);
+  static Role _$role(User v) => v.role;
+  static const Field<User, Role> _f$role = Field('role', _$role);
   static String? _$referralCode(User v) => v.referralCode;
   static const Field<User, String> _f$referralCode = Field(
     'referralCode',
@@ -347,7 +348,7 @@ abstract class UserCopyWith<$R, $In extends User, $Out>
     String? nationality,
     DateTime? dateOfBirth,
     String? audienceSizeRange,
-    String? role,
+    Role? role,
     String? referralCode,
     List<String>? interests,
     List<String>? contentNiches,
@@ -409,7 +410,7 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
     Object? nationality = $none,
     Object? dateOfBirth = $none,
     Object? audienceSizeRange = $none,
-    String? role,
+    Role? role,
     Object? referralCode = $none,
     Object? interests = $none,
     Object? contentNiches = $none,

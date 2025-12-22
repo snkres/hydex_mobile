@@ -266,7 +266,6 @@ class _BoardingScreenState extends State<BoardingScreen> {
                     setState(() {
                       _currentPage = page;
                     });
-                    // Reset timer when user manually swipes
                     _resetTimer();
                   },
                   itemBuilder: (context, index) {
