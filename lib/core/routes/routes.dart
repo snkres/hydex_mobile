@@ -30,6 +30,7 @@ import 'package:hydex/src/features/profile/ui/profile_screen.dart';
 import 'package:hydex/src/features/profile_summary/ui/profile_summary.dart';
 import 'package:hydex/src/features/splash/ui/splash.dart';
 import 'package:hydex/src/features/vendors/ui/vendors.dart';
+import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/ui/components/event_details.dart';
 import 'package:hydex/src/features/vibes/ui/details_screen.dart';
 import 'package:hydex/src/features/vibes/ui/happening_nearby.dart';
@@ -172,7 +173,8 @@ class AppRoutes {
       GoRoute(
         path: "/category",
         name: "category_detail",
-        builder: (context, state) => CategoryDetails(),
+        builder: (context, state) =>
+            CategoryDetails(category: state.extra as EventCategory),
       ),
     ],
   );

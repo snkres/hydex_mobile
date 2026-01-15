@@ -1,5 +1,4 @@
 import 'package:dart_mappable/dart_mappable.dart';
-import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/data/location.dart';
 import 'package:hydex/src/features/vibes/data/vendor.dart';
 
@@ -248,7 +247,6 @@ class AssignmentEvent with AssignmentEventMappable {
   AssignmentEvent({required this.id});
 }
 
-
 @MappableEnum()
 enum AssignmentStatus {
   @MappableValue('VENDOR')
@@ -283,3 +281,4 @@ extension PriceTypeX on PriceType {
     }
   }
 }
+

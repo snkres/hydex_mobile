@@ -152,41 +152,37 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
 
     return Scaffold(
       floatingActionButtonLocation: .centerDocked,
-      floatingActionButton: Visibility(
-        visible:
-            vendorAsync.value?.bookingExperience?.passes.isNotEmpty ?? false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: PrimaryButton(
-            bgColor: Colors.white,
-            frColor: Colors.black,
-            onTap: () async {
-              try {
-                final vendor = vendorAsync.requireValue;
-                final book = CreateBook(
-                  image: vendor.logo ?? "",
-                  location:
-                      vendor.location.address ??
-                      "${vendor.location.street}, ${vendor.location.city}, ${vendor.location.country}",
-                  name: vendor.name,
-                  operatingHours: vendor.operatingHours.toOpenDateTimes(),
-                  requiresApproval:
-                      vendorAsync
-                          .requireValue
-                          .bookingExperience
-                          ?.requireReservationApproval ??
-                      false,
-                  passes: vendor.bookingExperience?.passes ?? [],
-                );
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: PrimaryButton(
+          bgColor: Colors.white,
+          frColor: Colors.black,
+          onTap: () async {
+            try {
+              final vendor = vendorAsync.requireValue;
+              final book = CreateBook(
+                image: vendor.logo ?? "",
+                location:
+                    vendor.location.address ??
+                    "${vendor.location.street}, ${vendor.location.city}, ${vendor.location.country}",
+                name: vendor.name,
+                operatingHours: vendor.operatingHours.toOpenDateTimes(),
+                requiresApproval:
+                    vendorAsync
+                        .requireValue
+                        .bookingExperience
+                        ?.requireReservationApproval ??
+                    false,
+                passes: vendor.bookingExperience?.passes ?? [],
+              );
 
-                ref.read(createBookProvider.notifier).updateBook(book);
-                context.push("/create-booking", extra: book);
-              } catch (e) {
-                return;
-              }
-            },
-            title: "RSVP",
-          ),
+              ref.read(createBookProvider.notifier).updateBook(book);
+              context.push("/create-booking", extra: book);
+            } catch (e) {
+              return;
+            }
+          },
+          title: "RSVP",
         ),
       ),
       body: vendorAsync.when(
@@ -890,110 +886,136 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                         ),
                                       ),
                                       SizedBox(height: 24),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                        ),
+                                      Visibility(
+                                        visible: vendor.details.isNotEmpty,
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment: .start,
                                           children: [
-                                            Text(
-                                              "Menu & Cuisines".toUpperCase(),
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                color: AppColors.textSecondary,
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    16,
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 16,
                                               ),
-                                            ),
-                                            SizedBox(height: 12),
-                                            vendor.detailsDescription != null
-                                                ? Text(
-                                                    vendor.detailsDescription!,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Menu & Cuisines"
+                                                        .toUpperCase(),
                                                     style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
                                                       color: AppColors
                                                           .textSecondary,
                                                       fontSize:
                                                           AppTextStyles(
                                                             context,
                                                           ).accumulator *
-                                                          14,
+                                                          16,
                                                     ),
-                                                  )
-                                                : SizedBox.shrink(),
+                                                  ),
+                                                  SizedBox(height: 12),
+                                                  vendor.detailsDescription !=
+                                                          null
+                                                      ? Text(
+                                                          vendor
+                                                              .detailsDescription!,
+                                                          style: TextStyle(
+                                                            color: AppColors
+                                                                .textSecondary,
+                                                            fontSize:
+                                                                AppTextStyles(
+                                                                  context,
+                                                                ).accumulator *
+                                                                14,
+                                                          ),
+                                                        )
+                                                      : SizedBox.shrink(),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(height: 12),
+                                            SizedBox(
+                                              height: 200,
+                                              child: ListView.separated(
+                                                itemCount:
+                                                    vendor.details.length,
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                ),
+
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                separatorBuilder:
+                                                    (context, index) =>
+                                                        SizedBox(width: 8),
+                                                itemBuilder: (context, index) {
+                                                  final item =
+                                                      vendor.details[index];
+                                                  return OpenContainer(
+                                                    closedColor:
+                                                        Colors.transparent,
+                                                    closedElevation: 0,
+                                                    closedBuilder: (context, _) {
+                                                      return Column(
+                                                        spacing: 12,
+                                                        children: [
+                                                          SmoothClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  24,
+                                                                ),
+                                                            smoothness: 1,
+                                                            child: SizedBox(
+                                                              width: 165,
+                                                              height: 168,
+                                                              child:
+                                                                  CachedNetworkImage(
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    imageUrl: item
+                                                                        .image,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            item.title,
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              fontSize:
+                                                                  AppTextStyles(
+                                                                    context,
+                                                                  ).accumulator *
+                                                                  12,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                    openBuilder:
+                                                        (context, action) =>
+                                                            Gallery(
+                                                              gallery: vendor
+                                                                  .details
+                                                                  .map(
+                                                                    (e) =>
+                                                                        e.image,
+                                                                  )
+                                                                  .toList(),
+                                                              clickedPhoto:
+                                                                  item.image,
+                                                            ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                            SizedBox(height: 24),
                                           ],
                                         ),
                                       ),
-                                      SizedBox(height: 12),
 
-                                      SizedBox(
-                                        height: 200,
-                                        child: ListView.separated(
-                                          itemCount: vendor.details.length,
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                          ),
-
-                                          scrollDirection: Axis.horizontal,
-                                          separatorBuilder: (context, index) =>
-                                              SizedBox(width: 8),
-                                          itemBuilder: (context, index) {
-                                            final item = vendor.details[index];
-                                            return OpenContainer(
-                                              closedColor: Colors.transparent,
-                                              closedElevation: 0,
-                                              closedBuilder: (context, _) {
-                                                return Column(
-                                                  spacing: 12,
-                                                  children: [
-                                                    SmoothClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            24,
-                                                          ),
-                                                      smoothness: 1,
-                                                      child: SizedBox(
-                                                        width: 165,
-                                                        height: 168,
-                                                        child:
-                                                            CachedNetworkImage(
-                                                              fit: BoxFit.cover,
-                                                              imageUrl:
-                                                                  item.image,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      item.title,
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        fontSize:
-                                                            AppTextStyles(
-                                                              context,
-                                                            ).accumulator *
-                                                            12,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                              openBuilder: (context, action) =>
-                                                  Gallery(
-                                                    gallery: vendor.details
-                                                        .map((e) => e.image)
-                                                        .toList(),
-                                                    clickedPhoto: item.image,
-                                                  ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                      SizedBox(height: 24),
                                       Padding(
                                         padding: EdgeInsets.symmetric(
                                           horizontal: 16,

@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -82,45 +81,45 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
       0.6,
     );
 
-    return eventAsync.when(
-      loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, st) {
-        log("Event Detail Error", error: e, stackTrace: st);
+    return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: PrimaryButton(
+          bgColor: Colors.white,
+          frColor: Colors.black,
+          onTap: () async {
+            final event = eventAsync.requireValue;
+            final book = CreateBook(
+              name: event.name,
+              image: event.vendor.logo ?? "",
+              location:
+                  event.location.address ??
+                  "${event.location.street}, ${event.location.city}, ${event.location.country}",
 
-        Sentry.captureException(e, stackTrace: st);
+              passes: event.bookingExperience?.passes ?? [],
+              startTime: event.startTime,
+            );
+            ref.read(createBookProvider.notifier).updateBook(book);
+            context.push("/create-booking", extra: book);
+          },
+          title: "RSVP",
+        ),
+      ),
+      body: eventAsync.when(
+        loading: () =>
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
+        error: (e, st) {
+          log("Event Detail Error", error: e, stackTrace: st);
 
-        return const Scaffold(
-          body: Center(child: Text("Something went wrong")),
-        );
-      },
-      data: (event) {
-        return Scaffold(
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: PrimaryButton(
-              bgColor: Colors.white,
-              frColor: Colors.black,
-              onTap: () async {
-                final book = CreateBook(
-                  name: event.name,
-                  image: event.vendor.logo ?? "",
-                  location:
-                      event.location.address ??
-                      "${event.location.street}, ${event.location.city}, ${event.location.country}",
+          Sentry.captureException(e, stackTrace: st);
 
-                  passes: event.bookingExperience?.passes ?? [],
-                  startTime: event.startTime,
-                );
-                ref.read(createBookProvider.notifier).updateBook(book);
-                context.push("/create-booking", extra: book);
-              },
-              title: "RSVP",
-            ),
-          ),
-          body: SoftEdgeBlur(
+          return const Scaffold(
+            body: Center(child: Text("Something went wrong")),
+          );
+        },
+        data: (event) {
+          return SoftEdgeBlur(
             edges: event.bookingExperience != null
                 ? [
                     EdgeBlur(
@@ -303,9 +302,9 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                 ),
               ],
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
@@ -1013,11 +1012,11 @@ class CollapsedEventContainer extends ConsumerWidget {
                                         AppTextStyles(context).accumulator * 16,
                                   ),
                                 ),
-                                SizedBox(height: 12),
                                 ListView.separated(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: thingsToKnow.length,
+                                  padding: .zero,
                                   separatorBuilder: (_, __) => Padding(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 16,
@@ -1029,7 +1028,6 @@ class CollapsedEventContainer extends ConsumerWidget {
                                   itemBuilder: (_, index) {
                                     return ListTile(
                                       contentPadding: .zero,
-
                                       leading: SvgPicture.asset(
                                         "img/svg/ar_.svg",
                                         width: 15,

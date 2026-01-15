@@ -13,6 +13,7 @@ import 'package:hydex/src/features/search/ui/components/not_found.dart';
 import 'package:hydex/src/features/search/ui/viewmodel.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
+import 'package:hydex/src/features/vibes/data/vendor.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:lottie/lottie.dart';
 import 'package:smooth_corner/smooth_corner.dart';
@@ -176,73 +177,97 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       (data.vendors?.isEmpty ?? false);
                   if (allEmpty) return NotFoundWidget();
 
-                  if (query?.isNotEmpty ?? false) {
-                    return Column(
-                      crossAxisAlignment: .start,
-                      children: [
-                        Visibility(
-                          visible: data.events?.isNotEmpty ?? true,
-                          child: Column(
-                            crossAxisAlignment: .start,
-                            children: [
-                              SizedBox(height: 12),
-                              ListView.separated(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                padding: .symmetric(horizontal: 16),
-                                separatorBuilder: (_, _) => SizedBox(height: 8),
-                                itemCount: data.events?.length ?? 0,
-                                itemBuilder: (context, index) {
-                                  final event = data.events?[index];
-                                  if (event == null) {
-                                    return SizedBox.shrink();
-                                  }
-                                  return TrendContainer(
-                                    width: double.infinity,
-                                    name: event.name,
-                                    image: event.media.first,
-                                    priceType:
-                                        "Event - ${event.priceType.label}",
-                                    category: event.category.name,
-                                    location: event.location.address ?? "",
-                                    onTap: () => context.pushNamed(
-                                      "event_detail",
-                                      pathParameters: {"id": event.id},
-                                    ),
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 8),
+                  final hasQuery = query?.isNotEmpty ?? false;
+                  final hasCategoryFilter = selectedCategory.name != "All";
 
-                              ListView.separated(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                padding: .symmetric(horizontal: 16),
-                                separatorBuilder: (_, _) => SizedBox(height: 8),
-                                itemCount: data.vendors?.length ?? 0,
-                                itemBuilder: (context, index) {
-                                  final vendor = data.vendors?[index];
-                                  if (vendor == null) {
-                                    return SizedBox.shrink();
-                                  }
-                                  return TrendContainer(
-                                    width: double.infinity,
-                                    name: vendor.name,
-                                    image: vendor.media.first,
-                                    priceType: vendor.priceType.label,
-                                    category: vendor.category?.name ?? "",
-                                    location: vendor.location.address ?? "",
-                                    onTap: () => context.pushNamed(
-                                      "vendor_detail",
-                                      pathParameters: {"id": vendor.id},
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
+                  if (hasQuery || hasCategoryFilter) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 100),
+                      child: Column(
+                        crossAxisAlignment: .start,
+                        children: [
+                          Visibility(
+                            visible: data.events?.isNotEmpty ?? false,
+                            child: Column(
+                              crossAxisAlignment: .start,
+                              children: [
+                                SizedBox(height: 12),
+                                ListView.separated(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  padding: .symmetric(horizontal: 16),
+                                  separatorBuilder: (_, _) =>
+                                      SizedBox(height: 8),
+                                  itemCount: data.events?.length ?? 0,
+                                  itemBuilder: (context, index) {
+                                    final event = data.events?[index];
+                                    if (event == null) {
+                                      return SizedBox.shrink();
+                                    }
+                                    return TrendContainer(
+                                      width: double.infinity,
+                                      name: event.name,
+                                      image: event.media.first,
+                                      duration: event.getEventDurationHours(),
+                                      formattedDate: event
+                                          .getFormattedEventTimeRange(),
+                                      priceType:
+                                          "Event - ${event.priceType.label}",
+                                      category: event.category.name,
+                                      location: event.location.address ?? "",
+                                      onTap: () => context.pushNamed(
+                                        "event_detail",
+                                        pathParameters: {"id": event.id},
+                                      ),
+                                    );
+                                  },
+                                ),
+                                SizedBox(height: 8),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                          Visibility(
+                            visible: data.vendors?.isNotEmpty ?? false,
+                            child: Column(
+                              crossAxisAlignment: .start,
+                              children: [
+                                SizedBox(height: 8),
+                                ListView.separated(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  padding: .symmetric(horizontal: 16),
+                                  separatorBuilder: (_, _) =>
+                                      SizedBox(height: 8),
+                                  itemCount: data.vendors?.length ?? 0,
+                                  itemBuilder: (context, index) {
+                                    final vendor = data.vendors?[index];
+                                    if (vendor == null) {
+                                      return SizedBox.shrink();
+                                    }
+                                    return TrendContainer(
+                                      width: double.infinity,
+                                      name: vendor.name,
+                                      image: vendor.media.first,
+
+                                      priceType: vendor.priceType.label,
+                                      category: vendor.category?.name ?? "",
+                                      duration: vendor
+                                          .getTodayOperatingHoursDuration(),
+                                      formattedDate: vendor
+                                          .getFormattedOperatingHoursRange(),
+                                      location: vendor.location.address ?? "",
+                                      onTap: () => context.pushNamed(
+                                        "vendor_detail",
+                                        pathParameters: {"id": vendor.id},
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   }
 
@@ -271,7 +296,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             ),
                             SizedBox(height: 12),
                             SizedBox(
-                              height: 85,
+                              height: 90,
                               child: ListView.separated(
                                 scrollDirection: .horizontal,
                                 padding: .symmetric(horizontal: 16),
@@ -287,6 +312,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                     image: event.media.first,
                                     priceType: event.priceType.label,
                                     category: event.category.name,
+                                    duration: event.getEventDurationHours(),
+                                    formattedDate: event
+                                        .getFormattedEventTimeRange(),
+
                                     location: event.location.address ?? "",
                                     onTap: () => context.pushNamed(
                                       "event_detail",
@@ -322,7 +351,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             ),
                             SizedBox(height: 12),
                             SizedBox(
-                              height: 85,
+                              height: 90,
                               child: ListView.separated(
                                 scrollDirection: .horizontal,
                                 padding: .symmetric(horizontal: 16),
@@ -333,12 +362,17 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                   if (vendor == null) {
                                     return SizedBox.shrink();
                                   }
+
                                   return TrendContainer(
                                     name: vendor.name,
                                     category: vendor.category?.name ?? "",
                                     priceType: vendor.priceType.label,
                                     location: vendor.location.address ?? "",
                                     image: vendor.media.first,
+                                    duration: vendor
+                                        .getTodayOperatingHoursDuration(),
+                                    formattedDate: vendor
+                                        .getFormattedOperatingHoursRange(),
                                     onTap: () => context.pushNamed(
                                       "vendor_detail",
                                       pathParameters: {"id": vendor.id},
@@ -379,11 +413,14 @@ class TrendContainer extends StatelessWidget {
     required this.location,
     required this.image,
     required this.onTap,
+    this.formattedDate = "",
     this.width = 316,
+    this.duration = "",
   });
   final String name, category, priceType, location, image;
   final VoidCallback onTap;
   final double width;
+  final String duration, formattedDate;
 
   @override
   Widget build(BuildContext context) {
@@ -391,7 +428,7 @@ class TrendContainer extends StatelessWidget {
       onTap: onTap,
       child: SizedBox(
         width: width,
-        height: 85,
+        height: 90,
         child: Row(
           spacing: 12,
           crossAxisAlignment: .start,
@@ -464,18 +501,39 @@ class TrendContainer extends StatelessWidget {
                       color: AppColors.textSecondary,
                     ),
                   ),
-                  // Row(
-                  //   children: [
-                  //     Text(
-                  //       "6 Hours",
-                  //       style: TextStyle(
-                  //         fontSize: AppTextStyles(context).accumulator * 12,
-                  //         color: AppColors.textSuccess,
-                  //         fontWeight: .w500,
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
+                  formattedDate == "Closed"
+                      ? Text(
+                          "Closed",
+                          style: TextStyle(
+                            fontSize: AppTextStyles(context).accumulator * 12,
+                            color: AppColors.textError,
+                            fontWeight: .w500,
+                          ),
+                        )
+                      : Expanded(
+                          child: Row(
+                            children: [
+                              Text(
+                                "$duration ${duration == "1" ? "Hour" : "Hours"}",
+                                style: TextStyle(
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 12,
+                                  color: AppColors.textSuccess,
+                                  fontWeight: .w500,
+                                ),
+                              ),
+                              Text(
+                                " • $formattedDate",
+                                style: TextStyle(
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 12,
+                                  color: AppColors.textPrimary,
+                                  fontWeight: .w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                 ],
               ),
             ),

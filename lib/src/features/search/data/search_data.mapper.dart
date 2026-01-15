@@ -195,6 +195,16 @@ class SearchEventMapper extends ClassMapperBase<SearchEvent> {
     'description',
     _$description,
   );
+  static DateTime _$startTime(SearchEvent v) => v.startTime;
+  static const Field<SearchEvent, DateTime> _f$startTime = Field(
+    'startTime',
+    _$startTime,
+  );
+  static DateTime _$endTime(SearchEvent v) => v.endTime;
+  static const Field<SearchEvent, DateTime> _f$endTime = Field(
+    'endTime',
+    _$endTime,
+  );
   static CategoryNoDesc _$category(SearchEvent v) => v.category;
   static const Field<SearchEvent, CategoryNoDesc> _f$category = Field(
     'category',
@@ -221,6 +231,8 @@ class SearchEventMapper extends ClassMapperBase<SearchEvent> {
     #id: _f$id,
     #name: _f$name,
     #description: _f$description,
+    #startTime: _f$startTime,
+    #endTime: _f$endTime,
     #category: _f$category,
     #priceType: _f$priceType,
     #location: _f$location,
@@ -232,6 +244,8 @@ class SearchEventMapper extends ClassMapperBase<SearchEvent> {
       id: data.dec(_f$id),
       name: data.dec(_f$name),
       description: data.dec(_f$description),
+      startTime: data.dec(_f$startTime),
+      endTime: data.dec(_f$endTime),
       category: data.dec(_f$category),
       priceType: data.dec(_f$priceType),
       location: data.dec(_f$location),
@@ -306,6 +320,8 @@ abstract class SearchEventCopyWith<$R, $In extends SearchEvent, $Out>
     String? id,
     String? name,
     String? description,
+    DateTime? startTime,
+    DateTime? endTime,
     CategoryNoDesc? category,
     PriceType? priceType,
     Location? location,
@@ -340,6 +356,8 @@ class _SearchEventCopyWithImpl<$R, $Out>
     String? id,
     String? name,
     String? description,
+    DateTime? startTime,
+    DateTime? endTime,
     CategoryNoDesc? category,
     PriceType? priceType,
     Location? location,
@@ -349,6 +367,8 @@ class _SearchEventCopyWithImpl<$R, $Out>
       if (id != null) #id: id,
       if (name != null) #name: name,
       if (description != null) #description: description,
+      if (startTime != null) #startTime: startTime,
+      if (endTime != null) #endTime: endTime,
       if (category != null) #category: category,
       if (priceType != null) #priceType: priceType,
       if (location != null) #location: location,
@@ -360,6 +380,8 @@ class _SearchEventCopyWithImpl<$R, $Out>
     id: data.get(#id, or: $value.id),
     name: data.get(#name, or: $value.name),
     description: data.get(#description, or: $value.description),
+    startTime: data.get(#startTime, or: $value.startTime),
+    endTime: data.get(#endTime, or: $value.endTime),
     category: data.get(#category, or: $value.category),
     priceType: data.get(#priceType, or: $value.priceType),
     location: data.get(#location, or: $value.location),

@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:developer';
-import 'dart:typed_data';
 
 import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -12,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/core/ui/widgets/adaptive_image.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/booking/data/format_time.dart';
 import 'package:hydex/src/features/location/ui/location_required.dart';
@@ -542,8 +541,8 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                                         width: 320,
                                                         color: AppColors
                                                             .surfaceContainer,
-                                                        child: _buildImage(
-                                                          e.image!,
+                                                        child: AdaptiveImage(
+                                                          imageData: e.image!,
                                                         ),
                                                       )
                                                     : Container(
@@ -612,107 +611,111 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                             SizedBox(height: 43.5),
 
                             AllVendorsWidget(),
-                            // Column(
-                            //   children: [
-                            //     categories.when(
-                            //       data: (data) {
-                            //         if (data.isEmpty) {
-                            //           return SizedBox.shrink();
-                            //         }
-                            //         return Padding(
-                            //           padding: const EdgeInsets.symmetric(
-                            //             horizontal: 16,
-                            //           ),
-                            //           child: Column(
-                            //             crossAxisAlignment:
-                            //                 CrossAxisAlignment.start,
+                            Column(
+                              children: [
+                                categories.when(
+                                  data: (data) {
+                                    if (data.isEmpty) {
+                                      return SizedBox.shrink();
+                                    }
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
 
-                            //             children: [
-                            //               SizedBox(height: 41),
+                                        children: [
+                                          SizedBox(height: 41),
 
-                            //               Text(
-                            //                 "HydeX Curated",
-                            //                 style: TextStyle(
-                            //                   fontSize:
-                            //                       AppTextStyles(
-                            //                         context,
-                            //                       ).accumulator *
-                            //                       24,
-                            //                   fontWeight: FontWeight.w700,
-                            //                 ),
-                            //               ),
-                            //               Text(
-                            //                 "The finest venues and events in one place.",
-                            //                 style: TextStyle(
-                            //                   fontSize:
-                            //                       AppTextStyles(
-                            //                         context,
-                            //                       ).accumulator *
-                            //                       14,
-                            //                   color: Color(0xff858585),
-                            //                 ),
-                            //               ),
-                            //               SizedBox(height: 15),
-                            //               Column(
-                            //                 spacing: 12,
-                            //                 children: [
-                            //                   for (
-                            //                     int index = 0;
-                            //                     index < data.length;
-                            //                     index++
-                            //                   ) ...[
-                            //                     CuratedContainer(
-                            //                       reverse: index % 2 == 0,
-                            //                       heading: data[index].name,
-                            //                       endText:
-                            //                           data[index].description,
-                            //                       image:
-                            //                           data[index].image ?? "",
-                            //                     ),
-                            //                   ],
-                            //                 ],
-                            //               ),
-                            //             ],
-                            //           ),
-                            //         );
-                            //       },
-                            //       error: (e, s) {
-                            //         log(
-                            //           "[Event Categories]",
-                            //           error: e,
-                            //           stackTrace: s,
-                            //         );
-                            //         return Text("Error");
-                            //       },
-                            //       loading: () {
-                            //         return SizedBox(
-                            //           height: 300,
-                            //           child: ListView.separated(
-                            //             itemCount: 4,
-                            //             separatorBuilder: (_, _) =>
-                            //                 SizedBox(height: 12),
-                            //             padding: .symmetric(horizontal: 16),
-                            //             itemBuilder: (context, index) =>
-                            //                 Shimmer.fromColors(
-                            //                   baseColor:
-                            //                       AppColors.backgroundOverlay,
-                            //                   highlightColor:
-                            //                       AppColors.buttonSecondary,
-                            //                   child: SmoothContainer(
-                            //                     smoothness: 1,
-                            //                     width: double.infinity,
-                            //                     color:
-                            //                         AppColors.backgroundOverlay,
-                            //                     borderRadius:
-                            //                         BorderRadius.circular(24),
-                            //                   ),
-                            //                 ),
-                            //           ),
-                            //         );
-                            //       },
-                            //     ),
-                            //   ],
-                            // ),
+                                          Text(
+                                            "HydeX Curated",
+                                            style: TextStyle(
+                                              fontSize:
+                                                  AppTextStyles(
+                                                    context,
+                                                  ).accumulator *
+                                                  24,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          Text(
+                                            "The finest venues and events in one place.",
+                                            style: TextStyle(
+                                              fontSize:
+                                                  AppTextStyles(
+                                                    context,
+                                                  ).accumulator *
+                                                  14,
+                                              color: Color(0xff858585),
+                                            ),
+                                          ),
+                                          SizedBox(height: 15),
+                                          Column(
+                                            spacing: 12,
+                                            children: [
+                                              for (
+                                                int index = 0;
+                                                index < data.length;
+                                                index++
+                                              ) ...[
+                                                CuratedContainer(
+                                                  onTap: () => context.push(
+                                                    "/category",
+                                                    extra: data[index],
+                                                  ),
+
+                                                  heading: data[index].name,
+                                                  endText:
+                                                      data[index].description,
+                                                  image:
+                                                      data[index].image ?? "",
+                                                ),
+                                              ],
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  error: (e, s) {
+                                    log(
+                                      "[Event Categories]",
+                                      error: e,
+                                      stackTrace: s,
+                                    );
+                                    return Text("Error");
+                                  },
+                                  loading: () {
+                                    return SizedBox(
+                                      height: 300,
+                                      child: ListView.separated(
+                                        itemCount: 4,
+                                        separatorBuilder: (_, _) =>
+                                            SizedBox(height: 12),
+                                        padding: .symmetric(horizontal: 16),
+                                        itemBuilder: (context, index) =>
+                                            Shimmer.fromColors(
+                                              baseColor:
+                                                  AppColors.backgroundOverlay,
+                                              highlightColor:
+                                                  AppColors.buttonSecondary,
+                                              child: SmoothContainer(
+                                                smoothness: 1,
+                                                width: double.infinity,
+                                                color:
+                                                    AppColors.backgroundOverlay,
+                                                borderRadius:
+                                                    BorderRadius.circular(24),
+                                              ),
+                                            ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
                             SizedBox(height: 120),
                           ],
                         ),
@@ -802,7 +805,7 @@ class AllVendorsWidget extends ConsumerWidget {
                         width: 240,
                         child: EventContainer(
                           heading: data[index].name,
-                          description: data[index].description,
+                          description: data[index].location.address,
                           image: data[index].media.first,
                           tag:
                               data[index].category?.name ??
@@ -958,7 +961,7 @@ class AllEventsWidget extends ConsumerWidget {
                             date: event.startTime.formatDate(),
                             heading: event.name,
                             image: event.media.firstOrNull,
-                            description: event.description,
+                            description: event.location.address,
                           ),
                         ),
                       );
@@ -1090,168 +1093,129 @@ class _ImageOrVideoWidgetState extends State<ImageOrVideoWidget> {
   Widget build(BuildContext context) {
     if (isVideo) {
       return _isVideoInitialized
-          ? FittedBox(
-              fit: BoxFit.cover,
-              child: SizedBox(
-                width: _videoController!.value.size.width,
-                height: _videoController!.value.size.height,
-                child: VideoPlayer(_videoController!),
+          ? SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: FittedBox(
+                fit: BoxFit.cover,
+                child: SizedBox(
+                  width: _videoController!.value.size.width,
+                  height: _videoController!.value.size.height,
+                  child: VideoPlayer(_videoController!),
+                ),
               ),
             )
           : const Center(child: CircularProgressIndicator());
     }
 
-    return SizedBox(height: double.infinity, child: _buildImage(widget.url));
+    return SizedBox(
+      height: double.infinity,
+      child: AdaptiveImage(imageData: widget.url),
+    );
   }
 }
 
 class CuratedContainer extends StatelessWidget {
   const CuratedContainer({
     super.key,
-    this.reverse = false,
     required this.heading,
     required this.endText,
     required this.image,
+    required this.onTap,
   });
-  final bool reverse;
   final String heading, endText;
   final String image;
   final Color containerColor = AppColors.surfaceContainer;
+  final VoidCallback onTap;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.push("/category"),
+      onTap: onTap,
       child: SmoothClipRRect(
         smoothness: 1,
         borderRadius: BorderRadius.circular(24),
-        child: Container(
-          decoration: BoxDecoration(color: containerColor),
-          child: IntrinsicHeight(
-            child: reverse
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Stack(
-                        alignment: Alignment.centerLeft,
-                        children: [
-                          SizedBox(
-                            height: double.infinity,
-                            width: 134,
-                            child: _buildImage(image),
-                          ),
-                          Container(
-                            width: 134,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.transparent,
-                                  containerColor.withValues(alpha: 0.5),
-                                  containerColor,
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Flexible(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 20,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                heading,
-                                style: TextStyle(
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 30,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              SizedBox(height: 12),
-                              Text(
-                                endText,
-                                maxLines: 1,
-                                style: TextStyle(
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 14,
-                                  fontWeight: FontWeight.w100,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 50),
-                    ],
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 20,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  heading,
-                                  style: TextStyle(
-                                    fontSize:
-                                        AppTextStyles(context).accumulator * 30,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 12),
+        child: SizedBox(
+          height: 135,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              AdaptiveImage(imageData: image),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
 
-                              Text(
-                                endText,
-                                style: TextStyle(
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 14,
-                                  fontWeight: FontWeight.w100,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Stack(
-                        alignment: Alignment.centerLeft,
-                        children: [
-                          SizedBox(
-                            height: double.infinity,
-                            width: 134,
-                            child: _buildImage(image),
-                          ),
-                          Container(
-                            width: 134,
-
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.centerRight,
-                                end: Alignment.centerLeft,
-                                colors: [
-                                  Colors.transparent,
-                                  containerColor.withValues(alpha: 0.5),
-                                  containerColor,
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      Colors.black.withValues(alpha: 0.8),
                     ],
                   ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  mainAxisAlignment: .spaceBetween,
+                  crossAxisAlignment: .end,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            heading,
+                            style: TextStyle(
+                              fontSize: AppTextStyles(context).accumulator * 24,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            endText,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: AppTextStyles(context).accumulator * 11,
+                              color: AppColors.textPrimary.withValues(
+                                alpha: 0.9,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 28),
+                      child: TextButton.icon(
+                        onPressed: onTap,
+                        iconAlignment: .end,
+                        style: ButtonStyle(
+                          backgroundColor: .all(
+                            Colors.black.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        label: Text(
+                          "Explore",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: .w600,
+                          ),
+                        ),
+                        icon: Icon(
+                          Icons.arrow_forward_ios,
+                          size: 15,
+                          fontWeight: .w900,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -1479,51 +1443,6 @@ class EventContainer extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-final Map<String, Uint8List> _imageCache = {};
-Widget _buildImage(String imageData) {
-  if (imageData.startsWith('data:image') ||
-      (!imageData.startsWith('http://') && !imageData.startsWith('https://'))) {
-    // Base64 image - decode once and cache
-    try {
-      // Check cache first
-      if (!_imageCache.containsKey(imageData)) {
-        String base64String = imageData;
-        if (imageData.contains(',')) {
-          base64String = imageData.split(',')[1];
-        }
-        _imageCache[imageData] = base64Decode(base64String);
-      }
-
-      return Image.memory(
-        _imageCache[imageData]!,
-
-        fit: BoxFit.cover,
-        gaplessPlayback: true, // Prevents flickering during rebuilds
-        errorBuilder: (context, error, stackTrace) => Center(
-          child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
-        ),
-      );
-    } catch (e) {
-      return Center(
-        child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
-      );
-    }
-  } else {
-    // URL image
-    return SizedBox(
-      child: CachedNetworkImage(
-        imageUrl: imageData,
-        fit: BoxFit.cover,
-        placeholder: (context, url) =>
-            Center(child: CircularProgressIndicator()),
-        errorWidget: (context, url, error) => Center(
-          child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
         ),
       ),
     );

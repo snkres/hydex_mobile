@@ -55,7 +55,9 @@ class AccessSection extends ConsumerWidget {
               description: pass.benefits,
               isSelected: isSelected,
               count: isSelected ? guestCount : 0,
-              discount: pass.discountPercentage,
+              discount: pass.discountPercentage != 0
+                  ? pass.discountPercentage
+                  : null,
               onSelect: () {
                 ref.read(createBookProvider.notifier).selectPasses(pass);
                 if (ref.read(guestsProvider) == 0) {

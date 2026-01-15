@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/src/features/location/domain/location_service.dart';
 import 'package:hydex/src/features/search/data/search_data.dart';
 import 'package:hydex/src/features/search/data/search_filters.dart';

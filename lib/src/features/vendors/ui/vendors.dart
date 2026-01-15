@@ -3,12 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
-import 'package:hydex/src/features/booking/data/booking.dart';
-import 'package:hydex/src/features/booking/data/format_time.dart';
 import 'package:hydex/src/features/search/ui/components/not_found.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
@@ -16,7 +13,6 @@ import 'package:hydex/src/features/vibes/data/vendor.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:lottie/lottie.dart';
 
 class AllVendors extends ConsumerStatefulWidget {
   const AllVendors({super.key});
@@ -193,6 +189,8 @@ class _AllVendorsState extends ConsumerState<AllVendors> {
                         width: double.infinity,
                         heading: item.name,
                         tag: item.category?.name,
+                        description: item.location.address,
+
                         image: item.media.first,
                         avatarImage: item.logo,
                         onView: () => context.pushNamed(

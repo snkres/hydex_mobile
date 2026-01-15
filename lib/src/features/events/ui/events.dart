@@ -14,7 +14,6 @@ import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:lottie/lottie.dart';
 
 class AllEvents extends ConsumerStatefulWidget {
   const AllEvents({super.key});
@@ -202,6 +201,8 @@ class _AllEventsState extends ConsumerState<AllEvents> {
                       itemBuilder: (context, item, index) => EventContainer(
                         width: double.infinity,
                         heading: item.name,
+                        description: item.location.address,
+
                         tag: item.category?.name,
                         image: item.media.first,
                         avatarImage: item.media.first,
