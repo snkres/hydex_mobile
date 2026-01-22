@@ -113,24 +113,32 @@ class VenueContainer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: .start,
         children: [
-          Text(
-            "Venue",
-            style: AppTextStyles(
-              context,
-            ).captionMedium.copyWith(color: AppColors.textSecondary),
-          ),
-          SizedBox(height: 4),
-          Text(
-            "Cairo Jazz Club",
-            style: TextStyle(
-              fontSize: AppTextStyles(context).accumulator * 16,
-              fontWeight: .w600,
+          Visibility(
+            visible: event.bookingType == "event",
+            child: Column(
+              crossAxisAlignment: .start,
+              children: [
+                Text(
+                  "Venue",
+                  style: AppTextStyles(
+                    context,
+                  ).captionMedium.copyWith(color: AppColors.textSecondary),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  event.vendorName,
+                  style: TextStyle(
+                    fontSize: AppTextStyles(context).accumulator * 16,
+                    fontWeight: .w600,
+                  ),
+                ),
+                SizedBox(height: 16),
+                Divider(),
+                SizedBox(height: 16),
+              ],
             ),
           ),
 
-          SizedBox(height: 16),
-          Divider(),
-          SizedBox(height: 16),
           Text(
             "Location",
             style: AppTextStyles(
@@ -195,7 +203,7 @@ class VenueContainer extends StatelessWidget {
           ),
           SizedBox(height: 4),
           Text(
-            "${event.numberOfGuests} VIP Experience",
+            "${event.numberOfGuests} ${event.passName}",
             style: TextStyle(
               fontSize: AppTextStyles(context).accumulator * 16,
               fontWeight: .w600,

@@ -102,6 +102,54 @@ class UpcomingEventMapper extends ClassMapperBase<UpcomingEvent> {
     opt: true,
     def: 0,
   );
+  static String? _$cancellationReason(UpcomingEvent v) => v.cancellationReason;
+  static const Field<UpcomingEvent, String> _f$cancellationReason = Field(
+    'cancellationReason',
+    _$cancellationReason,
+    opt: true,
+  );
+  static List<String>? _$guestsNames(UpcomingEvent v) => v.guestsNames;
+  static const Field<UpcomingEvent, List<String>> _f$guestsNames = Field(
+    'guestsNames',
+    _$guestsNames,
+    opt: true,
+  );
+  static List<String> _$thingsToKnow(UpcomingEvent v) => v.thingsToKnow;
+  static const Field<UpcomingEvent, List<String>> _f$thingsToKnow = Field(
+    'thingsToKnow',
+    _$thingsToKnow,
+  );
+  static String _$passId(UpcomingEvent v) => v.passId;
+  static const Field<UpcomingEvent, String> _f$passId = Field(
+    'passId',
+    _$passId,
+  );
+  static String? _$termsAndConditions(UpcomingEvent v) => v.termsAndConditions;
+  static const Field<UpcomingEvent, String> _f$termsAndConditions = Field(
+    'termsAndConditions',
+    _$termsAndConditions,
+    opt: true,
+  );
+  static int _$totalPrice(UpcomingEvent v) => v.totalPrice;
+  static const Field<UpcomingEvent, int> _f$totalPrice = Field(
+    'totalPrice',
+    _$totalPrice,
+  );
+  static String _$vendorName(UpcomingEvent v) => v.vendorName;
+  static const Field<UpcomingEvent, String> _f$vendorName = Field(
+    'vendorName',
+    _$vendorName,
+  );
+  static String _$bookingType(UpcomingEvent v) => v.bookingType;
+  static const Field<UpcomingEvent, String> _f$bookingType = Field(
+    'bookingType',
+    _$bookingType,
+  );
+  static String _$passName(UpcomingEvent v) => v.passName;
+  static const Field<UpcomingEvent, String> _f$passName = Field(
+    'passName',
+    _$passName,
+  );
 
   @override
   final MappableFields<UpcomingEvent> fields = const {
@@ -112,6 +160,15 @@ class UpcomingEventMapper extends ClassMapperBase<UpcomingEvent> {
     #location: _f$location,
     #status: _f$status,
     #numberOfGuests: _f$numberOfGuests,
+    #cancellationReason: _f$cancellationReason,
+    #guestsNames: _f$guestsNames,
+    #thingsToKnow: _f$thingsToKnow,
+    #passId: _f$passId,
+    #termsAndConditions: _f$termsAndConditions,
+    #totalPrice: _f$totalPrice,
+    #vendorName: _f$vendorName,
+    #bookingType: _f$bookingType,
+    #passName: _f$passName,
   };
 
   static UpcomingEvent _instantiate(DecodingData data) {
@@ -123,6 +180,15 @@ class UpcomingEventMapper extends ClassMapperBase<UpcomingEvent> {
       location: data.dec(_f$location),
       status: data.dec(_f$status),
       numberOfGuests: data.dec(_f$numberOfGuests),
+      cancellationReason: data.dec(_f$cancellationReason),
+      guestsNames: data.dec(_f$guestsNames),
+      thingsToKnow: data.dec(_f$thingsToKnow),
+      passId: data.dec(_f$passId),
+      termsAndConditions: data.dec(_f$termsAndConditions),
+      totalPrice: data.dec(_f$totalPrice),
+      vendorName: data.dec(_f$vendorName),
+      bookingType: data.dec(_f$bookingType),
+      passName: data.dec(_f$passName),
     );
   }
 
@@ -189,6 +255,8 @@ extension UpcomingEventValueCopy<$R, $Out>
 abstract class UpcomingEventCopyWith<$R, $In extends UpcomingEvent, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   LocationCopyWith<$R, Location, Location> get location;
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get guestsNames;
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get thingsToKnow;
   $R call({
     String? id,
     String? name,
@@ -197,6 +265,15 @@ abstract class UpcomingEventCopyWith<$R, $In extends UpcomingEvent, $Out>
     Location? location,
     UpcomingEventStatus? status,
     int? numberOfGuests,
+    String? cancellationReason,
+    List<String>? guestsNames,
+    List<String>? thingsToKnow,
+    String? passId,
+    String? termsAndConditions,
+    int? totalPrice,
+    String? vendorName,
+    String? bookingType,
+    String? passName,
   });
   UpcomingEventCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -213,6 +290,22 @@ class _UpcomingEventCopyWithImpl<$R, $Out>
   LocationCopyWith<$R, Location, Location> get location =>
       $value.location.copyWith.$chain((v) => call(location: v));
   @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>?
+  get guestsNames => $value.guestsNames != null
+      ? ListCopyWith(
+          $value.guestsNames!,
+          (v, t) => ObjectCopyWith(v, $identity, t),
+          (v) => call(guestsNames: v),
+        )
+      : null;
+  @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>
+  get thingsToKnow => ListCopyWith(
+    $value.thingsToKnow,
+    (v, t) => ObjectCopyWith(v, $identity, t),
+    (v) => call(thingsToKnow: v),
+  );
+  @override
   $R call({
     String? id,
     String? name,
@@ -221,6 +314,15 @@ class _UpcomingEventCopyWithImpl<$R, $Out>
     Location? location,
     UpcomingEventStatus? status,
     int? numberOfGuests,
+    Object? cancellationReason = $none,
+    Object? guestsNames = $none,
+    List<String>? thingsToKnow,
+    String? passId,
+    Object? termsAndConditions = $none,
+    int? totalPrice,
+    String? vendorName,
+    String? bookingType,
+    String? passName,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -230,6 +332,15 @@ class _UpcomingEventCopyWithImpl<$R, $Out>
       if (location != null) #location: location,
       if (status != null) #status: status,
       if (numberOfGuests != null) #numberOfGuests: numberOfGuests,
+      if (cancellationReason != $none) #cancellationReason: cancellationReason,
+      if (guestsNames != $none) #guestsNames: guestsNames,
+      if (thingsToKnow != null) #thingsToKnow: thingsToKnow,
+      if (passId != null) #passId: passId,
+      if (termsAndConditions != $none) #termsAndConditions: termsAndConditions,
+      if (totalPrice != null) #totalPrice: totalPrice,
+      if (vendorName != null) #vendorName: vendorName,
+      if (bookingType != null) #bookingType: bookingType,
+      if (passName != null) #passName: passName,
     }),
   );
   @override
@@ -241,6 +352,21 @@ class _UpcomingEventCopyWithImpl<$R, $Out>
     location: data.get(#location, or: $value.location),
     status: data.get(#status, or: $value.status),
     numberOfGuests: data.get(#numberOfGuests, or: $value.numberOfGuests),
+    cancellationReason: data.get(
+      #cancellationReason,
+      or: $value.cancellationReason,
+    ),
+    guestsNames: data.get(#guestsNames, or: $value.guestsNames),
+    thingsToKnow: data.get(#thingsToKnow, or: $value.thingsToKnow),
+    passId: data.get(#passId, or: $value.passId),
+    termsAndConditions: data.get(
+      #termsAndConditions,
+      or: $value.termsAndConditions,
+    ),
+    totalPrice: data.get(#totalPrice, or: $value.totalPrice),
+    vendorName: data.get(#vendorName, or: $value.vendorName),
+    bookingType: data.get(#bookingType, or: $value.bookingType),
+    passName: data.get(#passName, or: $value.passName),
   );
 
   @override

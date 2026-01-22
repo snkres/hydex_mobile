@@ -57,6 +57,7 @@ Future<List<Vendor>> getVendors(
   Ref ref, {
   int page = 1,
   String? categoryId,
+  String? subcategoryId,
 }) async {
   final link = ref.keepAlive();
   Timer? timer;
@@ -78,6 +79,9 @@ Future<List<Vendor>> getVendors(
     if (categoryId != null) {
       data["categoryId"] = categoryId;
     }
+    if (subcategoryId != null) {
+      data["subcategoryId"] = subcategoryId;
+    }
     final response = await DioHelper.get(
       '/vendors',
       queryParameters: data,
@@ -98,12 +102,16 @@ Future<List<Event>> getEvents(
   Ref ref, {
   int page = 1,
   String? categoryId,
+  String? subcategoryId,
   bool? happeningTonight,
   bool? nearby,
 }) async {
   final Map<String, dynamic> data = {"page": page, "limit": 10};
   if (categoryId != null) {
     data["categoryId"] = categoryId;
+  }
+  if (subcategoryId != null) {
+    data["subcategoryId"] = subcategoryId;
   }
 
   if (happeningTonight != null) {

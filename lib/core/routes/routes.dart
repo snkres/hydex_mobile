@@ -173,8 +173,13 @@ class AppRoutes {
       GoRoute(
         path: "/category",
         name: "category_detail",
-        builder: (context, state) =>
-            CategoryDetails(category: state.extra as EventCategory),
+        builder: (context, state) {
+          final category = state.extra as EventCategory;
+          return CategoryDetails(
+            category: category,
+            subCategories: category.subCategories ?? [],
+          );
+        },
       ),
     ],
   );

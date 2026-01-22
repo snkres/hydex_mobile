@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -143,41 +144,33 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: PageView.builder(
-                    controller: pageController,
-                    itemCount: event.media.length,
-                    itemBuilder: (_, i) {
-                      return Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          ImageOrVideoWidget(url: event.media[i]),
-
-                          Container(
-                            color: Colors.black.withOpacity(overlayOpacity),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-
-                Positioned.fill(
                   child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
                     onVerticalDragUpdate: (details) {
                       if (_sheetSize >= _collapseThreshold &&
                           details.delta.dy < 0) {
                         return;
                       }
-
                       final delta = -details.delta.dy / screenHeight;
                       final newSize = (_sheetSize + delta).clamp(0.3, 0.85);
-
                       if (_sheetController.isAttached) {
                         _sheetController.jumpTo(newSize);
                       }
                     },
-                    child: Container(color: Colors.transparent),
+                    child: PageView.builder(
+                      controller: pageController,
+                      itemCount: event.media.length,
+                      itemBuilder: (_, i) {
+                        return Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            ImageOrVideoWidget(url: event.media[i]),
+                            Container(
+                              color: Colors.black.withOpacity(overlayOpacity),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
 

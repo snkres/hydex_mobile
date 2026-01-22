@@ -49,27 +49,23 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final featuredEvents = ref.watch(
-      getBannersProvider(type: BannerType.featured),
-    );
-    final promotionalEvents = ref.watch(
-      getBannersProvider(type: BannerType.promotional),
-    );
+    final featuredEvents = ref.watch(getBannersProvider(type: .featured));
+    final promotionalEvents = ref.watch(getBannersProvider(type: .promotional));
 
     final categories = ref.watch(getEventCategoriesProvider);
     return Scaffold(
       body: LocationRequired(
         child: RefreshIndicator(
           onRefresh: () async {
-            await ref.refresh(
-              getBannersProvider(type: BannerType.featured).future,
-            );
+            ref.invalidate(getBannersProvider(type: .featured));
+            ref.invalidate(getBannersProvider(type: .promotional));
+            ref.invalidate(getEventCategoriesProvider);
 
-            await ref.refresh(
-              getBannersProvider(type: BannerType.promotional).future,
-            );
-
-            await ref.refresh(getEventCategoriesProvider.future);
+            await Future.wait([
+              ref.read(getBannersProvider(type: .featured).future),
+              ref.read(getBannersProvider(type: .promotional).future),
+              ref.read(getEventCategoriesProvider.future),
+            ]);
           },
           child: SingleChildScrollView(
             child: Column(

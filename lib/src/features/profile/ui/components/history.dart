@@ -3,11 +3,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/profile/data/upcoming_event.dart';
 import 'package:hydex/src/features/profile/domain/profile_providers.dart';
+import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:intl/intl.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
@@ -195,7 +197,7 @@ class HistoryContainer extends StatelessWidget {
                     width: 15,
                   ),
                   Text(
-                    "Booked for 2",
+                    "Booked for ${event.numberOfGuests}",
                     style: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: AppTextStyles(context).accumulator * 14,
@@ -206,15 +208,15 @@ class HistoryContainer extends StatelessWidget {
             ),
           ],
         ),
-        // SizedBox(height: 16),
-        // // PrimaryButton(
-        // //   onTap: () async {
-        // //     context.push("/profile-summary", extra: event);
-        // //   },
-        // //   title: "View details",
-        // //   frColor: AppColors.buttonPrimary,
-        // //   bgColor: AppColors.buttonTertiary,
-        // // ),
+        SizedBox(height: 16),
+        PrimaryButton(
+          onTap: () async {
+            context.push("/profile-summary", extra: event);
+          },
+          title: "View details",
+          frColor: AppColors.buttonPrimary,
+          bgColor: AppColors.buttonTertiary,
+        ),
         SizedBox(height: 16),
       ],
     );

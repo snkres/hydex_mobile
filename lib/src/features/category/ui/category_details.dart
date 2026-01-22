@@ -16,9 +16,14 @@ import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class CategoryDetails extends ConsumerStatefulWidget {
-  const CategoryDetails({super.key, required this.category});
+  const CategoryDetails({
+    super.key,
+    required this.category,
+    required this.subCategories,
+  });
 
   final EventCategory category;
+  final List<SubCategories> subCategories;
 
   @override
   ConsumerState<CategoryDetails> createState() => _CategoryDetailsState();
@@ -26,17 +31,21 @@ class CategoryDetails extends ConsumerStatefulWidget {
 
 class _CategoryDetailsState extends ConsumerState<CategoryDetails>
     with TickerProviderStateMixin {
-  EventCategory selectedCategory = EventCategory(
-    description: "all",
-    name: "All",
-  );
+  SubCategories selectedCategory = SubCategories(id: "all", title: "All");
   late final TabController _tabController;
 
   late final _eventsPagingController = PagingController<int, Event>(
     getNextPageKey: (state) =>
         state.lastPageIsEmpty ? null : state.nextIntPageKey,
     fetchPage: (pageKey) async => ref.watch(
-      getEventsProvider(page: pageKey, categoryId: selectedCategory.id).future,
+      getEventsProvider(
+        page: pageKey,
+        categoryId: widget.category.id,
+
+        subcategoryId: selectedCategory.id == "all"
+            ? null
+            : selectedCategory.id,
+      ).future,
     ),
   );
 
@@ -44,7 +53,13 @@ class _CategoryDetailsState extends ConsumerState<CategoryDetails>
     getNextPageKey: (state) =>
         state.lastPageIsEmpty ? null : state.nextIntPageKey,
     fetchPage: (pageKey) async => ref.watch(
-      getVendorsProvider(page: pageKey, categoryId: selectedCategory.id).future,
+      getVendorsProvider(
+        page: pageKey,
+        categoryId: widget.category.id,
+        subcategoryId: selectedCategory.id == "all"
+            ? null
+            : selectedCategory.id,
+      ).future,
     ),
   );
 
@@ -52,7 +67,6 @@ class _CategoryDetailsState extends ConsumerState<CategoryDetails>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    // Listen to tab changes and rebuild UI
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
         setState(() {});
@@ -166,33 +180,27 @@ class _CategoryDetailsState extends ConsumerState<CategoryDetails>
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.only(top: 10, right: 16),
+            padding: const EdgeInsets.only(top: 10),
             sliver: SliverToBoxAdapter(
               child: SizedBox(
                 height: 38,
                 child: ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   scrollDirection: Axis.horizontal,
-                  itemCount: 4,
+                  itemCount: widget.subCategories.length + 1,
                   separatorBuilder: (context, index) =>
                       const SizedBox(width: 8),
                   itemBuilder: (context, index) {
-                    final labels = [
-                      "All",
-                      "Category 1",
-                      "Category 2",
-                      "Category 3",
+                    final List<SubCategories> labels = [
+                      SubCategories(id: "all", title: "All"),
+                      ...widget.subCategories,
                     ];
                     return CustomChip(
-                      title: labels[index],
-                      isSelected: selectedCategory.name == labels[index],
+                      title: labels[index].title ?? "All",
+                      isSelected: selectedCategory.id == labels[index].id,
                       onTap: () {
                         setState(() {
-                          selectedCategory = EventCategory(
-                            name: labels[index],
-                            description: labels[index].toLowerCase(),
-                            id: labels[index].toLowerCase(),
-                          );
+                          selectedCategory = labels[index];
                         });
                         _eventsPagingController.refresh();
                         _vendorsPagingController.refresh();
@@ -218,7 +226,8 @@ class _CategoryDetailsState extends ConsumerState<CategoryDetails>
                             noItemsFoundIndicatorBuilder: (context) =>
                                 NotFoundWidget(
                                   heading: "Hmm… nothing here",
-                                  description: "Try exploring other categories",
+                                  description:
+                                      "Try exploring other sub-categories",
                                 ),
                             noMoreItemsIndicatorBuilder: (ctx) =>
                                 SizedBox.shrink(),
@@ -254,14 +263,15 @@ class _CategoryDetailsState extends ConsumerState<CategoryDetails>
                             noItemsFoundIndicatorBuilder: (context) =>
                                 NotFoundWidget(
                                   heading: "Hmm… nothing here",
-                                  description: "Try exploring other categories",
+                                  description:
+                                      "Try exploring other sub-categories",
                                 ),
                             noMoreItemsIndicatorBuilder: (ctx) =>
                                 SizedBox.shrink(),
                             itemBuilder: (context, item, index) =>
                                 EventContainer(
                                   width: double.infinity,
-                                  date: "",
+                                  date: item.priceType.label,
                                   heading: item.name,
                                   tag: item.category?.name,
                                   image: item.media.first,

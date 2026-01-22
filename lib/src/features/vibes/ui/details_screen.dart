@@ -218,54 +218,45 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: PageView.builder(
-                    controller: pageController,
-                    itemCount: vendor.media.length,
-                    itemBuilder: (_, i) {
-                      return Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          CachedNetworkImage(
-                            imageUrl: vendor.media[i],
-                            fit: BoxFit.cover,
-                            alignment: Alignment.topCenter,
-                            placeholder: (_, __) => const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                            errorWidget: (_, __, ___) =>
-                                const Center(child: Icon(Icons.error)),
-                          ),
-                          // The darkening overlay
-                          Container(
-                            color: Colors.black.withOpacity(overlayOpacity),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-
-                Positioned.fill(
                   child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
                     onVerticalDragUpdate: (details) {
                       if (_sheetSize >= _collapseThreshold &&
                           details.delta.dy < 0) {
                         return;
                       }
-
-                      // 2. Calculate new size
                       final delta = -details.delta.dy / screenHeight;
                       final newSize = (_sheetSize + delta).clamp(0.3, 0.86);
-
-                      // 3. Move sheet
                       if (_sheetController.isAttached) {
                         _sheetController.jumpTo(newSize);
                       }
                     },
-                    child: Container(color: Colors.transparent),
+                    child: PageView.builder(
+                      controller: pageController,
+                      itemCount: vendor.media.length,
+                      itemBuilder: (_, i) {
+                        return Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl: vendor.media[i],
+                              fit: BoxFit.cover,
+                              alignment: Alignment.topCenter,
+                              placeholder: (_, __) => const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                              errorWidget: (_, __, ___) =>
+                                  const Center(child: Icon(Icons.error)),
+                            ),
+                            Container(
+                              color: Colors.black.withOpacity(overlayOpacity),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
+
                 DraggableScrollableSheet(
                   controller: _sheetController,
                   maxChildSize: 0.86,
@@ -1016,66 +1007,69 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                         ),
                                       ),
 
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                        ),
-                                        child: Text(
-                                          "Gallery",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w700,
-                                            fontSize:
-                                                AppTextStyles(
-                                                  context,
-                                                ).accumulator *
-                                                14,
+                                      if (vendor.gallery.isNotEmpty) ...[
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                          ),
+                                          child: Text(
+                                            "Gallery",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w700,
+                                              fontSize:
+                                                  AppTextStyles(
+                                                    context,
+                                                  ).accumulator *
+                                                  14,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(height: 12),
-                                      GridView.builder(
-                                        itemCount: vendor.gallery.length,
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                        ),
-                                        gridDelegate:
-                                            SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount: 2,
-                                              mainAxisSpacing: 12,
-                                              crossAxisSpacing: 12,
-                                            ),
-                                        itemBuilder: (context, index) {
-                                          return OpenContainer(
-                                            closedColor: Colors.transparent,
-                                            closedElevation: 0,
-                                            openBuilder: (context, action) =>
-                                                Gallery(
-                                                  gallery: vendor.gallery,
-                                                  clickedPhoto:
-                                                      vendor.gallery[index],
-                                                ),
-                                            closedBuilder: (context, _) {
-                                              return SmoothClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(24),
-                                                smoothness: 1,
-                                                child: SizedBox(
-                                                  width: 165,
-
-                                                  child: CachedNetworkImage(
-                                                    fit: BoxFit.cover,
-                                                    imageUrl:
+                                        SizedBox(height: 12),
+                                        GridView.builder(
+                                          itemCount: vendor.gallery.length,
+                                          shrinkWrap: true,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                          ),
+                                          gridDelegate:
+                                              SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount: 2,
+                                                mainAxisSpacing: 12,
+                                                crossAxisSpacing: 12,
+                                              ),
+                                          itemBuilder: (context, index) {
+                                            return OpenContainer(
+                                              closedColor: Colors.transparent,
+                                              closedElevation: 0,
+                                              openBuilder: (context, action) =>
+                                                  Gallery(
+                                                    gallery: vendor.gallery,
+                                                    clickedPhoto:
                                                         vendor.gallery[index],
                                                   ),
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                      ),
-                                      SizedBox(height: 24),
+                                              closedBuilder: (context, _) {
+                                                return SmoothClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(24),
+                                                  smoothness: 1,
+                                                  child: SizedBox(
+                                                    width: 165,
+
+                                                    child: CachedNetworkImage(
+                                                      fit: BoxFit.cover,
+                                                      imageUrl:
+                                                          vendor.gallery[index],
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        SizedBox(height: 24),
+                                      ],
 
                                       Padding(
                                         padding: EdgeInsets.symmetric(

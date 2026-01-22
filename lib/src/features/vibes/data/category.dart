@@ -8,12 +8,14 @@ class EventCategory with EventCategoryMappable {
   final String name;
   final String description;
   final String? image;
+  final List<SubCategories>? subCategories;
 
   EventCategory({
     this.id,
     required this.description,
     this.image,
     required this.name,
+    this.subCategories = const [],
   });
 }
 
@@ -23,4 +25,17 @@ class VendorCategory with VendorCategoryMappable {
   final String? image;
 
   VendorCategory({required this.name, this.image});
+}
+
+@MappableClass()
+class SubCategories with SubCategoriesMappable {
+  final String id;
+  final String? title, description, imageUrl;
+
+  SubCategories({
+    required this.id,
+    this.title,
+    this.description,
+    this.imageUrl,
+  });
 }

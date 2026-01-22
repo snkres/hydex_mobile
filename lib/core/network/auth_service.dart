@@ -129,17 +129,20 @@ class AuthService {
   Future<String> register() async {
     try {
       final user = ref.read(userProvider);
+      if (user == null || user.role == Role.none) {
+        throw ApiException('Please select a role before registering');
+      }
       final data = {
-        "email": user?.email,
-        "phone": user?.phone,
-        "password": user?.password,
-        "fullName": user?.fullName,
-        "role": user?.role.toValue(),
-        "gender": user?.gender,
-        "nationality": user?.nationality,
-        "dateOfBirth": user?.dateOfBirth,
+        "email": user.email,
+        "phone": user.phone,
+        "password": user.password,
+        "fullName": user.fullName,
+        "role": user.role.toValue(),
+        "gender": user.gender,
+        "nationality": user.nationality,
+        "dateOfBirth": user.dateOfBirth,
       };
-      if (user!.referralCode!.isNotEmpty) {
+      if (user.referralCode != null && user.referralCode!.isNotEmpty) {
         data["referralCode"] = user.referralCode;
       }
 

@@ -14,6 +14,7 @@ class EventCategoryMapper extends ClassMapperBase<EventCategory> {
   static EventCategoryMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = EventCategoryMapper._());
+      SubCategoriesMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -40,6 +41,10 @@ class EventCategoryMapper extends ClassMapperBase<EventCategory> {
   );
   static String _$name(EventCategory v) => v.name;
   static const Field<EventCategory, String> _f$name = Field('name', _$name);
+  static List<SubCategories>? _$subCategories(EventCategory v) =>
+      v.subCategories;
+  static const Field<EventCategory, List<SubCategories>> _f$subCategories =
+      Field('subCategories', _$subCategories, opt: true, def: const []);
 
   @override
   final MappableFields<EventCategory> fields = const {
@@ -47,6 +52,7 @@ class EventCategoryMapper extends ClassMapperBase<EventCategory> {
     #description: _f$description,
     #image: _f$image,
     #name: _f$name,
+    #subCategories: _f$subCategories,
   };
 
   static EventCategory _instantiate(DecodingData data) {
@@ -55,6 +61,7 @@ class EventCategoryMapper extends ClassMapperBase<EventCategory> {
       description: data.dec(_f$description),
       image: data.dec(_f$image),
       name: data.dec(_f$name),
+      subCategories: data.dec(_f$subCategories),
     );
   }
 
@@ -120,7 +127,19 @@ extension EventCategoryValueCopy<$R, $Out>
 
 abstract class EventCategoryCopyWith<$R, $In extends EventCategory, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  $R call({String? id, String? description, String? image, String? name});
+  ListCopyWith<
+    $R,
+    SubCategories,
+    SubCategoriesCopyWith<$R, SubCategories, SubCategories>
+  >?
+  get subCategories;
+  $R call({
+    String? id,
+    String? description,
+    String? image,
+    String? name,
+    List<SubCategories>? subCategories,
+  });
   EventCategoryCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -133,17 +152,32 @@ class _EventCategoryCopyWithImpl<$R, $Out>
   late final ClassMapperBase<EventCategory> $mapper =
       EventCategoryMapper.ensureInitialized();
   @override
+  ListCopyWith<
+    $R,
+    SubCategories,
+    SubCategoriesCopyWith<$R, SubCategories, SubCategories>
+  >?
+  get subCategories => $value.subCategories != null
+      ? ListCopyWith(
+          $value.subCategories!,
+          (v, t) => v.copyWith.$chain(t),
+          (v) => call(subCategories: v),
+        )
+      : null;
+  @override
   $R call({
     Object? id = $none,
     String? description,
     Object? image = $none,
     String? name,
+    Object? subCategories = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != $none) #id: id,
       if (description != null) #description: description,
       if (image != $none) #image: image,
       if (name != null) #name: name,
+      if (subCategories != $none) #subCategories: subCategories,
     }),
   );
   @override
@@ -152,12 +186,167 @@ class _EventCategoryCopyWithImpl<$R, $Out>
     description: data.get(#description, or: $value.description),
     image: data.get(#image, or: $value.image),
     name: data.get(#name, or: $value.name),
+    subCategories: data.get(#subCategories, or: $value.subCategories),
   );
 
   @override
   EventCategoryCopyWith<$R2, EventCategory, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   ) => _EventCategoryCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class SubCategoriesMapper extends ClassMapperBase<SubCategories> {
+  SubCategoriesMapper._();
+
+  static SubCategoriesMapper? _instance;
+  static SubCategoriesMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = SubCategoriesMapper._());
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'SubCategories';
+
+  static String _$id(SubCategories v) => v.id;
+  static const Field<SubCategories, String> _f$id = Field('id', _$id);
+  static String? _$title(SubCategories v) => v.title;
+  static const Field<SubCategories, String> _f$title = Field(
+    'title',
+    _$title,
+    opt: true,
+  );
+  static String? _$description(SubCategories v) => v.description;
+  static const Field<SubCategories, String> _f$description = Field(
+    'description',
+    _$description,
+    opt: true,
+  );
+  static String? _$imageUrl(SubCategories v) => v.imageUrl;
+  static const Field<SubCategories, String> _f$imageUrl = Field(
+    'imageUrl',
+    _$imageUrl,
+    opt: true,
+  );
+
+  @override
+  final MappableFields<SubCategories> fields = const {
+    #id: _f$id,
+    #title: _f$title,
+    #description: _f$description,
+    #imageUrl: _f$imageUrl,
+  };
+
+  static SubCategories _instantiate(DecodingData data) {
+    return SubCategories(
+      id: data.dec(_f$id),
+      title: data.dec(_f$title),
+      description: data.dec(_f$description),
+      imageUrl: data.dec(_f$imageUrl),
+    );
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static SubCategories fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<SubCategories>(map);
+  }
+
+  static SubCategories fromJson(String json) {
+    return ensureInitialized().decodeJson<SubCategories>(json);
+  }
+}
+
+mixin SubCategoriesMappable {
+  String toJson() {
+    return SubCategoriesMapper.ensureInitialized().encodeJson<SubCategories>(
+      this as SubCategories,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return SubCategoriesMapper.ensureInitialized().encodeMap<SubCategories>(
+      this as SubCategories,
+    );
+  }
+
+  SubCategoriesCopyWith<SubCategories, SubCategories, SubCategories>
+  get copyWith => _SubCategoriesCopyWithImpl<SubCategories, SubCategories>(
+    this as SubCategories,
+    $identity,
+    $identity,
+  );
+  @override
+  String toString() {
+    return SubCategoriesMapper.ensureInitialized().stringifyValue(
+      this as SubCategories,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return SubCategoriesMapper.ensureInitialized().equalsValue(
+      this as SubCategories,
+      other,
+    );
+  }
+
+  @override
+  int get hashCode {
+    return SubCategoriesMapper.ensureInitialized().hashValue(
+      this as SubCategories,
+    );
+  }
+}
+
+extension SubCategoriesValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, SubCategories, $Out> {
+  SubCategoriesCopyWith<$R, SubCategories, $Out> get $asSubCategories =>
+      $base.as((v, t, t2) => _SubCategoriesCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class SubCategoriesCopyWith<$R, $In extends SubCategories, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  $R call({String? id, String? title, String? description, String? imageUrl});
+  SubCategoriesCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+}
+
+class _SubCategoriesCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, SubCategories, $Out>
+    implements SubCategoriesCopyWith<$R, SubCategories, $Out> {
+  _SubCategoriesCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<SubCategories> $mapper =
+      SubCategoriesMapper.ensureInitialized();
+  @override
+  $R call({
+    String? id,
+    Object? title = $none,
+    Object? description = $none,
+    Object? imageUrl = $none,
+  }) => $apply(
+    FieldCopyWithData({
+      if (id != null) #id: id,
+      if (title != $none) #title: title,
+      if (description != $none) #description: description,
+      if (imageUrl != $none) #imageUrl: imageUrl,
+    }),
+  );
+  @override
+  SubCategories $make(CopyWithData data) => SubCategories(
+    id: data.get(#id, or: $value.id),
+    title: data.get(#title, or: $value.title),
+    description: data.get(#description, or: $value.description),
+    imageUrl: data.get(#imageUrl, or: $value.imageUrl),
+  );
+
+  @override
+  SubCategoriesCopyWith<$R2, SubCategories, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  ) => _SubCategoriesCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
 class VendorCategoryMapper extends ClassMapperBase<VendorCategory> {

@@ -139,7 +139,8 @@ final class GetVendorsProvider
     with $FutureModifier<List<Vendor>>, $FutureProvider<List<Vendor>> {
   const GetVendorsProvider._({
     required GetVendorsFamily super.from,
-    required ({int page, String? categoryId}) super.argument,
+    required ({int page, String? categoryId, String? subcategoryId})
+    super.argument,
   }) : super(
          retry: null,
          name: r'getVendorsProvider',
@@ -166,11 +167,14 @@ final class GetVendorsProvider
 
   @override
   FutureOr<List<Vendor>> create(Ref ref) {
-    final argument = this.argument as ({int page, String? categoryId});
+    final argument =
+        this.argument
+            as ({int page, String? categoryId, String? subcategoryId});
     return getVendors(
       ref,
       page: argument.page,
       categoryId: argument.categoryId,
+      subcategoryId: argument.subcategoryId,
     );
   }
 
@@ -185,13 +189,13 @@ final class GetVendorsProvider
   }
 }
 
-String _$getVendorsHash() => r'fd8787e470400b587057331516c95f46a9f4117b';
+String _$getVendorsHash() => r'a6fe9f4416cfca0437a972e6fef3b86bbd475555';
 
 final class GetVendorsFamily extends $Family
     with
         $FunctionalFamilyOverride<
           FutureOr<List<Vendor>>,
-          ({int page, String? categoryId})
+          ({int page, String? categoryId, String? subcategoryId})
         > {
   const GetVendorsFamily._()
     : super(
@@ -202,11 +206,18 @@ final class GetVendorsFamily extends $Family
         isAutoDispose: true,
       );
 
-  GetVendorsProvider call({int page = 1, String? categoryId}) =>
-      GetVendorsProvider._(
-        argument: (page: page, categoryId: categoryId),
-        from: this,
-      );
+  GetVendorsProvider call({
+    int page = 1,
+    String? categoryId,
+    String? subcategoryId,
+  }) => GetVendorsProvider._(
+    argument: (
+      page: page,
+      categoryId: categoryId,
+      subcategoryId: subcategoryId,
+    ),
+    from: this,
+  );
 
   @override
   String toString() => r'getVendorsProvider';
@@ -228,6 +239,7 @@ final class GetEventsProvider
     required ({
       int page,
       String? categoryId,
+      String? subcategoryId,
       bool? happeningTonight,
       bool? nearby,
     })
@@ -263,6 +275,7 @@ final class GetEventsProvider
             as ({
               int page,
               String? categoryId,
+              String? subcategoryId,
               bool? happeningTonight,
               bool? nearby,
             });
@@ -270,6 +283,7 @@ final class GetEventsProvider
       ref,
       page: argument.page,
       categoryId: argument.categoryId,
+      subcategoryId: argument.subcategoryId,
       happeningTonight: argument.happeningTonight,
       nearby: argument.nearby,
     );
@@ -286,13 +300,19 @@ final class GetEventsProvider
   }
 }
 
-String _$getEventsHash() => r'd3e54ceddf3abfd79277d1d4fa683efaff219e4d';
+String _$getEventsHash() => r'c9c75d46fa43405fda13b6910fd33ea60f132679';
 
 final class GetEventsFamily extends $Family
     with
         $FunctionalFamilyOverride<
           FutureOr<List<Event>>,
-          ({int page, String? categoryId, bool? happeningTonight, bool? nearby})
+          ({
+            int page,
+            String? categoryId,
+            String? subcategoryId,
+            bool? happeningTonight,
+            bool? nearby,
+          })
         > {
   const GetEventsFamily._()
     : super(
@@ -306,12 +326,14 @@ final class GetEventsFamily extends $Family
   GetEventsProvider call({
     int page = 1,
     String? categoryId,
+    String? subcategoryId,
     bool? happeningTonight,
     bool? nearby,
   }) => GetEventsProvider._(
     argument: (
       page: page,
       categoryId: categoryId,
+      subcategoryId: subcategoryId,
       happeningTonight: happeningTonight,
       nearby: nearby,
     ),

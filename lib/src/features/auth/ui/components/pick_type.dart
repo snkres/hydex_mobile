@@ -88,13 +88,13 @@ class PickUserType extends StatelessWidget {
                     nullfrColor: AppColors.surfaceContainer,
                     onTap: currentType != Role.none
                         ? () async {
-                            pageController.nextPage(
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
                             ref
                                 .read(userProvider.notifier)
                                 .create(role: currentType);
+                            await pageController.nextPage(
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
                           }
                         : null,
                   );

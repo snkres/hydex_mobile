@@ -12,6 +12,15 @@ class UpcomingEvent with UpcomingEventMappable {
   final Location location;
   final UpcomingEventStatus status;
   final int numberOfGuests;
+  final String? cancellationReason;
+  final List<String>? guestsNames;
+  final List<String> thingsToKnow;
+  final String passId;
+  final String? termsAndConditions;
+  final int totalPrice;
+  final String vendorName;
+  final String bookingType;
+  final String passName;
 
   UpcomingEvent({
     required this.id,
@@ -21,6 +30,15 @@ class UpcomingEvent with UpcomingEventMappable {
     required this.location,
     required this.status,
     this.numberOfGuests = 0,
+    this.cancellationReason,
+    this.guestsNames,
+    required this.thingsToKnow,
+    required this.passId,
+    this.termsAndConditions,
+    required this.totalPrice,
+    required this.vendorName,
+    required this.bookingType,
+    required this.passName,
   });
 }
 

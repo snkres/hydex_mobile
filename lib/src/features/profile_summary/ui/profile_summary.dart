@@ -87,7 +87,7 @@ class ProfileSummary extends StatelessWidget {
                     Spacer(),
                     Text.rich(
                       TextSpan(
-                        text: "5,100 ",
+                        text: "${event.totalPrice} ",
                         style: TextStyle(
                           fontSize: AppTextStyles(context).accumulator * 17,
                           fontWeight: .w600,
@@ -117,86 +117,100 @@ class ProfileSummary extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 12),
-              SmoothContainer(
-                side: BorderSide(color: AppColors.borderDefault),
-                borderRadius: .circular(16),
-                margin: .symmetric(horizontal: 16),
-                padding: .all(16),
-                smoothness: 1,
-                child: Row(
-                  mainAxisAlignment: .center,
-                  children: [
-                    SvgPicture.asset("img/svg/profile.svg", package: "assets"),
-                    SizedBox(width: 9),
-                    Column(
-                      crossAxisAlignment: .start,
-                      children: [
-                        Text(
-                          "Hady Soliman",
-                          style: TextStyle(
-                            fontWeight: .w600,
-                            fontSize: AppTextStyles(context).accumulator * 14,
+              ...List.generate(
+                event.guestsNames?.length ?? 0,
+                (index) => SmoothContainer(
+                  side: BorderSide(color: AppColors.borderDefault),
+                  borderRadius: .circular(16),
+                  margin: EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: index < (event.guestsNames?.length ?? 0) - 1
+                        ? 8
+                        : 0,
+                  ),
+                  padding: .all(16),
+                  smoothness: 1,
+                  child: Row(
+                    mainAxisAlignment: .center,
+                    children: [
+                      SvgPicture.asset(
+                        "img/svg/profile.svg",
+                        package: "assets",
+                      ),
+                      SizedBox(width: 9),
+                      Column(
+                        crossAxisAlignment: .start,
+                        children: [
+                          Text(
+                            event.guestsNames![index],
+                            style: TextStyle(
+                              fontWeight: .w600,
+                              fontSize: AppTextStyles(context).accumulator * 14,
+                            ),
                           ),
-                        ),
-                        Text(
-                          "Guest 1",
-                          style: TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: AppTextStyles(context).accumulator * 12,
+                          Text(
+                            "Guest ${index + 1}",
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: AppTextStyles(context).accumulator * 12,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Spacer(),
-                    // ElevatedButton(
-                    //   onPressed: () async {},
-                    //   child: Text("View Pass"),
-                    // ),
-                  ],
+                        ],
+                      ),
+                      Spacer(),
+                    ],
+                  ),
                 ),
               ),
-              SizedBox(height: 32),
+              Visibility(
+                visible: event.thingsToKnow.isNotEmpty,
+                child: SizedBox(height: 32),
+              ),
 
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Things to know".toUpperCase(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textSecondary,
-                        fontSize: AppTextStyles(context).accumulator * 16,
+              Visibility(
+                visible: event.thingsToKnow.isNotEmpty,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Things to know".toUpperCase(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textSecondary,
+                          fontSize: AppTextStyles(context).accumulator * 16,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 12),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: ["yalhwy"].length,
-                      separatorBuilder: (_, __) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Divider(color: AppColors.borderDefault),
-                      ),
-                      itemBuilder: (_, index) {
-                        return ListTile(
-                          contentPadding: .zero,
+                      SizedBox(height: 12),
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: event.thingsToKnow.length,
+                        separatorBuilder: (_, __) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Divider(color: AppColors.borderDefault),
+                        ),
+                        itemBuilder: (_, index) {
+                          return ListTile(
+                            contentPadding: .zero,
 
-                          leading: SvgPicture.asset(
-                            "img/svg/ar_.svg",
-                            width: 15,
-                            height: 15,
-                            package: "assets",
-                          ),
-                          title: Text(
-                            ["yalhwy"][index],
-                            style: AppTextStyles(context).smallRegular,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                            leading: SvgPicture.asset(
+                              "img/svg/ar_.svg",
+                              width: 15,
+                              height: 15,
+                              package: "assets",
+                            ),
+                            title: Text(
+                              event.thingsToKnow[index],
+                              style: AppTextStyles(context).smallRegular,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
               SizedBox(height: 24),
@@ -275,7 +289,7 @@ class ProfileSummary extends StatelessWidget {
                     side: BorderSide(color: AppColors.borderDefault),
                   ),
                 ),
-                child: Center(child: Text("Mwah")),
+                child: Center(child: Text(event.termsAndConditions ?? "")),
               ),
               SizedBox(height: 100),
             ],
