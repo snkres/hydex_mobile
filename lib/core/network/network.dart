@@ -393,6 +393,16 @@ class DioHelper {
               }
               _authEventListener?.onTokenRefreshFailed();
               await _clearTokens();
+
+              // Reject with UnauthorizedException instead of passing original error
+              handler.reject(
+                DioException(
+                  requestOptions: error.requestOptions,
+                  error: UnauthorizedException('Unauthorized'),
+                  type: DioExceptionType.unknown,
+                ),
+              );
+              return;
             }
           }
 
@@ -826,6 +836,9 @@ class DioHelper {
           }
           if (error.error is TokenExpiredException) {
             return error.error as TokenExpiredException;
+          }
+          if (error.error is UnauthorizedException) {
+            return error.error as UnauthorizedException;
           }
           return ApiException('An unexpected error occurred: ${error.message}');
 
