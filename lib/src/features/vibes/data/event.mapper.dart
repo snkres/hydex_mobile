@@ -162,6 +162,7 @@ class BannerMapper extends ClassMapperBase<Banner> {
       MapperContainer.globals.use(_instance = BannerMapper._());
       BannerTypeMapper.ensureInitialized();
       AssignmentMapper.ensureInitialized();
+      EventCategoryMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -210,6 +211,12 @@ class BannerMapper extends ClassMapperBase<Banner> {
     'assignment',
     _$assignment,
   );
+  static EventCategory? _$category(Banner v) => v.category;
+  static const Field<Banner, EventCategory> _f$category = Field(
+    'category',
+    _$category,
+    opt: true,
+  );
 
   @override
   final MappableFields<Banner> fields = const {
@@ -222,6 +229,7 @@ class BannerMapper extends ClassMapperBase<Banner> {
     #campaignStartDate: _f$campaignStartDate,
     #campaignEndDate: _f$campaignEndDate,
     #assignment: _f$assignment,
+    #category: _f$category,
   };
 
   static Banner _instantiate(DecodingData data) {
@@ -235,6 +243,7 @@ class BannerMapper extends ClassMapperBase<Banner> {
       campaignStartDate: data.dec(_f$campaignStartDate),
       campaignEndDate: data.dec(_f$campaignEndDate),
       assignment: data.dec(_f$assignment),
+      category: data.dec(_f$category),
     );
   }
 
@@ -285,6 +294,7 @@ extension BannerValueCopy<$R, $Out> on ObjectCopyWith<$R, Banner, $Out> {
 abstract class BannerCopyWith<$R, $In extends Banner, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   AssignmentCopyWith<$R, Assignment, Assignment> get assignment;
+  EventCategoryCopyWith<$R, EventCategory, EventCategory>? get category;
   $R call({
     String? id,
     BannerType? type,
@@ -295,6 +305,7 @@ abstract class BannerCopyWith<$R, $In extends Banner, $Out>
     DateTime? campaignStartDate,
     DateTime? campaignEndDate,
     Assignment? assignment,
+    EventCategory? category,
   });
   BannerCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -309,6 +320,9 @@ class _BannerCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Banner, $Out>
   AssignmentCopyWith<$R, Assignment, Assignment> get assignment =>
       $value.assignment.copyWith.$chain((v) => call(assignment: v));
   @override
+  EventCategoryCopyWith<$R, EventCategory, EventCategory>? get category =>
+      $value.category?.copyWith.$chain((v) => call(category: v));
+  @override
   $R call({
     String? id,
     BannerType? type,
@@ -319,6 +333,7 @@ class _BannerCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Banner, $Out>
     DateTime? campaignStartDate,
     DateTime? campaignEndDate,
     Assignment? assignment,
+    Object? category = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -330,6 +345,7 @@ class _BannerCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Banner, $Out>
       if (campaignStartDate != null) #campaignStartDate: campaignStartDate,
       if (campaignEndDate != null) #campaignEndDate: campaignEndDate,
       if (assignment != null) #assignment: assignment,
+      if (category != $none) #category: category,
     }),
   );
   @override
@@ -346,6 +362,7 @@ class _BannerCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Banner, $Out>
     ),
     campaignEndDate: data.get(#campaignEndDate, or: $value.campaignEndDate),
     assignment: data.get(#assignment, or: $value.assignment),
+    category: data.get(#category, or: $value.category),
   );
 
   @override
@@ -361,6 +378,7 @@ class AssignmentMapper extends ClassMapperBase<Assignment> {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = AssignmentMapper._());
       AssignmentStatusMapper.ensureInitialized();
+      AssignmentVendorMapper.ensureInitialized();
       AssignmentEventMapper.ensureInitialized();
     }
     return _instance!;
@@ -376,8 +394,8 @@ class AssignmentMapper extends ClassMapperBase<Assignment> {
     'targetType',
     _$targetType,
   );
-  static AssignmentEvent? _$vendor(Assignment v) => v.vendor;
-  static const Field<Assignment, AssignmentEvent> _f$vendor = Field(
+  static AssignmentVendor? _$vendor(Assignment v) => v.vendor;
+  static const Field<Assignment, AssignmentVendor> _f$vendor = Field(
     'vendor',
     _$vendor,
     opt: true,
@@ -466,12 +484,12 @@ extension AssignmentValueCopy<$R, $Out>
 
 abstract class AssignmentCopyWith<$R, $In extends Assignment, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  AssignmentEventCopyWith<$R, AssignmentEvent, AssignmentEvent>? get vendor;
+  AssignmentVendorCopyWith<$R, AssignmentVendor, AssignmentVendor>? get vendor;
   AssignmentEventCopyWith<$R, AssignmentEvent, AssignmentEvent>? get event;
   $R call({
     String? id,
     AssignmentStatus? targetType,
-    AssignmentEvent? vendor,
+    AssignmentVendor? vendor,
     AssignmentEvent? event,
   });
   AssignmentCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
@@ -486,8 +504,8 @@ class _AssignmentCopyWithImpl<$R, $Out>
   late final ClassMapperBase<Assignment> $mapper =
       AssignmentMapper.ensureInitialized();
   @override
-  AssignmentEventCopyWith<$R, AssignmentEvent, AssignmentEvent>? get vendor =>
-      $value.vendor?.copyWith.$chain((v) => call(vendor: v));
+  AssignmentVendorCopyWith<$R, AssignmentVendor, AssignmentVendor>?
+  get vendor => $value.vendor?.copyWith.$chain((v) => call(vendor: v));
   @override
   AssignmentEventCopyWith<$R, AssignmentEvent, AssignmentEvent>? get event =>
       $value.event?.copyWith.$chain((v) => call(event: v));
@@ -519,219 +537,226 @@ class _AssignmentCopyWithImpl<$R, $Out>
   ) => _AssignmentCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
-class AssignmentEventMapper extends ClassMapperBase<AssignmentEvent> {
-  AssignmentEventMapper._();
+class AssignmentVendorMapper extends ClassMapperBase<AssignmentVendor> {
+  AssignmentVendorMapper._();
 
-  static AssignmentEventMapper? _instance;
-  static AssignmentEventMapper ensureInitialized() {
+  static AssignmentVendorMapper? _instance;
+  static AssignmentVendorMapper ensureInitialized() {
     if (_instance == null) {
-      MapperContainer.globals.use(_instance = AssignmentEventMapper._());
+      MapperContainer.globals.use(_instance = AssignmentVendorMapper._());
+      PriceTypeMapper.ensureInitialized();
+      LocationMapper.ensureInitialized();
+      OperatingHoursMapper.ensureInitialized();
     }
     return _instance!;
   }
 
   @override
-  final String id = 'AssignmentEvent';
+  final String id = 'AssignmentVendor';
 
-  static String _$id(AssignmentEvent v) => v.id;
-  static const Field<AssignmentEvent, String> _f$id = Field('id', _$id);
+  static String _$id(AssignmentVendor v) => v.id;
+  static const Field<AssignmentVendor, String> _f$id = Field('id', _$id);
+  static PriceType? _$priceType(AssignmentVendor v) => v.priceType;
+  static const Field<AssignmentVendor, PriceType> _f$priceType = Field(
+    'priceType',
+    _$priceType,
+    opt: true,
+  );
+  static String _$name(AssignmentVendor v) => v.name;
+  static const Field<AssignmentVendor, String> _f$name = Field('name', _$name);
+  static String _$description(AssignmentVendor v) => v.description;
+  static const Field<AssignmentVendor, String> _f$description = Field(
+    'description',
+    _$description,
+  );
+  static List<String> _$media(AssignmentVendor v) => v.media;
+  static const Field<AssignmentVendor, List<String>> _f$media = Field(
+    'media',
+    _$media,
+  );
+  static Location _$location(AssignmentVendor v) => v.location;
+  static const Field<AssignmentVendor, Location> _f$location = Field(
+    'location',
+    _$location,
+  );
+  static Map<String, OperatingHours> _$operatingHours(AssignmentVendor v) =>
+      v.operatingHours;
+  static const Field<AssignmentVendor, Map<String, OperatingHours>>
+  _f$operatingHours = Field('operatingHours', _$operatingHours);
 
   @override
-  final MappableFields<AssignmentEvent> fields = const {#id: _f$id};
+  final MappableFields<AssignmentVendor> fields = const {
+    #id: _f$id,
+    #priceType: _f$priceType,
+    #name: _f$name,
+    #description: _f$description,
+    #media: _f$media,
+    #location: _f$location,
+    #operatingHours: _f$operatingHours,
+  };
 
-  static AssignmentEvent _instantiate(DecodingData data) {
-    return AssignmentEvent(id: data.dec(_f$id));
+  static AssignmentVendor _instantiate(DecodingData data) {
+    return AssignmentVendor(
+      id: data.dec(_f$id),
+      priceType: data.dec(_f$priceType),
+      name: data.dec(_f$name),
+      description: data.dec(_f$description),
+      media: data.dec(_f$media),
+      location: data.dec(_f$location),
+      operatingHours: data.dec(_f$operatingHours),
+    );
   }
 
   @override
   final Function instantiate = _instantiate;
 
-  static AssignmentEvent fromMap(Map<String, dynamic> map) {
-    return ensureInitialized().decodeMap<AssignmentEvent>(map);
+  static AssignmentVendor fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<AssignmentVendor>(map);
   }
 
-  static AssignmentEvent fromJson(String json) {
-    return ensureInitialized().decodeJson<AssignmentEvent>(json);
+  static AssignmentVendor fromJson(String json) {
+    return ensureInitialized().decodeJson<AssignmentVendor>(json);
   }
 }
 
-mixin AssignmentEventMappable {
+mixin AssignmentVendorMappable {
   String toJson() {
-    return AssignmentEventMapper.ensureInitialized()
-        .encodeJson<AssignmentEvent>(this as AssignmentEvent);
+    return AssignmentVendorMapper.ensureInitialized()
+        .encodeJson<AssignmentVendor>(this as AssignmentVendor);
   }
 
   Map<String, dynamic> toMap() {
-    return AssignmentEventMapper.ensureInitialized().encodeMap<AssignmentEvent>(
-      this as AssignmentEvent,
-    );
+    return AssignmentVendorMapper.ensureInitialized()
+        .encodeMap<AssignmentVendor>(this as AssignmentVendor);
   }
 
-  AssignmentEventCopyWith<AssignmentEvent, AssignmentEvent, AssignmentEvent>
+  AssignmentVendorCopyWith<AssignmentVendor, AssignmentVendor, AssignmentVendor>
   get copyWith =>
-      _AssignmentEventCopyWithImpl<AssignmentEvent, AssignmentEvent>(
-        this as AssignmentEvent,
+      _AssignmentVendorCopyWithImpl<AssignmentVendor, AssignmentVendor>(
+        this as AssignmentVendor,
         $identity,
         $identity,
       );
   @override
   String toString() {
-    return AssignmentEventMapper.ensureInitialized().stringifyValue(
-      this as AssignmentEvent,
+    return AssignmentVendorMapper.ensureInitialized().stringifyValue(
+      this as AssignmentVendor,
     );
   }
 
   @override
   bool operator ==(Object other) {
-    return AssignmentEventMapper.ensureInitialized().equalsValue(
-      this as AssignmentEvent,
+    return AssignmentVendorMapper.ensureInitialized().equalsValue(
+      this as AssignmentVendor,
       other,
     );
   }
 
   @override
   int get hashCode {
-    return AssignmentEventMapper.ensureInitialized().hashValue(
-      this as AssignmentEvent,
+    return AssignmentVendorMapper.ensureInitialized().hashValue(
+      this as AssignmentVendor,
     );
   }
 }
 
-extension AssignmentEventValueCopy<$R, $Out>
-    on ObjectCopyWith<$R, AssignmentEvent, $Out> {
-  AssignmentEventCopyWith<$R, AssignmentEvent, $Out> get $asAssignmentEvent =>
-      $base.as((v, t, t2) => _AssignmentEventCopyWithImpl<$R, $Out>(v, t, t2));
+extension AssignmentVendorValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, AssignmentVendor, $Out> {
+  AssignmentVendorCopyWith<$R, AssignmentVendor, $Out>
+  get $asAssignmentVendor =>
+      $base.as((v, t, t2) => _AssignmentVendorCopyWithImpl<$R, $Out>(v, t, t2));
 }
 
-abstract class AssignmentEventCopyWith<$R, $In extends AssignmentEvent, $Out>
+abstract class AssignmentVendorCopyWith<$R, $In extends AssignmentVendor, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  $R call({String? id});
-  AssignmentEventCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get media;
+  LocationCopyWith<$R, Location, Location> get location;
+  MapCopyWith<
+    $R,
+    String,
+    OperatingHours,
+    OperatingHoursCopyWith<$R, OperatingHours, OperatingHours>
+  >
+  get operatingHours;
+  $R call({
+    String? id,
+    PriceType? priceType,
+    String? name,
+    String? description,
+    List<String>? media,
+    Location? location,
+    Map<String, OperatingHours>? operatingHours,
+  });
+  AssignmentVendorCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   );
 }
 
-class _AssignmentEventCopyWithImpl<$R, $Out>
-    extends ClassCopyWithBase<$R, AssignmentEvent, $Out>
-    implements AssignmentEventCopyWith<$R, AssignmentEvent, $Out> {
-  _AssignmentEventCopyWithImpl(super.value, super.then, super.then2);
+class _AssignmentVendorCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, AssignmentVendor, $Out>
+    implements AssignmentVendorCopyWith<$R, AssignmentVendor, $Out> {
+  _AssignmentVendorCopyWithImpl(super.value, super.then, super.then2);
 
   @override
-  late final ClassMapperBase<AssignmentEvent> $mapper =
-      AssignmentEventMapper.ensureInitialized();
+  late final ClassMapperBase<AssignmentVendor> $mapper =
+      AssignmentVendorMapper.ensureInitialized();
   @override
-  $R call({String? id}) => $apply(FieldCopyWithData({if (id != null) #id: id}));
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get media =>
+      ListCopyWith(
+        $value.media,
+        (v, t) => ObjectCopyWith(v, $identity, t),
+        (v) => call(media: v),
+      );
   @override
-  AssignmentEvent $make(CopyWithData data) =>
-      AssignmentEvent(id: data.get(#id, or: $value.id));
-
+  LocationCopyWith<$R, Location, Location> get location =>
+      $value.location.copyWith.$chain((v) => call(location: v));
   @override
-  AssignmentEventCopyWith<$R2, AssignmentEvent, $Out2> $chain<$R2, $Out2>(
-    Then<$Out2, $R2> t,
-  ) => _AssignmentEventCopyWithImpl<$R2, $Out2>($value, $cast, t);
-}
-
-class DetailMapper extends ClassMapperBase<Detail> {
-  DetailMapper._();
-
-  static DetailMapper? _instance;
-  static DetailMapper ensureInitialized() {
-    if (_instance == null) {
-      MapperContainer.globals.use(_instance = DetailMapper._());
-    }
-    return _instance!;
-  }
-
+  MapCopyWith<
+    $R,
+    String,
+    OperatingHours,
+    OperatingHoursCopyWith<$R, OperatingHours, OperatingHours>
+  >
+  get operatingHours => MapCopyWith(
+    $value.operatingHours,
+    (v, t) => v.copyWith.$chain(t),
+    (v) => call(operatingHours: v),
+  );
   @override
-  final String id = 'Detail';
-
-  static String _$image(Detail v) => v.image;
-  static const Field<Detail, String> _f$image = Field('image', _$image);
-  static String _$title(Detail v) => v.title;
-  static const Field<Detail, String> _f$title = Field('title', _$title);
-
-  @override
-  final MappableFields<Detail> fields = const {
-    #image: _f$image,
-    #title: _f$title,
-  };
-
-  static Detail _instantiate(DecodingData data) {
-    return Detail(image: data.dec(_f$image), title: data.dec(_f$title));
-  }
-
-  @override
-  final Function instantiate = _instantiate;
-
-  static Detail fromMap(Map<String, dynamic> map) {
-    return ensureInitialized().decodeMap<Detail>(map);
-  }
-
-  static Detail fromJson(String json) {
-    return ensureInitialized().decodeJson<Detail>(json);
-  }
-}
-
-mixin DetailMappable {
-  String toJson() {
-    return DetailMapper.ensureInitialized().encodeJson<Detail>(this as Detail);
-  }
-
-  Map<String, dynamic> toMap() {
-    return DetailMapper.ensureInitialized().encodeMap<Detail>(this as Detail);
-  }
-
-  DetailCopyWith<Detail, Detail, Detail> get copyWith =>
-      _DetailCopyWithImpl<Detail, Detail>(this as Detail, $identity, $identity);
-  @override
-  String toString() {
-    return DetailMapper.ensureInitialized().stringifyValue(this as Detail);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return DetailMapper.ensureInitialized().equalsValue(this as Detail, other);
-  }
-
-  @override
-  int get hashCode {
-    return DetailMapper.ensureInitialized().hashValue(this as Detail);
-  }
-}
-
-extension DetailValueCopy<$R, $Out> on ObjectCopyWith<$R, Detail, $Out> {
-  DetailCopyWith<$R, Detail, $Out> get $asDetail =>
-      $base.as((v, t, t2) => _DetailCopyWithImpl<$R, $Out>(v, t, t2));
-}
-
-abstract class DetailCopyWith<$R, $In extends Detail, $Out>
-    implements ClassCopyWith<$R, $In, $Out> {
-  $R call({String? image, String? title});
-  DetailCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
-}
-
-class _DetailCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Detail, $Out>
-    implements DetailCopyWith<$R, Detail, $Out> {
-  _DetailCopyWithImpl(super.value, super.then, super.then2);
-
-  @override
-  late final ClassMapperBase<Detail> $mapper = DetailMapper.ensureInitialized();
-  @override
-  $R call({String? image, String? title}) => $apply(
+  $R call({
+    String? id,
+    Object? priceType = $none,
+    String? name,
+    String? description,
+    List<String>? media,
+    Location? location,
+    Map<String, OperatingHours>? operatingHours,
+  }) => $apply(
     FieldCopyWithData({
-      if (image != null) #image: image,
-      if (title != null) #title: title,
+      if (id != null) #id: id,
+      if (priceType != $none) #priceType: priceType,
+      if (name != null) #name: name,
+      if (description != null) #description: description,
+      if (media != null) #media: media,
+      if (location != null) #location: location,
+      if (operatingHours != null) #operatingHours: operatingHours,
     }),
   );
   @override
-  Detail $make(CopyWithData data) => Detail(
-    image: data.get(#image, or: $value.image),
-    title: data.get(#title, or: $value.title),
+  AssignmentVendor $make(CopyWithData data) => AssignmentVendor(
+    id: data.get(#id, or: $value.id),
+    priceType: data.get(#priceType, or: $value.priceType),
+    name: data.get(#name, or: $value.name),
+    description: data.get(#description, or: $value.description),
+    media: data.get(#media, or: $value.media),
+    location: data.get(#location, or: $value.location),
+    operatingHours: data.get(#operatingHours, or: $value.operatingHours),
   );
 
   @override
-  DetailCopyWith<$R2, Detail, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
-      _DetailCopyWithImpl<$R2, $Out2>($value, $cast, t);
+  AssignmentVendorCopyWith<$R2, AssignmentVendor, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  ) => _AssignmentVendorCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
 class OperatingHoursMapper extends ClassMapperBase<OperatingHours> {
@@ -856,6 +881,323 @@ class _OperatingHoursCopyWithImpl<$R, $Out>
   OperatingHoursCopyWith<$R2, OperatingHours, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   ) => _OperatingHoursCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class AssignmentEventMapper extends ClassMapperBase<AssignmentEvent> {
+  AssignmentEventMapper._();
+
+  static AssignmentEventMapper? _instance;
+  static AssignmentEventMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = AssignmentEventMapper._());
+      PriceTypeMapper.ensureInitialized();
+      LocationMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'AssignmentEvent';
+
+  static String _$id(AssignmentEvent v) => v.id;
+  static const Field<AssignmentEvent, String> _f$id = Field('id', _$id);
+  static PriceType? _$priceType(AssignmentEvent v) => v.priceType;
+  static const Field<AssignmentEvent, PriceType> _f$priceType = Field(
+    'priceType',
+    _$priceType,
+    opt: true,
+  );
+  static String _$name(AssignmentEvent v) => v.name;
+  static const Field<AssignmentEvent, String> _f$name = Field('name', _$name);
+  static String _$description(AssignmentEvent v) => v.description;
+  static const Field<AssignmentEvent, String> _f$description = Field(
+    'description',
+    _$description,
+  );
+  static List<String> _$media(AssignmentEvent v) => v.media;
+  static const Field<AssignmentEvent, List<String>> _f$media = Field(
+    'media',
+    _$media,
+  );
+  static Location _$location(AssignmentEvent v) => v.location;
+  static const Field<AssignmentEvent, Location> _f$location = Field(
+    'location',
+    _$location,
+  );
+  static DateTime _$startTime(AssignmentEvent v) => v.startTime;
+  static const Field<AssignmentEvent, DateTime> _f$startTime = Field(
+    'startTime',
+    _$startTime,
+  );
+  static DateTime _$endTime(AssignmentEvent v) => v.endTime;
+  static const Field<AssignmentEvent, DateTime> _f$endTime = Field(
+    'endTime',
+    _$endTime,
+  );
+
+  @override
+  final MappableFields<AssignmentEvent> fields = const {
+    #id: _f$id,
+    #priceType: _f$priceType,
+    #name: _f$name,
+    #description: _f$description,
+    #media: _f$media,
+    #location: _f$location,
+    #startTime: _f$startTime,
+    #endTime: _f$endTime,
+  };
+
+  static AssignmentEvent _instantiate(DecodingData data) {
+    return AssignmentEvent(
+      id: data.dec(_f$id),
+      priceType: data.dec(_f$priceType),
+      name: data.dec(_f$name),
+      description: data.dec(_f$description),
+      media: data.dec(_f$media),
+      location: data.dec(_f$location),
+      startTime: data.dec(_f$startTime),
+      endTime: data.dec(_f$endTime),
+    );
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static AssignmentEvent fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<AssignmentEvent>(map);
+  }
+
+  static AssignmentEvent fromJson(String json) {
+    return ensureInitialized().decodeJson<AssignmentEvent>(json);
+  }
+}
+
+mixin AssignmentEventMappable {
+  String toJson() {
+    return AssignmentEventMapper.ensureInitialized()
+        .encodeJson<AssignmentEvent>(this as AssignmentEvent);
+  }
+
+  Map<String, dynamic> toMap() {
+    return AssignmentEventMapper.ensureInitialized().encodeMap<AssignmentEvent>(
+      this as AssignmentEvent,
+    );
+  }
+
+  AssignmentEventCopyWith<AssignmentEvent, AssignmentEvent, AssignmentEvent>
+  get copyWith =>
+      _AssignmentEventCopyWithImpl<AssignmentEvent, AssignmentEvent>(
+        this as AssignmentEvent,
+        $identity,
+        $identity,
+      );
+  @override
+  String toString() {
+    return AssignmentEventMapper.ensureInitialized().stringifyValue(
+      this as AssignmentEvent,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return AssignmentEventMapper.ensureInitialized().equalsValue(
+      this as AssignmentEvent,
+      other,
+    );
+  }
+
+  @override
+  int get hashCode {
+    return AssignmentEventMapper.ensureInitialized().hashValue(
+      this as AssignmentEvent,
+    );
+  }
+}
+
+extension AssignmentEventValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, AssignmentEvent, $Out> {
+  AssignmentEventCopyWith<$R, AssignmentEvent, $Out> get $asAssignmentEvent =>
+      $base.as((v, t, t2) => _AssignmentEventCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class AssignmentEventCopyWith<$R, $In extends AssignmentEvent, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get media;
+  LocationCopyWith<$R, Location, Location> get location;
+  $R call({
+    String? id,
+    PriceType? priceType,
+    String? name,
+    String? description,
+    List<String>? media,
+    Location? location,
+    DateTime? startTime,
+    DateTime? endTime,
+  });
+  AssignmentEventCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  );
+}
+
+class _AssignmentEventCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, AssignmentEvent, $Out>
+    implements AssignmentEventCopyWith<$R, AssignmentEvent, $Out> {
+  _AssignmentEventCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<AssignmentEvent> $mapper =
+      AssignmentEventMapper.ensureInitialized();
+  @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get media =>
+      ListCopyWith(
+        $value.media,
+        (v, t) => ObjectCopyWith(v, $identity, t),
+        (v) => call(media: v),
+      );
+  @override
+  LocationCopyWith<$R, Location, Location> get location =>
+      $value.location.copyWith.$chain((v) => call(location: v));
+  @override
+  $R call({
+    String? id,
+    Object? priceType = $none,
+    String? name,
+    String? description,
+    List<String>? media,
+    Location? location,
+    DateTime? startTime,
+    DateTime? endTime,
+  }) => $apply(
+    FieldCopyWithData({
+      if (id != null) #id: id,
+      if (priceType != $none) #priceType: priceType,
+      if (name != null) #name: name,
+      if (description != null) #description: description,
+      if (media != null) #media: media,
+      if (location != null) #location: location,
+      if (startTime != null) #startTime: startTime,
+      if (endTime != null) #endTime: endTime,
+    }),
+  );
+  @override
+  AssignmentEvent $make(CopyWithData data) => AssignmentEvent(
+    id: data.get(#id, or: $value.id),
+    priceType: data.get(#priceType, or: $value.priceType),
+    name: data.get(#name, or: $value.name),
+    description: data.get(#description, or: $value.description),
+    media: data.get(#media, or: $value.media),
+    location: data.get(#location, or: $value.location),
+    startTime: data.get(#startTime, or: $value.startTime),
+    endTime: data.get(#endTime, or: $value.endTime),
+  );
+
+  @override
+  AssignmentEventCopyWith<$R2, AssignmentEvent, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  ) => _AssignmentEventCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class DetailMapper extends ClassMapperBase<Detail> {
+  DetailMapper._();
+
+  static DetailMapper? _instance;
+  static DetailMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = DetailMapper._());
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'Detail';
+
+  static String _$image(Detail v) => v.image;
+  static const Field<Detail, String> _f$image = Field('image', _$image);
+  static String _$title(Detail v) => v.title;
+  static const Field<Detail, String> _f$title = Field('title', _$title);
+
+  @override
+  final MappableFields<Detail> fields = const {
+    #image: _f$image,
+    #title: _f$title,
+  };
+
+  static Detail _instantiate(DecodingData data) {
+    return Detail(image: data.dec(_f$image), title: data.dec(_f$title));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static Detail fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<Detail>(map);
+  }
+
+  static Detail fromJson(String json) {
+    return ensureInitialized().decodeJson<Detail>(json);
+  }
+}
+
+mixin DetailMappable {
+  String toJson() {
+    return DetailMapper.ensureInitialized().encodeJson<Detail>(this as Detail);
+  }
+
+  Map<String, dynamic> toMap() {
+    return DetailMapper.ensureInitialized().encodeMap<Detail>(this as Detail);
+  }
+
+  DetailCopyWith<Detail, Detail, Detail> get copyWith =>
+      _DetailCopyWithImpl<Detail, Detail>(this as Detail, $identity, $identity);
+  @override
+  String toString() {
+    return DetailMapper.ensureInitialized().stringifyValue(this as Detail);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return DetailMapper.ensureInitialized().equalsValue(this as Detail, other);
+  }
+
+  @override
+  int get hashCode {
+    return DetailMapper.ensureInitialized().hashValue(this as Detail);
+  }
+}
+
+extension DetailValueCopy<$R, $Out> on ObjectCopyWith<$R, Detail, $Out> {
+  DetailCopyWith<$R, Detail, $Out> get $asDetail =>
+      $base.as((v, t, t2) => _DetailCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class DetailCopyWith<$R, $In extends Detail, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  $R call({String? image, String? title});
+  DetailCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+}
+
+class _DetailCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Detail, $Out>
+    implements DetailCopyWith<$R, Detail, $Out> {
+  _DetailCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<Detail> $mapper = DetailMapper.ensureInitialized();
+  @override
+  $R call({String? image, String? title}) => $apply(
+    FieldCopyWithData({
+      if (image != null) #image: image,
+      if (title != null) #title: title,
+    }),
+  );
+  @override
+  Detail $make(CopyWithData data) => Detail(
+    image: data.get(#image, or: $value.image),
+    title: data.get(#title, or: $value.title),
+  );
+
+  @override
+  DetailCopyWith<$R2, Detail, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+      _DetailCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
 class ExperiencesMapper extends ClassMapperBase<Experiences> {

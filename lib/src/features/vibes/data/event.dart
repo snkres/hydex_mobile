@@ -1,6 +1,8 @@
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/data/location.dart';
 import 'package:hydex/src/features/vibes/data/vendor.dart';
+import 'package:intl/intl.dart';
 
 part 'event.mapper.dart';
 
@@ -23,6 +25,7 @@ class Banner with BannerMappable {
   final DateTime campaignStartDate;
   final DateTime campaignEndDate;
   final Assignment assignment;
+  final EventCategory? category;
 
   Banner({
     required this.id,
@@ -34,6 +37,7 @@ class Banner with BannerMappable {
     required this.campaignStartDate,
     required this.campaignEndDate,
     required this.assignment,
+    this.category,
   });
 }
 
@@ -229,7 +233,8 @@ class BookingExperience with BookingExperienceMappable {
 class Assignment with AssignmentMappable {
   final String id;
   final AssignmentStatus targetType;
-  final AssignmentEvent? vendor;
+  final AssignmentVendor? vendor;
+
   final AssignmentEvent? event;
 
   Assignment({
@@ -243,8 +248,129 @@ class Assignment with AssignmentMappable {
 @MappableClass()
 class AssignmentEvent with AssignmentEventMappable {
   final String id;
+  final PriceType? priceType;
+  final String name, description;
+  final List<String> media;
+  final Location location;
+  final DateTime startTime;
+  final DateTime endTime;
 
-  AssignmentEvent({required this.id});
+  AssignmentEvent({
+    required this.id,
+    this.priceType,
+    required this.name,
+    required this.description,
+    required this.media,
+    required this.location,
+    required this.startTime,
+    required this.endTime,
+  });
+}
+
+@MappableClass()
+class AssignmentVendor with AssignmentVendorMappable {
+  final String id;
+  final PriceType? priceType;
+  final String name, description;
+  final List<String> media;
+  final Location location;
+  final Map<String, OperatingHours> operatingHours;
+
+  AssignmentVendor({
+    required this.id,
+    this.priceType,
+    required this.name,
+    required this.description,
+    required this.media,
+    required this.location,
+    required this.operatingHours,
+  });
+}
+
+extension AssignmentEventExtensions on AssignmentVendor {
+  /// Returns the duration in hours between start and end time
+  /// Example: "6" for 6 hours
+  String getFormattedOperatingHoursRange() {
+    final now = DateTime.now();
+    final dayNames = [
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday',
+    ];
+
+    // Get the current day name
+    final currentDayName = dayNames[now.weekday - 1];
+    final todayHours = operatingHours[currentDayName];
+
+    if (todayHours == null) {
+      return "Closed";
+    }
+
+    try {
+      final openTime = _parseTimeString(todayHours.open, now);
+      final closeTime = _parseTimeString(todayHours.close, now);
+
+      if (openTime == null || closeTime == null) {
+        print("Close Time $closeTime");
+        print("Open Time $openTime");
+
+        return "Closed";
+      }
+
+      // If close time is before open time, it closes the next day
+      final actualCloseTime = closeTime.isBefore(openTime)
+          ? closeTime.add(Duration(days: 1))
+          : closeTime;
+
+      // Format: "9:00 PM - 13 Oct, 3:00 AM"
+      final startFormat = DateFormat('h:mm a');
+      final endDateFormat = DateFormat('d MMM');
+      final endTimeFormat = DateFormat('h:mm a');
+
+      final startStr = startFormat.format(openTime);
+      final endDateStr = endDateFormat.format(actualCloseTime);
+      final endTimeStr = endTimeFormat.format(actualCloseTime);
+
+      return "$startStr – $endDateStr, $endTimeStr";
+    } catch (e) {
+      print("Error Time: $e");
+      return "Closed";
+    }
+  }
+
+  DateTime? _parseTimeString(String timeStr, DateTime baseDate) {
+    try {
+      // Try parsing with AM/PM format first (e.g., "9:00 PM")
+      try {
+        final format = DateFormat('h:mm a');
+        final parsedTime = format.parse(timeStr);
+        return DateTime(
+          baseDate.year,
+          baseDate.month,
+          baseDate.day,
+          parsedTime.hour,
+          parsedTime.minute,
+        );
+      } catch (_) {
+        // Try 24-hour format (e.g., "21:00")
+        final format = DateFormat('HH:mm');
+        final parsedTime = format.parse(timeStr);
+        return DateTime(
+          baseDate.year,
+          baseDate.month,
+          baseDate.day,
+          parsedTime.hour,
+          parsedTime.minute,
+        );
+      }
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
 @MappableEnum()
@@ -281,4 +407,3 @@ extension PriceTypeX on PriceType {
     }
   }
 }
-

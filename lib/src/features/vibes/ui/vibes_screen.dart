@@ -239,60 +239,17 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                   ),
                                 ),
 
-                                Row(
-                                  spacing: 12,
-                                  children: [
-                                    // GestureDetector(
-                                    //   onTap: () {
-                                    //     context.push("/location");
-                                    //   },
-                                    //   child: Container(
-                                    //     padding: EdgeInsets.symmetric(
-                                    //       vertical: 8,
-                                    //       horizontal: 12,
-                                    //     ),
-                                    //     decoration: BoxDecoration(
-                                    //       color: Colors.white.withValues(
-                                    //         alpha: 0.2,
-                                    //       ),
-                                    //       borderRadius: BorderRadius.circular(
-                                    //         100,
-                                    //       ),
-                                    //     ),
-                                    //     child: Row(
-                                    //       children: [
-                                    //         Icon(
-                                    //           Icons.keyboard_arrow_down,
-                                    //           size: 20,
-                                    //         ),
-                                    //         Text(
-                                    //           "Egypt",
-                                    //           style: TextStyle(
-                                    //             fontSize:
-                                    //                 AppTextStyles(
-                                    //                   context,
-                                    //                 ).accumulator *
-                                    //                 14,
-                                    //             fontWeight: FontWeight.w500,
-                                    //           ),
-                                    //         ),
-                                    //       ],
-                                    //     ),
-                                    //   ),
-                                    // ),
-                                    GestureDetector(
-                                      onTap: () =>
-                                          context.push("/notifications"),
-                                      child: CircleAvatar(
-                                        backgroundColor: Colors.white
-                                            .withValues(alpha: 0.2),
-                                        child: SvgPicture.asset(
-                                          "img/svg/notification.svg",
-                                          package: "assets",
-                                        ),
-                                      ),
+                                GestureDetector(
+                                  onTap: () => context.push("/notifications"),
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white.withValues(
+                                      alpha: 0.2,
                                     ),
-                                  ],
+                                    child: SvgPicture.asset(
+                                      "img/svg/notification.svg",
+                                      package: "assets",
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -1118,11 +1075,18 @@ class CuratedContainer extends StatelessWidget {
     required this.endText,
     required this.image,
     required this.onTap,
+    this.showExplore = true,
+    this.radius = 24,
+    this.headingSize = 24,
+    this.endTextSize = 11,
+    this.spaceBetweenHeadingAndEnd = 8,
   });
   final String heading, endText;
   final String image;
   final Color containerColor = AppColors.surfaceContainer;
   final VoidCallback onTap;
+  final bool showExplore;
+  final double radius, headingSize, endTextSize, spaceBetweenHeadingAndEnd;
 
   @override
   Widget build(BuildContext context) {
@@ -1130,7 +1094,7 @@ class CuratedContainer extends StatelessWidget {
       onTap: onTap,
       child: SmoothClipRRect(
         smoothness: 1,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(radius),
         child: SizedBox(
           height: 135,
           child: Stack(
@@ -1164,17 +1128,21 @@ class CuratedContainer extends StatelessWidget {
                           Text(
                             heading,
                             style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 24,
+                              fontSize:
+                                  AppTextStyles(context).accumulator *
+                                  headingSize,
                               fontWeight: FontWeight.w900,
                               color: Colors.white,
                             ),
                           ),
-                          SizedBox(height: 8),
+                          SizedBox(height: spaceBetweenHeadingAndEnd),
                           Text(
                             endText,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 11,
+                              fontSize:
+                                  AppTextStyles(context).accumulator *
+                                  endTextSize,
                               color: AppColors.textPrimary.withValues(
                                 alpha: 0.9,
                               ),
@@ -1183,31 +1151,33 @@ class CuratedContainer extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 28),
-                      child: TextButton.icon(
-                        onPressed: onTap,
-                        iconAlignment: .end,
-                        style: ButtonStyle(
-                          backgroundColor: .all(
-                            Colors.black.withValues(alpha: 0.3),
-                          ),
-                        ),
-                        label: Text(
-                          "Explore",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: .w600,
-                          ),
-                        ),
-                        icon: Icon(
-                          Icons.arrow_forward_ios,
-                          size: 15,
-                          fontWeight: .w900,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                    showExplore
+                        ? Padding(
+                            padding: const EdgeInsets.only(left: 28),
+                            child: TextButton.icon(
+                              onPressed: onTap,
+                              iconAlignment: .end,
+                              style: ButtonStyle(
+                                backgroundColor: .all(
+                                  Colors.black.withValues(alpha: 0.3),
+                                ),
+                              ),
+                              label: Text(
+                                "Explore",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: .w600,
+                                ),
+                              ),
+                              icon: Icon(
+                                Icons.arrow_forward_ios,
+                                size: 15,
+                                fontWeight: .w900,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        : SizedBox.shrink(),
                   ],
                 ),
               ),
