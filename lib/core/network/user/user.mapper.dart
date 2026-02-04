@@ -188,6 +188,11 @@ class UserMapper extends ClassMapperBase<User> {
     _$referralCode,
     opt: true,
   );
+  static DateTime _$createdAt(User v) => v.createdAt;
+  static const Field<User, DateTime> _f$createdAt = Field(
+    'createdAt',
+    _$createdAt,
+  );
   static List<String>? _$interests(User v) => v.interests;
   static const Field<User, List<String>> _f$interests = Field(
     'interests',
@@ -251,6 +256,7 @@ class UserMapper extends ClassMapperBase<User> {
     #audienceSizeRange: _f$audienceSizeRange,
     #role: _f$role,
     #referralCode: _f$referralCode,
+    #createdAt: _f$createdAt,
     #interests: _f$interests,
     #contentNiches: _f$contentNiches,
     #businessName: _f$businessName,
@@ -275,6 +281,7 @@ class UserMapper extends ClassMapperBase<User> {
       audienceSizeRange: data.dec(_f$audienceSizeRange),
       role: data.dec(_f$role),
       referralCode: data.dec(_f$referralCode),
+      createdAt: data.dec(_f$createdAt),
       interests: data.dec(_f$interests),
       contentNiches: data.dec(_f$contentNiches),
       businessName: data.dec(_f$businessName),
@@ -350,6 +357,7 @@ abstract class UserCopyWith<$R, $In extends User, $Out>
     String? audienceSizeRange,
     Role? role,
     String? referralCode,
+    DateTime? createdAt,
     List<String>? interests,
     List<String>? contentNiches,
     String? businessName,
@@ -412,6 +420,7 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
     Object? audienceSizeRange = $none,
     Role? role,
     Object? referralCode = $none,
+    DateTime? createdAt,
     Object? interests = $none,
     Object? contentNiches = $none,
     Object? businessName = $none,
@@ -434,6 +443,7 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
       if (audienceSizeRange != $none) #audienceSizeRange: audienceSizeRange,
       if (role != null) #role: role,
       if (referralCode != $none) #referralCode: referralCode,
+      if (createdAt != null) #createdAt: createdAt,
       if (interests != $none) #interests: interests,
       if (contentNiches != $none) #contentNiches: contentNiches,
       if (businessName != $none) #businessName: businessName,
@@ -461,6 +471,7 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
     ),
     role: data.get(#role, or: $value.role),
     referralCode: data.get(#referralCode, or: $value.referralCode),
+    createdAt: data.get(#createdAt, or: $value.createdAt),
     interests: data.get(#interests, or: $value.interests),
     contentNiches: data.get(#contentNiches, or: $value.contentNiches),
     businessName: data.get(#businessName, or: $value.businessName),

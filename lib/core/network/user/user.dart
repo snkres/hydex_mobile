@@ -49,6 +49,7 @@ class User with UserMappable {
   final String? audienceSizeRange;
   final String? groupSize;
   final String? preferredCountry;
+  final DateTime createdAt;
   final SocialLinks? socialLinks;
 
   User({
@@ -64,6 +65,7 @@ class User with UserMappable {
     this.audienceSizeRange,
     required this.role,
     this.referralCode,
+    required this.createdAt,
     this.interests,
     this.contentNiches,
     this.businessName,

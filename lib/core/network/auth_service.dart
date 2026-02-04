@@ -323,6 +323,7 @@ class UserNotifier extends _$UserNotifier {
   }) {
     if (state == null) {
       state = User(
+        createdAt: DateTime.now(),
         email: email ?? "",
         phone: phone,
         status: UserStatus.pending,

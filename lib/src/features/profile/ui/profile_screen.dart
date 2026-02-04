@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_flip_card/controllers/flip_card_controllers.dart';
+import 'package:flutter_flip_card/flipcard/flip_card.dart';
+import 'package:flutter_flip_card/flipcard/gesture_flip_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/profile/ui/components/back_container.dart';
+import 'package:hydex/src/features/profile/ui/components/front_container.dart';
 import 'package:hydex/src/features/profile/ui/components/history.dart';
 import 'package:hydex/src/features/profile/ui/components/passport.dart';
 import 'package:hydex/src/features/profile/ui/components/upcoming_event.dart';
+import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
+import 'package:smooth_corner/smooth_corner.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -58,36 +65,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
               return [
                 SliverAppBar(
                   automaticallyImplyLeading: false,
-                  toolbarHeight: isUserInHistory ? 330 : 120,
+                  toolbarHeight: isUserInHistory ? 330 : 240,
                   flexibleSpace: FlexibleSpaceBar(
                     background: Stack(
                       alignment: Alignment.center,
                       children: [
                         Container(
+                          width: .infinity,
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Color(0xFFA25BFF),
-                                Color(0xFF251343),
-                                Colors.transparent,
-                              ],
+                            image: DecorationImage(
+                              image: AssetImage(
+                                "img/profile_light.png",
+                                package: "assets",
+                              ),
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: SvgPicture.asset(
-                            "img/svg/pattern.svg",
-                            fit: BoxFit.cover,
-                            package: "assets",
-                            width: .infinity,
-                            color: AppColors.backgroundBase.withValues(
-                              alpha: 0.1,
-                            ),
-                          ),
-                        ),
+
                         SafeArea(
                           child: Column(
                             children: [
@@ -99,24 +94,28 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                               //   borderRadius: .circular(16),
                               //   smoothness: 1,
                               // ),
-                              SizedBox(height: 16),
-                              Text(
-                                data?.fullName ?? "",
-                                style: TextStyle(
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 24,
-                                  fontWeight: .w600,
+                              SizedBox(height: 28),
+                              FlipCard(
+                                rotateSide: .right,
+                                controller: FlipCardController(),
+                                frontWidget: FrontContainer(
+                                  name: data?.fullName ?? "",
+                                  nationality: data?.nationality ?? "",
+                                  createdAt: data?.createdAt ?? .now(),
                                 ),
+                                backWidget: BackContainer(),
+                                onTapFlipping: true,
+                                animationDuration: Duration(milliseconds: 600),
                               ),
-                              SizedBox(height: 8),
-                              Text(
-                                data?.role.name ?? Role.seeker.name,
-                                style: TextStyle(
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 14,
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
+
+                              // Text(
+                              //   data?.fullName ?? "",
+                              //   style: TextStyle(
+                              //     fontSize:
+                              //         AppTextStyles(context).accumulator * 24,
+                              //     fontWeight: .w600,
+                              //   ),
+                              // ),
                               SizedBox(height: 36),
                               // Visibility(
                               //   visible: isUserInHistory,
