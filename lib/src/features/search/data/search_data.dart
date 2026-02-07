@@ -17,7 +17,7 @@ class SearchData with SearchDataMappable {
 @MappableClass()
 class SearchEvent with SearchEventMappable {
   final String id, name, description;
-  final PriceType priceType;
+  final PriceType? priceType;
   final CategoryNoDesc category;
   final Location location;
   final DateTime startTime, endTime;
@@ -30,7 +30,7 @@ class SearchEvent with SearchEventMappable {
     required this.startTime,
     required this.endTime,
     required this.category,
-    required this.priceType,
+    this.priceType,
     required this.location,
     required this.media,
   });

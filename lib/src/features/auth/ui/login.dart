@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/country_picker_provider.dart';
 import 'package:hydex/src/features/auth/ui/components/country_picker.dart';
+import 'package:hydex/src/features/auth/ui/components/error_snackbar.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 
@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 keyboardType:
                                                     TextInputType.number,
                                                 textInputAction:
-                                                    TextInputAction.done,
+                                                    TextInputAction.next,
                                                 onChanged: (v) {
                                                   setState(() {
                                                     phoneNumber =
@@ -209,6 +209,29 @@ class _LoginScreenState extends State<LoginScreen> {
                                   TextFormField(
                                     controller: passwordController,
                                     obscureText: hidePassword,
+                                    onFieldSubmitted: (_) async {
+                                      if (!formKey.currentState!.validate()) {
+                                        return;
+                                      }
+                                      try {
+                                        await ref
+                                            .read(authServiceProvider)
+                                            .login(
+                                              phoneNumber!,
+                                              passwordController.text,
+                                            );
+
+                                        if (context.mounted) context.go("/");
+                                      } on ApiException catch (error) {
+                                        if (context.mounted) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            errorSnackBar(error, context),
+                                          );
+                                        }
+                                      }
+                                    },
                                     autovalidateMode:
                                         AutovalidateMode.onUserInteraction,
                                     validator: (value) {
@@ -217,7 +240,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       }
                                       return null;
                                     },
-                                    textInputAction: TextInputAction.next,
+                                    textInputAction: TextInputAction.done,
                                     decoration: InputDecoration(
                                       labelText: "Password",
                                       suffixIcon: Padding(
@@ -296,10 +319,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                       if (context.mounted) context.go("/");
                                     } on ApiException catch (error) {
                                       if (context.mounted) {
-                                        Fluttertoast.showToast(
-                                          msg: error.message,
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.BOTTOM,
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          errorSnackBar(error, context),
                                         );
                                       }
                                     }

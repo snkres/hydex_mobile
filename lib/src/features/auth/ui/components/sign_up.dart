@@ -210,7 +210,7 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                             }
                           });
                       if (context.mounted) {
-                        context.go("/otp");
+                        context.push("/otp");
                       }
                     }
                   }

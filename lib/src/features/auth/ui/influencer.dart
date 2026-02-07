@@ -141,9 +141,15 @@ class _InfluencerScreenState extends State<InfluencerScreen> {
                                             title: e,
                                             isSelected: e == selectedSize,
                                             onTap: () {
-                                              setState(() {
-                                                selectedSize = e;
-                                              });
+                                              if (selectedSize == e) {
+                                                setState(() {
+                                                  selectedSize = null;
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  selectedSize = e;
+                                                });
+                                              }
                                             },
                                           ),
                                         )
@@ -155,6 +161,12 @@ class _InfluencerScreenState extends State<InfluencerScreen> {
                                     decoration: InputDecoration(
                                       labelText: "City of primary activity",
                                     ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "City of primary activity is required";
+                                      }
+                                      return null;
+                                    },
                                   ),
                                 ],
                               ),

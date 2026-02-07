@@ -1,10 +1,8 @@
 import 'dart:developer';
-import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/colors.dart';
@@ -16,7 +14,6 @@ import 'package:hydex/src/features/search/ui/components/animted_text.dart';
 import 'package:hydex/src/features/search/ui/components/not_found.dart';
 import 'package:hydex/src/features/search/ui/viewmodel.dart';
 import 'package:hydex/src/features/search/data/recently_viewed.dart';
-import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/data/vendor.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
@@ -236,6 +233,45 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       loading: () => SizedBox.shrink(),
                     ),
                   ),
+
+                  Visibility(
+                    visible: isClicked,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Wrap(
+                        spacing: 8,
+                        children: [
+                          CustomChip(
+                            title: "All",
+                            isSelected: _selectedFilter == "All",
+                            onTap: () {
+                              setState(() {
+                                _selectedFilter = "All";
+                              });
+                            },
+                          ),
+                          CustomChip(
+                            title: "Events",
+                            isSelected: _selectedFilter == "Events",
+                            onTap: () {
+                              setState(() {
+                                _selectedFilter = "Events";
+                              });
+                            },
+                          ),
+                          CustomChip(
+                            title: "Venues",
+                            isSelected: _selectedFilter == "Venues",
+                            onTap: () {
+                              setState(() {
+                                _selectedFilter = "Venues";
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   Visibility(
                     visible: isClicked,
                     child: searchAsync.when(
@@ -251,43 +287,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             child: Column(
                               crossAxisAlignment: .start,
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  child: Wrap(
-                                    spacing: 8,
-                                    children: [
-                                      CustomChip(
-                                        title: "All",
-                                        isSelected: _selectedFilter == "All",
-                                        onTap: () {
-                                          setState(() {
-                                            _selectedFilter = "All";
-                                          });
-                                        },
-                                      ),
-                                      CustomChip(
-                                        title: "Events",
-                                        isSelected: _selectedFilter == "Events",
-                                        onTap: () {
-                                          setState(() {
-                                            _selectedFilter = "Events";
-                                          });
-                                        },
-                                      ),
-                                      CustomChip(
-                                        title: "Venues",
-                                        isSelected: _selectedFilter == "Venues",
-                                        onTap: () {
-                                          setState(() {
-                                            _selectedFilter = "Venues";
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
                                 SizedBox(height: 24),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -379,13 +378,15 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                           return TrendContainer(
                                             width: double.infinity,
                                             name: event.name,
-                                            image: event.media.first,
+                                            image: event.media.isNotEmpty
+                                                ? event.media.first
+                                                : "",
                                             duration: event
                                                 .getEventDurationHours(),
                                             formattedDate: event
                                                 .getFormattedEventTimeRange(),
                                             priceType:
-                                                "Event - ${event.priceType.label}",
+                                                "Event - ${event.priceType?.label}",
                                             category: event.category.name,
                                             location:
                                                 event.location.address ?? "",
@@ -509,7 +510,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                         return TrendContainer(
                                           name: event.name,
                                           image: event.media.first,
-                                          priceType: event.priceType.label,
+                                          priceType:
+                                              event.priceType?.label ?? "",
                                           category: event.category.name,
                                           duration: event
                                               .getEventDurationHours(),

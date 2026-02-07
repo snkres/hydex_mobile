@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flip_card/controllers/flip_card_controllers.dart';
 import 'package:flutter_flip_card/flipcard/flip_card.dart';
-import 'package:flutter_flip_card/flipcard/gesture_flip_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:hydex/core/network/auth_service.dart';
-import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/ui/colors.dart';
-import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/profile/ui/components/back_container.dart';
 import 'package:hydex/src/features/profile/ui/components/front_container.dart';
 import 'package:hydex/src/features/profile/ui/components/history.dart';
-import 'package:hydex/src/features/profile/ui/components/passport.dart';
 import 'package:hydex/src/features/profile/ui/components/upcoming_event.dart';
-import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
-import 'package:smooth_corner/smooth_corner.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -97,9 +90,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                               SizedBox(height: 28),
                               FlipCard(
                                 rotateSide: .right,
+                                axis: .vertical,
                                 controller: FlipCardController(),
                                 frontWidget: FrontContainer(
                                   name: data?.fullName ?? "",
+                                  id:
+                                      data?.id?.substring(0, 7).toUpperCase() ??
+                                      "",
                                   nationality: data?.nationality ?? "",
                                   createdAt: data?.createdAt ?? .now(),
                                 ),
@@ -108,14 +105,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                 animationDuration: Duration(milliseconds: 600),
                               ),
 
-                              // Text(
-                              //   data?.fullName ?? "",
-                              //   style: TextStyle(
-                              //     fontSize:
-                              //         AppTextStyles(context).accumulator * 24,
-                              //     fontWeight: .w600,
-                              //   ),
-                              // ),
                               SizedBox(height: 36),
                               // Visibility(
                               //   visible: isUserInHistory,

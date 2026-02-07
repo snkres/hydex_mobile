@@ -106,63 +106,75 @@ class ProfileSummary extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 32),
-              Padding(
-                padding: const .symmetric(horizontal: 16),
-                child: Text(
-                  "Guest(s) details",
-                  style: AppTextStyles(
-                    context,
-                  ).secondaryRegular.copyWith(fontWeight: .w700),
+              Visibility(
+                visible: event.guestsNames?.isNotEmpty ?? false,
+                child: Column(
+                  crossAxisAlignment: .start,
+                  children: [
+                    SizedBox(height: 32),
+
+                    Padding(
+                      padding: const .symmetric(horizontal: 16),
+                      child: Text(
+                        "Guest(s) details",
+                        style: AppTextStyles(
+                          context,
+                        ).secondaryRegular.copyWith(fontWeight: .w700),
+                      ),
+                    ),
+                    SizedBox(height: 12),
+                    ...List.generate(
+                      event.guestsNames?.length ?? 0,
+                      (index) => SmoothContainer(
+                        side: BorderSide(color: AppColors.borderDefault),
+                        borderRadius: .circular(16),
+                        margin: EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          bottom: index < (event.guestsNames?.length ?? 0) - 1
+                              ? 8
+                              : 0,
+                        ),
+                        padding: .all(16),
+                        smoothness: 1,
+                        child: Row(
+                          mainAxisAlignment: .center,
+                          children: [
+                            SvgPicture.asset(
+                              "img/svg/profile.svg",
+                              package: "assets",
+                            ),
+                            SizedBox(width: 9),
+                            Column(
+                              crossAxisAlignment: .start,
+                              children: [
+                                Text(
+                                  event.guestsNames![index],
+                                  style: TextStyle(
+                                    fontWeight: .w600,
+                                    fontSize:
+                                        AppTextStyles(context).accumulator * 14,
+                                  ),
+                                ),
+                                Text(
+                                  "Guest ${index + 1}",
+                                  style: TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontSize:
+                                        AppTextStyles(context).accumulator * 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Spacer(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(height: 12),
-              ...List.generate(
-                event.guestsNames?.length ?? 0,
-                (index) => SmoothContainer(
-                  side: BorderSide(color: AppColors.borderDefault),
-                  borderRadius: .circular(16),
-                  margin: EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: index < (event.guestsNames?.length ?? 0) - 1
-                        ? 8
-                        : 0,
-                  ),
-                  padding: .all(16),
-                  smoothness: 1,
-                  child: Row(
-                    mainAxisAlignment: .center,
-                    children: [
-                      SvgPicture.asset(
-                        "img/svg/profile.svg",
-                        package: "assets",
-                      ),
-                      SizedBox(width: 9),
-                      Column(
-                        crossAxisAlignment: .start,
-                        children: [
-                          Text(
-                            event.guestsNames![index],
-                            style: TextStyle(
-                              fontWeight: .w600,
-                              fontSize: AppTextStyles(context).accumulator * 14,
-                            ),
-                          ),
-                          Text(
-                            "Guest ${index + 1}",
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: AppTextStyles(context).accumulator * 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Spacer(),
-                    ],
-                  ),
-                ),
-              ),
+
               Visibility(
                 visible: event.thingsToKnow.isNotEmpty,
                 child: SizedBox(height: 32),
@@ -214,83 +226,94 @@ class ProfileSummary extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 24),
-              SmoothContainer(
-                borderRadius: .circular(26),
-                color: Color(0xff1E1E20),
-                padding: .all(16),
-                margin: .symmetric(horizontal: 16),
-                smoothness: 1,
-                child: Row(
+
+              // SmoothContainer(
+              //   borderRadius: .circular(26),
+              //   color: Color(0xff1E1E20),
+              //   padding: .all(16),
+              //   margin: .symmetric(horizontal: 16),
+              //   smoothness: 1,
+              //   child: Row(
+              //     children: [
+              //       Expanded(
+              //         child: Column(
+              //           crossAxisAlignment: .start,
+              //           spacing: 4,
+              //           children: [
+              //             Text(
+              //               "Cancel Booking?",
+              //               style: TextStyle(
+              //                 fontSize: AppTextStyles(context).accumulator * 14,
+              //                 fontWeight: .w600,
+              //               ),
+              //             ),
+              //             Text(
+              //               "If your plans shifted, you can request a cancellation.",
+              //               style: TextStyle(
+              //                 fontSize: AppTextStyles(context).accumulator * 12,
+              //                 color: AppColors.textSecondary,
+              //                 fontWeight: .w600,
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //       ),
+              //       ElevatedButton(
+              //         onPressed: () {
+              //           showModalBottomSheet(
+              //             context: context,
+              //             isScrollControlled: true,
+              //             builder: (context) {
+              //               return CancelationWidget();
+              //             },
+              //           );
+              //         },
+
+              //         child: Text(
+              //           "Cancel",
+              //           style: TextStyle(
+              //             fontSize: AppTextStyles(context).accumulator * 13,
+              //             fontWeight: .w600,
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // SizedBox(height: 32),
+              Visibility(
+                visible: event.termsAndConditions != null,
+                child: Column(
+                  crossAxisAlignment: .start,
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: .start,
-                        spacing: 4,
-                        children: [
-                          Text(
-                            "Cancel Booking?",
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 14,
-                              fontWeight: .w600,
-                            ),
-                          ),
-                          Text(
-                            "If your plans shifted, you can request a cancellation.",
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 12,
-                              color: AppColors.textSecondary,
-                              fontWeight: .w600,
-                            ),
-                          ),
-                        ],
+                    Padding(
+                      padding: const .symmetric(horizontal: 16),
+                      child: Text(
+                        "Terms and conditions",
+                        style: AppTextStyles(
+                          context,
+                        ).secondaryRegular.copyWith(fontWeight: .w700),
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (context) {
-                            return CancelationWidget();
-                          },
-                        );
-                      },
-
-                      child: Text(
-                        "Cancel",
-                        style: TextStyle(
-                          fontSize: AppTextStyles(context).accumulator * 13,
-                          fontWeight: .w600,
+                    SizedBox(height: 12),
+                    Container(
+                      padding: .all(12),
+                      margin: .symmetric(horizontal: 16),
+                      decoration: ShapeDecoration(
+                        shape: SmoothRectangleBorder(
+                          smoothness: 1,
+                          borderRadius: .circular(16),
+                          side: BorderSide(color: AppColors.borderDefault),
                         ),
+                      ),
+                      child: Center(
+                        child: Text(event.termsAndConditions ?? ""),
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 32),
 
-              Padding(
-                padding: const .symmetric(horizontal: 16),
-                child: Text(
-                  "Terms and conditions",
-                  style: AppTextStyles(
-                    context,
-                  ).secondaryRegular.copyWith(fontWeight: .w700),
-                ),
-              ),
-              SizedBox(height: 12),
-              Container(
-                padding: .all(12),
-                margin: .symmetric(horizontal: 16),
-                decoration: ShapeDecoration(
-                  shape: SmoothRectangleBorder(
-                    smoothness: 1,
-                    borderRadius: .circular(16),
-                    side: BorderSide(color: AppColors.borderDefault),
-                  ),
-                ),
-                child: Center(child: Text(event.termsAndConditions ?? "")),
-              ),
               SizedBox(height: 100),
             ],
           ),

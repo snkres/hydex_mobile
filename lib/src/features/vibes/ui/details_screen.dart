@@ -4,6 +4,7 @@ import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_avif/flutter_avif.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -961,12 +962,21 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                                               width: 165,
                                                               height: 168,
                                                               child:
-                                                                  CachedNetworkImage(
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                    imageUrl: item
-                                                                        .image,
-                                                                  ),
+                                                                  item.image
+                                                                      .endsWith(
+                                                                        '.avif',
+                                                                      )
+                                                                  ? CachedNetworkAvifImage(
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      item.image,
+                                                                    )
+                                                                  : CachedNetworkImage(
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      imageUrl:
+                                                                          item.image,
+                                                                    ),
                                                             ),
                                                           ),
                                                           Text(

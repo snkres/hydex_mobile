@@ -15,6 +15,7 @@ class _DescribeState extends State<Describe> {
   String? describeType;
   @override
   Widget build(BuildContext context) {
+    print("DescribeType: $describeType");
     return Scaffold(
       body: Stack(
         children: [
@@ -98,7 +99,7 @@ class _DescribeState extends State<Describe> {
                           padding: const EdgeInsets.only(top: 16),
                           child: PrimaryButton(
                             onTap: describeType != null
-                                ? () => context.push("/")
+                                ? () async => context.go("/waitlist")
                                 : null,
                           ),
                         ),

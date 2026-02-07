@@ -97,55 +97,66 @@ class NightLifeSection extends StatelessWidget {
         ),
         SizedBox(height: 24),
 
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            title?.toUpperCase() ?? "",
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              color: AppColors.textSecondary,
-              fontSize: AppTextStyles(context).accumulator * 16,
-            ),
-          ),
-        ),
-        SizedBox(height: 12),
-        CarouselSlider(
-          items: details
-              .map(
-                (e) => Column(
-                  spacing: 13,
-                  children: [
-                    SmoothClipRRect(
-                      borderRadius: BorderRadius.circular(24),
-                      smoothness: 1,
-                      child: CachedNetworkImage(
-                        imageUrl: e.image,
-                        width: 200,
-                        height: 200,
-                        fit: .cover,
-                      ),
-                    ),
-                    Text(e.title, style: AppTextStyles(context).smallBold),
-                  ],
+        Visibility(
+          visible: details.isNotEmpty,
+          child: Column(
+            crossAxisAlignment: .start,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  title?.toUpperCase() ?? "",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textSecondary,
+                    fontSize: AppTextStyles(context).accumulator * 16,
+                  ),
                 ),
-              )
-              .toList(),
+              ),
+              SizedBox(height: 12),
+              CarouselSlider(
+                items: details
+                    .map(
+                      (e) => Column(
+                        spacing: 13,
+                        children: [
+                          SmoothClipRRect(
+                            borderRadius: BorderRadius.circular(24),
+                            smoothness: 1,
+                            child: CachedNetworkImage(
+                              imageUrl: e.image,
+                              width: 200,
+                              height: 200,
+                              fit: .cover,
+                            ),
+                          ),
+                          Text(
+                            e.title,
+                            style: AppTextStyles(context).smallBold,
+                          ),
+                        ],
+                      ),
+                    )
+                    .toList(),
 
-          options: CarouselOptions(
-            height: 245,
-            enableInfiniteScroll: true,
-            reverse: false,
-            autoPlay: true,
-            autoPlayInterval: Duration(seconds: 3),
-            autoPlayAnimationDuration: Duration(milliseconds: 800),
-            autoPlayCurve: Curves.fastOutSlowIn,
-            enlargeCenterPage: true,
+                options: CarouselOptions(
+                  height: 245,
+                  enableInfiniteScroll: true,
+                  reverse: false,
+                  autoPlay: true,
+                  autoPlayInterval: Duration(seconds: 3),
+                  autoPlayAnimationDuration: Duration(milliseconds: 800),
+                  autoPlayCurve: Curves.fastOutSlowIn,
+                  enlargeCenterPage: true,
 
-            enlargeFactor: 0.3,
-            scrollDirection: Axis.horizontal,
+                  enlargeFactor: 0.3,
+                  scrollDirection: Axis.horizontal,
+                ),
+              ),
+              SizedBox(height: 24),
+            ],
           ),
         ),
-        SizedBox(height: 24),
       ],
     );
   }

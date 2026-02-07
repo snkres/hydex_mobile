@@ -10,9 +10,10 @@ class FrontContainer extends StatelessWidget {
     required this.name,
     required this.nationality,
     required this.createdAt,
+    required this.id,
   });
 
-  final String name, nationality;
+  final String name, nationality, id;
   final DateTime createdAt;
 
   @override
@@ -118,7 +119,7 @@ class FrontContainer extends StatelessWidget {
                       crossAxisAlignment: .end,
                       children: [
                         Text(
-                          "#12312312",
+                          "#$id",
                           style: TextStyle(
                             fontWeight: .w700,
                             fontSize: AppTextStyles(context).accumulator * 12,

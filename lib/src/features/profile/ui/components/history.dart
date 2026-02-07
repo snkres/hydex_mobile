@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -10,7 +9,6 @@ import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/profile/data/upcoming_event.dart';
 import 'package:hydex/src/features/profile/domain/profile_providers.dart';
-import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:intl/intl.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
@@ -80,340 +78,189 @@ class HistoryContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: ShapeDecoration(
-        shape: RoundedSuperellipseBorder(borderRadius: .circular(24)),
-        color: const Color.fromARGB(255, 81, 74, 74),
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Container(
-                  width: AppTextStyles(context).accumulator * 48,
-                  height: AppTextStyles(context).heightAccumulator * 67,
-                  decoration: ShapeDecoration(
-                    shape: SmoothRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      smoothness: 1,
+    return GestureDetector(
+      onTap: () => context.push("/profile-summary", extra: event),
+      child: Container(
+        decoration: ShapeDecoration(
+          shape: RoundedSuperellipseBorder(borderRadius: .circular(24)),
+          color: const Color.fromARGB(255, 81, 74, 74),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Container(
+                    width: AppTextStyles(context).accumulator * 48,
+                    height: AppTextStyles(context).heightAccumulator * 67,
+                    decoration: ShapeDecoration(
+                      shape: SmoothRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        smoothness: 1,
+                      ),
+                      color: AppColors.surfaceContainerInverse,
                     ),
-                    color: AppColors.surfaceContainerInverse,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 4,
-                    children: [
-                      Text(
-                        event.date.day.toString(),
-                        style: TextStyle(
-                          fontSize: AppTextStyles(context).accumulator * 15,
-                          color: AppColors.textInverse,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Text(
-                        weekdayShort(event.date).toUpperCase(),
-                        style: TextStyle(
-                          fontSize: AppTextStyles(context).accumulator * 12,
-                          color: AppColors.textInverse,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: .start,
-                    children: [
-                      Text(
-                        getStatus(event.status) ?? "",
-                        style: TextStyle(color: getStatusColor(event.status)),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        event.name,
-                        style: TextStyle(
-                          fontSize: AppTextStyles(context).accumulator * 16,
-                          fontWeight: .w700,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Row(
-                        spacing: 8,
-                        children: [
-                          Row(
-                            spacing: 8,
-
-                            children: [
-                              SvgPicture.asset(
-                                "img/svg/guests.svg",
-                                package: "assets",
-                                width: 15,
-                              ),
-                              Text(
-                                "Fri, 12 Nov 2025",
-                                style: TextStyle(
-                                  color: AppColors.textSecondary,
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 14,
-                                ),
-                              ),
-                            ],
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      spacing: 4,
+                      children: [
+                        Text(
+                          event.date.day.toString(),
+                          style: TextStyle(
+                            fontSize: AppTextStyles(context).accumulator * 15,
+                            color: AppColors.textInverse,
+                            fontWeight: FontWeight.w700,
                           ),
-                          Expanded(
-                            child: Row(
+                        ),
+                        Text(
+                          weekdayShort(event.date).toUpperCase(),
+                          style: TextStyle(
+                            fontSize: AppTextStyles(context).accumulator * 12,
+                            color: AppColors.textInverse,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: .start,
+                      children: [
+                        Text(
+                          getStatus(event.status) ?? "",
+                          style: TextStyle(color: getStatusColor(event.status)),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          event.name,
+                          style: TextStyle(
+                            fontSize: AppTextStyles(context).accumulator * 16,
+                            fontWeight: .w700,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Row(
+                          spacing: 8,
+                          children: [
+                            Row(
                               spacing: 8,
+
                               children: [
                                 SvgPicture.asset(
-                                  "img/svg/location.svg",
+                                  "img/svg/guests.svg",
                                   package: "assets",
-                                  width: 15,
+                                  width: 11,
                                 ),
-                                Expanded(
-                                  child: Text(
-                                    event.location.address ??
-                                        "${event.location.street}, ${event.location.city}",
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: AppColors.textSecondary,
-                                      fontSize:
-                                          AppTextStyles(context).accumulator *
-                                          14,
-                                    ),
+                                Text(
+                                  "Fri, 12 Nov 2025",
+                                  style: TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontSize:
+                                        AppTextStyles(context).accumulator * 11,
                                   ),
                                 ),
                               ],
+                            ),
+                            Expanded(
+                              child: Row(
+                                spacing: 8,
+                                children: [
+                                  SvgPicture.asset(
+                                    "img/svg/location.svg",
+                                    package: "assets",
+                                    width: 12,
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      event.location.address ??
+                                          "${event.location.street}, ${event.location.city}",
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: AppColors.textSecondary,
+                                        fontSize:
+                                            AppTextStyles(context).accumulator *
+                                            12,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              alignment: .center,
+              padding: .all(16),
+              decoration: ShapeDecoration(
+                color: AppColors.surfaceContainer,
+                shape: RoundedSuperellipseBorder(borderRadius: .circular(16)),
+              ),
+              child: Row(
+                spacing: 8,
+                mainAxisAlignment: .spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      SvgPicture.asset("img/svg/qrcode.svg", package: "assets"),
+                      SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: .start,
+                        spacing: 4,
+                        children: [
+                          Text(
+                            "Booking ID:",
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: AppTextStyles(context).accumulator * 12,
+                            ),
+                          ),
+                          Text(
+                            "#${event.id.substring(0, 8).toUpperCase()}",
+                            style: TextStyle(
+                              fontSize: AppTextStyles(context).accumulator * 12,
                             ),
                           ),
                         ],
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            alignment: .center,
-            padding: .all(16),
-            decoration: ShapeDecoration(
-              color: AppColors.surfaceContainer,
-              shape: RoundedSuperellipseBorder(borderRadius: .circular(16)),
-            ),
-            child: Row(
-              spacing: 8,
-              mainAxisAlignment: .spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    SvgPicture.asset("img/svg/qrcode.svg", package: "assets"),
-                    SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: .start,
-                      spacing: 4,
+                  Container(
+                    padding: .symmetric(vertical: 8, horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: .circular(100),
+                    ),
+                    child: Row(
+                      spacing: 8,
                       children: [
                         Text(
-                          "Booking ID:",
+                          "View Details",
                           style: TextStyle(
-                            color: AppColors.textSecondary,
+                            color: Colors.black,
+                            fontWeight: .w600,
                             fontSize: AppTextStyles(context).accumulator * 12,
                           ),
                         ),
-                        Text(
-                          "#12312312",
-                          style: TextStyle(
-                            fontSize: AppTextStyles(context).accumulator * 12,
-                          ),
-                        ),
+                        Icon(Icons.arrow_forward, color: Colors.black),
                       ],
                     ),
-                  ],
-                ),
-                Container(
-                  padding: .symmetric(vertical: 8, horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: .circular(100),
                   ),
-                  child: Row(
-                    spacing: 8,
-                    children: [
-                      Text(
-                        "View Details",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: .w600,
-                          fontSize: AppTextStyles(context).accumulator * 12,
-                        ),
-                      ),
-                      Icon(Icons.arrow_forward, color: Colors.black),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
-    // return Column(
-    //   children: [
-    //     Row(
-    //       crossAxisAlignment: .start,
-    //       children: [
-    //         Container(
-    //           width: AppTextStyles(context).accumulator * 48,
-    //           height: AppTextStyles(context).heightAccumulator * 67,
-
-    //           decoration: ShapeDecoration(
-    //             shape: SmoothRectangleBorder(
-    //               side: BorderSide(color: AppColors.borderBrand, width: 1),
-    //               borderRadius: BorderRadius.circular(16),
-    //               smoothness: 1,
-    //             ),
-    //             color: AppColors.signalBrandTint,
-    //           ),
-    //           child: Column(
-    //             mainAxisAlignment: MainAxisAlignment.center,
-    //             spacing: 4,
-    //             children: [
-    //               Text(
-    //                 event.date.day.toString(),
-    //                 style: TextStyle(
-    //                   fontSize: AppTextStyles(context).accumulator * 18,
-    //                   color: AppColors.signalBrandSolid,
-    //                   fontWeight: FontWeight.w700,
-    //                 ),
-    //               ),
-    //               Text(
-    //                 weekdayShort(event.date).toUpperCase(),
-    //                 style: TextStyle(
-    //                   fontSize: AppTextStyles(context).accumulator * 14,
-    //                   color: AppColors.signalBrandSolid,
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //         SizedBox(width: 12),
-    //         Expanded(
-    //           child: Row(
-    //             mainAxisAlignment: .spaceBetween,
-    //             crossAxisAlignment: .start,
-    //             children: [
-    //               Expanded(
-    //                 child: Column(
-    //                   crossAxisAlignment: .start,
-    //                   mainAxisAlignment: .spaceBetween,
-    //                   children: [
-    //                     SizedBox(
-    //                       width: 200,
-    //                       child: Text(
-    //                         event.name,
-    //                         style: TextStyle(
-    //                           fontSize: AppTextStyles(context).accumulator * 16,
-    //                           fontWeight: .w600,
-    //                         ),
-    //                       ),
-    //                     ),
-    //                     Text(
-    //                       "${formatDate(event.date)} • ${event.time}",
-    //                       style: TextStyle(
-    //                         color: AppColors.textSecondary,
-    //                         fontSize: AppTextStyles(context).accumulator * 14,
-    //                       ),
-    //                     ),
-    //                   ],
-    //                 ),
-    //               ),
-    //               getStatus(event.status) != null
-    //                   ? Container(
-    //                       padding: .symmetric(horizontal: 12, vertical: 4),
-    //                       margin: .symmetric(horizontal: 16),
-    //                       decoration: BoxDecoration(
-    //                         color: AppColors.signalFunError,
-    //                         borderRadius: .circular(100),
-    //                       ),
-    //                       child: Text(
-    //                         getStatus(event.status)!,
-    //                         style: TextStyle(
-    //                           fontSize: AppTextStyles(context).accumulator * 12,
-    //                           color: AppColors.textError,
-    //                         ),
-    //                       ),
-    //                     )
-    //                   : SizedBox.shrink(),
-    //             ],
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //     SizedBox(height: 16),
-    //     Row(
-    //       spacing: 16,
-    //       children: [
-    //         Expanded(
-    //           child: Row(
-    //             spacing: 4.5,
-    //             children: [
-    //               SvgPicture.asset(
-    //                 "img/svg/location.svg",
-    //                 package: "assets",
-    //                 width: 15,
-    //               ),
-    //               Expanded(
-    //                 child: Text(
-    //                   event.location.address ??
-    //                       "${event.location.street}, ${event.location.city}, ${event.location.country}",
-
-    //                   style: TextStyle(
-    //                     color: AppColors.textSecondary,
-    //                     fontSize: AppTextStyles(context).accumulator * 14,
-    //                   ),
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //         Padding(
-    //           padding: const .symmetric(horizontal: 16),
-    //           child: Row(
-    //             spacing: 4.5,
-
-    //             children: [
-    //               SvgPicture.asset(
-    //                 "img/svg/guests.svg",
-    //                 package: "assets",
-    //                 width: 15,
-    //               ),
-    //               Text(
-    //                 "Booked for ${event.numberOfGuests}",
-    //                 style: TextStyle(
-    //                   color: AppColors.textSecondary,
-    //                   fontSize: AppTextStyles(context).accumulator * 14,
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //     SizedBox(height: 16),
-    //     PrimaryButton(
-    //       onTap: () async {
-    //         context.push("/profile-summary", extra: event);
-    //       },
-    //       title: "View details",
-    //       frColor: AppColors.buttonPrimary,
-    //       bgColor: AppColors.buttonTertiary,
-    //     ),
-    //     SizedBox(height: 16),
-    //   ],
-    // );
   }
 }

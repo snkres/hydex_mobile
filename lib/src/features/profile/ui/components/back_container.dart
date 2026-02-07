@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 
 class BackContainer extends StatelessWidget {

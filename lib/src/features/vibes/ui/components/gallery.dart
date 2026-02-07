@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_avif/flutter_avif.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:smooth_corner/smooth_corner.dart';
@@ -33,10 +34,12 @@ class _GalleryState extends State<Gallery> {
           children: [
             CustomBackButton(),
             Center(
-              child: CachedNetworkImage(
-                imageUrl: selectedPhoto ?? widget.clickedPhoto,
-                fit: BoxFit.cover,
-              ),
+              child: selectedPhoto!.endsWith(".avif")
+                  ? CachedNetworkAvifImage(selectedPhoto!)
+                  : CachedNetworkImage(
+                      imageUrl: selectedPhoto!,
+                      fit: BoxFit.cover,
+                    ),
             ),
             Spacer(),
             Center(
@@ -70,12 +73,19 @@ class _GalleryState extends State<Gallery> {
                       smoothness: 1,
                       child: Stack(
                         children: [
-                          CachedNetworkImage(
-                            height: 100,
-                            width: 100,
-                            fit: BoxFit.cover,
-                            imageUrl: widget.gallery[index],
-                          ),
+                          widget.gallery[index].endsWith(".avif")
+                              ? CachedNetworkAvifImage(
+                                  widget.gallery[index],
+                                  height: 100,
+                                  width: 100,
+                                  fit: BoxFit.cover,
+                                )
+                              : CachedNetworkImage(
+                                  height: 100,
+                                  width: 100,
+                                  fit: BoxFit.cover,
+                                  imageUrl: widget.gallery[index],
+                                ),
                           isSelected
                               ? Container(
                                   height: 100,

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,17 +30,31 @@ class _HappeningNearbyState extends ConsumerState<HappeningNearby> {
     name: "All",
   );
 
-  late final _pagingController = PagingController<int, Event>(
-    getNextPageKey: (state) =>
-        state.lastPageIsEmpty ? null : state.nextIntPageKey,
-    fetchPage: (pageKey) async => ref.watch(
-      getEventsProvider(
-        page: pageKey,
-        categoryId: selectedCategory.id,
-        nearby: true,
-      ).future,
-    ),
-  );
+  late final PagingController<int, Event> _pagingController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pagingController = PagingController<int, Event>(
+      getNextPageKey: (state) =>
+          state.lastPageIsEmpty ? null : state.nextIntPageKey,
+      fetchPage: (pageKey) async {
+        try {
+          final events = await ref.read(
+            getEventsProvider(
+              page: pageKey,
+              categoryId: selectedCategory.id,
+              nearby: true,
+            ).future,
+          );
+          return events;
+        } catch (e, stackTrace) {
+          log('Error loading nearby events: $e', stackTrace: stackTrace);
+          rethrow;
+        }
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -200,12 +216,14 @@ class _HappeningNearbyState extends ConsumerState<HappeningNearby> {
                         description: "Try exploring other categories",
                       ),
                       noMoreItemsIndicatorBuilder: (ctx) => SizedBox.shrink(),
+
                       itemBuilder: (context, item, index) => EventContainer(
                         width: double.infinity,
                         heading: item.name,
                         tag: item.category?.name,
-                        image: item.media.first,
-                        avatarImage: item.media.first,
+                        description: item.location.address,
+                        image: item.media.firstOrNull,
+                        avatarImage: item.media.firstOrNull,
                         onView: () => context.pushNamed(
                           "event_detail",
                           pathParameters: {"id": item.id},

@@ -445,6 +445,7 @@ class _TellusState extends State<Tellus> {
                                                 email: emailController.text,
                                                 fullName: nameController.text,
                                               );
+
                                           if (!isRegestered) {
                                             await ref
                                                 .read(authServiceProvider)
@@ -527,7 +528,7 @@ class CustomChip extends StatelessWidget {
         ),
         child: isRecentViewed
             ? Row(
-              mainAxisSize: .min,
+                mainAxisSize: .min,
                 children: [
                   Icon(
                     Icons.history,

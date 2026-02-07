@@ -14,8 +14,6 @@ class WaitlistScreen extends ConsumerStatefulWidget {
 
 class _WaitlistScreenState extends ConsumerState<WaitlistScreen> {
   @override
-
-
   @override
   Widget build(BuildContext context) {
     final loadingPath = Theme.brightnessOf(context) == Brightness.dark
@@ -61,48 +59,6 @@ class _WaitlistScreenState extends ConsumerState<WaitlistScreen> {
 
                   style: AppTextStyles(context).smallRegular.copyWith(
                     color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-                SizedBox(height: 22),
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        "img/gold-ticket.png",
-                        package: "assets",
-                        width: 56,
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Your exclusive ticket awaits",
-                              style: AppTextStyles(context).secondaryMedium
-                                  .copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.surface,
-                                  ),
-                            ),
-                            Text(
-                              "Once your membership is approved, you’ll unlock access to our private launch event.",
-                              style: AppTextStyles(context).captionRegular
-                                  .copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.surface,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
                   ),
                 ),
 

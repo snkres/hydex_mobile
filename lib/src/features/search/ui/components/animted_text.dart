@@ -39,7 +39,7 @@ class _AnimatedTextState extends State<AnimatedText>
       CurvedAnimation(parent: _verticalController, curve: Curves.easeOut),
     );
 
-    _wordChangeTimer = Timer.periodic(Duration(seconds: 4), (_) {
+    _wordChangeTimer = Timer.periodic(Duration(seconds: 2), (_) {
       setState(() {
         _currentWordIndex = (_currentWordIndex + 1) % words.length;
       });

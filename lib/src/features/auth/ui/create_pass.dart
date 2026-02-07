@@ -20,6 +20,8 @@ class _CreatePasswordState extends State<CreatePassword> {
   final formKey = GlobalKey<FormState>();
   final passwordController = TextEditingController();
   final passwordConfirmController = TextEditingController();
+  late FocusNode _passwordFocus;
+  late FocusNode _confirmPasswordFocus;
   double _strength = 0;
   String _strengthText = '';
   Color _strengthColor = Color.fromRGBO(231, 231, 231, 1);
@@ -54,6 +56,8 @@ class _CreatePasswordState extends State<CreatePassword> {
   @override
   void initState() {
     super.initState();
+    _passwordFocus = FocusNode();
+    _confirmPasswordFocus = FocusNode();
     passwordController.addListener(_onPasswordChanged);
   }
 
@@ -61,6 +65,9 @@ class _CreatePasswordState extends State<CreatePassword> {
   void dispose() {
     passwordController.removeListener(_onPasswordChanged);
     passwordController.dispose();
+    passwordConfirmController.dispose();
+    _passwordFocus.dispose();
+    _confirmPasswordFocus.dispose();
     super.dispose();
   }
 
@@ -179,17 +186,31 @@ class _CreatePasswordState extends State<CreatePassword> {
                             spacing: 10,
                             children: [
                               TextFormField(
+                                focusNode: _passwordFocus,
                                 controller: passwordController,
                                 obscureText: hidePassword,
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
                                 validator: _validatePassword,
                                 textInputAction: TextInputAction.next,
+                                onFieldSubmitted: (value) {
+                                  FocusScope.of(
+                                    context,
+                                  ).requestFocus(_confirmPasswordFocus);
+                                },
                                 decoration: InputDecoration(
                                   labelText: "Password",
                                   suffixIcon: Padding(
                                     padding: const EdgeInsets.only(right: 8),
                                     child: IconButton(
+                                      focusNode: FocusNode(
+                                        canRequestFocus: false,
+                                      ),
+                                      style: ButtonStyle(
+                                        backgroundColor: .all(
+                                          Colors.transparent,
+                                        ),
+                                      ),
                                       onPressed: () {
                                         setState(() {
                                           hidePassword = !hidePassword;
@@ -214,6 +235,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                                 ),
                               ),
                               TextFormField(
+                                focusNode: _confirmPasswordFocus,
                                 controller: passwordConfirmController,
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
@@ -228,12 +250,19 @@ class _CreatePasswordState extends State<CreatePassword> {
                                 },
                                 validator: _validatePasswordConfirmation,
                                 textInputAction: TextInputAction.done,
-
                                 decoration: InputDecoration(
                                   labelText: "Confirm Password",
                                   suffixIcon: Padding(
                                     padding: const EdgeInsets.only(right: 8),
                                     child: IconButton(
+                                      focusNode: FocusNode(
+                                        canRequestFocus: false,
+                                      ),
+                                      style: ButtonStyle(
+                                        backgroundColor: .all(
+                                          Colors.transparent,
+                                        ),
+                                      ),
                                       onPressed: () {
                                         setState(() {
                                           hideConfirmPassword =
@@ -277,12 +306,10 @@ class _CreatePasswordState extends State<CreatePassword> {
                               return PrimaryButton(
                                 onTap: shouldDisableButton()
                                     ? null
-                                    : () async{
+                                    : () async {
                                         if (formKey.currentState!.validate()) {
                                           ref
-                                              .read(
-                                                userProvider.notifier,
-                                              )
+                                              .read(userProvider.notifier)
                                               .create(
                                                 password:
                                                     passwordConfirmController

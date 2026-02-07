@@ -210,10 +210,11 @@ class SearchEventMapper extends ClassMapperBase<SearchEvent> {
     'category',
     _$category,
   );
-  static PriceType _$priceType(SearchEvent v) => v.priceType;
+  static PriceType? _$priceType(SearchEvent v) => v.priceType;
   static const Field<SearchEvent, PriceType> _f$priceType = Field(
     'priceType',
     _$priceType,
+    opt: true,
   );
   static Location _$location(SearchEvent v) => v.location;
   static const Field<SearchEvent, Location> _f$location = Field(
@@ -359,7 +360,7 @@ class _SearchEventCopyWithImpl<$R, $Out>
     DateTime? startTime,
     DateTime? endTime,
     CategoryNoDesc? category,
-    PriceType? priceType,
+    Object? priceType = $none,
     Location? location,
     List<String>? media,
   }) => $apply(
@@ -370,7 +371,7 @@ class _SearchEventCopyWithImpl<$R, $Out>
       if (startTime != null) #startTime: startTime,
       if (endTime != null) #endTime: endTime,
       if (category != null) #category: category,
-      if (priceType != null) #priceType: priceType,
+      if (priceType != $none) #priceType: priceType,
       if (location != null) #location: location,
       if (media != null) #media: media,
     }),

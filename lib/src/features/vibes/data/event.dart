@@ -156,7 +156,7 @@ class Event with EventMappable {
   final List<String> media, tags;
   final Location location;
   final List<Detail> details;
-  final PriceType priceType;
+  final PriceType? priceType;
   final String? detailsTitle;
   final List<Experiences> experiences;
   final List<String>? thingsToKnow;
@@ -176,7 +176,7 @@ class Event with EventMappable {
     required this.media,
     required this.location,
     required this.details,
-    required this.priceType,
+    this.priceType,
     required this.tags,
     required this.category,
     required this.experiences,

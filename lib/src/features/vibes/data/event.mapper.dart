@@ -1500,10 +1500,11 @@ class EventMapper extends ClassMapperBase<Event> {
     'details',
     _$details,
   );
-  static PriceType _$priceType(Event v) => v.priceType;
+  static PriceType? _$priceType(Event v) => v.priceType;
   static const Field<Event, PriceType> _f$priceType = Field(
     'priceType',
     _$priceType,
+    opt: true,
   );
   static List<String> _$tags(Event v) => v.tags;
   static const Field<Event, List<String>> _f$tags = Field('tags', _$tags);
@@ -1751,7 +1752,7 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
     List<String>? media,
     Location? location,
     List<Detail>? details,
-    PriceType? priceType,
+    Object? priceType = $none,
     List<String>? tags,
     Object? category = $none,
     List<Experiences>? experiences,
@@ -1771,7 +1772,7 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
       if (media != null) #media: media,
       if (location != null) #location: location,
       if (details != null) #details: details,
-      if (priceType != null) #priceType: priceType,
+      if (priceType != $none) #priceType: priceType,
       if (tags != null) #tags: tags,
       if (category != $none) #category: category,
       if (experiences != null) #experiences: experiences,

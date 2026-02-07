@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -206,7 +205,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                               startTime: event.startTime,
                               tags: event.tags,
                               location: event.location,
-                              pricing: event.priceType.label,
+                              pricing: event.priceType?.label ?? "",
                               owner: event.vendor,
                               title: event.detailsTitle,
                             ),
