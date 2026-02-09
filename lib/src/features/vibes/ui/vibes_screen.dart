@@ -13,6 +13,7 @@ import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/core/ui/widgets/adaptive_image.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/booking/data/format_time.dart';
+import 'package:hydex/src/features/location/domain/location_service.dart';
 import 'package:hydex/src/features/location/ui/location_required.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
@@ -51,7 +52,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
   Widget build(BuildContext context) {
     final featuredEvents = ref.watch(getBannersProvider(type: .featured));
     final promotionalEvents = ref.watch(getBannersProvider(type: .promotional));
-
+    final countryCode = ref.watch(selectedCountryProvider);
     final categories = ref.watch(getEventCategoriesProvider);
     return Scaffold(
       body: RefreshIndicator(
@@ -66,372 +67,219 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
             ref.read(getEventCategoriesProvider.future),
           ]);
         },
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              featuredEvents.when(
-                data: (data) {
-                  if (data.isEmpty) {
-                    return SizedBox(height: 100);
-                  }
+        child: LocationRequired(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                featuredEvents.when(
+                  data: (data) {
+                    if (data.isEmpty) {
+                      return SizedBox(height: 100);
+                    }
 
-                  return Stack(
-                    children: [
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          return SizedBox(
-                            height: constraints.maxWidth > 600
-                                ? 350 * 1.5
-                                : 350,
-                            child: PageView.builder(
-                              itemCount: data.length,
-                              controller: headingPageController,
-                              onPageChanged: (value) {
-                                setState(() {
-                                  currentIndex = value;
-                                });
-                              },
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    if (data[index].assignment.targetType
-                                            .toValue() ==
-                                        AssignmentStatus.vendor.toValue()) {
-                                      context.pushNamed(
-                                        "vendor_detail",
-                                        pathParameters: {
-                                          "id":
-                                              data[index].assignment.vendor!.id,
-                                        },
-                                      );
-                                    } else {
-                                      context.pushNamed(
-                                        "event_detail",
-                                        pathParameters: {
-                                          "id":
-                                              data[index].assignment.event!.id,
-                                        },
-                                      );
-                                    }
-                                  },
-                                  child: Stack(
-                                    children: [
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: ImageOrVideoWidget(
-                                          url:
-                                              data[index].video ??
-                                              data[index].image ??
-                                              "",
+                    return Stack(
+                      children: [
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SizedBox(
+                              height: constraints.maxWidth > 600
+                                  ? 350 * 1.5
+                                  : 350,
+                              child: PageView.builder(
+                                itemCount: data.length,
+                                controller: headingPageController,
+                                onPageChanged: (value) {
+                                  setState(() {
+                                    currentIndex = value;
+                                  });
+                                },
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      if (data[index].assignment.targetType
+                                              .toValue() ==
+                                          AssignmentStatus.vendor.toValue()) {
+                                        context.pushNamed(
+                                          "vendor_detail",
+                                          pathParameters: {
+                                            "id": data[index]
+                                                .assignment
+                                                .vendor!
+                                                .id,
+                                          },
+                                        );
+                                      } else {
+                                        context.pushNamed(
+                                          "event_detail",
+                                          pathParameters: {
+                                            "id": data[index]
+                                                .assignment
+                                                .event!
+                                                .id,
+                                          },
+                                        );
+                                      }
+                                    },
+                                    child: Stack(
+                                      children: [
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: ImageOrVideoWidget(
+                                            url:
+                                                data[index].video ??
+                                                data[index].image ??
+                                                "",
+                                          ),
                                         ),
-                                      ),
-                                      Container(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.3,
+                                        Container(
+                                          color: Colors.black.withValues(
+                                            alpha: 0.3,
+                                          ),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 60,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              data[index].subtitle,
-                                              textAlign: TextAlign.start,
-                                              style: TextStyle(
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    12,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w300,
-                                              ),
-                                            ),
-                                            SizedBox(height: 4),
-                                            Text(
-                                              data[index].headline,
-                                              style: TextStyle(
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    20,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  formatDateTime(
-                                                    data[index]
-                                                        .campaignStartDate,
-                                                  ),
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize:
-                                                        AppTextStyles(
-                                                          context,
-                                                        ).accumulator *
-                                                        12,
-                                                  ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 60,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                data[index].subtitle,
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      12,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w300,
                                                 ),
-                                              ],
-                                            ),
-                                          ],
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                data[index].headline,
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      20,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    formatDateTime(
+                                                      data[index]
+                                                          .campaignStartDate,
+                                                    ),
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize:
+                                                          AppTextStyles(
+                                                            context,
+                                                          ).accumulator *
+                                                          12,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                      Positioned(
-                        top: 145,
-                        left: 16,
-                        child: Center(
-                          child: SmoothPageIndicator(
-                            controller: headingPageController,
-                            count: data.length,
-                            effect: ExpandingDotsEffect(
-                              activeDotColor: Colors.white,
-                              dotColor: Colors.white.withValues(alpha: 0.2),
-                              dotHeight: 10,
-                              dotWidth: 6,
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                        Positioned(
+                          top: 145,
+                          left: 16,
+                          child: Center(
+                            child: SmoothPageIndicator(
+                              controller: headingPageController,
+                              count: data.length,
+                              effect: ExpandingDotsEffect(
+                                activeDotColor: Colors.white,
+                                dotColor: Colors.white.withValues(alpha: 0.2),
+                                dotHeight: 10,
+                                dotWidth: 6,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        top: 10,
-                        left: 16,
-                        right: 16,
-                        child: SafeArea(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "HYDEX",
-                                style: TextStyle(
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 22,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
+                        Positioned(
+                          top: 10,
+                          left: 16,
+                          right: 16,
+                          child: SafeArea(
+                            child: Row(
+                              mainAxisAlignment: .spaceBetween,
+                              children: [
+                                Text(
+                                  "HYDEX",
+                                  style: TextStyle(
+                                    fontSize:
+                                        AppTextStyles(context).accumulator * 22,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                  ),
                                 ),
-                              ),
 
-                              GestureDetector(
-                                onTap: () => context.push("/notifications"),
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.white.withValues(
-                                    alpha: 0.2,
-                                  ),
-                                  child: SvgPicture.asset(
-                                    "img/svg/notification.svg",
-                                    package: "assets",
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-                error: (e, s) => Center(child: Text("Error")),
-                loading: () => Shimmer.fromColors(
-                  baseColor: AppColors.backgroundOverlay,
-                  highlightColor: AppColors.buttonSecondary,
-                  child: Container(color: Colors.red, height: 350),
-                ),
-              ),
-              Transform.translate(
-                offset: Offset(0, -45),
-                child: Container(
-                  width: MediaQuery.widthOf(context),
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundBase,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0xff232325),
-                        offset: Offset(0, -3),
-                      ),
-                    ],
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
-                    ),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(32),
-                      topRight: Radius.circular(32),
-                    ),
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          LayoutBuilder(
-                            builder: (context, constraints) {
-                              return SizedBox(
-                                height: constraints.maxWidth > 600
-                                    ? 130 * 1.5
-                                    : 130,
-                                child: ListView(
-                                  physics: BouncingScrollPhysics(),
-                                  scrollDirection: Axis.horizontal,
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                Row(
+                                  spacing: 8,
                                   children: [
                                     GestureDetector(
                                       onTap: () =>
-                                          context.push("/happening_tonight"),
-                                      child: SmoothContainer(
-                                        width: 150,
-                                        height: 130,
-                                        color: AppColors.surfaceContainer,
-                                        smoothness: 1,
-                                        padding: EdgeInsets.all(12),
-                                        borderRadius: BorderRadius.circular(24),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            LottieBuilder.asset(
-                                              "json/fire.json",
-                                              package: "assets",
-                                              height: 24,
-                                            ),
-                                            Spacer(),
-                                            Text(
-                                              "Happening",
-                                              style: TextStyle(
-                                                color: AppColors.textSecondary,
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    12,
-                                              ),
-                                            ),
-                                            Text(
-                                              "Tonight",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    18,
-                                              ),
-                                            ),
-                                          ],
+                                          context.push("/notifications"),
+                                      child: CircleAvatar(
+                                        backgroundColor: Colors.white
+                                            .withValues(alpha: 0.2),
+                                        child: SvgPicture.asset(
+                                          "img/svg/notification.svg",
+                                          package: "assets",
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 6),
                                     GestureDetector(
-                                      onTap: () =>
-                                          context.push("/happening_nearby"),
-
-                                      child: SmoothContainer(
-                                        width: 150,
-                                        height: 110,
-                                        color: AppColors.surfaceContainer,
-
-                                        smoothness: 1,
-                                        padding: EdgeInsets.all(12),
-                                        borderRadius: BorderRadius.circular(24),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SvgPicture.asset(
-                                              height: 24,
-                                              "img/svg/location_pin.svg",
-                                              package: "assets",
-                                            ),
-                                            Spacer(),
-                                            Text(
-                                              "Happening",
-                                              style: TextStyle(
-                                                color: AppColors.textSecondary,
-
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    12,
-                                              ),
-                                            ),
-                                            Text(
-                                              "Near me",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    18,
-                                              ),
-                                            ),
-                                          ],
+                                      onTap: () {
+                                        context.push("/location");
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 8,
+                                          horizontal: 12,
                                         ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 6),
-                                    GestureDetector(
-                                      onTap: () => context.push("/", extra: 1),
-                                      child: SmoothContainer(
-                                        width: 150,
-                                        height: 130,
-                                        color: AppColors.surfaceContainer,
-
-                                        smoothness: 1,
-                                        padding: EdgeInsets.all(12),
-                                        borderRadius: BorderRadius.circular(24),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.2,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            100,
+                                          ),
+                                        ),
+                                        child: Row(
                                           children: [
-                                            Spacer(),
-                                            Text(
-                                              "Search &",
-                                              style: TextStyle(
-                                                color: AppColors.textSecondary,
-
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    12,
-                                              ),
+                                            Icon(
+                                              Icons.keyboard_arrow_down,
+                                              size: 20,
                                             ),
-                                            Text(
-                                              "Explore",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    18,
-                                              ),
+                                            CountryText(
+                                              countryCode: countryCode.value,
                                             ),
                                           ],
                                         ),
@@ -439,226 +287,433 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                     ),
                                   ],
                                 ),
-                              );
-                            },
+                              ],
+                            ),
                           ),
-
-                          AllEventsWidget(),
-                          promotionalEvents.when(
-                            data: (data) {
-                              if (data.isEmpty) {
-                                return SizedBox.shrink();
-                              }
-                              return Column(
-                                children: [
-                                  SizedBox(height: 24),
-                                  CarouselSlider(
-                                    items: data
-                                        .map(
-                                          (e) => GestureDetector(
-                                            onTap: () {
-                                              if (e.assignment.targetType ==
-                                                  AssignmentStatus.event) {
-                                                context.push(
-                                                  "/event/${e.assignment.event?.id}",
-                                                );
-                                              } else {
-                                                context.push(
-                                                  "/vendor/${e.assignment.vendor?.id}",
-                                                );
-                                              }
-                                            },
-                                            child: SmoothClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(24),
-                                              smoothness: 1,
-                                              child: e.image != null
-                                                  ? Container(
-                                                      width: 320,
-                                                      color: AppColors
-                                                          .surfaceContainer,
-                                                      child: AdaptiveImage(
-                                                        imageData: e.image!,
-                                                      ),
-                                                    )
-                                                  : Container(
-                                                      width: 320,
-                                                      decoration: BoxDecoration(
-                                                        color: AppColors
-                                                            .surfaceContainer,
-                                                      ),
-                                                    ),
-                                            ),
-                                          ),
-                                        )
-                                        .toList(),
-
-                                    options: CarouselOptions(
-                                      height: 107,
-                                      initialPage: 0,
-                                      enableInfiniteScroll: true,
-                                      reverse: false,
-                                      autoPlay: true,
-                                      autoPlayInterval: Duration(seconds: 3),
-                                      autoPlayAnimationDuration: Duration(
-                                        milliseconds: 800,
-                                      ),
-                                      autoPlayCurve: Curves.fastOutSlowIn,
-                                      enlargeCenterPage: true,
-                                      onPageChanged: (index, reason) {
-                                        setState(() {
-                                          adIndex = index;
-                                        });
-                                      },
-                                      enlargeFactor: 0.3,
-                                      scrollDirection: Axis.horizontal,
-                                    ),
-                                  ),
-                                  SizedBox(height: 17),
-                                  Center(
-                                    child: AnimatedSmoothIndicator(
-                                      count: data.length,
-                                      activeIndex: adIndex,
-                                      effect: ExpandingDotsEffect(
-                                        activeDotColor: Colors.white,
-                                        dotColor: Colors.white.withValues(
-                                          alpha: 0.2,
-                                        ),
-                                        dotHeight: 10,
-                                        dotWidth: 8,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                            error: (e, s) {
-                              log(
-                                "[Error Promotional]",
-                                error: e,
-                                stackTrace: s,
-                              );
-                              return Center(child: Text("Error"));
-                            },
-                            loading: () =>
-                                Center(child: CircularProgressIndicator()),
-                          ),
-
-                          SizedBox(height: 43.5),
-
-                          AllVendorsWidget(),
-                          Column(
-                            children: [
-                              categories.when(
-                                data: (data) {
-                                  if (data.isEmpty) {
-                                    return SizedBox.shrink();
-                                  }
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
+                        ),
+                      ],
+                    );
+                  },
+                  error: (e, s) => Center(child: Text("Error")),
+                  loading: () => Shimmer.fromColors(
+                    baseColor: AppColors.backgroundOverlay,
+                    highlightColor: AppColors.buttonSecondary,
+                    child: Container(color: Colors.red, height: 350),
+                  ),
+                ),
+                Transform.translate(
+                  offset: Offset(0, -45),
+                  child: Container(
+                    width: MediaQuery.widthOf(context),
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundBase,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0xff232325),
+                          offset: Offset(0, -3),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16),
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(32),
+                        topRight: Radius.circular(32),
+                      ),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                return SizedBox(
+                                  height: constraints.maxWidth > 600
+                                      ? 130 * 1.5
+                                      : 130,
+                                  child: ListView(
+                                    physics: BouncingScrollPhysics(),
+                                    scrollDirection: Axis.horizontal,
+                                    padding: EdgeInsets.symmetric(
                                       horizontal: 16,
                                     ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-
-                                      children: [
-                                        SizedBox(height: 41),
-
-                                        Text(
-                                          "HydeX Curated",
-                                          style: TextStyle(
-                                            fontSize:
-                                                AppTextStyles(
-                                                  context,
-                                                ).accumulator *
-                                                24,
-                                            fontWeight: FontWeight.w700,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () =>
+                                            context.push("/happening_tonight"),
+                                        child: SmoothContainer(
+                                          width: 150,
+                                          height: 130,
+                                          color: AppColors.surfaceContainer,
+                                          smoothness: 1,
+                                          padding: EdgeInsets.all(12),
+                                          borderRadius: BorderRadius.circular(
+                                            24,
                                           ),
-                                        ),
-                                        Text(
-                                          "The finest venues and events in one place.",
-                                          style: TextStyle(
-                                            fontSize:
-                                                AppTextStyles(
-                                                  context,
-                                                ).accumulator *
-                                                14,
-                                            color: Color(0xff858585),
-                                          ),
-                                        ),
-                                        SizedBox(height: 15),
-                                        Column(
-                                          spacing: 12,
-                                          children: [
-                                            for (
-                                              int index = 0;
-                                              index < data.length;
-                                              index++
-                                            ) ...[
-                                              CuratedContainer(
-                                                onTap: () => context.push(
-                                                  "/category",
-                                                  extra: data[index],
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              LottieBuilder.asset(
+                                                "json/fire.json",
+                                                package: "assets",
+                                                height: 24,
+                                              ),
+                                              Spacer(),
+                                              Text(
+                                                "Happening",
+                                                style: TextStyle(
+                                                  color:
+                                                      AppColors.textSecondary,
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      12,
                                                 ),
-
-                                                heading: data[index].name,
-                                                endText:
-                                                    data[index].description,
-                                                image: data[index].image ?? "",
+                                              ),
+                                              Text(
+                                                "Tonight",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      18,
+                                                ),
                                               ),
                                             ],
-                                          ],
+                                          ),
                                         ),
-                                      ],
+                                      ),
+                                      SizedBox(width: 6),
+                                      GestureDetector(
+                                        onTap: () =>
+                                            context.push("/happening_nearby"),
+
+                                        child: SmoothContainer(
+                                          width: 150,
+                                          height: 110,
+                                          color: AppColors.surfaceContainer,
+
+                                          smoothness: 1,
+                                          padding: EdgeInsets.all(12),
+                                          borderRadius: BorderRadius.circular(
+                                            24,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SvgPicture.asset(
+                                                height: 24,
+                                                "img/svg/location_pin.svg",
+                                                package: "assets",
+                                              ),
+                                              Spacer(),
+                                              Text(
+                                                "Happening",
+                                                style: TextStyle(
+                                                  color:
+                                                      AppColors.textSecondary,
+
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      12,
+                                                ),
+                                              ),
+                                              Text(
+                                                "Near me",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      18,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 6),
+                                      GestureDetector(
+                                        onTap: () =>
+                                            context.push("/", extra: 1),
+                                        child: SmoothContainer(
+                                          width: 150,
+                                          height: 130,
+                                          color: AppColors.surfaceContainer,
+
+                                          smoothness: 1,
+                                          padding: EdgeInsets.all(12),
+                                          borderRadius: BorderRadius.circular(
+                                            24,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Spacer(),
+                                              Text(
+                                                "Search &",
+                                                style: TextStyle(
+                                                  color:
+                                                      AppColors.textSecondary,
+
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      12,
+                                                ),
+                                              ),
+                                              Text(
+                                                "Explore",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      18,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+
+                            AllEventsWidget(),
+                            promotionalEvents.when(
+                              data: (data) {
+                                if (data.isEmpty) {
+                                  return SizedBox.shrink();
+                                }
+                                return Column(
+                                  children: [
+                                    SizedBox(height: 24),
+                                    CarouselSlider(
+                                      items: data
+                                          .map(
+                                            (e) => GestureDetector(
+                                              onTap: () {
+                                                if (e.assignment.targetType ==
+                                                    AssignmentStatus.event) {
+                                                  context.push(
+                                                    "/event/${e.assignment.event?.id}",
+                                                  );
+                                                } else {
+                                                  context.push(
+                                                    "/vendor/${e.assignment.vendor?.id}",
+                                                  );
+                                                }
+                                              },
+                                              child: SmoothClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(24),
+                                                smoothness: 1,
+                                                child: e.image != null
+                                                    ? Container(
+                                                        width: 320,
+                                                        color: AppColors
+                                                            .surfaceContainer,
+                                                        child: AdaptiveImage(
+                                                          imageData: e.image!,
+                                                        ),
+                                                      )
+                                                    : Container(
+                                                        width: 320,
+                                                        decoration: BoxDecoration(
+                                                          color: AppColors
+                                                              .surfaceContainer,
+                                                        ),
+                                                      ),
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
+
+                                      options: CarouselOptions(
+                                        height: 107,
+                                        initialPage: 0,
+                                        enableInfiniteScroll: true,
+                                        reverse: false,
+                                        autoPlay: true,
+                                        autoPlayInterval: Duration(seconds: 3),
+                                        autoPlayAnimationDuration: Duration(
+                                          milliseconds: 800,
+                                        ),
+                                        autoPlayCurve: Curves.fastOutSlowIn,
+                                        enlargeCenterPage: true,
+                                        onPageChanged: (index, reason) {
+                                          setState(() {
+                                            adIndex = index;
+                                          });
+                                        },
+                                        enlargeFactor: 0.3,
+                                        scrollDirection: Axis.horizontal,
+                                      ),
                                     ),
-                                  );
-                                },
-                                error: (e, s) {
-                                  log(
-                                    "[Event Categories]",
-                                    error: e,
-                                    stackTrace: s,
-                                  );
-                                  return Text("Error");
-                                },
-                                loading: () {
-                                  return SizedBox(
-                                    height: 300,
-                                    child: ListView.separated(
-                                      itemCount: 4,
-                                      separatorBuilder: (_, _) =>
-                                          SizedBox(height: 12),
-                                      padding: .symmetric(horizontal: 16),
-                                      itemBuilder: (context, index) =>
-                                          Shimmer.fromColors(
-                                            baseColor:
-                                                AppColors.backgroundOverlay,
-                                            highlightColor:
-                                                AppColors.buttonSecondary,
-                                            child: SmoothContainer(
-                                              smoothness: 1,
-                                              width: double.infinity,
-                                              color:
-                                                  AppColors.backgroundOverlay,
-                                              borderRadius:
-                                                  BorderRadius.circular(24),
+                                    SizedBox(height: 17),
+                                    Center(
+                                      child: AnimatedSmoothIndicator(
+                                        count: data.length,
+                                        activeIndex: adIndex,
+                                        effect: ExpandingDotsEffect(
+                                          activeDotColor: Colors.white,
+                                          dotColor: Colors.white.withValues(
+                                            alpha: 0.2,
+                                          ),
+                                          dotHeight: 10,
+                                          dotWidth: 8,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                              error: (e, s) {
+                                log(
+                                  "[Error Promotional]",
+                                  error: e,
+                                  stackTrace: s,
+                                );
+                                return Center(child: Text("Error"));
+                              },
+                              loading: () =>
+                                  Center(child: CircularProgressIndicator()),
+                            ),
+
+                            SizedBox(height: 43.5),
+
+                            AllVendorsWidget(),
+                            Column(
+                              children: [
+                                categories.when(
+                                  data: (data) {
+                                    if (data.isEmpty) {
+                                      return SizedBox.shrink();
+                                    }
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+
+                                        children: [
+                                          SizedBox(height: 41),
+
+                                          Text(
+                                            "HydeX Curated",
+                                            style: TextStyle(
+                                              fontSize:
+                                                  AppTextStyles(
+                                                    context,
+                                                  ).accumulator *
+                                                  24,
+                                              fontWeight: FontWeight.w700,
                                             ),
                                           ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 120),
-                        ],
+                                          Text(
+                                            "The finest venues and events in one place.",
+                                            style: TextStyle(
+                                              fontSize:
+                                                  AppTextStyles(
+                                                    context,
+                                                  ).accumulator *
+                                                  14,
+                                              color: Color(0xff858585),
+                                            ),
+                                          ),
+                                          SizedBox(height: 15),
+                                          Column(
+                                            spacing: 12,
+                                            children: [
+                                              for (
+                                                int index = 0;
+                                                index < data.length;
+                                                index++
+                                              ) ...[
+                                                CuratedContainer(
+                                                  onTap: () => context.push(
+                                                    "/category",
+                                                    extra: data[index],
+                                                  ),
+
+                                                  heading: data[index].name,
+                                                  endText:
+                                                      data[index].description,
+                                                  image:
+                                                      data[index].image ?? "",
+                                                ),
+                                              ],
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  error: (e, s) {
+                                    log(
+                                      "[Event Categories]",
+                                      error: e,
+                                      stackTrace: s,
+                                    );
+                                    return Text("Error");
+                                  },
+                                  loading: () {
+                                    return SizedBox(
+                                      height: 300,
+                                      child: ListView.separated(
+                                        itemCount: 4,
+                                        separatorBuilder: (_, _) =>
+                                            SizedBox(height: 12),
+                                        padding: .symmetric(horizontal: 16),
+                                        itemBuilder: (context, index) =>
+                                            Shimmer.fromColors(
+                                              baseColor:
+                                                  AppColors.backgroundOverlay,
+                                              highlightColor:
+                                                  AppColors.buttonSecondary,
+                                              child: SmoothContainer(
+                                                smoothness: 1,
+                                                width: double.infinity,
+                                                color:
+                                                    AppColors.backgroundOverlay,
+                                                borderRadius:
+                                                    BorderRadius.circular(24),
+                                              ),
+                                            ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 120),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -1165,6 +1220,36 @@ class CuratedContainer extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class CountryText extends StatelessWidget {
+  const CountryText({super.key, this.countryCode});
+
+  final String? countryCode;
+
+  String getCountryName(String? code) {
+    if (code == null) return "Select Country";
+
+    switch (code.toUpperCase()) {
+      case 'EGYPT':
+        return 'Egypt';
+      case 'UAE':
+        return 'UAE';
+      default:
+        return code;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      getCountryName(countryCode),
+      style: TextStyle(
+        fontSize: AppTextStyles(context).accumulator * 14,
+        fontWeight: FontWeight.w500,
       ),
     );
   }

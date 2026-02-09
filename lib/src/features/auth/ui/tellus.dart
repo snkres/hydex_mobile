@@ -433,18 +433,36 @@ class _TellusState extends State<Tellus> {
                                             );
                                             return;
                                           }
-                                          ref
-                                              .read(userProvider.notifier)
-                                              .create(
-                                                nationality:
-                                                    nationalityController.text,
-                                                gender: gender,
-                                                dateOfBirth: requiredBirth,
-                                                referralCode:
-                                                    referralCodeController.text,
-                                                email: emailController.text,
-                                                fullName: nameController.text,
-                                              );
+                                          if (emailController.text == '') {
+                                            ref
+                                                .read(userProvider.notifier)
+                                                .create(
+                                                  nationality:
+                                                      nationalityController
+                                                          .text,
+                                                  gender: gender,
+                                                  dateOfBirth: requiredBirth,
+                                                  referralCode:
+                                                      referralCodeController
+                                                          .text,
+                                                  fullName: nameController.text,
+                                                );
+                                          } else {
+                                            ref
+                                                .read(userProvider.notifier)
+                                                .create(
+                                                  nationality:
+                                                      nationalityController
+                                                          .text,
+                                                  gender: gender,
+                                                  dateOfBirth: requiredBirth,
+                                                  email: emailController.text,
+                                                  referralCode:
+                                                      referralCodeController
+                                                          .text,
+                                                  fullName: nameController.text,
+                                                );
+                                          }
 
                                           if (!isRegestered) {
                                             await ref

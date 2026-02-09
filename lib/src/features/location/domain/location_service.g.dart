@@ -9,6 +9,81 @@ part of 'location_service.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(currentAddress)
+const currentAddressProvider = CurrentAddressProvider._();
+
+final class CurrentAddressProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Map<String, String?>>,
+          Map<String, String?>,
+          FutureOr<Map<String, String?>>
+        >
+    with
+        $FutureModifier<Map<String, String?>>,
+        $FutureProvider<Map<String, String?>> {
+  const CurrentAddressProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'currentAddressProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$currentAddressHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<Map<String, String?>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Map<String, String?>> create(Ref ref) {
+    return currentAddress(ref);
+  }
+}
+
+String _$currentAddressHash() => r'0a3c1be14e36a5e3b6320ba0b71baa63f94cf4f5';
+
+@ProviderFor(currentCountryCode)
+const currentCountryCodeProvider = CurrentCountryCodeProvider._();
+
+final class CurrentCountryCodeProvider
+    extends $FunctionalProvider<AsyncValue<String?>, String?, FutureOr<String?>>
+    with $FutureModifier<String?>, $FutureProvider<String?> {
+  const CurrentCountryCodeProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'currentCountryCodeProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$currentCountryCodeHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<String?> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<String?> create(Ref ref) {
+    return currentCountryCode(ref);
+  }
+}
+
+String _$currentCountryCodeHash() =>
+    r'fe2cc3f07fc899d0966fdb0c4278bcbba45de203';
+
 @ProviderFor(calculateDistance)
 const calculateDistanceProvider = CalculateDistanceFamily._();
 
@@ -90,4 +165,49 @@ final class CalculateDistanceFamily extends $Family
 
   @override
   String toString() => r'calculateDistanceProvider';
+}
+
+@ProviderFor(SelectedCountry)
+const selectedCountryProvider = SelectedCountryProvider._();
+
+final class SelectedCountryProvider
+    extends $AsyncNotifierProvider<SelectedCountry, String> {
+  const SelectedCountryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'selectedCountryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$selectedCountryHash();
+
+  @$internal
+  @override
+  SelectedCountry create() => SelectedCountry();
+}
+
+String _$selectedCountryHash() => r'5825a26d36bf1fdd285b3ecedc4b8a6c21ecd70a';
+
+abstract class _$SelectedCountry extends $AsyncNotifier<String> {
+  FutureOr<String> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<String>, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<String>, String>,
+              AsyncValue<String>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
 }

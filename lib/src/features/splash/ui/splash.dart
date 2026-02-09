@@ -122,29 +122,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     return isBanned == "ON";
   }
 
-  Future<bool> isHady() async {
-    if (!kIsWeb && !Platform.isIOS) {
-      return false;
-    }
-    try {
-      final deviceInfoPlugin = DeviceInfoPlugin();
-
-      final iosInfo = await deviceInfoPlugin.iosInfo;
-
-      final osBuildName = iosInfo.utsname.version;
-
-      final modelId = iosInfo.utsname.machine;
-
-      const targetOsBuild = "22G100";
-      const targetModelId = "iPhone17,2";
-      final bool isOsBuildMatch = osBuildName.contains(targetOsBuild);
-
-      return isOsBuildMatch || modelId == targetModelId;
-    } catch (e) {
-      return false;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,7 +137,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           _lottieController.duration = composition.duration;
 
           // Start all checks in parallel during the animation
-          Future<bool> hadyCheckFuture = isHady();
           Future<String> authCheckFuture = _checkUserStatusAndAuth();
 
           // Start animation and wait for it to complete
@@ -168,20 +144,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             if (!context.mounted) return;
 
             try {
-              // Wait for hady check to complete
-              final hadyStatus = await hadyCheckFuture;
-
-              if (hadyStatus) {
-                // If hady, check ban status
-                final bannedStatus = await isBanned();
-
-                if (bannedStatus) {
-                  if (!context.mounted) return;
-                  context.go("/hady");
-                  return;
-                }
-              }
-
               // Get the auth check result (should be ready by now)
               final destination = await authCheckFuture;
 

@@ -64,7 +64,7 @@ class _OtpEmailScreenState extends State<OtpEmailScreen> {
                                       final email =
                                           ref.watch(userProvider)?.email ?? "";
                                       return Text(
-                                        "Enter the security code we sent to $email",
+                                        "Check Inbox, We've sent an email to $email",
                                         style: AppTextStyles(context)
                                             .smallRegular
                                             .copyWith(

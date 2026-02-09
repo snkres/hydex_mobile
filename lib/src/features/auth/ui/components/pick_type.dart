@@ -82,8 +82,8 @@ class PickUserType extends StatelessWidget {
               child: Consumer(
                 builder: (context, ref, child) {
                   return PrimaryButton(
-                    bgColor: AppColors.textBrand,
-                    frColor: AppColors.textPrimary,
+                    bgColor: Colors.white,
+                    frColor: Colors.black,
                     nullbgColor: Color(0xff080808),
                     nullfrColor: AppColors.surfaceContainer,
                     onTap: currentType != Role.none

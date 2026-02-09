@@ -183,8 +183,8 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
           child: PrimaryButton(
             nullbgColor: Color(0xff080808),
             nullfrColor: AppColors.surfaceContainer,
-            bgColor: AppColors.textBrand,
-            frColor: AppColors.textPrimary,
+            bgColor: Colors.white,
+            frColor: Colors.black,
 
             onTap: textController.text != ''
                 ? () async {

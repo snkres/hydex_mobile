@@ -58,6 +58,7 @@ Future<List<Vendor>> getVendors(
   int page = 1,
   String? categoryId,
   String? subcategoryId,
+  String? country,
 }) async {
   final link = ref.keepAlive();
   Timer? timer;
@@ -81,6 +82,15 @@ Future<List<Vendor>> getVendors(
     }
     if (subcategoryId != null) {
       data["subcategoryId"] = subcategoryId;
+    }
+
+    if (country == null) {
+      // Get country from selected country provider (uses GPS as default)
+      final selectedCountry = await ref.read(selectedCountryProvider.future);
+      data["country"] = selectedCountry;
+    }
+    if (country != null) {
+      data["country"] = country;
     }
     final response = await DioHelper.get(
       '/vendors',
@@ -123,6 +133,10 @@ Future<List<Event>> getEvents(
     data["lat"] = userPosition.latitude.toString();
     data["lng"] = userPosition.longitude.toString();
   }
+
+  // Get country from selected country provider (uses GPS as default)
+  final selectedCountry = await ref.read(selectedCountryProvider.future);
+  data["country"] = selectedCountry;
 
   try {
     final response = await DioHelper.get('/events', queryParameters: data);

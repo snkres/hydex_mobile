@@ -139,7 +139,12 @@ final class GetVendorsProvider
     with $FutureModifier<List<Vendor>>, $FutureProvider<List<Vendor>> {
   const GetVendorsProvider._({
     required GetVendorsFamily super.from,
-    required ({int page, String? categoryId, String? subcategoryId})
+    required ({
+      int page,
+      String? categoryId,
+      String? subcategoryId,
+      String? country,
+    })
     super.argument,
   }) : super(
          retry: null,
@@ -169,12 +174,18 @@ final class GetVendorsProvider
   FutureOr<List<Vendor>> create(Ref ref) {
     final argument =
         this.argument
-            as ({int page, String? categoryId, String? subcategoryId});
+            as ({
+              int page,
+              String? categoryId,
+              String? subcategoryId,
+              String? country,
+            });
     return getVendors(
       ref,
       page: argument.page,
       categoryId: argument.categoryId,
       subcategoryId: argument.subcategoryId,
+      country: argument.country,
     );
   }
 
@@ -189,13 +200,18 @@ final class GetVendorsProvider
   }
 }
 
-String _$getVendorsHash() => r'a6fe9f4416cfca0437a972e6fef3b86bbd475555';
+String _$getVendorsHash() => r'ac190fdc16cfb19e9d7c8a9ee4a3938e72df6a6c';
 
 final class GetVendorsFamily extends $Family
     with
         $FunctionalFamilyOverride<
           FutureOr<List<Vendor>>,
-          ({int page, String? categoryId, String? subcategoryId})
+          ({
+            int page,
+            String? categoryId,
+            String? subcategoryId,
+            String? country,
+          })
         > {
   const GetVendorsFamily._()
     : super(
@@ -210,11 +226,13 @@ final class GetVendorsFamily extends $Family
     int page = 1,
     String? categoryId,
     String? subcategoryId,
+    String? country,
   }) => GetVendorsProvider._(
     argument: (
       page: page,
       categoryId: categoryId,
       subcategoryId: subcategoryId,
+      country: country,
     ),
     from: this,
   );
@@ -300,7 +318,7 @@ final class GetEventsProvider
   }
 }
 
-String _$getEventsHash() => r'c9c75d46fa43405fda13b6910fd33ea60f132679';
+String _$getEventsHash() => r'6ad813192ccc9050f7db8e32f41dd5dadfb3a634';
 
 final class GetEventsFamily extends $Family
     with
