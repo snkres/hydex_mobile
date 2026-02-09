@@ -13,7 +13,7 @@ part of 'location_notifier.dart';
 const locationCheckerProvider = LocationCheckerProvider._();
 
 final class LocationCheckerProvider
-    extends $AsyncNotifierProvider<LocationChecker, LocationPermission?> {
+    extends $AsyncNotifierProvider<LocationChecker, LocationStatus?> {
   const LocationCheckerProvider._()
     : super(
         from: null,
@@ -33,21 +33,20 @@ final class LocationCheckerProvider
   LocationChecker create() => LocationChecker();
 }
 
-String _$locationCheckerHash() => r'2bd04255e83b7df440c43e0bb7059e445b35bf78';
+String _$locationCheckerHash() => r'5a1e69e7ccf824c427337fef00ed578a88b472ca';
 
-abstract class _$LocationChecker extends $AsyncNotifier<LocationPermission?> {
-  FutureOr<LocationPermission?> build();
+abstract class _$LocationChecker extends $AsyncNotifier<LocationStatus?> {
+  FutureOr<LocationStatus?> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref =
-        this.ref as $Ref<AsyncValue<LocationPermission?>, LocationPermission?>;
+    final ref = this.ref as $Ref<AsyncValue<LocationStatus?>, LocationStatus?>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<LocationPermission?>, LocationPermission?>,
-              AsyncValue<LocationPermission?>,
+              AnyNotifier<AsyncValue<LocationStatus?>, LocationStatus?>,
+              AsyncValue<LocationStatus?>,
               Object?,
               Object?
             >;

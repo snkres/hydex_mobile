@@ -83,7 +83,7 @@ class HistoryContainer extends StatelessWidget {
       child: Container(
         decoration: ShapeDecoration(
           shape: RoundedSuperellipseBorder(borderRadius: .circular(24)),
-          color: const Color.fromARGB(255, 81, 74, 74),
+          color: AppColors.signalBrandTint,
         ),
         child: Column(
           children: [

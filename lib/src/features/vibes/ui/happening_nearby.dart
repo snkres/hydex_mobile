@@ -9,6 +9,7 @@ import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/features/booking/data/format_time.dart';
+import 'package:hydex/src/features/location/ui/location_required.dart';
 import 'package:hydex/src/features/search/ui/components/not_found.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
@@ -211,6 +212,8 @@ class _HappeningNearbyState extends ConsumerState<HappeningNearby> {
                     separatorBuilder: (context, index) => SizedBox(height: 10),
                     fetchNextPage: fetchNextPage,
                     builderDelegate: PagedChildBuilderDelegate(
+                      firstPageErrorIndicatorBuilder: (_) =>
+                          LocationRequired(child: Text("data")),
                       noItemsFoundIndicatorBuilder: (context) => NotFoundWidget(
                         heading: "Hmm… nothing happening nearby 😔",
                         description: "Try exploring other categories",

@@ -4,10 +4,20 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'location_notifier.g.dart';
 
+class LocationStatus {
+  final LocationPermission permission;
+  final bool isServiceEnabled;
+
+  const LocationStatus({
+    required this.permission,
+    required this.isServiceEnabled,
+  });
+}
+
 @Riverpod(keepAlive: true)
 class LocationChecker extends _$LocationChecker {
   @override
-  FutureOr<LocationPermission?> build() async {
+  FutureOr<LocationStatus?> build() async {
     checkStatus();
     return null;
   }
@@ -16,15 +26,21 @@ class LocationChecker extends _$LocationChecker {
     try {
       state = AsyncValue.loading();
 
-      final status = await LocationService().locationPermission();
-      state = AsyncValue.data(status);
+      final locationService = LocationService();
+      final permission = await locationService.locationPermission();
+      final isServiceEnabled = await locationService.isLocationEnabled;
+      state = AsyncValue.data(
+        LocationStatus(
+          permission: permission,
+          isServiceEnabled: isServiceEnabled,
+        ),
+      );
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
   }
 
   Future<void> requestPermissionAndUpdate() async {
-    // You might want to update a separate flag here to track user interaction
     await LocationService().requestLocationPermission();
     await checkStatus();
   }

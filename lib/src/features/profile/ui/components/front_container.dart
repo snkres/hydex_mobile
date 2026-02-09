@@ -61,7 +61,7 @@ class FrontContainer extends StatelessWidget {
                       width: 65,
                       height: 65,
                       decoration: ShapeDecoration(
-                        color: Colors.red,
+                        color: Colors.transparent,
                         shape: RoundedSuperellipseBorder(
                           borderRadius: .circular(8),
                         ),
