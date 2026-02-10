@@ -39,7 +39,7 @@ class LocationRequired extends ConsumerWidget {
                     .requestPermissionAndUpdate();
               },
               icon: const Icon(Icons.location_on),
-              label: const Text('Enable Location'),
+              label: const Text('Continue'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
