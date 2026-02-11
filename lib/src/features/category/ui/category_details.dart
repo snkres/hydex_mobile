@@ -236,8 +236,8 @@ class _CategoryDetailsState extends ConsumerState<CategoryDetails>
                                   width: double.infinity,
                                   heading: item.name,
                                   tag: item.category?.name,
-                                  image: item.media.first,
-                                  avatarImage: item.media.first,
+                                  image: item.media.firstOrNull,
+                                  avatarImage: item.media.firstOrNull,
                                   description: item.location.address,
                                   onView: () => context.pushNamed(
                                     "event_detail",
@@ -274,8 +274,8 @@ class _CategoryDetailsState extends ConsumerState<CategoryDetails>
                                   date: item.priceType.label,
                                   heading: item.name,
                                   tag: item.category?.name,
-                                  image: item.media.first,
-                                  avatarImage: item.media.first,
+                                  image: item.media.firstOrNull,
+                                  avatarImage: item.media.firstOrNull,
                                   description: item.location.address,
                                   onView: () => context.pushNamed(
                                     "vendor_detail",

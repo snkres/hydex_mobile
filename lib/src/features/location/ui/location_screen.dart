@@ -42,33 +42,31 @@ class _LocationScreenState extends ConsumerState<LocationScreen> {
         }
       });
 
-      // Also listen to GPS location changes
-      ref.listen(currentAddressProvider, (previous, next) {
-        next.whenData((addressData) {
-          final gpsCountry = addressData['country'];
-          if (gpsCountry != null && mounted) {
-            // Map GPS country name to our country list
-            String newCountry = "Egypt";
-            if (gpsCountry.toLowerCase().contains('egypt')) {
-              newCountry = "Egypt";
-            } else if (gpsCountry.toLowerCase().contains('arab') ||
-                gpsCountry.toLowerCase().contains('uae') ||
-                gpsCountry.toLowerCase().contains('emirates')) {
-              newCountry = "UAE";
-            }
-            setState(() => selectedCountry = newCountry);
-            // Update the provider
-            ref
-                .read(selectedCountryProvider.notifier)
-                .setCountry(newCountry == "Egypt" ? "EGYPT" : "UAE");
-          }
-        });
-      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(currentAddressProvider, (previous, next) {
+      next.whenData((addressData) {
+        final gpsCountry = addressData['country'];
+        if (gpsCountry != null && mounted) {
+          String newCountry = "Egypt";
+          if (gpsCountry.toLowerCase().contains('egypt')) {
+            newCountry = "Egypt";
+          } else if (gpsCountry.toLowerCase().contains('arab') ||
+              gpsCountry.toLowerCase().contains('uae') ||
+              gpsCountry.toLowerCase().contains('emirates')) {
+            newCountry = "UAE";
+          }
+          setState(() => selectedCountry = newCountry);
+          ref
+              .read(selectedCountryProvider.notifier)
+              .setCountry(newCountry == "Egypt" ? "EGYPT" : "UAE");
+        }
+      });
+    });
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -264,45 +262,6 @@ class _LocationScreenState extends ConsumerState<LocationScreen> {
                     scrollDirection: Axis.horizontal,
                     physics: NeverScrollableScrollPhysics(),
                     separatorBuilder: (context, index) => SizedBox(width: 12),
-                  ),
-                ),
-                SizedBox(height: 16),
-
-                Text(
-                  "City",
-                  style: TextStyle(
-                    fontSize: AppTextStyles(context).accumulator * 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: 12),
-                SizedBox(
-                  height: MediaQuery.heightOf(context),
-                  child: ListView.separated(
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: Text(
-                              countryCities[selectedCountry]?[index] ?? "",
-                              style: TextStyle(
-                                fontSize:
-                                    AppTextStyles(context).accumulator * 15,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                          ),
-                          Icon(Icons.arrow_forward_ios_outlined, size: 16),
-                        ],
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return SizedBox(height: 12);
-                    },
-                    itemCount: countryCities[selectedCountry]?.length ?? 0,
                   ),
                 ),
               ],

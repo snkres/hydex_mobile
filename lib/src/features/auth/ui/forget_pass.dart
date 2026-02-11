@@ -49,6 +49,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                           changeToEmail
                               ? TextButton(
                                   onPressed: () {
+                                    FocusScope.of(context).unfocus();
                                     emailController.clear();
                                     setState(() {
                                       changeToEmail = false;
@@ -67,6 +68,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                   builder: (context, ref, child) {
                                     return TextButton(
                                       onPressed: () {
+                                        FocusScope.of(context).unfocus();
                                         emailController.clear();
                                         setState(() {
                                           changeToEmail = true;
