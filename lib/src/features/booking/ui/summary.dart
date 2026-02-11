@@ -161,30 +161,42 @@ class SummaryBooking extends ConsumerWidget {
                 ),
                 SizedBox(height: 24),
                 GuestsSummary(),
-                SizedBox(height: 24),
 
-                Padding(
-                  padding: const .symmetric(horizontal: 16),
-                  child: Text(
-                    "Terms and conditions",
-                    style: AppTextStyles(
-                      context,
-                    ).secondaryRegular.copyWith(fontWeight: .w700),
+                Visibility(
+                  visible: booking.termsAndConditions != null,
+                  child: Column(
+                    crossAxisAlignment: .start,
+                    children: [
+                      SizedBox(height: 24),
+
+                      Padding(
+                        padding: const .symmetric(horizontal: 16),
+                        child: Text(
+                          "Terms and conditions",
+                          style: AppTextStyles(
+                            context,
+                          ).secondaryRegular.copyWith(fontWeight: .w700),
+                        ),
+                      ),
+                      SizedBox(height: 12),
+                      Container(
+                        padding: .all(12),
+                        margin: .symmetric(horizontal: 16),
+                        decoration: ShapeDecoration(
+                          shape: SmoothRectangleBorder(
+                            smoothness: 1,
+                            borderRadius: .circular(16),
+                            side: BorderSide(color: AppColors.borderDefault),
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(booking.termsAndConditions ?? ""),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 12),
-                Container(
-                  padding: .all(12),
-                  margin: .symmetric(horizontal: 16),
-                  decoration: ShapeDecoration(
-                    shape: SmoothRectangleBorder(
-                      smoothness: 1,
-                      borderRadius: .circular(16),
-                      side: BorderSide(color: AppColors.borderDefault),
-                    ),
-                  ),
-                  child: Center(child: Text("Mwah")),
-                ),
+
                 SizedBox(height: 100),
               ],
             ),

@@ -150,6 +150,12 @@ class UpcomingEventMapper extends ClassMapperBase<UpcomingEvent> {
     'passName',
     _$passName,
   );
+  static List<String>? _$media(UpcomingEvent v) => v.media;
+  static const Field<UpcomingEvent, List<String>> _f$media = Field(
+    'media',
+    _$media,
+    opt: true,
+  );
 
   @override
   final MappableFields<UpcomingEvent> fields = const {
@@ -169,6 +175,7 @@ class UpcomingEventMapper extends ClassMapperBase<UpcomingEvent> {
     #vendorName: _f$vendorName,
     #bookingType: _f$bookingType,
     #passName: _f$passName,
+    #media: _f$media,
   };
 
   static UpcomingEvent _instantiate(DecodingData data) {
@@ -189,6 +196,7 @@ class UpcomingEventMapper extends ClassMapperBase<UpcomingEvent> {
       vendorName: data.dec(_f$vendorName),
       bookingType: data.dec(_f$bookingType),
       passName: data.dec(_f$passName),
+      media: data.dec(_f$media),
     );
   }
 
@@ -257,6 +265,7 @@ abstract class UpcomingEventCopyWith<$R, $In extends UpcomingEvent, $Out>
   LocationCopyWith<$R, Location, Location> get location;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get guestsNames;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get thingsToKnow;
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get media;
   $R call({
     String? id,
     String? name,
@@ -274,6 +283,7 @@ abstract class UpcomingEventCopyWith<$R, $In extends UpcomingEvent, $Out>
     String? vendorName,
     String? bookingType,
     String? passName,
+    List<String>? media,
   });
   UpcomingEventCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -306,6 +316,15 @@ class _UpcomingEventCopyWithImpl<$R, $Out>
     (v) => call(thingsToKnow: v),
   );
   @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get media =>
+      $value.media != null
+      ? ListCopyWith(
+          $value.media!,
+          (v, t) => ObjectCopyWith(v, $identity, t),
+          (v) => call(media: v),
+        )
+      : null;
+  @override
   $R call({
     String? id,
     String? name,
@@ -323,6 +342,7 @@ class _UpcomingEventCopyWithImpl<$R, $Out>
     String? vendorName,
     String? bookingType,
     String? passName,
+    Object? media = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -341,6 +361,7 @@ class _UpcomingEventCopyWithImpl<$R, $Out>
       if (vendorName != null) #vendorName: vendorName,
       if (bookingType != null) #bookingType: bookingType,
       if (passName != null) #passName: passName,
+      if (media != $none) #media: media,
     }),
   );
   @override
@@ -367,6 +388,7 @@ class _UpcomingEventCopyWithImpl<$R, $Out>
     vendorName: data.get(#vendorName, or: $value.vendorName),
     bookingType: data.get(#bookingType, or: $value.bookingType),
     passName: data.get(#passName, or: $value.passName),
+    media: data.get(#media, or: $value.media),
   );
 
   @override

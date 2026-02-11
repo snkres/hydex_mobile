@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -83,7 +84,17 @@ class HistoryContainer extends StatelessWidget {
       child: Container(
         decoration: ShapeDecoration(
           shape: RoundedSuperellipseBorder(borderRadius: .circular(24)),
-          color: AppColors.signalBrandTint,
+          image: event.media != null
+              ? DecorationImage(
+                  fit: .cover,
+                  image: CachedNetworkImageProvider(event.media?.first ?? ""),
+                  colorFilter: ColorFilter.mode(
+                    Colors.black.withValues(alpha: 0.7),
+                    BlendMode.darken,
+                  ),
+                )
+              : null,
+          color: event.media == null ? AppColors.signalBrandTint : null,
         ),
         child: Column(
           children: [

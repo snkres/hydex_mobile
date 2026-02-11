@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/notification/notification.dart';
+import 'package:hydex/src/features/profile/domain/profile_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auth_service.g.dart';
 
@@ -13,8 +14,8 @@ enum AuthEvent { tokenRefreshed, tokenExpired, unauthorized }
 class AuthService {
   Ref ref;
   AuthService(this.ref);
-  static void initialize() {
-    DioHelper().init();
+  static Future<void> initialize() async {
+    await DioHelper().init();
   }
 
   Future<void> login(String email, String password) async {
@@ -24,6 +25,9 @@ class AuthService {
         'identifier': email,
         'password': password,
       });
+
+      // Clear any stale cached data from previous session
+      _clearUserState();
 
       // Parse user data from response
       final userData = responseData['data']['user'] as Map<String, dynamic>;
@@ -203,6 +207,7 @@ class AuthService {
       final response = await DioHelper.delete('/auth/me');
       if (response.success) {
         DioHelper.clearTokens();
+        _clearUserState();
         return true;
       }
       return false;
@@ -215,9 +220,18 @@ class AuthService {
     try {
       await DioHelper.logout('/auth/logout');
       DioHelper.clearTokens();
+      _clearUserState();
     } catch (e) {
       rethrow;
     }
+  }
+
+  void _clearUserState() {
+    ref.read(userProvider.notifier).clearUser();
+    ref.invalidate(currentUserProvider);
+    ref.invalidate(getUpcomingEventsProvider);
+    ref.invalidate(getHistoryProvider);
+    ref.invalidate(getPassportProvider);
   }
 
   Future<void> sendFCMNotification() async {
@@ -298,6 +312,10 @@ class UserNotifier extends _$UserNotifier {
 
   void setUser(User user) {
     state = user;
+  }
+
+  void clearUser() {
+    state = null;
   }
 
   void create({
@@ -385,7 +403,7 @@ enum OTPType { phone, email }
 
 @Riverpod(keepAlive: true)
 Future<User?> currentUser(Ref ref) async {
-  final userState = ref.read(userProvider);
+  final userState = ref.watch(userProvider);
   if (userState != null) {
     return userState;
   }

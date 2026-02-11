@@ -10,6 +10,7 @@ class CreateBook {
   final Passes? selectedPasses;
   final String location;
   final String image;
+  final String? termsAndConditions;
 
   CreateBook({
     required this.name,
@@ -23,6 +24,7 @@ class CreateBook {
     this.selectedDate,
     this.selectedSlot,
     this.selectedPasses,
+    this.termsAndConditions,
   });
 
   CreateBook copyWith({

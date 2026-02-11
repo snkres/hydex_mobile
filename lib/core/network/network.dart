@@ -161,7 +161,7 @@ class DioHelper {
   static const String _tokenExpiryKey = 'token_expiry';
 
   // Initialize Dio with base configuration
-  void init({Map<String, dynamic>? defaultHeaders}) {
+  Future<void> init({Map<String, dynamic>? defaultHeaders}) async {
     _refreshEndpoint = '/auth/refresh';
 
     BaseOptions options = BaseOptions(
@@ -183,7 +183,7 @@ class DioHelper {
     _dio = Dio(options);
     _setupInterceptors();
 
-    _loadStoredTokens();
+    await _loadStoredTokens();
   }
 
   // Load tokens from secure storage

@@ -318,7 +318,7 @@ final class GetEventsProvider
   }
 }
 
-String _$getEventsHash() => r'6ad813192ccc9050f7db8e32f41dd5dadfb3a634';
+String _$getEventsHash() => r'0b3816d06bfba71b7886462edd8a2341de4feb10';
 
 final class GetEventsFamily extends $Family
     with

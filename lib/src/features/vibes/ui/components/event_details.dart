@@ -96,7 +96,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
               location:
                   event.location.address ??
                   "${event.location.street}, ${event.location.city}, ${event.location.country}",
-
+              termsAndConditions: event.termsAndConditions,
               passes: event.bookingExperience?.passes ?? [],
               startTime: event.startTime,
             );

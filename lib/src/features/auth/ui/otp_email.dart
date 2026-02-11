@@ -50,7 +50,7 @@ class _OtpEmailScreenState extends State<OtpEmailScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "We just sent you a text",
+                                    "Check your inbox",
                                     style: TextStyle(
                                       fontSize:
                                           AppTextStyles(context).accumulator *
@@ -64,7 +64,7 @@ class _OtpEmailScreenState extends State<OtpEmailScreen> {
                                       final email =
                                           ref.watch(userProvider)?.email ?? "";
                                       return Text(
-                                        "Check Inbox, We've sent an email to $email",
+                                        "Enter the security code we sent to $email",
                                         style: AppTextStyles(context)
                                             .smallRegular
                                             .copyWith(

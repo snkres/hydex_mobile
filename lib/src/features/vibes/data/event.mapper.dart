@@ -1550,6 +1550,12 @@ class EventMapper extends ClassMapperBase<Event> {
     _$detailsTitle,
     opt: true,
   );
+  static String? _$termsAndConditions(Event v) => v.termsAndConditions;
+  static const Field<Event, String> _f$termsAndConditions = Field(
+    'termsAndConditions',
+    _$termsAndConditions,
+    opt: true,
+  );
 
   @override
   final MappableFields<Event> fields = const {
@@ -1571,6 +1577,7 @@ class EventMapper extends ClassMapperBase<Event> {
     #bookingExperience: _f$bookingExperience,
     #isFavorited: _f$isFavorited,
     #detailsTitle: _f$detailsTitle,
+    #termsAndConditions: _f$termsAndConditions,
   };
 
   static Event _instantiate(DecodingData data) {
@@ -1593,6 +1600,7 @@ class EventMapper extends ClassMapperBase<Event> {
       bookingExperience: data.dec(_f$bookingExperience),
       isFavorited: data.dec(_f$isFavorited),
       detailsTitle: data.dec(_f$detailsTitle),
+      termsAndConditions: data.dec(_f$termsAndConditions),
     );
   }
 
@@ -1677,6 +1685,7 @@ abstract class EventCopyWith<$R, $In extends Event, $Out>
     BookingExperience? bookingExperience,
     bool? isFavorited,
     String? detailsTitle,
+    String? termsAndConditions,
   });
   EventCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -1762,6 +1771,7 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
     Object? bookingExperience = $none,
     bool? isFavorited,
     Object? detailsTitle = $none,
+    Object? termsAndConditions = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -1782,6 +1792,7 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
       if (bookingExperience != $none) #bookingExperience: bookingExperience,
       if (isFavorited != null) #isFavorited: isFavorited,
       if (detailsTitle != $none) #detailsTitle: detailsTitle,
+      if (termsAndConditions != $none) #termsAndConditions: termsAndConditions,
     }),
   );
   @override
@@ -1807,6 +1818,10 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
     ),
     isFavorited: data.get(#isFavorited, or: $value.isFavorited),
     detailsTitle: data.get(#detailsTitle, or: $value.detailsTitle),
+    termsAndConditions: data.get(
+      #termsAndConditions,
+      or: $value.termsAndConditions,
+    ),
   );
 
   @override

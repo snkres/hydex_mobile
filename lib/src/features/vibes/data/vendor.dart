@@ -29,6 +29,7 @@ class Vendor with VendorMappable {
   final List<String> thingsToKnow;
   final List<EventInsideVendor> events;
   final BookingExperience? bookingExperience;
+  final String? termsAndConditions;
 
   Vendor({
     required this.id,
@@ -50,6 +51,7 @@ class Vendor with VendorMappable {
     this.detailsDescription,
     required this.tags,
     required this.thingsToKnow,
+    this.termsAndConditions,
   });
 }
 

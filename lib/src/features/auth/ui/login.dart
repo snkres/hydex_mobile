@@ -304,6 +304,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 24),
                                 child: PrimaryButton(
+                                  
                                   onTap: () async {
                                     if (!formKey.currentState!.validate()) {
                                       return;

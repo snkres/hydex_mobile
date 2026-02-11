@@ -48,9 +48,11 @@ class _HappeningNearbyState extends ConsumerState<HappeningNearby> {
               nearby: true,
             ).future,
           );
+          if (!mounted) return [];
           return events;
         } catch (e, stackTrace) {
           log('Error loading nearby events: $e', stackTrace: stackTrace);
+          if (!mounted) return [];
           rethrow;
         }
       },
@@ -212,8 +214,9 @@ class _HappeningNearbyState extends ConsumerState<HappeningNearby> {
                     separatorBuilder: (context, index) => SizedBox(height: 10),
                     fetchNextPage: fetchNextPage,
                     builderDelegate: PagedChildBuilderDelegate(
+                      animateTransitions: true,
                       firstPageErrorIndicatorBuilder: (_) =>
-                          LocationRequired(child: Text("data")),
+                          LocationRequired(child: SizedBox.shrink()),
                       noItemsFoundIndicatorBuilder: (context) => NotFoundWidget(
                         heading: "Hmm… nothing happening nearby 😔",
                         description: "Try exploring other categories",

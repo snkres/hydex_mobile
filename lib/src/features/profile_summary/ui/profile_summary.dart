@@ -85,24 +85,34 @@ class ProfileSummary extends StatelessWidget {
                       ],
                     ),
                     Spacer(),
-                    Text.rich(
-                      TextSpan(
-                        text: "${event.totalPrice} ",
-                        style: TextStyle(
-                          fontSize: AppTextStyles(context).accumulator * 17,
-                          fontWeight: .w600,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: "EGP",
+                    event.totalPrice == 0
+                        ? Text(
+                            "Free",
                             style: TextStyle(
                               fontSize: AppTextStyles(context).accumulator * 12,
                               fontWeight: .w600,
                             ),
+                          )
+                        : Text.rich(
+                            TextSpan(
+                              text: "${event.totalPrice} ",
+                              style: TextStyle(
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 17,
+                                fontWeight: .w600,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: "EGP",
+                                  style: TextStyle(
+                                    fontSize:
+                                        AppTextStyles(context).accumulator * 12,
+                                    fontWeight: .w600,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),

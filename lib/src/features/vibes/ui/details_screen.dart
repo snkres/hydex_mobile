@@ -168,6 +168,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                     "${vendor.location.street}, ${vendor.location.city}, ${vendor.location.country}",
                 name: vendor.name,
                 operatingHours: vendor.operatingHours.toOpenDateTimes(),
+                termsAndConditions: vendor.termsAndConditions,
                 requiresApproval:
                     vendorAsync
                         .requireValue

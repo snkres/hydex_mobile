@@ -115,6 +115,12 @@ class VendorMapper extends ClassMapperBase<Vendor> {
     'thingsToKnow',
     _$thingsToKnow,
   );
+  static String? _$termsAndConditions(Vendor v) => v.termsAndConditions;
+  static const Field<Vendor, String> _f$termsAndConditions = Field(
+    'termsAndConditions',
+    _$termsAndConditions,
+    opt: true,
+  );
 
   @override
   final MappableFields<Vendor> fields = const {
@@ -137,6 +143,7 @@ class VendorMapper extends ClassMapperBase<Vendor> {
     #detailsDescription: _f$detailsDescription,
     #tags: _f$tags,
     #thingsToKnow: _f$thingsToKnow,
+    #termsAndConditions: _f$termsAndConditions,
   };
 
   static Vendor _instantiate(DecodingData data) {
@@ -160,6 +167,7 @@ class VendorMapper extends ClassMapperBase<Vendor> {
       detailsDescription: data.dec(_f$detailsDescription),
       tags: data.dec(_f$tags),
       thingsToKnow: data.dec(_f$thingsToKnow),
+      termsAndConditions: data.dec(_f$termsAndConditions),
     );
   }
 
@@ -252,6 +260,7 @@ abstract class VendorCopyWith<$R, $In extends Vendor, $Out>
     String? detailsDescription,
     List<String>? tags,
     List<String>? thingsToKnow,
+    String? termsAndConditions,
   });
   VendorCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -359,6 +368,7 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
     Object? detailsDescription = $none,
     List<String>? tags,
     List<String>? thingsToKnow,
+    Object? termsAndConditions = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -380,6 +390,7 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
       if (detailsDescription != $none) #detailsDescription: detailsDescription,
       if (tags != null) #tags: tags,
       if (thingsToKnow != null) #thingsToKnow: thingsToKnow,
+      if (termsAndConditions != $none) #termsAndConditions: termsAndConditions,
     }),
   );
   @override
@@ -409,6 +420,10 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
     ),
     tags: data.get(#tags, or: $value.tags),
     thingsToKnow: data.get(#thingsToKnow, or: $value.thingsToKnow),
+    termsAndConditions: data.get(
+      #termsAndConditions,
+      or: $value.termsAndConditions,
+    ),
   );
 
   @override

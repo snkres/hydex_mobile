@@ -61,6 +61,7 @@ class _BottomBarState extends ConsumerState<BottomBar> {
             Spacer(),
 
             FloatingActionButton.extended(
+              enableFeedback: true,
               onPressed: () {
                 ref
                     .read(createBookProvider.notifier)
@@ -147,7 +148,7 @@ class TotalPriceDisplay extends ConsumerWidget {
       children: [
         BlurText(
           key: ValueKey(finalPriceText),
-          text: "\$$finalPriceText ",
+          text: " $finalPriceText ",
           duration: const Duration(milliseconds: 350),
           type: AnimationType.word,
           textStyle: AppTextStyles(context).secondaryBold.copyWith(

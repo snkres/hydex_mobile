@@ -49,6 +49,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                           changeToEmail
                               ? TextButton(
                                   onPressed: () {
+                                    emailController.clear();
                                     setState(() {
                                       changeToEmail = false;
                                     });
@@ -66,12 +67,10 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                   builder: (context, ref, child) {
                                     return TextButton(
                                       onPressed: () {
+                                        emailController.clear();
                                         setState(() {
                                           changeToEmail = true;
                                         });
-                                        ref
-                                            .read(forgetPhoneProvider.notifier)
-                                            .dispose();
                                       },
                                       child: Text(
                                         "Recover with email",
@@ -136,6 +135,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                         final phone = ref.read(
                                           forgetPhoneProvider,
                                         );
+
                                         await ref
                                             .read(authServiceProvider)
                                             .forgetPassword(
@@ -258,7 +258,18 @@ class ForgotPasswordPhone extends StatelessWidget {
                         return null;
                       },
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9+]+')),
+                        FilteringTextInputFormatter.digitsOnly,
+                        // Prevent user from typing 0 as the first digit
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          if (data.code == "EG" &&
+                              newValue.text.startsWith('0')) {
+                            return oldValue;
+                          }
+                          return newValue;
+                        }),
+                        LengthLimitingTextInputFormatter(
+                          data.code == "EG" ? 10 : 13,
+                        ),
                       ],
                       forceErrorText: errorText,
 

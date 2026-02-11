@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_flip_card/controllers/flip_card_controllers.dart';
 import 'package:flutter_flip_card/flipcard/flip_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/colors.dart';
+import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/profile/ui/components/back_container.dart';
 import 'package:hydex/src/features/profile/ui/components/front_container.dart';
 import 'package:hydex/src/features/profile/ui/components/history.dart';
@@ -88,21 +90,28 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                               //   smoothness: 1,
                               // ),
                               SizedBox(height: 28),
-                              FlipCard(
-                                rotateSide: .right,
-                                axis: .vertical,
-                                controller: FlipCardController(),
-                                frontWidget: FrontContainer(
-                                  name: data?.fullName ?? "",
-                                  id:
-                                      data?.id?.substring(0, 7).toUpperCase() ??
-                                      "",
-                                  nationality: data?.nationality ?? "",
-                                  createdAt: data?.createdAt ?? .now(),
+                              GestureDetector(
+                                onTap: () => HapticFeedback.heavyImpact(),
+                                child: FlipCard(
+                                  rotateSide: .right,
+                                  axis: .vertical,
+                                  controller: FlipCardController(),
+                                  frontWidget: FrontContainer(
+                                    name: data?.fullName?.capitalize() ?? "",
+                                    id:
+                                        data?.id
+                                            ?.substring(0, 7)
+                                            .toUpperCase() ??
+                                        "",
+                                    nationality: data?.nationality ?? "",
+                                    createdAt: data?.createdAt ?? .now(),
+                                  ),
+                                  backWidget: BackContainer(),
+                                  onTapFlipping: true,
+                                  animationDuration: Duration(
+                                    milliseconds: 600,
+                                  ),
                                 ),
-                                backWidget: BackContainer(),
-                                onTapFlipping: true,
-                                animationDuration: Duration(milliseconds: 600),
                               ),
 
                               SizedBox(height: 36),

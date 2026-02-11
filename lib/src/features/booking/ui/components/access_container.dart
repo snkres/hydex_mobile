@@ -217,6 +217,7 @@ class AccessContainer extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           IconButton(
+                            enableFeedback: true,
                             onPressed: onDecrement,
                             style: const ButtonStyle(
                               backgroundColor: WidgetStatePropertyAll(
@@ -239,6 +240,7 @@ class AccessContainer extends StatelessWidget {
                           ),
                           IconButton(
                             onPressed: onIncrement,
+                            enableFeedback: true,
                             style: const ButtonStyle(
                               backgroundColor: WidgetStatePropertyAll(
                                 Colors.transparent,

@@ -17,7 +17,7 @@ void main() async {
 
   await CacheHelper.init();
   await AssetLottie('json/splash.json', package: "assets").load();
-  AuthService.initialize();
+  await AuthService.initialize();
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,

@@ -21,6 +21,7 @@ class UpcomingEvent with UpcomingEventMappable {
   final String vendorName;
   final String bookingType;
   final String passName;
+  final List<String>? media;
 
   UpcomingEvent({
     required this.id,
@@ -39,6 +40,7 @@ class UpcomingEvent with UpcomingEventMappable {
     required this.vendorName,
     required this.bookingType,
     required this.passName,
+    this.media,
   });
 }
 

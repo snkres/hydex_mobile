@@ -163,6 +163,7 @@ class Event with EventMappable {
   final CategoryNoDesc? category;
   final bool isFavorited;
   final BookingExperience? bookingExperience;
+  final String? termsAndConditions;
 
   final Vendor vendor;
   final DateTime createdAt;
@@ -186,6 +187,7 @@ class Event with EventMappable {
     this.bookingExperience,
     this.isFavorited = false,
     this.detailsTitle,
+    this.termsAndConditions,
   });
 }
 

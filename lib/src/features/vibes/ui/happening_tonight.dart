@@ -194,7 +194,7 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
                         description: "Try exploring other categories",
                       ),
                       noMoreItemsIndicatorBuilder: (ctx) => SizedBox.shrink(),
-
+                      animateTransitions: true,
                       itemBuilder: (context, item, index) => EventContainer(
                         width: double.infinity,
                         heading: item.name,

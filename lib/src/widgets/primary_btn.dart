@@ -29,6 +29,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
     return ConstrainedBox(
       constraints: BoxConstraints(minWidth: double.infinity, minHeight: 50),
       child: ElevatedButton(
+        
         onPressed: () async {
           setState(() {
             loading = true;
