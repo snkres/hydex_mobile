@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/settings/domain/settings_domain.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -18,6 +19,7 @@ class SettingsScreen extends StatelessWidget {
           builder: (context, ref, child) {
             final user = ref.watch(currentUserProvider);
             return Column(
+              crossAxisAlignment: .start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -121,6 +123,7 @@ class SettingsScreen extends StatelessWidget {
                 ),
 
                 SizedBox(height: 12),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   spacing: 6,
@@ -324,6 +327,25 @@ class SettingsScreen extends StatelessWidget {
                       child: Text("Delete account"),
                     ),
                   ],
+                ),
+                Text(
+                  "App Version",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: .w700,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  ref
+                      .watch(appVersionProvider)
+                      .when(
+                        data: (v) => v,
+                        loading: () => '...',
+                        error: (_, __) => 'Unknown',
+                      ),
+                  style: TextStyle(color: Colors.white),
                 ),
               ],
             );

@@ -77,7 +77,7 @@ class ProfileSummary extends StatelessWidget {
                       children: [
                         Text("Total Price"),
                         Text(
-                          "Fees for ${event.numberOfGuests} passes",
+                          "Fees for ${event.numberOfGuests == 0 ? 1 : event.numberOfGuests} passes",
                           style: AppTextStyles(context).captionRegular.copyWith(
                             color: AppColors.textSecondary,
                           ),

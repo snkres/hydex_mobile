@@ -32,7 +32,6 @@ class _LocationScreenState extends ConsumerState<LocationScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize from GPS-based provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(selectedCountryProvider.future).then((country) {
         if (mounted) {
@@ -41,7 +40,6 @@ class _LocationScreenState extends ConsumerState<LocationScreen> {
           });
         }
       });
-
     });
   }
 
@@ -68,78 +66,94 @@ class _LocationScreenState extends ConsumerState<LocationScreen> {
     });
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () {
-            context.pop();
-          },
-          icon: Icon(Icons.keyboard_arrow_down),
-        ),
-
-        title: Text(
-          'Location',
-          style: TextStyle(
-            fontSize: AppTextStyles(context).accumulator * 16,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
       body: SingleChildScrollView(
         child: LocationRequired(
           child: Padding(
             padding: EdgeInsetsGeometry.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Consumer(
-                  builder: (context, ref, child) {
-                    final currentAddressAsync = ref.watch(
-                      currentAddressProvider,
-                    );
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    spacing: 8,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          context.pop();
+                        },
+                        icon: Icon(Icons.keyboard_arrow_down),
+                      ),
+                      Text(
+                        'Location',
+                        style: TextStyle(
+                          fontSize: AppTextStyles(context).accumulator * 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final currentAddressAsync = ref.watch(
+                        currentAddressProvider,
+                      );
 
-                    return GestureDetector(
-                      onTap: () {
-                        ref.invalidate(currentAddressProvider);
-                      },
-                      child: SmoothContainer(
-                        height: 64,
-                        width: double.infinity,
-                        color: AppColors.signalBrandTint,
-                        borderRadius: BorderRadius.circular(16),
-                        smoothness: 1,
-                        padding: EdgeInsets.symmetric(horizontal: 16),
+                      return GestureDetector(
+                        onTap: () {
+                          ref.invalidate(currentAddressProvider);
+                        },
+                        child: SmoothContainer(
+                          height: 64,
+                          width: double.infinity,
+                          color: AppColors.signalBrandTint,
+                          borderRadius: BorderRadius.circular(16),
+                          smoothness: 1,
+                          padding: EdgeInsets.symmetric(horizontal: 16),
 
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              'img/svg/location_outline.svg',
-                              package: "assets",
-                            ),
-                            SizedBox(width: 15),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Use current location',
-                                    style: TextStyle(
-                                      fontSize:
-                                          AppTextStyles(context).accumulator *
-                                          14,
-                                      fontWeight: FontWeight.w500,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                'img/svg/location_outline.svg',
+                                package: "assets",
+                              ),
+                              SizedBox(width: 15),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Use current location',
+                                      style: TextStyle(
+                                        fontSize:
+                                            AppTextStyles(context).accumulator *
+                                            14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
-                                  ),
-                                  currentAddressAsync.when(
-                                    data: (addressData) {
-                                      final address =
-                                          addressData['fullAddress'] ??
-                                          'Unable to get address';
-                                      return Text(
-                                        address,
+                                    currentAddressAsync.when(
+                                      data: (addressData) {
+                                        final address =
+                                            addressData['fullAddress'] ??
+                                            'Unable to get address';
+                                        return Text(
+                                          address,
+                                          style: TextStyle(
+                                            fontSize:
+                                                AppTextStyles(
+                                                  context,
+                                                ).accumulator *
+                                                12,
+                                            color: AppColors.textSecondary,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        );
+                                      },
+                                      loading: () => Text(
+                                        'Getting your location...',
                                         style: TextStyle(
                                           fontSize:
                                               AppTextStyles(
@@ -148,123 +162,114 @@ class _LocationScreenState extends ConsumerState<LocationScreen> {
                                               12,
                                           color: AppColors.textSecondary,
                                         ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      );
-                                    },
-                                    loading: () => Text(
-                                      'Getting your location...',
-                                      style: TextStyle(
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            12,
-                                        color: AppColors.textSecondary,
+                                      ),
+                                      error: (error, stack) => Text(
+                                        'Tap to retry',
+                                        style: TextStyle(
+                                          fontSize:
+                                              AppTextStyles(
+                                                context,
+                                              ).accumulator *
+                                              12,
+                                          color: AppColors.textSecondary,
+                                        ),
                                       ),
                                     ),
-                                    error: (error, stack) => Text(
-                                      'Tap to retry',
-                                      style: TextStyle(
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            12,
-                                        color: AppColors.textSecondary,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 8),
-                            Icon(Icons.arrow_forward_ios, size: 20),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: 16),
-                Text(
-                  "Country",
-                  style: TextStyle(
-                    fontSize: AppTextStyles(context).accumulator * 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: 12),
-
-                SizedBox(
-                  height: 100,
-                  child: ListView.separated(
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedCountry = countries[index];
-                          });
-                          // Update the provider
-                          ref
-                              .read(selectedCountryProvider.notifier)
-                              .setCountry(
-                                countries[index] == "Egypt" ? "EGYPT" : "UAE",
-                              );
-                          ref.refresh(getEventsProvider());
-                          ref.refresh(getVendorsProvider());
-                        },
-                        child: AnimatedContainer(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: selectedCountry == countries[index]
-                                  ? AppColors.borderBrand
-                                  : Colors.transparent,
-                              width: 2,
-                            ),
-                          ),
-                          child: SmoothClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            smoothness: 1,
-                            child: Container(
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                color: selectedCountry == countries[index]
-                                    ? AppColors.signalBrandTint
-                                    : Color(0xff2C2C2E),
-                              ),
-                              width: 120,
-                              child: Column(
-                                children: [
-                                  SvgPicture.asset(
-                                    images[index],
-                                    package: "assets",
-                                    height: 52,
-                                  ),
-                                  SizedBox(height: 8),
-                                  Text(
-                                    countries[index],
-                                    style: TextStyle(
-                                      fontSize:
-                                          AppTextStyles(context).accumulator *
-                                          12,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                              SizedBox(width: 8),
+                              Icon(Icons.arrow_forward_ios, size: 20),
+                            ],
                           ),
                         ),
                       );
                     },
-                    itemCount: countries.length,
-                    scrollDirection: Axis.horizontal,
-                    physics: NeverScrollableScrollPhysics(),
-                    separatorBuilder: (context, index) => SizedBox(width: 12),
                   ),
-                ),
-              ],
+                  SizedBox(height: 16),
+                  Text(
+                    "Country",
+                    style: TextStyle(
+                      fontSize: AppTextStyles(context).accumulator * 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+
+                  SizedBox(
+                    height: 100,
+                    child: ListView.separated(
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedCountry = countries[index];
+                            });
+                            // Update the provider
+                            ref
+                                .read(selectedCountryProvider.notifier)
+                                .setCountry(
+                                  countries[index] == "Egypt" ? "EGYPT" : "UAE",
+                                );
+                            ref.refresh(getEventsProvider());
+                            ref.refresh(getVendorsProvider());
+                          },
+                          child: AnimatedContainer(
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: selectedCountry == countries[index]
+                                    ? AppColors.borderBrand
+                                    : Colors.transparent,
+                                width: 2,
+                              ),
+                            ),
+                            child: SmoothClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              smoothness: 1,
+                              child: Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  color: selectedCountry == countries[index]
+                                      ? AppColors.signalBrandTint
+                                      : Color(0xff2C2C2E),
+                                ),
+                                width: 120,
+                                child: Column(
+                                  children: [
+                                    SvgPicture.asset(
+                                      images[index],
+                                      package: "assets",
+                                      height: 52,
+                                    ),
+                                    SizedBox(height: 8),
+                                    Text(
+                                      countries[index],
+                                      style: TextStyle(
+                                        fontSize:
+                                            AppTextStyles(context).accumulator *
+                                            12,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      itemCount: countries.length,
+                      scrollDirection: Axis.horizontal,
+                      physics: NeverScrollableScrollPhysics(),
+                      separatorBuilder: (context, index) => SizedBox(width: 12),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
