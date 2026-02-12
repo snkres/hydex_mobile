@@ -800,7 +800,7 @@ class AllVendorsWidget extends ConsumerWidget {
                               data[index].category?.name ??
                               data[index].tags.first,
                           avatarImage: data[index].logo,
-                          date: data[index].priceType.label,
+                          date: data[index].priceType?.label ?? "",
                         ),
                       );
                     },

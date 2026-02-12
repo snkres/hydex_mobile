@@ -197,7 +197,7 @@ class _AllVendorsState extends ConsumerState<AllVendors> {
                           "vendor_detail",
                           pathParameters: {"id": item.id},
                         ),
-                        date: item.priceType.label,
+                        date: item.priceType?.label ?? "",
                       ),
                     ),
                   ),

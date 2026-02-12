@@ -123,10 +123,12 @@ class PassportVendor with PassportVendorMappable {
   final String vendorId;
   final int visitCount;
   final String vendorName;
+  final List<String> media;
 
   PassportVendor({
     required this.vendorId,
     required this.visitCount,
     required this.vendorName,
+    this.media = const [],
   });
 }

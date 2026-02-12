@@ -26,6 +26,7 @@ import 'package:readmore/readmore.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:smooth_corner/smooth_corner.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:soft_edge_blur/soft_edge_blur.dart';
 
 class EventDetailScreen extends ConsumerStatefulWidget {
@@ -193,21 +194,39 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                           child: SingleChildScrollView(
                             controller: scrollController,
                             physics: const ClampingScrollPhysics(),
-                            child: CollapsedEventContainer(
-                              experiences: event.experiences,
-                              details: event.details,
-                              name: event.name,
-                              createdTime: event.createdAt,
-                              thingsToKnow: event.thingsToKnow ?? [],
-                              category: event.category?.name,
-                              description: event.description,
-                              endTime: event.endTime,
-                              startTime: event.startTime,
-                              tags: event.tags,
-                              location: event.location,
-                              pricing: event.priceType?.label ?? "",
-                              owner: event.vendor,
-                              title: event.detailsTitle,
+                            child: Column(
+                              children: [
+                                Center(
+                                  child: SmoothPageIndicator(
+                                    controller: pageController,
+                                    count: event.media.length,
+                                    effect: ExpandingDotsEffect(
+                                      activeDotColor: Colors.white,
+                                      dotColor: Colors.white.withValues(
+                                        alpha: 0.2,
+                                      ),
+                                      dotHeight: 10,
+                                      dotWidth: 13,
+                                    ),
+                                  ),
+                                ),
+                                CollapsedEventContainer(
+                                  experiences: event.experiences,
+                                  details: event.details,
+                                  name: event.name,
+                                  createdTime: event.createdAt,
+                                  thingsToKnow: event.thingsToKnow ?? [],
+                                  category: event.category?.name,
+                                  description: event.description,
+                                  endTime: event.endTime,
+                                  startTime: event.startTime,
+                                  tags: event.tags,
+                                  location: event.location,
+                                  pricing: event.priceType?.label ?? "",
+                                  owner: event.vendor,
+                                  title: event.detailsTitle,
+                                ),
+                              ],
                             ),
                           ),
                         ),

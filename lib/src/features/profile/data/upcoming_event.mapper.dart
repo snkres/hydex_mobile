@@ -758,12 +758,20 @@ class PassportVendorMapper extends ClassMapperBase<PassportVendor> {
     'vendorName',
     _$vendorName,
   );
+  static List<String> _$media(PassportVendor v) => v.media;
+  static const Field<PassportVendor, List<String>> _f$media = Field(
+    'media',
+    _$media,
+    opt: true,
+    def: const [],
+  );
 
   @override
   final MappableFields<PassportVendor> fields = const {
     #vendorId: _f$vendorId,
     #visitCount: _f$visitCount,
     #vendorName: _f$vendorName,
+    #media: _f$media,
   };
 
   static PassportVendor _instantiate(DecodingData data) {
@@ -771,6 +779,7 @@ class PassportVendorMapper extends ClassMapperBase<PassportVendor> {
       vendorId: data.dec(_f$vendorId),
       visitCount: data.dec(_f$visitCount),
       vendorName: data.dec(_f$vendorName),
+      media: data.dec(_f$media),
     );
   }
 
@@ -836,7 +845,13 @@ extension PassportVendorValueCopy<$R, $Out>
 
 abstract class PassportVendorCopyWith<$R, $In extends PassportVendor, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  $R call({String? vendorId, int? visitCount, String? vendorName});
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get media;
+  $R call({
+    String? vendorId,
+    int? visitCount,
+    String? vendorName,
+    List<String>? media,
+  });
   PassportVendorCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   );
@@ -851,11 +866,24 @@ class _PassportVendorCopyWithImpl<$R, $Out>
   late final ClassMapperBase<PassportVendor> $mapper =
       PassportVendorMapper.ensureInitialized();
   @override
-  $R call({String? vendorId, int? visitCount, String? vendorName}) => $apply(
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get media =>
+      ListCopyWith(
+        $value.media,
+        (v, t) => ObjectCopyWith(v, $identity, t),
+        (v) => call(media: v),
+      );
+  @override
+  $R call({
+    String? vendorId,
+    int? visitCount,
+    String? vendorName,
+    List<String>? media,
+  }) => $apply(
     FieldCopyWithData({
       if (vendorId != null) #vendorId: vendorId,
       if (visitCount != null) #visitCount: visitCount,
       if (vendorName != null) #vendorName: vendorName,
+      if (media != null) #media: media,
     }),
   );
   @override
@@ -863,6 +891,7 @@ class _PassportVendorCopyWithImpl<$R, $Out>
     vendorId: data.get(#vendorId, or: $value.vendorId),
     visitCount: data.get(#visitCount, or: $value.visitCount),
     vendorName: data.get(#vendorName, or: $value.vendorName),
+    media: data.get(#media, or: $value.media),
   );
 
   @override

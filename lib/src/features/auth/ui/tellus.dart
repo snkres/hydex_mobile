@@ -520,12 +520,14 @@ class CustomChip extends StatelessWidget {
     required this.isSelected,
     required this.onTap,
     this.isRecentViewed = false,
+    this.count,
   });
 
   final String title;
   final bool isSelected;
   final VoidCallback onTap;
   final bool isRecentViewed;
+  final String? count;
 
   @override
   Widget build(BuildContext context) {
@@ -567,11 +569,30 @@ class CustomChip extends StatelessWidget {
                   ),
                 ],
               )
-            : Text(
-                title,
-                style: TextStyle(
-                  fontSize: AppTextStyles(context).accumulator * 13,
-                ),
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: AppTextStyles(context).accumulator * 13,
+                      color: isSelected
+                          ? AppColors.borderBrand
+                          : AppColors.textSecondary,
+                    ),
+                  ),
+                  if (count != null) ...[
+                    SizedBox(width: 4),
+                    Text(
+                      count!,
+                      style: TextStyle(
+                        fontSize: AppTextStyles(context).accumulator * 13,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ],
               ),
       ),
     );

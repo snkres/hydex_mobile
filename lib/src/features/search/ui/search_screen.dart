@@ -398,7 +398,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                             name: vendor.name,
                                             image: vendor.media.first,
 
-                                            priceType: vendor.priceType.label,
+                                            priceType: vendor.priceType?.label ?? "",
                                             category:
                                                 vendor.category?.name ?? "",
                                             duration: vendor

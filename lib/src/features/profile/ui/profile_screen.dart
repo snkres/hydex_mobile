@@ -9,6 +9,7 @@ import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/profile/ui/components/back_container.dart';
 import 'package:hydex/src/features/profile/ui/components/front_container.dart';
 import 'package:hydex/src/features/profile/ui/components/history.dart';
+import 'package:hydex/src/features/profile/ui/components/passport.dart';
 import 'package:hydex/src/features/profile/ui/components/upcoming_event.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -245,7 +246,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                     tabs: [
                       Tab(text: "Upcoming Events"),
                       Tab(text: "History"),
-                      // Tab(text: "Passport"),
+                      Tab(text: "Passport"),
                     ],
                   ),
                 ),
@@ -254,7 +255,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             body: TabBarView(
               controller: _tabController,
 
-              children: [UpcomingEventSection(), History()],
+              children: [UpcomingEventSection(), History(), Passport()],
             ),
           );
         },

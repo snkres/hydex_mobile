@@ -76,10 +76,11 @@ class VendorMapper extends ClassMapperBase<Vendor> {
     'location',
     _$location,
   );
-  static PriceType _$priceType(Vendor v) => v.priceType;
+  static PriceType? _$priceType(Vendor v) => v.priceType;
   static const Field<Vendor, PriceType> _f$priceType = Field(
     'priceType',
     _$priceType,
+    opt: true,
   );
   static Map<String, OperatingHours> _$operatingHours(Vendor v) =>
       v.operatingHours;
@@ -359,7 +360,7 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
     List<EventInsideVendor>? events,
     String? description,
     Location? location,
-    PriceType? priceType,
+    Object? priceType = $none,
     Map<String, OperatingHours>? operatingHours,
     List<String>? experiences,
     List<String>? media,
@@ -381,7 +382,7 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
       if (events != null) #events: events,
       if (description != null) #description: description,
       if (location != null) #location: location,
-      if (priceType != null) #priceType: priceType,
+      if (priceType != $none) #priceType: priceType,
       if (operatingHours != null) #operatingHours: operatingHours,
       if (experiences != null) #experiences: experiences,
       if (media != null) #media: media,

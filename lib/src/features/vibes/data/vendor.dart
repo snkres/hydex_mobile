@@ -16,7 +16,7 @@ class Vendor with VendorMappable {
   final Location location;
   final bool isFavorited;
 
-  final PriceType priceType;
+  final PriceType? priceType;
   final Map<String, OperatingHours> operatingHours;
   final List<String> experiences;
   final List<String> media;
@@ -42,7 +42,7 @@ class Vendor with VendorMappable {
     this.events = const [],
     required this.description,
     required this.location,
-    required this.priceType,
+    this.priceType,
     required this.operatingHours,
     required this.experiences,
     required this.media,

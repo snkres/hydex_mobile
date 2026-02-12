@@ -26,6 +26,7 @@ import 'package:readmore/readmore.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:smooth_corner/smooth_corner.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:soft_edge_blur/soft_edge_blur.dart';
 
 class VendorDetailsScreen extends ConsumerStatefulWidget {
@@ -45,15 +46,16 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
   bool _isCollapsedFromSheet = false;
-  final double _collapseThreshold = 0.86;
   double _sheetSize = 0.3;
+  final GlobalKey _contentKey = GlobalKey();
+  double _computedMaxChildSize = 0.86;
 
   @override
   void initState() {
     super.initState();
 
     _sheetController.addListener(() {
-      final bool next = _sheetController.size >= _collapseThreshold;
+      final bool next = _sheetController.size >= 0.86;
       if (next != _isCollapsedFromSheet) {
         setState(() {
           _isCollapsedFromSheet = next;
@@ -63,6 +65,22 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
         setState(() {
           _sheetSize = _sheetController.size;
         });
+      }
+    });
+  }
+
+  void _measureContent() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = _contentKey.currentContext;
+      if (ctx != null) {
+        final box = ctx.findRenderObject() as RenderBox;
+        final screenHeight = MediaQuery.of(context).size.height;
+        final ratio = (box.size.height / screenHeight).clamp(0.3, 0.86);
+        if (ratio != _computedMaxChildSize) {
+          setState(() {
+            _computedMaxChildSize = ratio;
+          });
+        }
       }
     });
   }
@@ -189,6 +207,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
       ),
       body: vendorAsync.when(
         data: (vendor) {
+          _measureContent();
           final distance = ref.watch(
             calculateDistanceProvider(
               endLatitude: vendor.location.coordinates.lat ?? 0,
@@ -222,12 +241,14 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                 Positioned.fill(
                   child: GestureDetector(
                     onVerticalDragUpdate: (details) {
-                      if (_sheetSize >= _collapseThreshold &&
-                          details.delta.dy < 0) {
+                      if (_sheetSize >= 0.86 && details.delta.dy < 0) {
                         return;
                       }
                       final delta = -details.delta.dy / screenHeight;
-                      final newSize = (_sheetSize + delta).clamp(0.3, 0.86);
+                      final newSize = (_sheetSize + delta).clamp(
+                        0.3,
+                        _computedMaxChildSize,
+                      );
                       if (_sheetController.isAttached) {
                         _sheetController.jumpTo(newSize);
                       }
@@ -261,7 +282,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
 
                 DraggableScrollableSheet(
                   controller: _sheetController,
-                  maxChildSize: 0.86,
+                  maxChildSize: _computedMaxChildSize,
                   initialChildSize: .3,
                   minChildSize: .3,
 
@@ -281,7 +302,22 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                         child: SingleChildScrollView(
                           controller: scrollController,
                           child: Column(
+                            key: _contentKey,
                             children: [
+                              Center(
+                                child: SmoothPageIndicator(
+                                  controller: pageController,
+                                  count: vendor.media.length,
+                                  effect: ExpandingDotsEffect(
+                                    activeDotColor: Colors.white,
+                                    dotColor: Colors.white.withValues(
+                                      alpha: 0.2,
+                                    ),
+                                    dotHeight: 10,
+                                    dotWidth: 13,
+                                  ),
+                                ),
+                              ),
                               SizedBox(height: 15),
                               SmoothClipRRect(
                                 borderRadius: BorderRadius.only(
@@ -434,7 +470,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                               ),
                                             ),
                                             Text(
-                                              vendor.priceType.label,
+                                              vendor.priceType?.label ?? "",
                                               style: TextStyle(
                                                 fontSize:
                                                     AppTextStyles(
@@ -747,71 +783,73 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(height: 24),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                        ),
-                                        child: SmoothClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            16,
+                                      if (vendor.experiences.isNotEmpty)
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 16,
                                           ),
-                                          smoothness: 1,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "Experiences".toUpperCase(),
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  color:
-                                                      AppColors.textSecondary,
-                                                  fontSize:
-                                                      AppTextStyles(
-                                                        context,
-                                                      ).accumulator *
-                                                      16,
+                                          child: SmoothClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              16,
+                                            ),
+                                            smoothness: 1,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(height: 24),
+
+                                                Text(
+                                                  "Experiences".toUpperCase(),
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    color:
+                                                        AppColors.textSecondary,
+                                                    fontSize:
+                                                        AppTextStyles(
+                                                          context,
+                                                        ).accumulator *
+                                                        16,
+                                                  ),
                                                 ),
-                                              ),
-                                              SizedBox(height: 8),
-                                              Wrap(
-                                                spacing: 8,
-                                                runSpacing: 8,
-                                                children: vendor.experiences
-                                                    .map(
-                                                      (e) => Container(
-                                                        padding:
-                                                            EdgeInsets.symmetric(
-                                                              horizontal: 12,
-                                                              vertical: 6,
-                                                            ),
-                                                        decoration: BoxDecoration(
-                                                          color: AppColors
-                                                              .surfaceContainer,
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                100,
+                                                SizedBox(height: 8),
+                                                Wrap(
+                                                  spacing: 8,
+                                                  runSpacing: 8,
+                                                  children: vendor.experiences
+                                                      .map(
+                                                        (e) => Container(
+                                                          padding:
+                                                              EdgeInsets.symmetric(
+                                                                horizontal: 12,
+                                                                vertical: 6,
                                                               ),
-                                                        ),
-                                                        child: Text(
-                                                          e,
-                                                          style: TextStyle(
-                                                            fontSize:
-                                                                AppTextStyles(
-                                                                  context,
-                                                                ).accumulator *
-                                                                12,
+                                                          decoration: BoxDecoration(
+                                                            color: AppColors
+                                                                .surfaceContainer,
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  100,
+                                                                ),
+                                                          ),
+                                                          child: Text(
+                                                            e,
+                                                            style: TextStyle(
+                                                              fontSize:
+                                                                  AppTextStyles(
+                                                                    context,
+                                                                  ).accumulator *
+                                                                  12,
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                    )
-                                                    .toList(),
-                                              ),
-                                            ],
+                                                      )
+                                                      .toList(),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
 
                                       Visibility(
                                         visible: vendor.events.isNotEmpty,
@@ -1079,63 +1117,67 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                             );
                                           },
                                         ),
-                                        SizedBox(height: 24),
                                       ],
 
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Things to know".toUpperCase(),
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                color: AppColors.textSecondary,
-                                                fontSize:
-                                                    AppTextStyles(
-                                                      context,
-                                                    ).accumulator *
-                                                    16,
-                                              ),
-                                            ),
+                                      if (vendor.thingsToKnow.isNotEmpty)
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(height: 24),
 
-                                            ListView.separated(
-                                              shrinkWrap: true,
-                                              padding: .zero,
-                                              physics:
-                                                  const NeverScrollableScrollPhysics(),
-                                              itemCount:
-                                                  vendor.thingsToKnow.length,
-                                              separatorBuilder: (_, __) =>
-                                                  Divider(
-                                                    color:
-                                                        AppColors.borderDefault,
-                                                  ),
-                                              itemBuilder: (_, index) {
-                                                return ListTile(
-                                                  contentPadding: .zero,
-                                                  leading: SvgPicture.asset(
-                                                    "img/svg/ar_.svg",
-                                                    width: 15,
-                                                    height: 15,
-                                                    package: "assets",
-                                                  ),
-                                                  title: Text(
-                                                    vendor.thingsToKnow[index],
-                                                    style: AppTextStyles(
-                                                      context,
-                                                    ).smallRegular,
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ],
+                                              Text(
+                                                "Things to know".toUpperCase(),
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color:
+                                                      AppColors.textSecondary,
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      16,
+                                                ),
+                                              ),
+
+                                              ListView.separated(
+                                                shrinkWrap: true,
+                                                padding: .zero,
+                                                physics:
+                                                    const NeverScrollableScrollPhysics(),
+                                                itemCount:
+                                                    vendor.thingsToKnow.length,
+                                                separatorBuilder: (_, __) =>
+                                                    Divider(
+                                                      color: AppColors
+                                                          .borderDefault,
+                                                    ),
+                                                itemBuilder: (_, index) {
+                                                  return ListTile(
+                                                    contentPadding: .zero,
+                                                    leading: SvgPicture.asset(
+                                                      "img/svg/ar_.svg",
+                                                      width: 15,
+                                                      height: 15,
+                                                      package: "assets",
+                                                    ),
+                                                    title: Text(
+                                                      vendor
+                                                          .thingsToKnow[index],
+                                                      style: AppTextStyles(
+                                                        context,
+                                                      ).smallRegular,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
                                       SizedBox(height: 124),
                                     ],
                                   ),

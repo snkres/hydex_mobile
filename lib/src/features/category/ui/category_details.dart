@@ -271,7 +271,7 @@ class _CategoryDetailsState extends ConsumerState<CategoryDetails>
                             itemBuilder: (context, item, index) =>
                                 EventContainer(
                                   width: double.infinity,
-                                  date: item.priceType.label,
+                                  date: item.priceType?.label ?? "",
                                   heading: item.name,
                                   tag: item.category?.name,
                                   image: item.media.firstOrNull,

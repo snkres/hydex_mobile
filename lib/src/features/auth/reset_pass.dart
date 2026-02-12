@@ -148,7 +148,7 @@ class _CreatePasswordState extends State<ResetPassword> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomBackButton(),
+                SizedBox(height: 36),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
