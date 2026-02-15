@@ -2,9 +2,37 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:hydex/core/network/network.dart';
+import 'package:hydex/src/features/profile/data/profile.dart';
 import 'package:hydex/src/features/profile/data/upcoming_event.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'profile_providers.g.dart';
+
+@riverpod
+Future<Profile> getProfile(Ref ref) async {
+  final link = ref.keepAlive();
+  Timer? timer;
+  final cancelToken = CancelToken();
+  ref.onDispose(() {
+    timer?.cancel();
+    cancelToken.cancel();
+  });
+  ref.onCancel(() {
+    timer = Timer(const Duration(seconds: 30), () {
+      link.close();
+    });
+  });
+  ref.onResume(() {
+    timer?.cancel();
+  });
+  try {
+    final response = await DioHelper.get("/profile", cancelToken: cancelToken);
+    final data = response.data['data'] as Map<String, dynamic>;
+
+    return ProfileMapper.fromMap(data);
+  } catch (e) {
+    throw Exception('Failed to load profile: $e');
+  }
+}
 
 @riverpod
 Future<List<UpcomingEvent>> getUpcomingEvents(Ref ref) async {

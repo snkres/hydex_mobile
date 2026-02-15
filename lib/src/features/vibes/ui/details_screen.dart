@@ -1228,7 +1228,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                             onPressed: () {
                               final shareText =
                                   "I'm going to ${vendor.name} !\n"
-                                  "Join me: https://app.hyde-x.com/event/${vendor.id}";
+                                  "Join me: https://app.hyde-x.com/vendor/${vendor.id}";
 
                               SharePlus.instance.share(
                                 ShareParams(text: shareText),

@@ -21,7 +21,7 @@ class AuthService {
   Future<void> login(String email, String password) async {
     try {
       // Use the enhanced login method that handles tokens automatically
-      final responseData = await DioHelper.authenticate('/auth/login', {
+      final responseData = await DioHelper.authenticate('/v2/auth/login', {
         'identifier': email,
         'password': password,
       });

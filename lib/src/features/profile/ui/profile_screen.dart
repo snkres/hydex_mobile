@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_flip_card/controllers/flip_card_controllers.dart';
@@ -5,12 +7,15 @@ import 'package:flutter_flip_card/flipcard/flip_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/colors.dart';
+import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
+import 'package:hydex/src/features/profile/domain/profile_providers.dart';
 import 'package:hydex/src/features/profile/ui/components/back_container.dart';
 import 'package:hydex/src/features/profile/ui/components/front_container.dart';
 import 'package:hydex/src/features/profile/ui/components/history.dart';
 import 'package:hydex/src/features/profile/ui/components/passport.dart';
 import 'package:hydex/src/features/profile/ui/components/upcoming_event.dart';
+import 'package:smooth_corner/smooth_corner.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -29,7 +34,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
-    // _tabController.addListener(checkIfUserInHistory);
+    _tabController.addListener(checkIfUserInHistory);
   }
 
   @override
@@ -52,7 +57,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = ref.watch(currentUserProvider);
+    final currentUser = ref.watch(getProfileProvider);
     return Scaffold(
       body: currentUser.when(
         data: (data) {
@@ -82,14 +87,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                         SafeArea(
                           child: Column(
                             children: [
-                              // SizedBox(height: 36),
-                              // SmoothContainer(
-                              //   width: 67,
-                              //   height: 67,
-                              //   color: Colors.red,
-                              //   borderRadius: .circular(16),
-                              //   smoothness: 1,
-                              // ),
                               SizedBox(height: 28),
                               GestureDetector(
                                 onTap: () => HapticFeedback.heavyImpact(),
@@ -98,14 +95,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                   axis: .vertical,
                                   controller: FlipCardController(),
                                   frontWidget: FrontContainer(
-                                    name: data?.fullName?.capitalize() ?? "",
-                                    id:
-                                        data?.id
-                                            ?.substring(0, 7)
-                                            .toUpperCase() ??
-                                        "",
-                                    nationality: data?.nationality ?? "",
-                                    createdAt: data?.createdAt ?? .now(),
+                                    name: data.user.fullName.capitalize(),
+                                    id: data.user.id
+                                        .substring(0, 7)
+                                        .toUpperCase(),
+                                    nationality: "Egyptian" ?? "",
+                                    createdAt: DateTime.now(),
                                   ),
                                   backWidget: BackContainer(),
                                   onTapFlipping: true,
@@ -115,120 +110,117 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                 ),
                               ),
 
-                              SizedBox(height: 36),
-                              // Visibility(
-                              //   visible: isUserInHistory,
-                              //   child: Padding(
-                              //     padding: const EdgeInsets.symmetric(
-                              //       horizontal: 16,
-                              //     ),
-                              //     child: Row(
-                              //       spacing: 8,
-                              //       children: [
-                              //         Expanded(
-                              //           child: SmoothContainer(
-                              //             borderRadius: .circular(16),
-                              //             side: BorderSide(
-                              //               color: AppColors.borderDefault,
-                              //             ),
-                              //             smoothness: 1,
-                              //             padding: .all(12),
-                              //             child: Column(
-                              //               crossAxisAlignment: .start,
-                              //               children: [
-                              //                 Row(
-                              //                   mainAxisAlignment:
-                              //                       .spaceBetween,
-                              //                   children: [
-                              //                     Text(
-                              //                       "Upcoming",
-                              //                       style: TextStyle(
-                              //                         fontSize:
-                              //                             AppTextStyles(
-                              //                               context,
-                              //                             ).accumulator *
-                              //                             14,
-                              //                         color: AppColors
-                              //                             .textSecondary,
-                              //                       ),
-                              //                     ),
-                              //                     SvgPicture.asset(
-                              //                       "img/svg/calendar.svg",
-                              //                       package: "assets",
-                              //                     ),
-                              //                   ],
-                              //                 ),
-                              //                 SizedBox(height: 16),
-                              //                 Text(
-                              //                   upcoming.toString(),
-                              //                   style: TextStyle(
-                              //                     fontWeight: .w600,
-                              //                     fontSize:
-                              //                         AppTextStyles(
-                              //                           context,
-                              //                         ).accumulator *
-                              //                         18,
-                              //                     color: AppColors.textPrimary,
-                              //                   ),
-                              //                 ),
-                              //               ],
-                              //             ),
-                              //           ),
-                              //         ),
-                              //         Expanded(
-                              //           child: SmoothContainer(
-                              //             borderRadius: .circular(16),
-                              //             side: BorderSide(
-                              //               color: AppColors.borderDefault,
-                              //             ),
-                              //             smoothness: 1,
-                              //             padding: .all(12),
-                              //             child: Column(
-                              //               crossAxisAlignment: .start,
-                              //               children: [
-                              //                 Row(
-                              //                   mainAxisAlignment:
-                              //                       .spaceBetween,
-                              //                   children: [
-                              //                     Text(
-                              //                       "Invites",
-                              //                       style: TextStyle(
-                              //                         fontSize:
-                              //                             AppTextStyles(
-                              //                               context,
-                              //                             ).accumulator *
-                              //                             14,
-                              //                         color: AppColors
-                              //                             .textSecondary,
-                              //                       ),
-                              //                     ),
-                              //                     SvgPicture.asset(
-                              //                       "img/svg/invites.svg",
-                              //                       package: "assets",
-                              //                     ),
-                              //                   ],
-                              //                 ),
-                              //                 SizedBox(height: 16),
-                              //                 Text(
-                              //                   "0",
-                              //                   style: TextStyle(
-                              //                     fontWeight: .w600,
-                              //                     fontSize:
-                              //                         AppTextStyles(
-                              //                           context,
-                              //                         ).accumulator *
-                              //                         18,
-                              //                     color: AppColors.textPrimary,
-                              //                   ),
-                              //                 ),
-                              //               ],
-                              //             ),
-                              //           ),
-                              //         ),
-                              //       ],
-                              //     ),
-                              //   ),
-                              // ),
+                              SizedBox(height: 8),
+                              Visibility(
+                                visible: isUserInHistory,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: Container(
+                                    decoration: ShapeDecoration(
+                                      gradient: RadialGradient(
+                                        radius: 2.7,
+                                        colors: [
+                                          Color(0xff511C96),
+                                          Color(0xff101010),
+                                        ],
+                                      ),
+                                      shape: RoundedSuperellipseBorder(
+                                        borderRadius: .circular(16),
+                                      ),
+                                    ),
+                                    padding: .symmetric(vertical: 16),
+                                    child: IntrinsicHeight(
+                                      child: Center(
+                                        child: Row(
+                                          mainAxisAlignment: .center,
+                                          children: [
+                                            Column(
+                                              mainAxisAlignment: .center,
+                                              children: [
+                                                Text(
+                                                  data.summary.upcomingCount
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                    fontWeight: .w600,
+                                                    fontSize:
+                                                        AppTextStyles(
+                                                          context,
+                                                        ).accumulator *
+                                                        18,
+                                                    color:
+                                                        AppColors.textPrimary,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                  "Upcoming",
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        AppTextStyles(
+                                                          context,
+                                                        ).accumulator *
+                                                        14,
+                                                    color:
+                                                        AppColors.textSecondary,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(width: 32),
+
+                                            SizedBox(
+                                              height: 30,
+                                              child: VerticalDivider(
+                                                color: Colors.black.withValues(
+                                                  alpha: 0.2,
+                                                ),
+                                                thickness: 1,
+
+                                                width: 1,
+                                              ),
+                                            ),
+                                            SizedBox(width: 32),
+                                            Column(
+                                              mainAxisAlignment: .center,
+                                              children: [
+                                                Text(
+                                                  data.summary.invitesCount
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                    fontWeight: .w600,
+                                                    fontSize:
+                                                        AppTextStyles(
+                                                          context,
+                                                        ).accumulator *
+                                                        18,
+                                                    color:
+                                                        AppColors.textPrimary,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                  "Invites",
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        AppTextStyles(
+                                                          context,
+                                                        ).accumulator *
+                                                        14,
+                                                    color:
+                                                        AppColors.textSecondary,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -259,7 +251,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             ),
           );
         },
-        error: (e, s) => Center(child: Text("Error")),
+        error: (e, s) {
+          log("Couldn't load profile", error: e, stackTrace: s);
+          return Center(child: Text("Error"));
+        },
         loading: () => Center(child: CircularProgressIndicator.adaptive()),
       ),
     );

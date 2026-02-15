@@ -92,15 +92,24 @@ class AdaptiveImage extends StatelessWidget {
   }
 
   Widget _buildNetworkImage() {
-    return CachedNetworkImage(
-      imageUrl: imageData,
-      fit: fit,
-      width: width,
-      height: height,
-      placeholder: (context, url) =>
-          placeholder ?? const Center(child: CircularProgressIndicator()),
-      errorWidget: (context, url, error) =>
-          errorWidget ?? _defaultErrorWidget(),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final pixelRatio = MediaQuery.of(context).devicePixelRatio;
+        final cacheWidth = constraints.maxWidth.isFinite
+            ? (constraints.maxWidth * pixelRatio).toInt()
+            : null;
+        return CachedNetworkImage(
+          imageUrl: imageData,
+          fit: fit,
+          width: width,
+          height: height,
+          memCacheWidth: cacheWidth,
+          placeholder: (context, url) =>
+              placeholder ?? const Center(child: CircularProgressIndicator()),
+          errorWidget: (context, url, error) =>
+              errorWidget ?? _defaultErrorWidget(),
+        );
+      },
     );
   }
 

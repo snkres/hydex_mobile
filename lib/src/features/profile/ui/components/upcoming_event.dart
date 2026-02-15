@@ -30,7 +30,7 @@ class UpcomingEventSection extends ConsumerWidget {
                 Column(children: [Divider(), SizedBox(height: 16)]),
             itemCount: data.length,
             itemBuilder: (context, index) =>
-                HistoryContainer(event: data[index]),
+                HistoryContainer(event: data[index],isHistory: false,),
           ),
         );
       },

@@ -45,6 +45,7 @@ class FrontContainer extends StatelessWidget {
                 package: "assets",
                 height: .infinity,
                 fit: BoxFit.contain,
+                colorFilter: .mode(Colors.black, .srcIn),
               ),
             ),
           ),

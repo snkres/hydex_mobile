@@ -80,3 +80,76 @@ final class CreateBookingProvider
 }
 
 String _$createBookingHash() => r'b9ba55bcd87e2534d9cc29ec36b5532570c4bfed';
+
+@ProviderFor(cancelBooking)
+const cancelBookingProvider = CancelBookingFamily._();
+
+final class CancelBookingProvider
+    extends $FunctionalProvider<AsyncValue<bool>, bool, FutureOr<bool>>
+    with $FutureModifier<bool>, $FutureProvider<bool> {
+  const CancelBookingProvider._({
+    required CancelBookingFamily super.from,
+    required ({String id, String reason}) super.argument,
+  }) : super(
+         retry: null,
+         name: r'cancelBookingProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$cancelBookingHash();
+
+  @override
+  String toString() {
+    return r'cancelBookingProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<bool> create(Ref ref) {
+    final argument = this.argument as ({String id, String reason});
+    return cancelBooking(ref, id: argument.id, reason: argument.reason);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CancelBookingProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$cancelBookingHash() => r'f88ef0576305c81f760c09d4c1b04d53d3431bda';
+
+final class CancelBookingFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<bool>,
+          ({String id, String reason})
+        > {
+  const CancelBookingFamily._()
+    : super(
+        retry: null,
+        name: r'cancelBookingProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  CancelBookingProvider call({required String id, required String reason}) =>
+      CancelBookingProvider._(argument: (id: id, reason: reason), from: this);
+
+  @override
+  String toString() => r'cancelBookingProvider';
+}

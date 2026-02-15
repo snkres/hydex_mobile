@@ -103,8 +103,13 @@ class AppRoutes {
       ),
       GoRoute(
         path: '/profile-summary',
-        builder: (context, state) =>
-            ProfileSummary(event: state.extra as UpcomingEvent),
+        builder: (context, state) {
+          final args = state.extra as Map<String, dynamic>;
+          return ProfileSummary(
+            event: args['event'] as UpcomingEvent,
+            isHistory: args['isHistory'] as bool? ?? false,
+          );
+        },
       ),
       GoRoute(
         path: '/forgot-password',

@@ -119,3 +119,23 @@ final formattedTotalPriceProvider = Provider<String>((ref) {
   final formatter = NumberFormat('#,##0', 'en_US');
   return formatter.format(rawPrice);
 });
+
+@riverpod
+Future<bool> cancelBooking(
+  Ref ref, {
+  required String id,
+  required String reason,
+}) async {
+  try {
+    final response = await DioHelper.patch(
+      "/bookings/$id/cancel",
+      data: {"cancellationReason": reason},
+    );
+    if (response.statusCode == 200) {
+      return true;
+    }
+    return false;
+  } catch (e) {
+    throw Exception('Failed to load bookings: $e');
+  }
+}

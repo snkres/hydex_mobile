@@ -31,7 +31,7 @@ class History extends ConsumerWidget {
                 Column(children: [Divider(), SizedBox(height: 16)]),
             itemCount: data.length,
             itemBuilder: (context, index) =>
-                HistoryContainer(event: data[index]),
+                HistoryContainer(event: data[index], isHistory: true),
           ),
         );
       },
@@ -45,9 +45,14 @@ class History extends ConsumerWidget {
 }
 
 class HistoryContainer extends StatelessWidget {
-  const HistoryContainer({super.key, required this.event});
+  const HistoryContainer({
+    super.key,
+    required this.event,
+    this.isHistory = false,
+  });
 
   final UpcomingEvent event;
+  final bool isHistory;
 
   String formatDate(DateTime time) {
     return DateFormat('MMM d').format(time);
@@ -80,7 +85,10 @@ class HistoryContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.push("/profile-summary", extra: event),
+      onTap: () => context.push(
+        "/profile-summary",
+        extra: {'event': event, 'isHistory': isHistory},
+      ),
       child: Container(
         decoration: ShapeDecoration(
           shape: RoundedSuperellipseBorder(borderRadius: .circular(24)),

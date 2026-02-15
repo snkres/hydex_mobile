@@ -204,8 +204,8 @@ class _AllEventsState extends ConsumerState<AllEvents> {
                         description: item.location.address,
 
                         tag: item.category?.name,
-                        image: item.media.first,
-                        avatarImage: item.media.first,
+                        image: item.media.firstOrNull,
+                        avatarImage: item.media.firstOrNull,
                         onView: () => context.pushNamed(
                           "event_detail",
                           pathParameters: {"id": item.id},

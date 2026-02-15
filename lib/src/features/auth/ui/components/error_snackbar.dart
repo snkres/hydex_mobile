@@ -22,3 +22,23 @@ SnackBar errorSnackBar(ApiException error, BuildContext context) {
     ),
   );
 }
+
+SnackBar successSnackBar(String message, BuildContext context) {
+  return SnackBar(
+    backgroundColor: AppColors.signalFunSuccess,
+    dismissDirection: .none,
+
+    content: Row(
+      spacing: 6,
+      children: [
+        Icon(Icons.check_circle_outline, color: AppColors.textSuccess),
+        Expanded(
+          child: Text(
+            message,
+            style: TextStyle(color: AppColors.textSuccess, fontSize: 12),
+          ),
+        ),
+      ],
+    ),
+  );
+}
