@@ -803,6 +803,7 @@ class _CancelationWidgetState extends State<CancelationWidget> {
                             if (result && context.mounted) {
                               int count = 0;
                               ref.refresh(getUpcomingEventsProvider);
+                              ref.refresh(getProfileProvider);
                               Navigator.of(
                                 context,
                               ).popUntil((_) => count++ >= 2);

@@ -260,16 +260,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                         return Stack(
                           fit: StackFit.expand,
                           children: [
-                            CachedNetworkImage(
-                              imageUrl: vendor.media[i],
-                              fit: BoxFit.cover,
-                              alignment: Alignment.topCenter,
-                              placeholder: (_, __) => const Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                              errorWidget: (_, __, ___) =>
-                                  const Center(child: Icon(Icons.error)),
-                            ),
+                            ImageOrVideoWidget(url: vendor.media[i]),
                             Container(
                               color: Colors.black.withOpacity(overlayOpacity),
                             ),
@@ -1200,7 +1191,15 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                       height: 70, // Standard AppBar height
                       child: Row(
                         children: [
-                          CustomBackButton(),
+                          CustomBackButton(
+                            onClick: () {
+                              if (context.canPop()) {
+                                context.pop();
+                              } else {
+                                context.go("/");
+                              }
+                            },
+                          ),
                           Expanded(
                             child: AnimatedSwitcher(
                               duration: const Duration(milliseconds: 220),

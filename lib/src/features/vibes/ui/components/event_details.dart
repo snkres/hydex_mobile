@@ -244,7 +244,15 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                       height: 70,
                       child: Row(
                         children: [
-                          CustomBackButton(),
+                          CustomBackButton(
+                            onClick: () {
+                              if (context.canPop()) {
+                                context.pop();
+                              } else {
+                                context.go("/");
+                              }
+                            },
+                          ),
                           Expanded(
                             child: AnimatedSwitcher(
                               duration: const Duration(milliseconds: 220),

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -45,41 +46,50 @@ class _BaseScreenState extends State<BaseScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: LiquidGlassLayer(
-          settings: LiquidGlassSettings(
-            ambientStrength: 0.5,
-            lightAngle: 0.5 * pi,
-            glassColor: Theme.of(
-              context,
-            ).colorScheme.surface.withValues(alpha: 0.4),
-            lightIntensity: 0.5,
-            blur: 20,
-          ),
-          child: LiquidGlass(
-            glassContainsChild: false,
-            shape: LiquidRoundedRectangle(borderRadius: 100),
-            child: Container(
-              width: AppTextStyles(context).accumulator * 327,
-              height: AppTextStyles(context).heightAccumulator * 56,
-              alignment: .center,
-              padding: .all(4),
-              child: NavBar(
-                items: navItems,
-                selectedIndex: currentIndex,
-                onTap: (index) {
-                  setState(() {
-                    currentIndex = index;
-                  });
-                },
+      body: Stack(
+        alignment: .bottomCenter,
+        children: [
+          children[currentIndex],
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: Platform.isIOS ? 0 : 16,
+              ),
+              child: LiquidGlassLayer(
+                settings: LiquidGlassSettings(
+                  ambientStrength: 0.5,
+                  lightAngle: 0.5 * pi,
+                  glassColor: Theme.of(
+                    context,
+                  ).colorScheme.surface.withValues(alpha: 0.4),
+                  lightIntensity: 0.5,
+                  blur: 20,
+                ),
+                child: LiquidGlass(
+                  glassContainsChild: false,
+                  shape: LiquidRoundedRectangle(borderRadius: 100),
+                  child: Container(
+                    width: AppTextStyles(context).accumulator * 327,
+                    height: AppTextStyles(context).heightAccumulator * 56,
+                    alignment: .center,
+                    padding: .all(4),
+                    child: NavBar(
+                      items: navItems,
+                      selectedIndex: currentIndex,
+                      onTap: (index) {
+                        setState(() {
+                          currentIndex = index;
+                        });
+                      },
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ),
-      body: children[currentIndex],
     );
   }
 }

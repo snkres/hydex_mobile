@@ -21,12 +21,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     with TickerProviderStateMixin {
   // 1. Define the AnimationController
   late final AnimationController _lottieController;
+  late final Future<String> _authCheckFuture;
 
   @override
   void initState() {
     super.initState();
 
     _lottieController = AnimationController(vsync: this);
+    // Start auth check immediately, don't wait for Lottie to load
+    _authCheckFuture = _checkUserStatusAndAuth();
   }
 
   @override
@@ -134,16 +137,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         onLoaded: (composition) {
           _lottieController.duration = composition.duration;
 
-          // Start all checks in parallel during the animation
-          Future<String> authCheckFuture = _checkUserStatusAndAuth();
-
           // Start animation and wait for it to complete
           _lottieController.forward().whenComplete(() async {
             if (!context.mounted) return;
 
             try {
-              // Get the auth check result (should be ready by now)
-              final destination = await authCheckFuture;
+              // Auth check started in initState, should be ready by now
+              final destination = await _authCheckFuture;
 
               if (!context.mounted) return;
               context.go(destination);
