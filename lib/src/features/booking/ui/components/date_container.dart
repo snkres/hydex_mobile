@@ -20,6 +20,41 @@ class DateContainer extends StatefulWidget {
 }
 
 class _DateContainerState extends State<DateContainer> {
+  final ScrollController _scrollController = ScrollController();
+  static const double _itemWidth = 59;
+  static const double _separatorWidth = 8;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToSelected();
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToSelected() {
+    if (widget.selectedDate == null) return;
+    final index = widget.availableDates.indexWhere(
+      (d) =>
+          d.year == widget.selectedDate!.year &&
+          d.month == widget.selectedDate!.month &&
+          d.day == widget.selectedDate!.day,
+    );
+    if (index <= 0) return;
+    final offset = index * (_itemWidth + _separatorWidth);
+    if (offset > _scrollController.position.maxScrollExtent) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    } else {
+      _scrollController.jumpTo(offset);
+    }
+  }
+
   String getDayName(int weekday) {
     switch (weekday) {
       case 1:
@@ -100,6 +135,7 @@ class _DateContainerState extends State<DateContainer> {
               child: SizedBox(
                 height: 72,
                 child: ListView.separated(
+                  controller: _scrollController,
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   itemBuilder: (context, index) {

@@ -31,9 +31,17 @@ class _CreateBookingState extends ConsumerState<CreateBooking> {
   @override
   void initState() {
     vendorAvailable = widget.book.operatingHours;
-    print("Vendor Available: $vendorAvailable");
 
-    selectedDate = isEvent ? widget.book.startTime : vendorAvailable.first;
+    if (isEvent) {
+      selectedDate = widget.book.startTime;
+    } else {
+      final now = DateTime.now();
+      selectedDate = vendorAvailable.cast<DateTime?>().firstWhere(
+            (d) => d!.year == now.year && d.month == now.month && d.day == now.day,
+            orElse: () => null,
+          ) ??
+          vendorAvailable.first;
+    }
 
     super.initState();
   }

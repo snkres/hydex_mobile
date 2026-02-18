@@ -1001,11 +1001,9 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                                                           .cover,
                                                                       item.image,
                                                                     )
-                                                                  : CachedNetworkImage(
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                      imageUrl:
-                                                                          item.image,
+                                                                  : ImageOrVideoWidget(
+                                                                      url: item
+                                                                          .image,
                                                                     ),
                                                             ),
                                                           ),
@@ -1097,9 +1095,8 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                                   child: SizedBox(
                                                     width: 165,
 
-                                                    child: CachedNetworkImage(
-                                                      fit: BoxFit.cover,
-                                                      imageUrl:
+                                                    child: ImageOrVideoWidget(
+                                                      url:
                                                           vendor.gallery[index],
                                                     ),
                                                   ),

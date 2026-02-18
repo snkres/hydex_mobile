@@ -593,8 +593,7 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                 );
                                 return Center(child: Text("Error"));
                               },
-                              loading: () =>
-                                  Center(child: CircularProgressIndicator()),
+                              loading: () => Center(child: Text("Loading")),
                             ),
 
                             SizedBox(height: 43.5),

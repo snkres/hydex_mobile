@@ -229,6 +229,7 @@ class AuthService {
   void _clearUserState() {
     ref.read(userProvider.notifier).clearUser();
     ref.invalidate(currentUserProvider);
+    ref.invalidate(getProfileProvider);
     ref.invalidate(getUpcomingEventsProvider);
     ref.invalidate(getHistoryProvider);
     ref.invalidate(getPassportProvider);
