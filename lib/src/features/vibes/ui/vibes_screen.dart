@@ -1048,6 +1048,7 @@ class ImageOrVideoWidget extends StatefulWidget {
 class _ImageOrVideoWidgetState extends State<ImageOrVideoWidget> {
   VideoPlayerController? _videoController;
   bool _isVideoInitialized = false;
+  bool _hasError = false;
 
   bool get isVideo {
     return widget.url.toLowerCase().endsWith('.mp4');
@@ -1062,12 +1063,17 @@ class _ImageOrVideoWidgetState extends State<ImageOrVideoWidget> {
         ..setLooping(true)
         ..setVolume(0);
 
-      _videoController!.initialize().then((_) {
-        setState(() {
-          _isVideoInitialized = true;
-          _videoController!.play();
-        });
-      });
+      _videoController!
+          .initialize()
+          .then((_) {
+            if (mounted) {
+              setState(() => _isVideoInitialized = true);
+              _videoController!.play();
+            }
+          })
+          .catchError((_) {
+            if (mounted) setState(() => _hasError = true);
+          });
     }
   }
 
@@ -1079,6 +1085,15 @@ class _ImageOrVideoWidgetState extends State<ImageOrVideoWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (_hasError) {
+      return Container(
+        color: Colors.grey[800],
+        child: const Center(
+          child: Icon(Icons.broken_image, color: Colors.white54, size: 40),
+        ),
+      );
+    }
+
     if (isVideo) {
       return _isVideoInitialized
           ? SizedBox(
@@ -1089,7 +1104,10 @@ class _ImageOrVideoWidgetState extends State<ImageOrVideoWidget> {
                 child: SizedBox(
                   width: _videoController!.value.size.width,
                   height: _videoController!.value.size.height,
-                  child: VideoPlayer(_videoController!),
+                  child: CustomPaint(
+                    foregroundPainter: _VideoRepaintPainter(_videoController!),
+                    child: VideoPlayer(_videoController!),
+                  ),
                 ),
               ),
             )
@@ -1101,6 +1119,21 @@ class _ImageOrVideoWidgetState extends State<ImageOrVideoWidget> {
       child: AdaptiveImage(imageData: widget.url),
     );
   }
+}
+
+/// A no-op painter whose sole purpose is to force the render object to
+/// repaint whenever the [VideoPlayerController] notifies (i.e. every video
+/// frame). This ensures the underlying [Texture] widget gets composited
+/// even when Flutter's rendering pipeline is otherwise idle.
+class _VideoRepaintPainter extends CustomPainter {
+  _VideoRepaintPainter(VideoPlayerController controller)
+      : super(repaint: controller);
+
+  @override
+  void paint(Canvas canvas, Size size) {}
+
+  @override
+  bool shouldRepaint(covariant _VideoRepaintPainter oldDelegate) => false;
 }
 
 class CuratedContainer extends StatelessWidget {
@@ -1283,25 +1316,10 @@ class EventContainer extends StatelessWidget {
         child: Stack(
           alignment: Alignment.topLeft,
           children: [
-            CachedNetworkImage(
-              imageUrl: image ?? '',
+            SizedBox(
               height: MediaQuery.heightOf(context) * 0.28,
               width: width,
-              fit: BoxFit.cover,
-              color: Colors.black.withValues(alpha: 0.4),
-              colorBlendMode: BlendMode.darken,
-              placeholder: (context, url) =>
-                  const Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) => Container(
-                color: Colors.grey[800],
-                child: const Center(
-                  child: Icon(
-                    Icons.broken_image,
-                    color: Colors.white54,
-                    size: 40,
-                  ),
-                ),
-              ),
+              child: ImageOrVideoWidget(url: image ?? ""),
             ),
             SizedBox(
               width: width,

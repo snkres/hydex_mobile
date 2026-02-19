@@ -49,6 +49,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
   double _sheetSize = 0.3;
   final GlobalKey _contentKey = GlobalKey();
   double _computedMaxChildSize = 0.86;
+  bool _hasMeasured = false;
 
   @override
   void initState() {
@@ -70,12 +71,14 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
   }
 
   void _measureContent() {
+    if (_hasMeasured) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final ctx = _contentKey.currentContext;
       if (ctx != null) {
         final box = ctx.findRenderObject() as RenderBox;
         final screenHeight = MediaQuery.of(context).size.height;
         final ratio = (box.size.height / screenHeight).clamp(0.3, 0.86);
+        _hasMeasured = true;
         if (ratio != _computedMaxChildSize) {
           setState(() {
             _computedMaxChildSize = ratio;
@@ -207,6 +210,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
       ),
       body: vendorAsync.when(
         data: (vendor) {
+          debugPrint('[DETAILS] build data branch, media=${vendor.media}');
           _measureContent();
           final distance = ref.watch(
             calculateDistanceProvider(

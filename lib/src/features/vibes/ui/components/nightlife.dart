@@ -1,9 +1,11 @@
+import 'package:animations/animations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
+import 'package:hydex/src/features/vibes/ui/components/gallery.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 class NightLifeSection extends StatelessWidget {
@@ -117,24 +119,32 @@ class NightLifeSection extends StatelessWidget {
               CarouselSlider(
                 items: details
                     .map(
-                      (e) => Column(
-                        spacing: 13,
-                        children: [
-                          SmoothClipRRect(
-                            borderRadius: BorderRadius.circular(24),
-                            smoothness: 1,
-                            child: CachedNetworkImage(
-                              imageUrl: e.image,
-                              width: 200,
-                              height: 200,
-                              fit: .cover,
+                      (e) => OpenContainer(
+                        closedColor: Colors.transparent,
+                        closedElevation: 0,
+                        openBuilder: (context, action) => Gallery(
+                          gallery: details.map((d) => d.image).toList(),
+                          clickedPhoto: e.image,
+                        ),
+                        closedBuilder: (context, _) => Column(
+                          spacing: 13,
+                          children: [
+                            SmoothClipRRect(
+                              borderRadius: BorderRadius.circular(24),
+                              smoothness: 1,
+                              child: CachedNetworkImage(
+                                imageUrl: e.image,
+                                width: 200,
+                                height: 200,
+                                fit: .cover,
+                              ),
                             ),
-                          ),
-                          Text(
-                            e.title,
-                            style: AppTextStyles(context).smallBold,
-                          ),
-                        ],
+                            Text(
+                              e.title,
+                              style: AppTextStyles(context).smallBold,
+                            ),
+                          ],
+                        ),
                       ),
                     )
                     .toList(),
