@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,20 +29,21 @@ class _CreateBookingState extends ConsumerState<CreateBooking> {
   DateTime? selectedSlot;
   List<DateTime> vendorAvailable = [];
   bool get isEvent => widget.book.startTime != null;
-
+  final currentDate = DateTime.now();
   @override
   void initState() {
     vendorAvailable = widget.book.operatingHours;
-
+    log("Vendor Available: $vendorAvailable");
     if (isEvent) {
       selectedDate = widget.book.startTime;
     } else {
-      final now = DateTime.now();
-      selectedDate = vendorAvailable.cast<DateTime?>().firstWhere(
-            (d) => d!.year == now.year && d.month == now.month && d.day == now.day,
-            orElse: () => null,
-          ) ??
-          vendorAvailable.first;
+      selectedDate = vendorAvailable.firstWhere(
+        (e) =>
+            e.year == currentDate.year &&
+            e.month == currentDate.month &&
+            e.day == currentDate.day,
+        orElse: () => vendorAvailable.first,
+      );
     }
 
     super.initState();

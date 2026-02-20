@@ -170,6 +170,16 @@ class ProfileUserMapper extends ClassMapperBase<ProfileUser> {
   static const Field<ProfileUser, String> _f$email = Field('email', _$email);
   static String _$phone(ProfileUser v) => v.phone;
   static const Field<ProfileUser, String> _f$phone = Field('phone', _$phone);
+  static String _$nationality(ProfileUser v) => v.nationality;
+  static const Field<ProfileUser, String> _f$nationality = Field(
+    'nationality',
+    _$nationality,
+  );
+  static DateTime _$createdAt(ProfileUser v) => v.createdAt;
+  static const Field<ProfileUser, DateTime> _f$createdAt = Field(
+    'createdAt',
+    _$createdAt,
+  );
 
   @override
   final MappableFields<ProfileUser> fields = const {
@@ -179,6 +189,8 @@ class ProfileUserMapper extends ClassMapperBase<ProfileUser> {
     #role: _f$role,
     #email: _f$email,
     #phone: _f$phone,
+    #nationality: _f$nationality,
+    #createdAt: _f$createdAt,
   };
 
   static ProfileUser _instantiate(DecodingData data) {
@@ -189,6 +201,8 @@ class ProfileUserMapper extends ClassMapperBase<ProfileUser> {
       role: data.dec(_f$role),
       email: data.dec(_f$email),
       phone: data.dec(_f$phone),
+      nationality: data.dec(_f$nationality),
+      createdAt: data.dec(_f$createdAt),
     );
   }
 
@@ -259,6 +273,8 @@ abstract class ProfileUserCopyWith<$R, $In extends ProfileUser, $Out>
     Role? role,
     String? email,
     String? phone,
+    String? nationality,
+    DateTime? createdAt,
   });
   ProfileUserCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -279,6 +295,8 @@ class _ProfileUserCopyWithImpl<$R, $Out>
     Role? role,
     String? email,
     String? phone,
+    String? nationality,
+    DateTime? createdAt,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -287,6 +305,8 @@ class _ProfileUserCopyWithImpl<$R, $Out>
       if (role != null) #role: role,
       if (email != null) #email: email,
       if (phone != null) #phone: phone,
+      if (nationality != null) #nationality: nationality,
+      if (createdAt != null) #createdAt: createdAt,
     }),
   );
   @override
@@ -297,6 +317,8 @@ class _ProfileUserCopyWithImpl<$R, $Out>
     role: data.get(#role, or: $value.role),
     email: data.get(#email, or: $value.email),
     phone: data.get(#phone, or: $value.phone),
+    nationality: data.get(#nationality, or: $value.nationality),
+    createdAt: data.get(#createdAt, or: $value.createdAt),
   );
 
   @override

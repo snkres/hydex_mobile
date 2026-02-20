@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
@@ -127,6 +128,7 @@ class _PassportState extends ConsumerState<Passport> {
                           padding: const EdgeInsets.only(bottom: 16),
                           child: PassportContainer(
                             title: vendor.vendorName,
+                            id: vendor.vendorId,
                             image: image,
                             category: category.categoryName,
                             visit: vendor.visitCount.toString().padLeft(2, '0'),
@@ -161,9 +163,10 @@ class PassportContainer extends StatelessWidget {
     required this.visit,
     this.image,
     this.baseColor,
+    required this.id,
   });
 
-  final String title, category, visit;
+  final String title, category, visit, id;
   final String? image;
   final Color? baseColor;
 
@@ -173,100 +176,107 @@ class PassportContainer extends StatelessWidget {
         ? CachedNetworkImageProvider(image!)
         : null;
     final color = baseColor ?? AppColors.borderBrand;
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: SmoothClipRRect(
-        smoothness: 1,
-        borderRadius: BorderRadius.circular(16),
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomRight,
-                        end: Alignment.topCenter,
-                        colors: [
-                          color,
-                          Color.lerp(color, Colors.black, 0.4)!,
-                          Color.lerp(color, Colors.black, 0.75)!,
-                        ],
+    return GestureDetector(
+      onTap: () =>
+          context.pushNamed("vendor_detail", pathParameters: {"id": id}),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: SmoothClipRRect(
+          smoothness: 1,
+          borderRadius: BorderRadius.circular(16),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomRight,
+                          end: Alignment.topCenter,
+                          colors: [
+                            color,
+                            Color.lerp(color, Colors.black, 0.4)!,
+                            Color.lerp(color, Colors.black, 0.75)!,
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: SvgPicture.asset(
-                      "img/svg/pattern.svg",
-                      package: "assets",
-                      fit: BoxFit.cover,
-                      color: AppColors.backgroundBase.withValues(alpha: 0.1),
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: SvgPicture.asset(
+                        "img/svg/pattern.svg",
+                        package: "assets",
+                        fit: BoxFit.cover,
+                        color: AppColors.backgroundBase.withValues(alpha: 0.1),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Column(
+                children: [
+                  SmoothContainer(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: imageProvider,
+                          onBackgroundImageError: (_, _) =>
+                              Center(child: Icon(Icons.broken_image)),
+                        ),
+                        SizedBox(height: 32),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                title,
+                                style: TextStyle(
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 18,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              visit,
+                              style: TextStyle(
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 18,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              category,
+                              style: TextStyle(
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 14,
+                              ),
+                            ),
+                            Text(
+                              "Visit(s)",
+                              style: TextStyle(
+                                fontSize:
+                                    AppTextStyles(context).accumulator * 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
-
-            Column(
-              children: [
-                SmoothContainer(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: imageProvider,
-                        onBackgroundImageError: (_, _) =>
-                            Center(child: Icon(Icons.broken_image)),
-                      ),
-                      SizedBox(height: 32),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              title,
-                              style: TextStyle(
-                                fontSize:
-                                    AppTextStyles(context).accumulator * 18,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            visit,
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 18,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            category,
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 14,
-                            ),
-                          ),
-                          Text(
-                            "Visit(s)",
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

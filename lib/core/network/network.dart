@@ -147,6 +147,10 @@ class DioHelper {
   static final List<MapEntry<RequestOptions, Completer<Response>>>
   _pendingRequests = [];
 
+  /// Called when a 401 occurs and token refresh fails.
+  /// Set this from your router to navigate to /boarding.
+  static VoidCallback? onForceLogout;
+
   // Secure storage instance
   static const FlutterSecureStorage secureStorage = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
@@ -165,7 +169,8 @@ class DioHelper {
     _refreshEndpoint = '/auth/refresh';
 
     BaseOptions options = BaseOptions(
-      baseUrl: 'https://dev.api.hyde-x.com',
+      baseUrl: 'https://api.hyde-x.com',
+      // baseUrl: 'https://dev.api.hyde-x.com',
       connectTimeout: Duration(milliseconds: 30000),
       receiveTimeout: Duration(milliseconds: 30000),
       sendTimeout: Duration(milliseconds: 30000),
@@ -174,7 +179,7 @@ class DioHelper {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'X-App-Version': '0.2.0',
+        'X-App-Version': '0.2.5',
         'X-Platform': Platform.isAndroid ? 'android' : 'ios',
         ...?defaultHeaders,
       },
@@ -315,16 +320,15 @@ class DioHelper {
             if (_tokenPair!.isExpired) {
               try {
                 // Wait for refresh if already in progress
-                if (_isRefreshing) {
-                  await _waitForRefresh();
-                } else {
-                  await _refreshToken();
-                }
+
+                await _refreshToken();
               } catch (e) {
                 if (kDebugMode) {
                   print('❌ Token refresh failed: $e');
                 }
                 _authEventListener?.onTokenRefreshFailed();
+                await _clearTokens();
+                onForceLogout?.call();
                 handler.reject(
                   DioException(
                     requestOptions: options,
@@ -368,6 +372,12 @@ class DioHelper {
           handler.next(response);
         },
         onError: (error, handler) async {
+          if (error.response?.statusCode == 503 &&
+              error.requestOptions.path.contains("me")) {
+            await _clearTokens();
+            onForceLogout?.call();
+            return handler.next(error);
+          }
           if (error.response?.statusCode == 401 &&
               _tokenPair != null &&
               !error.requestOptions.path.contains(_refreshEndpoint!) &&
@@ -393,8 +403,8 @@ class DioHelper {
               }
               _authEventListener?.onTokenRefreshFailed();
               await _clearTokens();
+              onForceLogout?.call();
 
-              // Reject with UnauthorizedException instead of passing original error
               handler.reject(
                 DioException(
                   requestOptions: error.requestOptions,
@@ -466,11 +476,6 @@ class DioHelper {
 
   // Refresh access token using refresh token from cookies
   static Future<void> _refreshToken() async {
-    if (_isRefreshing) {
-      // Wait for ongoing refresh
-      return _waitForRefresh();
-    }
-
     if (_tokenPair?.refreshToken == null) {
       throw TokenExpiredException('No refresh token available');
     }
@@ -529,13 +534,6 @@ class DioHelper {
       throw TokenExpiredException('Token refresh failed: $e');
     } finally {
       _isRefreshing = false;
-    }
-  }
-
-  // Wait for ongoing refresh to complete
-  static Future<void> _waitForRefresh() async {
-    while (_isRefreshing) {
-      await Future.delayed(Duration(milliseconds: 300));
     }
   }
 

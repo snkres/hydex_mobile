@@ -18,6 +18,8 @@ class ProfileUser with ProfileUserMappable {
   final String? avatar;
   final Role role;
   final String email;
+  final String nationality;
+  final DateTime createdAt;
   final String phone;
   ProfileUser({
     required this.id,
@@ -26,6 +28,8 @@ class ProfileUser with ProfileUserMappable {
     required this.role,
     required this.email,
     required this.phone,
+    required this.nationality,
+    required this.createdAt,
   });
 }
 

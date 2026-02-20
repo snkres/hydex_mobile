@@ -203,7 +203,7 @@ class VenueContainer extends StatelessWidget {
           ),
           SizedBox(height: 4),
           Text(
-            "${event.numberOfGuests == 0 ? 1 : event.numberOfGuests} ${event.passName}",
+            "${event.guests.isEmpty ? 1 : event.guests.length} ${event.passName}",
             style: TextStyle(
               fontSize: AppTextStyles(context).accumulator * 16,
               fontWeight: .w600,

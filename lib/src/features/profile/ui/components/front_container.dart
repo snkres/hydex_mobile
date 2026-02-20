@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hydex/core/extensions/date_time_extension.dart';
@@ -11,10 +12,12 @@ class FrontContainer extends StatelessWidget {
     required this.nationality,
     required this.createdAt,
     required this.id,
+    this.avatar,
   });
 
   final String name, nationality, id;
   final DateTime createdAt;
+  final String? avatar;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +65,12 @@ class FrontContainer extends StatelessWidget {
                       width: 65,
                       height: 65,
                       decoration: ShapeDecoration(
-                        color: Colors.transparent,
+                        image: avatar != null
+                            ? DecorationImage(
+                                image: CachedNetworkImageProvider(avatar!),
+                              )
+                            : null,
+                        color: avatar == null ? Colors.transparent : null,
                         shape: RoundedSuperellipseBorder(
                           borderRadius: .circular(8),
                         ),

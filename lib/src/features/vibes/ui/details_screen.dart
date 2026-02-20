@@ -182,6 +182,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
           onTap: () async {
             try {
               final vendor = vendorAsync.requireValue;
+              print("Vendor: ${vendor.operatingHours}");
               final book = CreateBook(
                 image: vendor.logo ?? "",
                 location:
@@ -505,19 +506,25 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                               ),
                                             ),
                                             GestureDetector(
-                                              onTap: () {
-                                                MapsLauncher.launchCoordinates(
-                                                  vendor
-                                                          .location
-                                                          .coordinates
-                                                          .lat ??
-                                                      0,
-                                                  vendor
-                                                          .location
-                                                          .coordinates
-                                                          .lng ??
-                                                      0,
-                                                );
+                                              onTap: () async {
+                                                try {
+                                                  await MapsLauncher.launchCoordinates(
+                                                    vendor
+                                                            .location
+                                                            .coordinates
+                                                            .lat ??
+                                                        0,
+                                                    vendor
+                                                            .location
+                                                            .coordinates
+                                                            .lng ??
+                                                        0,
+                                                  );
+                                                } catch (e) {
+                                                  await Sentry.captureException(
+                                                    e,
+                                                  );
+                                                }
                                               },
                                               child: Container(
                                                 padding: EdgeInsets.symmetric(
@@ -1109,6 +1116,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                             );
                                           },
                                         ),
+                                        SizedBox(height: 24),
                                       ],
 
                                       if (vendor.thingsToKnow.isNotEmpty)
@@ -1120,8 +1128,6 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              SizedBox(height: 24),
-
                                               Text(
                                                 "Things to know".toUpperCase(),
                                                 style: TextStyle(

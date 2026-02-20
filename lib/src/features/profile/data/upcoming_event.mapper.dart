@@ -70,6 +70,7 @@ class UpcomingEventMapper extends ClassMapperBase<UpcomingEvent> {
       MapperContainer.globals.use(_instance = UpcomingEventMapper._());
       LocationMapper.ensureInitialized();
       UpcomingEventStatusMapper.ensureInitialized();
+      ProfileGuestsMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -95,13 +96,6 @@ class UpcomingEventMapper extends ClassMapperBase<UpcomingEvent> {
     'status',
     _$status,
   );
-  static int _$numberOfGuests(UpcomingEvent v) => v.numberOfGuests;
-  static const Field<UpcomingEvent, int> _f$numberOfGuests = Field(
-    'numberOfGuests',
-    _$numberOfGuests,
-    opt: true,
-    def: 0,
-  );
   static String? _$cancellationReason(UpcomingEvent v) => v.cancellationReason;
   static const Field<UpcomingEvent, String> _f$cancellationReason = Field(
     'cancellationReason',
@@ -113,6 +107,11 @@ class UpcomingEventMapper extends ClassMapperBase<UpcomingEvent> {
     'guestsNames',
     _$guestsNames,
     opt: true,
+  );
+  static List<ProfileGuests> _$guests(UpcomingEvent v) => v.guests;
+  static const Field<UpcomingEvent, List<ProfileGuests>> _f$guests = Field(
+    'guests',
+    _$guests,
   );
   static List<String> _$thingsToKnow(UpcomingEvent v) => v.thingsToKnow;
   static const Field<UpcomingEvent, List<String>> _f$thingsToKnow = Field(
@@ -156,6 +155,18 @@ class UpcomingEventMapper extends ClassMapperBase<UpcomingEvent> {
     _$media,
     opt: true,
   );
+  static String? _$qrCode(UpcomingEvent v) => v.qrCode;
+  static const Field<UpcomingEvent, String> _f$qrCode = Field(
+    'qrCode',
+    _$qrCode,
+    opt: true,
+  );
+  static String? _$qrCodeUrl(UpcomingEvent v) => v.qrCodeUrl;
+  static const Field<UpcomingEvent, String> _f$qrCodeUrl = Field(
+    'qrCodeUrl',
+    _$qrCodeUrl,
+    opt: true,
+  );
 
   @override
   final MappableFields<UpcomingEvent> fields = const {
@@ -165,9 +176,9 @@ class UpcomingEventMapper extends ClassMapperBase<UpcomingEvent> {
     #time: _f$time,
     #location: _f$location,
     #status: _f$status,
-    #numberOfGuests: _f$numberOfGuests,
     #cancellationReason: _f$cancellationReason,
     #guestsNames: _f$guestsNames,
+    #guests: _f$guests,
     #thingsToKnow: _f$thingsToKnow,
     #passId: _f$passId,
     #termsAndConditions: _f$termsAndConditions,
@@ -176,6 +187,8 @@ class UpcomingEventMapper extends ClassMapperBase<UpcomingEvent> {
     #bookingType: _f$bookingType,
     #passName: _f$passName,
     #media: _f$media,
+    #qrCode: _f$qrCode,
+    #qrCodeUrl: _f$qrCodeUrl,
   };
 
   static UpcomingEvent _instantiate(DecodingData data) {
@@ -186,9 +199,9 @@ class UpcomingEventMapper extends ClassMapperBase<UpcomingEvent> {
       time: data.dec(_f$time),
       location: data.dec(_f$location),
       status: data.dec(_f$status),
-      numberOfGuests: data.dec(_f$numberOfGuests),
       cancellationReason: data.dec(_f$cancellationReason),
       guestsNames: data.dec(_f$guestsNames),
+      guests: data.dec(_f$guests),
       thingsToKnow: data.dec(_f$thingsToKnow),
       passId: data.dec(_f$passId),
       termsAndConditions: data.dec(_f$termsAndConditions),
@@ -197,6 +210,8 @@ class UpcomingEventMapper extends ClassMapperBase<UpcomingEvent> {
       bookingType: data.dec(_f$bookingType),
       passName: data.dec(_f$passName),
       media: data.dec(_f$media),
+      qrCode: data.dec(_f$qrCode),
+      qrCodeUrl: data.dec(_f$qrCodeUrl),
     );
   }
 
@@ -264,6 +279,12 @@ abstract class UpcomingEventCopyWith<$R, $In extends UpcomingEvent, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   LocationCopyWith<$R, Location, Location> get location;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get guestsNames;
+  ListCopyWith<
+    $R,
+    ProfileGuests,
+    ProfileGuestsCopyWith<$R, ProfileGuests, ProfileGuests>
+  >
+  get guests;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get thingsToKnow;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get media;
   $R call({
@@ -273,9 +294,9 @@ abstract class UpcomingEventCopyWith<$R, $In extends UpcomingEvent, $Out>
     String? time,
     Location? location,
     UpcomingEventStatus? status,
-    int? numberOfGuests,
     String? cancellationReason,
     List<String>? guestsNames,
+    List<ProfileGuests>? guests,
     List<String>? thingsToKnow,
     String? passId,
     String? termsAndConditions,
@@ -284,6 +305,8 @@ abstract class UpcomingEventCopyWith<$R, $In extends UpcomingEvent, $Out>
     String? bookingType,
     String? passName,
     List<String>? media,
+    String? qrCode,
+    String? qrCodeUrl,
   });
   UpcomingEventCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -309,6 +332,17 @@ class _UpcomingEventCopyWithImpl<$R, $Out>
         )
       : null;
   @override
+  ListCopyWith<
+    $R,
+    ProfileGuests,
+    ProfileGuestsCopyWith<$R, ProfileGuests, ProfileGuests>
+  >
+  get guests => ListCopyWith(
+    $value.guests,
+    (v, t) => v.copyWith.$chain(t),
+    (v) => call(guests: v),
+  );
+  @override
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>
   get thingsToKnow => ListCopyWith(
     $value.thingsToKnow,
@@ -332,9 +366,9 @@ class _UpcomingEventCopyWithImpl<$R, $Out>
     String? time,
     Location? location,
     UpcomingEventStatus? status,
-    int? numberOfGuests,
     Object? cancellationReason = $none,
     Object? guestsNames = $none,
+    List<ProfileGuests>? guests,
     List<String>? thingsToKnow,
     String? passId,
     Object? termsAndConditions = $none,
@@ -343,6 +377,8 @@ class _UpcomingEventCopyWithImpl<$R, $Out>
     String? bookingType,
     String? passName,
     Object? media = $none,
+    Object? qrCode = $none,
+    Object? qrCodeUrl = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -351,9 +387,9 @@ class _UpcomingEventCopyWithImpl<$R, $Out>
       if (time != null) #time: time,
       if (location != null) #location: location,
       if (status != null) #status: status,
-      if (numberOfGuests != null) #numberOfGuests: numberOfGuests,
       if (cancellationReason != $none) #cancellationReason: cancellationReason,
       if (guestsNames != $none) #guestsNames: guestsNames,
+      if (guests != null) #guests: guests,
       if (thingsToKnow != null) #thingsToKnow: thingsToKnow,
       if (passId != null) #passId: passId,
       if (termsAndConditions != $none) #termsAndConditions: termsAndConditions,
@@ -362,6 +398,8 @@ class _UpcomingEventCopyWithImpl<$R, $Out>
       if (bookingType != null) #bookingType: bookingType,
       if (passName != null) #passName: passName,
       if (media != $none) #media: media,
+      if (qrCode != $none) #qrCode: qrCode,
+      if (qrCodeUrl != $none) #qrCodeUrl: qrCodeUrl,
     }),
   );
   @override
@@ -372,12 +410,12 @@ class _UpcomingEventCopyWithImpl<$R, $Out>
     time: data.get(#time, or: $value.time),
     location: data.get(#location, or: $value.location),
     status: data.get(#status, or: $value.status),
-    numberOfGuests: data.get(#numberOfGuests, or: $value.numberOfGuests),
     cancellationReason: data.get(
       #cancellationReason,
       or: $value.cancellationReason,
     ),
     guestsNames: data.get(#guestsNames, or: $value.guestsNames),
+    guests: data.get(#guests, or: $value.guests),
     thingsToKnow: data.get(#thingsToKnow, or: $value.thingsToKnow),
     passId: data.get(#passId, or: $value.passId),
     termsAndConditions: data.get(
@@ -389,12 +427,148 @@ class _UpcomingEventCopyWithImpl<$R, $Out>
     bookingType: data.get(#bookingType, or: $value.bookingType),
     passName: data.get(#passName, or: $value.passName),
     media: data.get(#media, or: $value.media),
+    qrCode: data.get(#qrCode, or: $value.qrCode),
+    qrCodeUrl: data.get(#qrCodeUrl, or: $value.qrCodeUrl),
   );
 
   @override
   UpcomingEventCopyWith<$R2, UpcomingEvent, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   ) => _UpcomingEventCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class ProfileGuestsMapper extends ClassMapperBase<ProfileGuests> {
+  ProfileGuestsMapper._();
+
+  static ProfileGuestsMapper? _instance;
+  static ProfileGuestsMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = ProfileGuestsMapper._());
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'ProfileGuests';
+
+  static String _$name(ProfileGuests v) => v.name;
+  static const Field<ProfileGuests, String> _f$name = Field('name', _$name);
+  static String _$email(ProfileGuests v) => v.email;
+  static const Field<ProfileGuests, String> _f$email = Field('email', _$email);
+  static String _$gender(ProfileGuests v) => v.gender;
+  static const Field<ProfileGuests, String> _f$gender = Field(
+    'gender',
+    _$gender,
+  );
+
+  @override
+  final MappableFields<ProfileGuests> fields = const {
+    #name: _f$name,
+    #email: _f$email,
+    #gender: _f$gender,
+  };
+
+  static ProfileGuests _instantiate(DecodingData data) {
+    return ProfileGuests(
+      name: data.dec(_f$name),
+      email: data.dec(_f$email),
+      gender: data.dec(_f$gender),
+    );
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static ProfileGuests fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<ProfileGuests>(map);
+  }
+
+  static ProfileGuests fromJson(String json) {
+    return ensureInitialized().decodeJson<ProfileGuests>(json);
+  }
+}
+
+mixin ProfileGuestsMappable {
+  String toJson() {
+    return ProfileGuestsMapper.ensureInitialized().encodeJson<ProfileGuests>(
+      this as ProfileGuests,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return ProfileGuestsMapper.ensureInitialized().encodeMap<ProfileGuests>(
+      this as ProfileGuests,
+    );
+  }
+
+  ProfileGuestsCopyWith<ProfileGuests, ProfileGuests, ProfileGuests>
+  get copyWith => _ProfileGuestsCopyWithImpl<ProfileGuests, ProfileGuests>(
+    this as ProfileGuests,
+    $identity,
+    $identity,
+  );
+  @override
+  String toString() {
+    return ProfileGuestsMapper.ensureInitialized().stringifyValue(
+      this as ProfileGuests,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return ProfileGuestsMapper.ensureInitialized().equalsValue(
+      this as ProfileGuests,
+      other,
+    );
+  }
+
+  @override
+  int get hashCode {
+    return ProfileGuestsMapper.ensureInitialized().hashValue(
+      this as ProfileGuests,
+    );
+  }
+}
+
+extension ProfileGuestsValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, ProfileGuests, $Out> {
+  ProfileGuestsCopyWith<$R, ProfileGuests, $Out> get $asProfileGuests =>
+      $base.as((v, t, t2) => _ProfileGuestsCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class ProfileGuestsCopyWith<$R, $In extends ProfileGuests, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  $R call({String? name, String? email, String? gender});
+  ProfileGuestsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+}
+
+class _ProfileGuestsCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, ProfileGuests, $Out>
+    implements ProfileGuestsCopyWith<$R, ProfileGuests, $Out> {
+  _ProfileGuestsCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<ProfileGuests> $mapper =
+      ProfileGuestsMapper.ensureInitialized();
+  @override
+  $R call({String? name, String? email, String? gender}) => $apply(
+    FieldCopyWithData({
+      if (name != null) #name: name,
+      if (email != null) #email: email,
+      if (gender != null) #gender: gender,
+    }),
+  );
+  @override
+  ProfileGuests $make(CopyWithData data) => ProfileGuests(
+    name: data.get(#name, or: $value.name),
+    email: data.get(#email, or: $value.email),
+    gender: data.get(#gender, or: $value.gender),
+  );
+
+  @override
+  ProfileGuestsCopyWith<$R2, ProfileGuests, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  ) => _ProfileGuestsCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
 class PassportDataMapper extends ClassMapperBase<PassportData> {

@@ -174,27 +174,26 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                                   fontWeight: FontWeight.w700,
                                                 ),
                                               ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    formatDateTime(
-                                                      data[index]
-                                                          .campaignStartDate,
-                                                    ),
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize:
-                                                          AppTextStyles(
-                                                            context,
-                                                          ).accumulator *
-                                                          12,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                              data[index].assignment.event !=
+                                                      null
+                                                  ? Text(
+                                                      formatDateTime(
+                                                        data[index]
+                                                                .assignment
+                                                                .event
+                                                                ?.startTime ??
+                                                            DateTime.now(),
+                                                      ),
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize:
+                                                            AppTextStyles(
+                                                              context,
+                                                            ).accumulator *
+                                                            12,
+                                                      ),
+                                                    )
+                                                  : SizedBox.shrink(),
                                             ],
                                           ),
                                         ),
@@ -593,7 +592,8 @@ class _VibesScreenState extends ConsumerState<VibesScreen> {
                                 );
                                 return Center(child: Text("Error"));
                               },
-                              loading: () => Center(child: Text("Loading")),
+                              loading: () =>
+                                  Center(child: CircularProgressIndicator()),
                             ),
 
                             SizedBox(height: 43.5),
@@ -1127,7 +1127,7 @@ class _ImageOrVideoWidgetState extends State<ImageOrVideoWidget> {
 /// even when Flutter's rendering pipeline is otherwise idle.
 class _VideoRepaintPainter extends CustomPainter {
   _VideoRepaintPainter(VideoPlayerController controller)
-      : super(repaint: controller);
+    : super(repaint: controller);
 
   @override
   void paint(Canvas canvas, Size size) {}

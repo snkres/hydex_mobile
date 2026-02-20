@@ -15,7 +15,9 @@ import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/data/location.dart';
 import 'package:hydex/src/features/vibes/data/vendor.dart';
 import 'package:hydex/src/features/vibes/domain/event_notifier.dart';
+import 'package:hydex/src/features/vibes/ui/components/gallery.dart';
 import 'package:hydex/src/features/vibes/ui/components/nightlife.dart';
+import 'package:animations/animations.dart';
 import 'package:hydex/src/features/vibes/ui/components/ticket_widget.dart';
 import 'package:hydex/src/features/vibes/ui/vibes_screen.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
@@ -156,21 +158,30 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                         _sheetController.jumpTo(newSize);
                       }
                     },
-                    child: PageView.builder(
-                      controller: pageController,
-                      itemCount: event.media.length,
-                      itemBuilder: (_, i) {
-                        return Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            ImageOrVideoWidget(url: event.media[i]),
-                            Container(
-                              color: Colors.black.withOpacity(overlayOpacity),
+                    child: event.media.isNotEmpty
+                        ? PageView.builder(
+                            controller: pageController,
+                            itemCount: event.media.length,
+                            itemBuilder: (_, i) {
+                              return Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  ImageOrVideoWidget(url: event.media[i]),
+                                  Container(
+                                    color: Colors.black.withOpacity(
+                                      overlayOpacity,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          )
+                        : Container(
+                            color: AppColors.borderDefault,
+                            child: Center(
+                              child: Icon(Icons.broken_image, size: 40),
                             ),
-                          ],
-                        );
-                      },
-                    ),
+                          ),
                   ),
                 ),
 
@@ -906,12 +917,22 @@ class CollapsedEventContainer extends ConsumerWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 24),
-                NightLifeSection(
-                  experiences: experiences,
-                  details: details,
-                  title: title,
+                Visibility(
+                  visible: experiences.isNotEmpty,
+                  child: Column(
+                    crossAxisAlignment: .start,
+                    children: [
+                      SizedBox(height: 12),
+                      NightLifeSection(
+                        experiences: experiences,
+                        details: details,
+                        title: title,
+                      ),
+                    ],
+                  ),
                 ),
+                SizedBox(height: 12),
+
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -998,14 +1019,24 @@ class CollapsedEventContainer extends ConsumerWidget {
                         separatorBuilder: (context, index) =>
                             SizedBox(width: 8),
                         itemBuilder: (context, index) {
-                          return SmoothClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            smoothness: 1,
-                            child: CachedNetworkImage(
-                              imageUrl: owner.media[index],
-                              width: 180,
-                              fit: .cover,
+                          return OpenContainer(
+                            closedColor: Colors.transparent,
+                            closedElevation: 0,
+                            openBuilder: (context, action) => Gallery(
+                              gallery: owner.media,
+                              clickedPhoto: owner.media[index],
                             ),
+                            closedBuilder: (context, action) {
+                              return SmoothClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                smoothness: 1,
+                                child: CachedNetworkImage(
+                                  imageUrl: owner.media[index],
+                                  width: 180,
+                                  fit: BoxFit.cover,
+                                ),
+                              );
+                            },
                           );
                         },
                       ),

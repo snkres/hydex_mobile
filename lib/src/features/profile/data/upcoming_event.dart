@@ -11,7 +11,7 @@ class UpcomingEvent with UpcomingEventMappable {
   final String time;
   final Location location;
   final UpcomingEventStatus status;
-  final int numberOfGuests;
+  final List<ProfileGuests> guests;
   final String? cancellationReason;
   final List<String>? guestsNames;
   final List<String> thingsToKnow;
@@ -22,6 +22,8 @@ class UpcomingEvent with UpcomingEventMappable {
   final String bookingType;
   final String passName;
   final List<String>? media;
+  final String? qrCode;
+  final String? qrCodeUrl;
 
   UpcomingEvent({
     required this.id,
@@ -30,9 +32,9 @@ class UpcomingEvent with UpcomingEventMappable {
     required this.time,
     required this.location,
     required this.status,
-    this.numberOfGuests = 0,
     this.cancellationReason,
     this.guestsNames,
+    required this.guests,
     required this.thingsToKnow,
     required this.passId,
     this.termsAndConditions,
@@ -41,6 +43,19 @@ class UpcomingEvent with UpcomingEventMappable {
     required this.bookingType,
     required this.passName,
     this.media,
+    this.qrCode,
+    this.qrCodeUrl,
+  });
+}
+
+@MappableClass()
+class ProfileGuests with ProfileGuestsMappable {
+  final String name, email, gender;
+
+  const ProfileGuests({
+    required this.name,
+    required this.email,
+    required this.gender,
   });
 }
 
@@ -58,7 +73,6 @@ enum UpcomingEventStatus {
   @MappableValue('Cancelled')
   cancelled,
 }
-
 
 @MappableClass()
 class PassportData with PassportDataMappable {

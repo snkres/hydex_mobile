@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/auth/reset_pass.dart';
 import 'package:hydex/src/features/auth/seeker.dart';
 import 'package:hydex/src/features/auth/ui/boarding.dart';
@@ -192,5 +193,12 @@ class AppRoutes {
 
 @riverpod
 GoRouter goRouter(Ref ref) {
-  return AppRoutes(ref).routes;
+  final router = AppRoutes(ref).routes;
+
+  // Wire up force logout so 503 (and failed token refresh) navigates to boarding
+  DioHelper.onForceLogout = () {
+    router.go('/boarding');
+  };
+
+  return router;
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -33,10 +35,20 @@ void main() async {
       ),
     );
   } else {
-    await SentryFlutter.init((options) {
-      options.dsn =
-          'https://fa54dbd5e75020b3a743a3b127cdccb9@o4510173263036416.ingest.de.sentry.io/4510181346705488';
-      options.sendDefaultPii = true;
-    }, appRunner: () => runApp(ProviderScope(child: const MyApp())));
+    runZonedGuarded(
+      () async {
+        await SentryFlutter.init((options) {
+          options.sendDefaultPii = true;
+
+          options.dsn =
+              'https://fa54dbd5e75020b3a743a3b127cdccb9@o4510173263036416.ingest.de.sentry.io/4510181346705488';
+        });
+
+        runApp(ProviderScope(child: const MyApp()));
+      },
+      (exception, stackTrace) async {
+        await Sentry.captureException(exception, stackTrace: stackTrace);
+      },
+    );
   }
 }

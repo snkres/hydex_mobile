@@ -196,16 +196,6 @@ class BannerMapper extends ClassMapperBase<Banner> {
     _$video,
     opt: true,
   );
-  static DateTime _$campaignStartDate(Banner v) => v.campaignStartDate;
-  static const Field<Banner, DateTime> _f$campaignStartDate = Field(
-    'campaignStartDate',
-    _$campaignStartDate,
-  );
-  static DateTime _$campaignEndDate(Banner v) => v.campaignEndDate;
-  static const Field<Banner, DateTime> _f$campaignEndDate = Field(
-    'campaignEndDate',
-    _$campaignEndDate,
-  );
   static Assignment _$assignment(Banner v) => v.assignment;
   static const Field<Banner, Assignment> _f$assignment = Field(
     'assignment',
@@ -226,8 +216,6 @@ class BannerMapper extends ClassMapperBase<Banner> {
     #subtitle: _f$subtitle,
     #image: _f$image,
     #video: _f$video,
-    #campaignStartDate: _f$campaignStartDate,
-    #campaignEndDate: _f$campaignEndDate,
     #assignment: _f$assignment,
     #category: _f$category,
   };
@@ -240,8 +228,6 @@ class BannerMapper extends ClassMapperBase<Banner> {
       subtitle: data.dec(_f$subtitle),
       image: data.dec(_f$image),
       video: data.dec(_f$video),
-      campaignStartDate: data.dec(_f$campaignStartDate),
-      campaignEndDate: data.dec(_f$campaignEndDate),
       assignment: data.dec(_f$assignment),
       category: data.dec(_f$category),
     );
@@ -302,8 +288,6 @@ abstract class BannerCopyWith<$R, $In extends Banner, $Out>
     String? subtitle,
     String? image,
     String? video,
-    DateTime? campaignStartDate,
-    DateTime? campaignEndDate,
     Assignment? assignment,
     EventCategory? category,
   });
@@ -330,8 +314,6 @@ class _BannerCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Banner, $Out>
     String? subtitle,
     Object? image = $none,
     Object? video = $none,
-    DateTime? campaignStartDate,
-    DateTime? campaignEndDate,
     Assignment? assignment,
     Object? category = $none,
   }) => $apply(
@@ -342,8 +324,6 @@ class _BannerCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Banner, $Out>
       if (subtitle != null) #subtitle: subtitle,
       if (image != $none) #image: image,
       if (video != $none) #video: video,
-      if (campaignStartDate != null) #campaignStartDate: campaignStartDate,
-      if (campaignEndDate != null) #campaignEndDate: campaignEndDate,
       if (assignment != null) #assignment: assignment,
       if (category != $none) #category: category,
     }),
@@ -356,11 +336,6 @@ class _BannerCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Banner, $Out>
     subtitle: data.get(#subtitle, or: $value.subtitle),
     image: data.get(#image, or: $value.image),
     video: data.get(#video, or: $value.video),
-    campaignStartDate: data.get(
-      #campaignStartDate,
-      or: $value.campaignStartDate,
-    ),
-    campaignEndDate: data.get(#campaignEndDate, or: $value.campaignEndDate),
     assignment: data.get(#assignment, or: $value.assignment),
     category: data.get(#category, or: $value.category),
   );

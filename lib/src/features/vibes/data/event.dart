@@ -22,8 +22,6 @@ class Banner with BannerMappable {
   final String subtitle;
   String? image;
   String? video;
-  final DateTime campaignStartDate;
-  final DateTime campaignEndDate;
   final Assignment assignment;
   final EventCategory? category;
 
@@ -34,8 +32,6 @@ class Banner with BannerMappable {
     required this.subtitle,
     this.image,
     this.video,
-    required this.campaignStartDate,
-    required this.campaignEndDate,
     required this.assignment,
     this.category,
   });
@@ -93,7 +89,7 @@ extension ScheduleParser on Map<String, OperatingHours> {
         final int openHour = int.parse(openTimeParts[0]);
         final int openMinute = int.parse(openTimeParts[1]);
 
-        final startDateTime = DateTime(
+        var startDateTime = DateTime(
           targetDate.year,
           targetDate.month,
           targetDate.day,
@@ -113,15 +109,23 @@ extension ScheduleParser on Map<String, OperatingHours> {
           closeMinute,
         );
 
-        // Handle closing time being on the next day (e.g., 23:00 to 02:00)
         if (endDateTime.isBefore(startDateTime)) {
           endDateTime = endDateTime.add(const Duration(days: 1));
+        }
+
+        // If the day has already passed this week, move to next week
+        if (endDateTime.isBefore(now)) {
+          startDateTime = startDateTime.add(const Duration(days: 7));
+          endDateTime = endDateTime.add(const Duration(days: 7));
         }
 
         // Generate 30-minute slots
         var currentSlot = startDateTime;
         while (currentSlot.isBefore(endDateTime)) {
-          result.add(currentSlot);
+          // For today, skip slots that have already passed
+          if (currentSlot.isAfter(now) || currentSlot.isAtSameMomentAs(now)) {
+            result.add(currentSlot);
+          }
           currentSlot = currentSlot.add(const Duration(minutes: 30));
         }
       }

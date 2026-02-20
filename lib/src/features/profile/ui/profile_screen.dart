@@ -99,8 +99,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                     id: data.user.id
                                         .substring(0, 7)
                                         .toUpperCase(),
-                                    nationality: "Egyptian" ?? "",
-                                    createdAt: DateTime.now(),
+                                    nationality: data.user.nationality,
+                                    createdAt: data.user.createdAt,
                                   ),
                                   backWidget: BackContainer(),
                                   onTapFlipping: true,
