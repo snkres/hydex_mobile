@@ -9,6 +9,7 @@ import 'package:hydex/src/features/booking/domain/booking_repository.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_summary.dart';
 import 'package:hydex/src/features/booking/ui/components/vendor_container.dart';
+import 'package:hydex/src/features/profile/domain/profile_providers.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:lottie/lottie.dart';
@@ -240,6 +241,7 @@ class _LoadingFloatingButtonState extends ConsumerState<LoadingFloatingButton> {
                     return false;
                   });
               if (status && context.mounted) {
+                ref.refresh(getUpcomingEventsProvider);
                 showModalBottomSheet(
                   context: context,
                   builder: (context) => Center(

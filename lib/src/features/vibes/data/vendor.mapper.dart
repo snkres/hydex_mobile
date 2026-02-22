@@ -47,11 +47,6 @@ class VendorMapper extends ClassMapperBase<Vendor> {
   );
   static String _$name(Vendor v) => v.name;
   static const Field<Vendor, String> _f$name = Field('name', _$name);
-  static String _$headline(Vendor v) => v.headline;
-  static const Field<Vendor, String> _f$headline = Field(
-    'headline',
-    _$headline,
-  );
   static bool _$isFavorited(Vendor v) => v.isFavorited;
   static const Field<Vendor, bool> _f$isFavorited = Field(
     'isFavorited',
@@ -66,10 +61,11 @@ class VendorMapper extends ClassMapperBase<Vendor> {
     opt: true,
     def: const [],
   );
-  static String _$description(Vendor v) => v.description;
+  static String? _$description(Vendor v) => v.description;
   static const Field<Vendor, String> _f$description = Field(
     'description',
     _$description,
+    opt: true,
   );
   static Location _$location(Vendor v) => v.location;
   static const Field<Vendor, Location> _f$location = Field(
@@ -110,7 +106,12 @@ class VendorMapper extends ClassMapperBase<Vendor> {
     opt: true,
   );
   static List<String> _$tags(Vendor v) => v.tags;
-  static const Field<Vendor, List<String>> _f$tags = Field('tags', _$tags);
+  static const Field<Vendor, List<String>> _f$tags = Field(
+    'tags',
+    _$tags,
+    opt: true,
+    def: const [],
+  );
   static List<String> _$thingsToKnow(Vendor v) => v.thingsToKnow;
   static const Field<Vendor, List<String>> _f$thingsToKnow = Field(
     'thingsToKnow',
@@ -130,7 +131,6 @@ class VendorMapper extends ClassMapperBase<Vendor> {
     #bookingExperience: _f$bookingExperience,
     #category: _f$category,
     #name: _f$name,
-    #headline: _f$headline,
     #isFavorited: _f$isFavorited,
     #events: _f$events,
     #description: _f$description,
@@ -154,7 +154,6 @@ class VendorMapper extends ClassMapperBase<Vendor> {
       bookingExperience: data.dec(_f$bookingExperience),
       category: data.dec(_f$category),
       name: data.dec(_f$name),
-      headline: data.dec(_f$headline),
       isFavorited: data.dec(_f$isFavorited),
       events: data.dec(_f$events),
       description: data.dec(_f$description),
@@ -247,7 +246,6 @@ abstract class VendorCopyWith<$R, $In extends Vendor, $Out>
     BookingExperience? bookingExperience,
     VendorCategory? category,
     String? name,
-    String? headline,
     bool? isFavorited,
     List<EventInsideVendor>? events,
     String? description,
@@ -355,10 +353,9 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
     Object? bookingExperience = $none,
     Object? category = $none,
     String? name,
-    String? headline,
     bool? isFavorited,
     List<EventInsideVendor>? events,
-    String? description,
+    Object? description = $none,
     Location? location,
     Object? priceType = $none,
     Map<String, OperatingHours>? operatingHours,
@@ -377,10 +374,9 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
       if (bookingExperience != $none) #bookingExperience: bookingExperience,
       if (category != $none) #category: category,
       if (name != null) #name: name,
-      if (headline != null) #headline: headline,
       if (isFavorited != null) #isFavorited: isFavorited,
       if (events != null) #events: events,
-      if (description != null) #description: description,
+      if (description != $none) #description: description,
       if (location != null) #location: location,
       if (priceType != $none) #priceType: priceType,
       if (operatingHours != null) #operatingHours: operatingHours,
@@ -404,7 +400,6 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
     ),
     category: data.get(#category, or: $value.category),
     name: data.get(#name, or: $value.name),
-    headline: data.get(#headline, or: $value.headline),
     isFavorited: data.get(#isFavorited, or: $value.isFavorited),
     events: data.get(#events, or: $value.events),
     description: data.get(#description, or: $value.description),

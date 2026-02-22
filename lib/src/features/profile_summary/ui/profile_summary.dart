@@ -11,6 +11,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/core/ui/widgets/adaptive_image.dart';
+import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/src/features/auth/ui/components/error_snackbar.dart';
 import 'package:hydex/src/features/booking/domain/booking_repository.dart';
 import 'package:hydex/src/features/booking/ui/components/vendor_container.dart';
@@ -23,7 +24,7 @@ import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:intl/intl.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
-class ProfileSummary extends StatelessWidget {
+class ProfileSummary extends ConsumerWidget {
   const ProfileSummary({
     super.key,
     required this.event,
@@ -42,7 +43,17 @@ class ProfileSummary extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(currentUserProvider).value;
+    final allGuests = [
+      if (user != null)
+        ProfileGuests(
+          name: user.fullName ?? 'You',
+          email: user.email,
+          gender: user.gender ?? '',
+        ),
+      ...event.guests,
+    ];
     return Scaffold(
       body: SingleChildScrollView(
         child: SafeArea(
@@ -94,7 +105,7 @@ class ProfileSummary extends StatelessWidget {
                       children: [
                         Text("Total Price"),
                         Text(
-                          "Fees for ${event.guests.isEmpty ? 1 : event.guests.length} passes",
+                          "Fees for ${allGuests.isEmpty ? 1 : allGuests.length} passes",
                           style: AppTextStyles(context).captionRegular.copyWith(
                             color: AppColors.textSecondary,
                           ),
@@ -134,11 +145,11 @@ class ProfileSummary extends StatelessWidget {
                 ),
               ),
               Visibility(
-                visible: event.guests.isNotEmpty,
+                visible: allGuests.isNotEmpty,
                 child: Column(
                   crossAxisAlignment: .start,
                   children: [
-                    SizedBox(height: 32),
+                    SizedBox(height: 24),
 
                     Padding(
                       padding: const .symmetric(horizontal: 16),
@@ -151,14 +162,14 @@ class ProfileSummary extends StatelessWidget {
                     ),
                     SizedBox(height: 12),
                     ...List.generate(
-                      event.guests.length,
+                      allGuests.length,
                       (index) => SmoothContainer(
                         side: BorderSide(color: AppColors.borderDefault),
                         borderRadius: .circular(16),
                         margin: EdgeInsets.only(
                           left: 16,
                           right: 16,
-                          bottom: index < (event.guests.length) - 1 ? 8 : 0,
+                          bottom: index < (allGuests.length) - 1 ? 8 : 0,
                         ),
                         padding: .all(16),
                         smoothness: 1,
@@ -174,7 +185,7 @@ class ProfileSummary extends StatelessWidget {
                               crossAxisAlignment: .start,
                               children: [
                                 Text(
-                                  event.guestsNames![index],
+                                  allGuests[index].name,
                                   style: TextStyle(
                                     fontWeight: .w600,
                                     fontSize:
@@ -182,7 +193,9 @@ class ProfileSummary extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  "Guest ${index + 1}",
+                                  index == 0 && user != null
+                                      ? "You"
+                                      : "Guest $index",
                                   style: TextStyle(
                                     color: AppColors.textSecondary,
                                     fontSize:
@@ -193,123 +206,102 @@ class ProfileSummary extends StatelessWidget {
                             ),
                             Spacer(),
 
-                            Visibility(
-                              visible: true,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    showDragHandle: true,
-                                    isScrollControlled: true,
-                                    builder: (context) {
-                                      final ticketKey = GlobalKey();
-                                      return Wrap(
-                                        children: [
-                                          RepaintBoundary(
-                                            key: ticketKey,
-                                            child: Container(
-                                              color: Theme.of(
-                                                context,
-                                              ).scaffoldBackgroundColor,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 16,
-                                                    vertical: 6,
+                            ElevatedButton(
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  showDragHandle: true,
+                                  isScrollControlled: true,
+                                  builder: (context) {
+                                    final ticketKey = GlobalKey();
+                                    return Wrap(
+                                      children: [
+                                        RepaintBoundary(
+                                          key: ticketKey,
+                                          child: Container(
+                                            color: Theme.of(
+                                              context,
+                                            ).scaffoldBackgroundColor,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 6,
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: .start,
+                                              children: [
+                                                Text(
+                                                  "Ticket#${event.id.substring(0, 8).toUpperCase()}",
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        AppTextStyles(
+                                                          context,
+                                                        ).accumulator *
+                                                        20,
+                                                    fontWeight: .w700,
                                                   ),
-                                              child: Column(
-                                                crossAxisAlignment: .start,
-                                                children: [
-                                                  Text(
-                                                    "Ticket#${event.id.substring(0, 8).toUpperCase()}",
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                          AppTextStyles(
-                                                            context,
-                                                          ).accumulator *
-                                                          20,
-                                                      fontWeight: .w700,
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: 12),
-                                                  TicketContainer(
-                                                    backgroundColor: AppColors
-                                                        .surfaceContainer,
-                                                    upperChild: Column(
-                                                      crossAxisAlignment:
-                                                          .start,
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              .spaceBetween,
-                                                          children: [
-                                                            Expanded(
-                                                              child: Text(
-                                                                event.name,
-                                                                style: TextStyle(
-                                                                  fontSize:
-                                                                      AppTextStyles(
-                                                                        context,
-                                                                      ).accumulator *
-                                                                      20,
-                                                                  fontWeight:
-                                                                      .w700,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Container(
-                                                              width: 70,
-                                                              height: 70,
-                                                              decoration: ShapeDecoration(
-                                                                image: DecorationImage(
-                                                                  fit: .cover,
-                                                                  image: CachedNetworkImageProvider(
-                                                                    event
-                                                                            .media
-                                                                            ?.first ??
-                                                                        "",
-                                                                  ),
-                                                                ),
-                                                                shape: RoundedSuperellipseBorder(
-                                                                  side: BorderSide(
-                                                                    color: AppColors
-                                                                        .borderDefault,
-                                                                    width: 1,
-                                                                  ),
-                                                                  borderRadius:
-                                                                      .circular(
-                                                                        8,
-                                                                      ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          width: 150,
-                                                          child: Text(
-                                                            event
-                                                                    .location
-                                                                    .address ??
-                                                                "${event.location.street}, ${event.location.city}, ${event.location.country}",
-                                                            maxLines: 2,
-                                                            overflow: .ellipsis,
-                                                            style: TextStyle(
-                                                              fontSize:
-                                                                  AppTextStyles(
-                                                                    context,
-                                                                  ).accumulator *
-                                                                  11,
-                                                              color: Color(
-                                                                0xff77767B,
+                                                ),
+                                                SizedBox(height: 12),
+                                                TicketContainer(
+                                                  backgroundColor: AppColors
+                                                      .surfaceContainer,
+                                                  upperChild: Column(
+                                                    crossAxisAlignment: .start,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            .spaceBetween,
+                                                        children: [
+                                                          Expanded(
+                                                            child: Text(
+                                                              event.name,
+                                                              style: TextStyle(
+                                                                fontSize:
+                                                                    AppTextStyles(
+                                                                      context,
+                                                                    ).accumulator *
+                                                                    20,
+                                                                fontWeight:
+                                                                    .w700,
                                                               ),
                                                             ),
                                                           ),
-                                                        ),
-                                                        SizedBox(height: 16),
-                                                        Divider(),
-                                                        SizedBox(height: 16),
-                                                        Text(
-                                                          "Guest Name",
+                                                          Container(
+                                                            width: 70,
+                                                            height: 70,
+                                                            decoration: ShapeDecoration(
+                                                              image: DecorationImage(
+                                                                fit: .cover,
+                                                                image: CachedNetworkImageProvider(
+                                                                  event
+                                                                          .media
+                                                                          ?.first ??
+                                                                      "",
+                                                                ),
+                                                              ),
+                                                              shape: RoundedSuperellipseBorder(
+                                                                side: BorderSide(
+                                                                  color: AppColors
+                                                                      .borderDefault,
+                                                                  width: 1,
+                                                                ),
+                                                                borderRadius:
+                                                                    .circular(
+                                                                      8,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        width: 150,
+                                                        child: Text(
+                                                          event
+                                                                  .location
+                                                                  .address ??
+                                                              "${event.location.street}, ${event.location.city}, ${event.location.country}",
+                                                          maxLines: 2,
+                                                          overflow: .ellipsis,
                                                           style: TextStyle(
                                                             fontSize:
                                                                 AppTextStyles(
@@ -321,256 +313,266 @@ class ProfileSummary extends StatelessWidget {
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(height: 4),
-                                                        Text(
-                                                          event
-                                                              .guests[index]
-                                                              .name,
-                                                          style: TextStyle(
-                                                            fontSize:
-                                                                AppTextStyles(
-                                                                  context,
-                                                                ).accumulator *
-                                                                16,
-                                                            fontWeight: .w700,
+                                                      ),
+                                                      SizedBox(height: 16),
+                                                      Divider(),
+                                                      SizedBox(height: 16),
+                                                      Text(
+                                                        "Guest Name",
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              AppTextStyles(
+                                                                context,
+                                                              ).accumulator *
+                                                              11,
+                                                          color: Color(
+                                                            0xff77767B,
                                                           ),
                                                         ),
-                                                        SizedBox(height: 4),
-                                                        Text(
-                                                          "${event.guests[index].email} - ${event.guests[index].gender}",
-                                                          style: TextStyle(
-                                                            fontSize:
-                                                                AppTextStyles(
-                                                                  context,
-                                                                ).accumulator *
-                                                                12,
-                                                            color: Color(
-                                                              0xff77767B,
-                                                            ),
+                                                      ),
+                                                      SizedBox(height: 4),
+                                                      Text(
+                                                        allGuests[index].name,
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              AppTextStyles(
+                                                                context,
+                                                              ).accumulator *
+                                                              16,
+                                                          fontWeight: .w700,
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 4),
+                                                      Text(
+                                                        "${allGuests[index].email} - ${allGuests[index].gender}",
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              AppTextStyles(
+                                                                context,
+                                                              ).accumulator *
+                                                              12,
+                                                          color: Color(
+                                                            0xff77767B,
                                                           ),
                                                         ),
-                                                        SizedBox(height: 16),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              .spaceBetween,
-                                                          children: [
-                                                            Column(
-                                                              crossAxisAlignment:
-                                                                  .start,
-                                                              spacing: 4,
-                                                              children: [
-                                                                Text(
-                                                                  "Date",
-                                                                  style: TextStyle(
-                                                                    fontSize:
-                                                                        AppTextStyles(
-                                                                          context,
-                                                                        ).accumulator *
-                                                                        12,
-                                                                    color: Color(
-                                                                      0xff77767B,
-                                                                    ),
+                                                      ),
+                                                      SizedBox(height: 16),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            .spaceBetween,
+                                                        children: [
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                .start,
+                                                            spacing: 4,
+                                                            children: [
+                                                              Text(
+                                                                "Date",
+                                                                style: TextStyle(
+                                                                  fontSize:
+                                                                      AppTextStyles(
+                                                                        context,
+                                                                      ).accumulator *
+                                                                      12,
+                                                                  color: Color(
+                                                                    0xff77767B,
                                                                   ),
                                                                 ),
-                                                                Text(
-                                                                  DateFormat(
-                                                                    'E',
-                                                                  ).format(
-                                                                    event.date,
-                                                                  ),
-                                                                  style: TextStyle(
-                                                                    fontSize:
-                                                                        AppTextStyles(
-                                                                          context,
-                                                                        ).accumulator *
-                                                                        16,
-                                                                    fontWeight:
-                                                                        .w700,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  DateFormat(
-                                                                    'd MMM y',
-                                                                  ).format(
-                                                                    event.date,
-                                                                  ),
-                                                                  style: TextStyle(
-                                                                    fontSize:
-                                                                        AppTextStyles(
-                                                                          context,
-                                                                        ).accumulator *
-                                                                        12,
-                                                                    color: Color(
-                                                                      0xff77767B,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            Column(
-                                                              crossAxisAlignment:
-                                                                  .start,
-                                                              spacing: 4,
-                                                              children: [
-                                                                Text(
-                                                                  "Time",
-                                                                  style: TextStyle(
-                                                                    fontSize:
-                                                                        AppTextStyles(
-                                                                          context,
-                                                                        ).accumulator *
-                                                                        12,
-                                                                    color: Color(
-                                                                      0xff77767B,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  DateFormat(
-                                                                    'hh:mm a',
-                                                                  ).format(
-                                                                    event.date,
-                                                                  ),
-                                                                  style: TextStyle(
-                                                                    fontSize:
-                                                                        AppTextStyles(
-                                                                          context,
-                                                                        ).accumulator *
-                                                                        16,
-                                                                    fontWeight:
-                                                                        .w700,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  "Doors open 1h before",
-                                                                  style: TextStyle(
-                                                                    fontSize:
-                                                                        AppTextStyles(
-                                                                          context,
-                                                                        ).accumulator *
-                                                                        12,
-                                                                    color: Color(
-                                                                      0xff77767B,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    lowerChild: Center(
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets.all(
-                                                              10.0,
-                                                            ),
-                                                        child: Column(
-                                                          spacing: 8,
-                                                          children: [
-                                                            AdaptiveImage(
-                                                              height: 125,
-                                                              width: 125,
-                                                              imageData:
-                                                                  event.qrCode!,
-                                                            ),
-                                                            Text(
-                                                              "Scan at entrance",
-                                                              style: TextStyle(
-                                                                fontSize:
-                                                                    AppTextStyles(
-                                                                      context,
-                                                                    ).accumulator *
-                                                                    11,
-                                                                color: AppColors
-                                                                    .textSecondary,
                                                               ),
+                                                              Text(
+                                                                DateFormat(
+                                                                  'E',
+                                                                ).format(
+                                                                  event.date,
+                                                                ),
+                                                                style: TextStyle(
+                                                                  fontSize:
+                                                                      AppTextStyles(
+                                                                        context,
+                                                                      ).accumulator *
+                                                                      16,
+                                                                  fontWeight:
+                                                                      .w700,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                DateFormat(
+                                                                  'd MMM y',
+                                                                ).format(
+                                                                  event.date,
+                                                                ),
+                                                                style: TextStyle(
+                                                                  fontSize:
+                                                                      AppTextStyles(
+                                                                        context,
+                                                                      ).accumulator *
+                                                                      12,
+                                                                  color: Color(
+                                                                    0xff77767B,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                .start,
+                                                            spacing: 4,
+                                                            children: [
+                                                              Text(
+                                                                "Time",
+                                                                style: TextStyle(
+                                                                  fontSize:
+                                                                      AppTextStyles(
+                                                                        context,
+                                                                      ).accumulator *
+                                                                      12,
+                                                                  color: Color(
+                                                                    0xff77767B,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                DateFormat(
+                                                                  'hh:mm a',
+                                                                ).format(
+                                                                  event.date,
+                                                                ),
+                                                                style: TextStyle(
+                                                                  fontSize:
+                                                                      AppTextStyles(
+                                                                        context,
+                                                                      ).accumulator *
+                                                                      16,
+                                                                  fontWeight:
+                                                                      .w700,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                "Doors open 1h before",
+                                                                style: TextStyle(
+                                                                  fontSize:
+                                                                      AppTextStyles(
+                                                                        context,
+                                                                      ).accumulator *
+                                                                      12,
+                                                                  color: Color(
+                                                                    0xff77767B,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  lowerChild: Center(
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                            10.0,
+                                                          ),
+                                                      child: Column(
+                                                        spacing: 8,
+                                                        children: [
+                                                          AdaptiveImage(
+                                                            height: 125,
+                                                            width: 125,
+                                                            imageData:
+                                                                event.qrCode!,
+                                                          ),
+                                                          Text(
+                                                            "Scan at entrance",
+                                                            style: TextStyle(
+                                                              fontSize:
+                                                                  AppTextStyles(
+                                                                    context,
+                                                                  ).accumulator *
+                                                                  11,
+                                                              color: AppColors
+                                                                  .textSecondary,
                                                             ),
-                                                          ],
-                                                        ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          Row(
-                                            spacing: 12,
-                                            children: [
-                                              SizedBox(height: 12),
-                                              ElevatedButton.icon(
-                                                style: ButtonStyle(
-                                                  backgroundColor: .all(
-                                                    AppColors.buttonTertiary,
-                                                  ),
-                                                ),
-                                                onPressed: () async {
-                                                  final boundary =
-                                                      ticketKey.currentContext
-                                                              ?.findRenderObject()
-                                                          as RenderRepaintBoundary?;
-                                                  if (boundary == null) return;
-                                                  final image = await boundary
-                                                      .toImage(pixelRatio: 3.0);
-                                                  final byteData = await image
-                                                      .toByteData(
-                                                        format: ui
-                                                            .ImageByteFormat
-                                                            .png,
-                                                      );
-                                                  if (byteData == null) return;
-                                                  final pngBytes = byteData
-                                                      .buffer
-                                                      .asUint8List();
-                                                  final tempDir =
-                                                      await getTemporaryDirectory();
-                                                  final file = File(
-                                                    '${tempDir.path}/ticket.png',
-                                                  );
-                                                  await file.writeAsBytes(
-                                                    pngBytes,
-                                                  );
-                                                  await SharePlus.instance
-                                                      .share(
-                                                        ShareParams(
-                                                          files: [
-                                                            XFile(file.path),
-                                                          ],
-                                                        ),
-                                                      );
-                                                },
-                                                icon: SvgPicture.asset(
-                                                  "img/svg/send.svg",
-                                                  package: "assets",
-                                                ),
-                                                label: Text(
-                                                  "Send to friend",
-                                                  style: TextStyle(
-                                                    fontWeight: .w600,
-                                                    fontSize:
-                                                        AppTextStyles(
-                                                          context,
-                                                        ).accumulator *
-                                                        14,
-                                                  ),
+                                        ),
+                                        Row(
+                                          spacing: 12,
+                                          children: [
+                                            SizedBox(height: 12),
+                                            ElevatedButton.icon(
+                                              style: ButtonStyle(
+                                                backgroundColor: .all(
+                                                  AppColors.buttonTertiary,
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                child: Text(
-                                  "View Pass",
-                                  style: TextStyle(
-                                    fontSize:
-                                        AppTextStyles(context).accumulator * 13,
-                                    fontWeight: .w600,
-                                  ),
+                                              onPressed: () async {
+                                                final boundary =
+                                                    ticketKey.currentContext
+                                                            ?.findRenderObject()
+                                                        as RenderRepaintBoundary?;
+                                                if (boundary == null) return;
+                                                final image = await boundary
+                                                    .toImage(pixelRatio: 3.0);
+                                                final byteData = await image
+                                                    .toByteData(
+                                                      format: ui
+                                                          .ImageByteFormat
+                                                          .png,
+                                                    );
+                                                if (byteData == null) return;
+                                                final pngBytes = byteData.buffer
+                                                    .asUint8List();
+                                                final tempDir =
+                                                    await getTemporaryDirectory();
+                                                final file = File(
+                                                  '${tempDir.path}/ticket.png',
+                                                );
+                                                await file.writeAsBytes(
+                                                  pngBytes,
+                                                );
+                                                await SharePlus.instance.share(
+                                                  ShareParams(
+                                                    files: [XFile(file.path)],
+                                                  ),
+                                                );
+                                              },
+                                              icon: SvgPicture.asset(
+                                                "img/svg/send.svg",
+                                                package: "assets",
+                                              ),
+                                              label: Text(
+                                                "Send to friend",
+                                                style: TextStyle(
+                                                  fontWeight: .w600,
+                                                  fontSize:
+                                                      AppTextStyles(
+                                                        context,
+                                                      ).accumulator *
+                                                      14,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              child: Text(
+                                "View Pass",
+                                style: TextStyle(
+                                  fontSize:
+                                      AppTextStyles(context).accumulator * 13,
+                                  fontWeight: .w600,
                                 ),
                               ),
                             ),
@@ -584,16 +586,12 @@ class ProfileSummary extends StatelessWidget {
 
               Visibility(
                 visible: event.thingsToKnow.isNotEmpty,
-                child: SizedBox(height: 32),
-              ),
-
-              Visibility(
-                visible: event.thingsToKnow.isNotEmpty,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SizedBox(height: 32),
                       Text(
                         "Things to know".toUpperCase(),
                         style: TextStyle(

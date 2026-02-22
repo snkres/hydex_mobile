@@ -1,13 +1,13 @@
 import 'dart:developer';
 
 import 'package:animations/animations.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
@@ -758,7 +758,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                                 ),
                                               ),
                                               ReadMoreText(
-                                                vendor.description,
+                                                vendor.description ?? "",
                                                 trimMode: TrimMode.Line,
                                                 trimLines: 3,
                                                 delimiter: "....",
@@ -1269,9 +1269,12 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
         },
         error: (e, s) {
           log("Vendor Error: ", error: e, stackTrace: s);
-          if (kReleaseMode) {
-            Sentry.captureException(e, stackTrace: s);
+          if (e is Exception) {
+            if (e.toString().contains("not found")) {
+              return Center(child: Text("Not Found"));
+            }
           }
+
           return Center(child: Text("Error"));
         },
         loading: () => Center(child: CircularProgressIndicator()),

@@ -115,8 +115,11 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
         error: (e, st) {
           log("Event Detail Error", error: e, stackTrace: st);
 
-          Sentry.captureException(e, stackTrace: st);
-
+          if (e is Exception) {
+            if (e.toString().contains("not found")) {
+              return Center(child: Text("Not Found"));
+            }
+          }
           return const Scaffold(
             body: Center(child: Text("Something went wrong")),
           );
@@ -976,7 +979,7 @@ class CollapsedEventContainer extends ConsumerWidget {
                                   style: AppTextStyles(context).smallBold,
                                 ),
                                 Text(
-                                  owner.description,
+                                  owner.description ?? "",
                                   style: AppTextStyles(context).captionRegular
                                       .copyWith(color: AppColors.textSecondary),
                                 ),

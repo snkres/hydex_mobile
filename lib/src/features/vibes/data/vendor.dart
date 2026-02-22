@@ -11,8 +11,7 @@ class Vendor with VendorMappable {
   final String id;
   final String? logo;
   final String name;
-  final String headline;
-  final String description;
+  final String? description;
   final Location location;
   final bool isFavorited;
 
@@ -37,10 +36,9 @@ class Vendor with VendorMappable {
     this.bookingExperience,
     this.category,
     required this.name,
-    required this.headline,
     this.isFavorited = false,
     this.events = const [],
-    required this.description,
+    this.description,
     required this.location,
     this.priceType,
     required this.operatingHours,
@@ -49,7 +47,7 @@ class Vendor with VendorMappable {
     required this.gallery,
     required this.details,
     this.detailsDescription,
-    required this.tags,
+    this.tags = const [],
     required this.thingsToKnow,
     this.termsAndConditions,
   });
