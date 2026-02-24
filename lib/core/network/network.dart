@@ -169,8 +169,8 @@ class DioHelper {
     _refreshEndpoint = '/auth/refresh';
 
     BaseOptions options = BaseOptions(
-      // baseUrl: 'https://api.hyde-x.com',
-      baseUrl: 'https://dev.api.hyde-x.com',
+      baseUrl: 'https://api.hyde-x.com',
+      // baseUrl: 'https://dev.api.hyde-x.com',
       connectTimeout: Duration(milliseconds: 30000),
       receiveTimeout: Duration(milliseconds: 30000),
       sendTimeout: Duration(milliseconds: 30000),
