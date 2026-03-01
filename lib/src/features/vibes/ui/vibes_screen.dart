@@ -792,9 +792,9 @@ class AllVendorsWidget extends ConsumerWidget {
                       return SizedBox(
                         width: 240,
                         child: EventContainer(
-                          heading: data[index].name,
-                          description: data[index].location.address,
-                          image: data[index].media.first,
+                          heading: data[index].name ?? "",
+                          description: data[index].location?.address ?? "",
+                          image: data[index].media.firstOrNull,
                           tag:
                               data[index].category?.name ??
                               data[index].tags.first,
@@ -947,9 +947,9 @@ class AllEventsWidget extends ConsumerWidget {
                             avatarImage: event.vendor.logo,
 
                             date: event.startTime.formatDate(),
-                            heading: event.name,
+                            heading: event.name ?? "",
                             image: event.media.firstOrNull,
-                            description: event.location.address,
+                            description: event.location?.address ?? "",
                           ),
                         ),
                       );
@@ -1194,7 +1194,9 @@ class CuratedContainer extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            heading,
+                            heading.trimLeft(),
+                            maxLines: 2,
+
                             style: TextStyle(
                               fontSize:
                                   AppTextStyles(context).accumulator *
@@ -1205,7 +1207,7 @@ class CuratedContainer extends StatelessWidget {
                           ),
                           SizedBox(height: spaceBetweenHeadingAndEnd),
                           Text(
-                            endText,
+                            endText.capitalize(),
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize:
@@ -1455,7 +1457,7 @@ class EventContainer extends StatelessWidget {
                                 ],
                               ),
                               Text(
-                                heading,
+                                heading.trimLeft(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(

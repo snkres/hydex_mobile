@@ -153,12 +153,12 @@ class CategoryNoDesc with CategoryNoDescMappable {
 @MappableClass()
 class Event with EventMappable {
   final String id;
-  final String name;
-  final String description;
+  final String? name;
+  final String? description;
   final DateTime startTime;
   final DateTime endTime;
   final List<String> media, tags;
-  final Location location;
+  final Location? location;
   final List<Detail> details;
   final PriceType? priceType;
   final String? detailsTitle;
@@ -179,7 +179,7 @@ class Event with EventMappable {
     required this.startTime,
     required this.endTime,
     required this.media,
-    required this.location,
+    this.location,
     required this.details,
     this.priceType,
     required this.tags,

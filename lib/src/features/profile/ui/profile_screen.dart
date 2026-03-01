@@ -64,7 +64,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
               return [
                 SliverAppBar(
                   automaticallyImplyLeading: false,
-                  toolbarHeight: isUserInHistory ? 330 : 240,
+                  toolbarHeight: isUserInHistory ? 340 : 255,
                   flexibleSpace: FlexibleSpaceBar(
                     background: Stack(
                       alignment: Alignment.center,

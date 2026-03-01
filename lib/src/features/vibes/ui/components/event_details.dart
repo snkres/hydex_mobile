@@ -11,6 +11,7 @@ import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/booking/data/create_book.dart';
 import 'package:hydex/src/features/booking/data/format_time.dart';
 import 'package:hydex/src/features/location/domain/location_service.dart';
+import 'package:hydex/src/features/vibes/data/coordinates.dart';
 import 'package:hydex/src/features/vibes/data/event.dart';
 import 'package:hydex/src/features/vibes/data/location.dart';
 import 'package:hydex/src/features/vibes/data/vendor.dart';
@@ -86,27 +87,31 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
 
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: PrimaryButton(
-          bgColor: Colors.white,
-          frColor: Colors.black,
-          onTap: () async {
-            final event = eventAsync.requireValue;
-            final book = CreateBook(
-              name: event.name,
-              image: event.vendor.logo ?? "",
-              location:
-                  event.location.address ??
-                  "${event.location.street}, ${event.location.city}, ${event.location.country}",
-              termsAndConditions: event.termsAndConditions,
-              passes: event.bookingExperience?.passes ?? [],
-              startTime: event.startTime,
-            );
-            ref.read(createBookProvider.notifier).updateBook(book);
-            context.push("/create-booking", extra: book);
-          },
-          title: "RSVP",
+      floatingActionButton: Visibility(
+        visible:
+            eventAsync.value?.bookingExperience?.passes.isNotEmpty ?? false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: PrimaryButton(
+            bgColor: Colors.white,
+            frColor: Colors.black,
+            onTap: () async {
+              final event = eventAsync.requireValue;
+              final book = CreateBook(
+                name: event.name ?? "",
+                image: event.vendor.logo ?? "",
+                location:
+                    event.location?.address ??
+                    "${event.location?.street}, ${event.location?.city}, ${event.location?.country}",
+                termsAndConditions: event.termsAndConditions,
+                passes: event.bookingExperience?.passes ?? [],
+                startTime: event.startTime,
+              );
+              ref.read(createBookProvider.notifier).updateBook(book);
+              context.push("/create-booking", extra: book);
+            },
+            title: "RSVP",
+          ),
         ),
       ),
       body: eventAsync.when(
@@ -227,15 +232,17 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                                 CollapsedEventContainer(
                                   experiences: event.experiences,
                                   details: event.details,
-                                  name: event.name,
+                                  name: event.name ?? "",
                                   createdTime: event.createdAt,
                                   thingsToKnow: event.thingsToKnow ?? [],
                                   category: event.category?.name,
-                                  description: event.description,
+                                  description: event.description ?? "",
                                   endTime: event.endTime,
                                   startTime: event.startTime,
                                   tags: event.tags,
-                                  location: event.location,
+                                  location:
+                                      event.location ??
+                                      Location(coordinates: Coordinates()),
                                   pricing: event.priceType?.label ?? "",
                                   owner: event.vendor,
                                   title: event.detailsTitle,
@@ -274,7 +281,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                               switchOutCurve: Curves.easeIn,
                               child: _isCollapsedFromSheet
                                   ? Text(
-                                      event.name,
+                                      event.name ?? "",
                                       key: const ValueKey('title'),
                                       style: const TextStyle(
                                         color: Colors.white,
@@ -781,7 +788,7 @@ class CollapsedEventContainer extends ConsumerWidget {
                                       ),
                                     ),
                                     Text(
-                                      owner.name,
+                                      owner.name ?? "",
                                       style: AppTextStyles(context).smallMedium,
                                     ),
                                   ],
@@ -975,7 +982,7 @@ class CollapsedEventContainer extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  owner.name,
+                                  owner.name ?? "",
                                   style: AppTextStyles(context).smallBold,
                                 ),
                                 Text(

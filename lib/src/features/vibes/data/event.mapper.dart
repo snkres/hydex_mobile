@@ -1449,9 +1449,9 @@ class EventMapper extends ClassMapperBase<Event> {
 
   static String _$id(Event v) => v.id;
   static const Field<Event, String> _f$id = Field('id', _$id);
-  static String _$name(Event v) => v.name;
+  static String? _$name(Event v) => v.name;
   static const Field<Event, String> _f$name = Field('name', _$name);
-  static String _$description(Event v) => v.description;
+  static String? _$description(Event v) => v.description;
   static const Field<Event, String> _f$description = Field(
     'description',
     _$description,
@@ -1465,10 +1465,11 @@ class EventMapper extends ClassMapperBase<Event> {
   static const Field<Event, DateTime> _f$endTime = Field('endTime', _$endTime);
   static List<String> _$media(Event v) => v.media;
   static const Field<Event, List<String>> _f$media = Field('media', _$media);
-  static Location _$location(Event v) => v.location;
+  static Location? _$location(Event v) => v.location;
   static const Field<Event, Location> _f$location = Field(
     'location',
     _$location,
+    opt: true,
   );
   static List<Detail> _$details(Event v) => v.details;
   static const Field<Event, List<Detail>> _f$details = Field(
@@ -1626,7 +1627,7 @@ extension EventValueCopy<$R, $Out> on ObjectCopyWith<$R, Event, $Out> {
 abstract class EventCopyWith<$R, $In extends Event, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get media;
-  LocationCopyWith<$R, Location, Location> get location;
+  LocationCopyWith<$R, Location, Location>? get location;
   ListCopyWith<$R, Detail, DetailCopyWith<$R, Detail, Detail>> get details;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get tags;
   CategoryNoDescCopyWith<$R, CategoryNoDesc, CategoryNoDesc>? get category;
@@ -1679,8 +1680,8 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
         (v) => call(media: v),
       );
   @override
-  LocationCopyWith<$R, Location, Location> get location =>
-      $value.location.copyWith.$chain((v) => call(location: v));
+  LocationCopyWith<$R, Location, Location>? get location =>
+      $value.location?.copyWith.$chain((v) => call(location: v));
   @override
   ListCopyWith<$R, Detail, DetailCopyWith<$R, Detail, Detail>> get details =>
       ListCopyWith(
@@ -1729,12 +1730,12 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
   @override
   $R call({
     String? id,
-    String? name,
-    String? description,
+    Object? name = $none,
+    Object? description = $none,
     DateTime? startTime,
     DateTime? endTime,
     List<String>? media,
-    Location? location,
+    Object? location = $none,
     List<Detail>? details,
     Object? priceType = $none,
     List<String>? tags,
@@ -1750,12 +1751,12 @@ class _EventCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Event, $Out>
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
-      if (name != null) #name: name,
-      if (description != null) #description: description,
+      if (name != $none) #name: name,
+      if (description != $none) #description: description,
       if (startTime != null) #startTime: startTime,
       if (endTime != null) #endTime: endTime,
       if (media != null) #media: media,
-      if (location != null) #location: location,
+      if (location != $none) #location: location,
       if (details != null) #details: details,
       if (priceType != $none) #priceType: priceType,
       if (tags != null) #tags: tags,

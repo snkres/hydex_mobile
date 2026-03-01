@@ -174,39 +174,43 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
 
     return Scaffold(
       floatingActionButtonLocation: .centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: PrimaryButton(
-          bgColor: Colors.white,
-          frColor: Colors.black,
-          onTap: () async {
-            try {
-              final vendor = vendorAsync.requireValue;
-              print("Vendor: ${vendor.operatingHours}");
-              final book = CreateBook(
-                image: vendor.logo ?? "",
-                location:
-                    vendor.location.address ??
-                    "${vendor.location.street}, ${vendor.location.city}, ${vendor.location.country}",
-                name: vendor.name,
-                operatingHours: vendor.operatingHours.toOpenDateTimes(),
-                termsAndConditions: vendor.termsAndConditions,
-                requiresApproval:
-                    vendorAsync
-                        .requireValue
-                        .bookingExperience
-                        ?.requireReservationApproval ??
-                    false,
-                passes: vendor.bookingExperience?.passes ?? [],
-              );
+      floatingActionButton: Visibility(
+        visible:
+            vendorAsync.value?.bookingExperience?.passes.isNotEmpty ?? false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: PrimaryButton(
+            bgColor: Colors.white,
+            frColor: Colors.black,
+            onTap: () async {
+              try {
+                final vendor = vendorAsync.requireValue;
+                print("Vendor: ${vendor.operatingHours}");
+                final book = CreateBook(
+                  image: vendor.logo ?? "",
+                  location:
+                      vendor.location?.address ??
+                      "${vendor.location?.street}, ${vendor.location?.city}, ${vendor.location?.country}",
+                  name: vendor.name ?? "",
+                  operatingHours: vendor.operatingHours.toOpenDateTimes(),
+                  termsAndConditions: vendor.termsAndConditions,
+                  requiresApproval:
+                      vendorAsync
+                          .requireValue
+                          .bookingExperience
+                          ?.requireReservationApproval ??
+                      false,
+                  passes: vendor.bookingExperience?.passes ?? [],
+                );
 
-              ref.read(createBookProvider.notifier).updateBook(book);
-              context.push("/create-booking", extra: book);
-            } catch (e) {
-              return;
-            }
-          },
-          title: "RSVP",
+                ref.read(createBookProvider.notifier).updateBook(book);
+                context.push("/create-booking", extra: book);
+              } catch (e) {
+                return;
+              }
+            },
+            title: "RSVP",
+          ),
         ),
       ),
       body: vendorAsync.when(
@@ -215,8 +219,8 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
           _measureContent();
           final distance = ref.watch(
             calculateDistanceProvider(
-              endLatitude: vendor.location.coordinates.lat ?? 0,
-              endLongitude: vendor.location.coordinates.lng ?? 0,
+              endLatitude: vendor.location?.coordinates.lat ?? 0,
+              endLongitude: vendor.location?.coordinates.lng ?? 0,
             ),
           );
           return SoftEdgeBlur(
@@ -379,7 +383,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    vendor.name,
+                                                    vendor.name ?? "",
                                                     style: TextStyle(
                                                       fontSize:
                                                           AppTextStyles(
@@ -393,10 +397,10 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                                   SizedBox(height: 12),
 
                                                   Text(
-                                                    vendor.location.address !=
+                                                    vendor.location?.address !=
                                                             null
-                                                        ? "📍 ${vendor.location.address}"
-                                                        : "${vendor.location.street}, ${vendor.location.city}, ${vendor.location.country}",
+                                                        ? "📍 ${vendor.location?.address}"
+                                                        : "${vendor.location?.street}, ${vendor.location?.city}, ${vendor.location?.country}",
                                                     style: TextStyle(
                                                       fontSize:
                                                           AppTextStyles(
@@ -508,18 +512,20 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                             GestureDetector(
                                               onTap: () async {
                                                 try {
-                                                  await MapsLauncher.launchCoordinates(
-                                                    vendor
-                                                            .location
-                                                            .coordinates
-                                                            .lat ??
-                                                        0,
-                                                    vendor
-                                                            .location
-                                                            .coordinates
-                                                            .lng ??
-                                                        0,
-                                                  );
+                                                  if (vendor.location != null) {
+                                                    await MapsLauncher.launchCoordinates(
+                                                      vendor
+                                                              .location!
+                                                              .coordinates
+                                                              .lat ??
+                                                          0,
+                                                      vendor
+                                                              .location!
+                                                              .coordinates
+                                                              .lng ??
+                                                          0,
+                                                    );
+                                                  }
                                                 } catch (e) {
                                                   await Sentry.captureException(
                                                     e,
@@ -1214,7 +1220,7 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                               switchOutCurve: Curves.easeIn,
                               child: _isCollapsedFromSheet
                                   ? Text(
-                                      vendor.name,
+                                      vendor.name ?? "",
                                       key: const ValueKey('title'),
                                       style: const TextStyle(
                                         color: Colors.white,

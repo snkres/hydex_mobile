@@ -187,9 +187,9 @@ class _AllVendorsState extends ConsumerState<AllVendors> {
 
                       itemBuilder: (context, item, index) => EventContainer(
                         width: double.infinity,
-                        heading: item.name,
+                        heading: item.name ?? "",
                         tag: item.category?.name,
-                        description: item.location.address,
+                        description: item.location?.address,
 
                         image: item.media.first,
                         avatarImage: item.logo,

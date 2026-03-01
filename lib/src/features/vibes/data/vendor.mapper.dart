@@ -45,8 +45,8 @@ class VendorMapper extends ClassMapperBase<Vendor> {
     _$category,
     opt: true,
   );
-  static String _$name(Vendor v) => v.name;
-  static const Field<Vendor, String> _f$name = Field('name', _$name);
+  static String? _$name(Vendor v) => v.name;
+  static const Field<Vendor, String> _f$name = Field('name', _$name, opt: true);
   static bool _$isFavorited(Vendor v) => v.isFavorited;
   static const Field<Vendor, bool> _f$isFavorited = Field(
     'isFavorited',
@@ -67,7 +67,7 @@ class VendorMapper extends ClassMapperBase<Vendor> {
     _$description,
     opt: true,
   );
-  static Location _$location(Vendor v) => v.location;
+  static Location? _$location(Vendor v) => v.location;
   static const Field<Vendor, Location> _f$location = Field(
     'location',
     _$location,
@@ -226,7 +226,7 @@ abstract class VendorCopyWith<$R, $In extends Vendor, $Out>
     EventInsideVendorCopyWith<$R, EventInsideVendor, EventInsideVendor>
   >
   get events;
-  LocationCopyWith<$R, Location, Location> get location;
+  LocationCopyWith<$R, Location, Location>? get location;
   MapCopyWith<
     $R,
     String,
@@ -290,8 +290,8 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
     (v) => call(events: v),
   );
   @override
-  LocationCopyWith<$R, Location, Location> get location =>
-      $value.location.copyWith.$chain((v) => call(location: v));
+  LocationCopyWith<$R, Location, Location>? get location =>
+      $value.location?.copyWith.$chain((v) => call(location: v));
   @override
   MapCopyWith<
     $R,
@@ -352,11 +352,11 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
     Object? logo = $none,
     Object? bookingExperience = $none,
     Object? category = $none,
-    String? name,
+    Object? name = $none,
     bool? isFavorited,
     List<EventInsideVendor>? events,
     Object? description = $none,
-    Location? location,
+    Object? location = $none,
     Object? priceType = $none,
     Map<String, OperatingHours>? operatingHours,
     List<String>? experiences,
@@ -373,11 +373,11 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
       if (logo != $none) #logo: logo,
       if (bookingExperience != $none) #bookingExperience: bookingExperience,
       if (category != $none) #category: category,
-      if (name != null) #name: name,
+      if (name != $none) #name: name,
       if (isFavorited != null) #isFavorited: isFavorited,
       if (events != null) #events: events,
       if (description != $none) #description: description,
-      if (location != null) #location: location,
+      if (location != $none) #location: location,
       if (priceType != $none) #priceType: priceType,
       if (operatingHours != null) #operatingHours: operatingHours,
       if (experiences != null) #experiences: experiences,

@@ -200,8 +200,8 @@ class _AllEventsState extends ConsumerState<AllEvents> {
 
                       itemBuilder: (context, item, index) => EventContainer(
                         width: double.infinity,
-                        heading: item.name,
-                        description: item.location.address,
+                        heading: item.name ?? "",
+                        description: item.location?.address ?? "",
 
                         tag: item.category?.name,
                         image: item.media.firstOrNull,

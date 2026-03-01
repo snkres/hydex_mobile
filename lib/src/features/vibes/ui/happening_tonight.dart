@@ -197,7 +197,7 @@ class _HappeningTonightState extends ConsumerState<HappeningTonight> {
                       animateTransitions: true,
                       itemBuilder: (context, item, index) => EventContainer(
                         width: double.infinity,
-                        heading: item.name,
+                        heading: item.name ?? "",
                         tag: item.category?.name,
                         image: item.media.first,
                         avatarImage: item.media.first,

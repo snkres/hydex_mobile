@@ -10,9 +10,9 @@ part 'vendor.mapper.dart';
 class Vendor with VendorMappable {
   final String id;
   final String? logo;
-  final String name;
+  final String? name;
   final String? description;
-  final Location location;
+  final Location? location;
   final bool isFavorited;
 
   final PriceType? priceType;
@@ -35,7 +35,7 @@ class Vendor with VendorMappable {
     this.logo,
     this.bookingExperience,
     this.category,
-    required this.name,
+    this.name,
     this.isFavorited = false,
     this.events = const [],
     this.description,

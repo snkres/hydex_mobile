@@ -395,7 +395,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                           }
                                           return TrendContainer(
                                             width: double.infinity,
-                                            name: vendor.name,
+                                            name: vendor.name ?? "",
                                             image: vendor.media.first,
 
                                             priceType:
@@ -407,11 +407,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                             formattedDate: vendor
                                                 .getFormattedOperatingHoursRange(),
                                             location:
-                                                vendor.location.address ?? "",
+                                                vendor.location?.address ?? "",
                                             onTap: () {
                                               RecentlyViewedHelper.addRecentlyViewed(
                                                 id: vendor.id,
-                                                name: vendor.name,
+                                                name: vendor.name ?? "",
                                                 type: 'vendor',
                                               );
                                               context.pushNamed(

@@ -234,11 +234,11 @@ class _CategoryDetailsState extends ConsumerState<CategoryDetails>
                             itemBuilder: (context, item, index) =>
                                 EventContainer(
                                   width: double.infinity,
-                                  heading: item.name,
+                                  heading: item.name ?? "",
                                   tag: item.category?.name,
                                   image: item.media.firstOrNull,
                                   avatarImage: item.media.firstOrNull,
-                                  description: item.location.address,
+                                  description: item.location?.address ?? "",
                                   onView: () => context.pushNamed(
                                     "event_detail",
                                     pathParameters: {"id": item.id},
@@ -272,11 +272,11 @@ class _CategoryDetailsState extends ConsumerState<CategoryDetails>
                                 EventContainer(
                                   width: double.infinity,
                                   date: item.priceType?.label ?? "",
-                                  heading: item.name,
+                                  heading: item.name ?? "",
                                   tag: item.category?.name,
                                   image: item.media.firstOrNull,
                                   avatarImage: item.media.firstOrNull,
-                                  description: item.location.address,
+                                  description: item.location?.address,
                                   onView: () => context.pushNamed(
                                     "vendor_detail",
                                     pathParameters: {"id": item.id},
