@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/user/user.dart';
+import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
-import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 import 'package:hydex/src/widgets/user_type_container.dart';
 
@@ -15,7 +15,8 @@ class PickUserType extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final currentType = ref.watch(userTypeNotifierProvider);
+        final currentType =
+            ref.watch(userProvider.select((v) => v?.role)) ?? Role.none;
         return Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -38,7 +39,7 @@ class PickUserType extends StatelessWidget {
                 UserTypeContainer<Role>(
                   emoji: "👩‍🎤",
                   onChanged: (v) {
-                    ref.read(userTypeNotifierProvider.notifier).change(v);
+                    ref.read(userProvider.notifier).create(role: v);
                   },
                   value: Role.seeker,
                   groupValue: currentType,
@@ -51,7 +52,7 @@ class PickUserType extends StatelessWidget {
                 UserTypeContainer<Role>(
                   emoji: "💫",
                   onChanged: (v) {
-                    ref.read(userTypeNotifierProvider.notifier).change(v);
+                    ref.read(userProvider.notifier).create(role: v);
                   },
                   value: Role.ambassador,
                   groupValue: currentType,
@@ -63,7 +64,7 @@ class PickUserType extends StatelessWidget {
                 UserTypeContainer<Role>(
                   emoji: "💼",
                   onChanged: (v) {
-                    ref.read(userTypeNotifierProvider.notifier).change(v);
+                    ref.read(userProvider.notifier).create(role: v);
                   },
                   value: Role.owner,
 
@@ -81,15 +82,19 @@ class PickUserType extends StatelessWidget {
               child: Consumer(
                 builder: (context, ref, child) {
                   return PrimaryButton(
+                    bgColor: Colors.white,
+                    frColor: Colors.black,
+                    nullbgColor: Color(0xff080808),
+                    nullfrColor: AppColors.surfaceContainer,
                     onTap: currentType != Role.none
-                        ? () async{
-                            pageController.nextPage(
+                        ? () async {
+                            ref
+                                .read(userProvider.notifier)
+                                .create(role: currentType);
+                            await pageController.nextPage(
                               duration: Duration(milliseconds: 300),
                               curve: Curves.easeInOut,
                             );
-                            ref
-                                .read(userNotifierProvider.notifier)
-                                .create(role: currentType.toValue());
                           }
                         : null,
                   );

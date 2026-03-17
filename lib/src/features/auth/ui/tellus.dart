@@ -5,9 +5,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/user/user.dart';
+import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/nationality_provider.dart';
-import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
 import 'package:hydex/src/features/auth/ui/verify_email.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/custom_radio.dart';
@@ -198,17 +198,25 @@ class _TellusState extends State<Tellus> {
                                                           initialDateTime:
                                                               DateTime.now()
                                                                   .subtract(
-                                                                    Duration(
+                                                                    const Duration(
                                                                       days:
                                                                           365 *
                                                                           18,
                                                                     ),
                                                                   ),
-
+                                                          maximumDate:
+                                                              DateTime.now()
+                                                                  .subtract(
+                                                                    const Duration(
+                                                                      days:
+                                                                          365 *
+                                                                          18,
+                                                                    ),
+                                                                  ),
                                                           minimumDate:
                                                               DateTime.now()
                                                                   .subtract(
-                                                                    Duration(
+                                                                    const Duration(
                                                                       days:
                                                                           365 *
                                                                           100,
@@ -263,7 +271,7 @@ class _TellusState extends State<Tellus> {
                                         Consumer(
                                           builder: (context, ref, child) {
                                             ref.listen<String?>(
-                                              nationalityNotifierProvider,
+                                              nationalityProvider,
                                               (previous, next) {
                                                 if (next != null) {
                                                   setState(() {
@@ -335,7 +343,7 @@ class _TellusState extends State<Tellus> {
                                   Consumer(
                                     builder: (context, ref, child) {
                                       final userType = ref.watch(
-                                        userTypeNotifierProvider,
+                                        userProvider.select((v) => v?.role),
                                       );
                                       return Visibility(
                                         visible: userType == Role.owner,
@@ -425,20 +433,37 @@ class _TellusState extends State<Tellus> {
                                             );
                                             return;
                                           }
-                                          ref
-                                              .read(
-                                                userNotifierProvider.notifier,
-                                              )
-                                              .create(
-                                                nationality:
-                                                    nationalityController.text,
-                                                gender: gender,
-                                                dateOfBirth: requiredBirth,
-                                                referralCode:
-                                                    referralCodeController.text,
-                                                email: emailController.text,
-                                                fullName: nameController.text,
-                                              );
+                                          if (emailController.text == '') {
+                                            ref
+                                                .read(userProvider.notifier)
+                                                .create(
+                                                  nationality:
+                                                      nationalityController
+                                                          .text,
+                                                  gender: gender,
+                                                  dateOfBirth: requiredBirth,
+                                                  referralCode:
+                                                      referralCodeController
+                                                          .text,
+                                                  fullName: nameController.text,
+                                                );
+                                          } else {
+                                            ref
+                                                .read(userProvider.notifier)
+                                                .create(
+                                                  nationality:
+                                                      nationalityController
+                                                          .text,
+                                                  gender: gender,
+                                                  dateOfBirth: requiredBirth,
+                                                  email: emailController.text,
+                                                  referralCode:
+                                                      referralCodeController
+                                                          .text,
+                                                  fullName: nameController.text,
+                                                );
+                                          }
+
                                           if (!isRegestered) {
                                             await ref
                                                 .read(authServiceProvider)
@@ -494,11 +519,15 @@ class CustomChip extends StatelessWidget {
     required this.title,
     required this.isSelected,
     required this.onTap,
+    this.isRecentViewed = false,
+    this.count,
   });
 
   final String title;
   final bool isSelected;
   final VoidCallback onTap;
+  final bool isRecentViewed;
+  final String? count;
 
   @override
   Widget build(BuildContext context) {
@@ -510,20 +539,61 @@ class CustomChip extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
           color: isSelected
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.secondaryContainer,
+              ? AppColors.signalBrandTint
+              : AppColors.containerDim,
           borderRadius: BorderRadius.circular(99),
+          border: isSelected
+              ? Border.all(color: AppColors.borderBrand, width: 1)
+              : null,
         ),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: AppTextStyles(context).accumulator * 14,
-            height: 1.7,
-            color: isSelected
-                ? Theme.of(context).colorScheme.onPrimary
-                : Theme.of(context).colorScheme.onSecondaryContainer,
-          ),
-        ),
+        child: isRecentViewed
+            ? Row(
+                mainAxisSize: .min,
+                children: [
+                  Icon(
+                    Icons.history,
+                    size: 16,
+                    color: isSelected
+                        ? AppColors.borderBrand
+                        : AppColors.textSecondary,
+                  ),
+                  SizedBox(width: 4),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: AppTextStyles(context).accumulator * 13,
+                      color: isSelected
+                          ? AppColors.borderBrand
+                          : AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              )
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: AppTextStyles(context).accumulator * 13,
+                      color: isSelected
+                          ? AppColors.borderBrand
+                          : AppColors.textSecondary,
+                    ),
+                  ),
+                  if (count != null) ...[
+                    SizedBox(width: 4),
+                    Text(
+                      count!,
+                      style: TextStyle(
+                        fontSize: AppTextStyles(context).accumulator * 13,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
       ),
     );
   }
@@ -646,7 +716,7 @@ class _NationalitiesPickerState extends ConsumerState<NationalitiesPicker> {
                 : Consumer(
                     builder: (context, ref, child) {
                       final selectedNationality = ref.watch(
-                        nationalityNotifierProvider,
+                        nationalityProvider,
                       );
                       return ListView.builder(
                         itemCount: filteredNations.length,
@@ -663,7 +733,7 @@ class _NationalitiesPickerState extends ConsumerState<NationalitiesPicker> {
                             ),
                             onTap: () {
                               ref
-                                  .read(nationalityNotifierProvider.notifier)
+                                  .read(nationalityProvider.notifier)
                                   .change(nationality);
                               context.pop();
                             },

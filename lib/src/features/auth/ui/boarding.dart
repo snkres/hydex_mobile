@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/data/boarding_type.dart';
 import 'package:hydex/src/features/auth/ui/components/pick_type.dart';
@@ -125,6 +126,10 @@ class _BoardingScreenState extends State<BoardingScreen> {
                 child: Consumer(
                   builder: (context, ref, child) {
                     return ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: .all(AppColors.buttonPrimary),
+                        foregroundColor: .all(Colors.black),
+                      ),
                       onPressed: () {
                         showModalBottomSheet(
                           context: context,
@@ -261,7 +266,6 @@ class _BoardingScreenState extends State<BoardingScreen> {
                     setState(() {
                       _currentPage = page;
                     });
-                    // Reset timer when user manually swipes
                     _resetTimer();
                   },
                   itemBuilder: (context, index) {

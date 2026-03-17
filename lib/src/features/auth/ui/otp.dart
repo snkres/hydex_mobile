@@ -76,10 +76,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                   Consumer(
                                     builder: (context, ref, child) {
                                       final phone =
-                                          ref
-                                              .watch(userNotifierProvider)
-                                              ?.phone ??
-                                          "";
+                                          ref.watch(userProvider)?.phone ?? "";
                                       return Text(
                                         "Enter the security code we sent to $phone over WhatsApp",
                                         style: AppTextStyles(context)
@@ -164,7 +161,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                               ),
                                               onPressed: () async {
                                                 final phoneNumber = ref
-                                                    .read(userNotifierProvider)
+                                                    .read(userProvider)
                                                     ?.phone;
                                                 await ref
                                                     .read(authServiceProvider)
@@ -213,7 +210,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                             if (formKey.currentState!
                                                 .validate()) {
                                               final phone = ref
-                                                  .read(userNotifierProvider)
+                                                  .read(userProvider)
                                                   ?.phone;
                                               await ref
                                                   .read(authServiceProvider)

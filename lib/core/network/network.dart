@@ -147,6 +147,10 @@ class DioHelper {
   static final List<MapEntry<RequestOptions, Completer<Response>>>
   _pendingRequests = [];
 
+  /// Called when a 401 occurs and token refresh fails.
+  /// Set this from your router to navigate to /boarding.
+  static VoidCallback? onForceLogout;
+
   // Secure storage instance
   static const FlutterSecureStorage secureStorage = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
@@ -161,25 +165,22 @@ class DioHelper {
   static const String _tokenExpiryKey = 'token_expiry';
 
   // Initialize Dio with base configuration
-  static void init({
-    String? refreshTokenEndpoint,
-    int sendTimeout = 30000,
-    Map<String, dynamic>? defaultHeaders,
-    AuthEventListener? authEventListener,
-  }) {
-    _refreshEndpoint = refreshTokenEndpoint ?? '/auth/refresh';
-    _authEventListener = authEventListener;
+  Future<void> init({Map<String, dynamic>? defaultHeaders}) async {
+    _refreshEndpoint = '/auth/refresh';
 
     BaseOptions options = BaseOptions(
-      baseUrl: 'https://dev.api.hyde-x.com',
+      baseUrl: 'https://api.hyde-x.com',
+      // baseUrl: 'https://dev.api.hyde-x.com',
       connectTimeout: Duration(milliseconds: 30000),
       receiveTimeout: Duration(milliseconds: 30000),
-      sendTimeout: Duration(milliseconds: sendTimeout),
+      sendTimeout: Duration(milliseconds: 30000),
       contentType: 'application/json',
       responseType: ResponseType.json,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'X-App-Version': '0.2.5',
+        'X-Platform': Platform.isAndroid ? 'android' : 'ios',
         ...?defaultHeaders,
       },
     );
@@ -187,7 +188,7 @@ class DioHelper {
     _dio = Dio(options);
     _setupInterceptors();
 
-    _loadStoredTokens();
+    await _loadStoredTokens();
   }
 
   // Load tokens from secure storage
@@ -294,7 +295,7 @@ class DioHelper {
   }
 
   // Setup interceptors with token management
-  static void _setupInterceptors() {
+  void _setupInterceptors() {
     // Request interceptor for token management
     _dio.interceptors.add(
       InterceptorsWrapper(
@@ -316,14 +317,18 @@ class DioHelper {
 
           // Check and refresh token if needed
           if (_tokenPair != null) {
-            if (_tokenPair!.isExpired && !_isRefreshing) {
+            if (_tokenPair!.isExpired) {
               try {
+                // Wait for refresh if already in progress
+
                 await _refreshToken();
               } catch (e) {
                 if (kDebugMode) {
                   print('❌ Token refresh failed: $e');
                 }
                 _authEventListener?.onTokenRefreshFailed();
+                await _clearTokens();
+                onForceLogout?.call();
                 handler.reject(
                   DioException(
                     requestOptions: options,
@@ -334,19 +339,8 @@ class DioHelper {
                 return;
               }
             }
-
-            // Add current access token
             options.headers['Authorization'] =
                 'Bearer ${_tokenPair!.accessToken}';
-          }
-
-          // Log request in debug mode
-          if (kDebugMode) {
-            print('🚀 REQUEST: ${options.method} ${options.uri}');
-            print('📤 Headers: ${options.headers}');
-            if (options.data != null) {
-              print('📤 Data: ${options.data}');
-            }
           }
 
           handler.next(options);
@@ -378,6 +372,12 @@ class DioHelper {
           handler.next(response);
         },
         onError: (error, handler) async {
+          if (error.response?.statusCode == 503 &&
+              error.requestOptions.path.contains("me")) {
+            await _clearTokens();
+            onForceLogout?.call();
+            return handler.next(error);
+          }
           if (error.response?.statusCode == 401 &&
               _tokenPair != null &&
               !error.requestOptions.path.contains(_refreshEndpoint!) &&
@@ -403,7 +403,16 @@ class DioHelper {
               }
               _authEventListener?.onTokenRefreshFailed();
               await _clearTokens();
-              await logout();
+              onForceLogout?.call();
+
+              handler.reject(
+                DioException(
+                  requestOptions: error.requestOptions,
+                  error: UnauthorizedException('Unauthorized'),
+                  type: DioExceptionType.unknown,
+                ),
+              );
+              return;
             }
           }
 
@@ -417,19 +426,6 @@ class DioHelper {
         },
       ),
     );
-
-    // Add pretty logger interceptor for debug mode
-    if (kDebugMode) {
-      _dio.interceptors.add(
-        LogInterceptor(
-          requestBody: true,
-          responseBody: true,
-          requestHeader: true,
-          responseHeader: false,
-          error: true,
-        ),
-      );
-    }
   }
 
   static Future<void> setTokensFromAuthResponse(
@@ -480,11 +476,6 @@ class DioHelper {
 
   // Refresh access token using refresh token from cookies
   static Future<void> _refreshToken() async {
-    if (_isRefreshing) {
-      // Wait for ongoing refresh
-      return _waitForRefresh();
-    }
-
     if (_tokenPair?.refreshToken == null) {
       throw TokenExpiredException('No refresh token available');
     }
@@ -543,13 +534,6 @@ class DioHelper {
       throw TokenExpiredException('Token refresh failed: $e');
     } finally {
       _isRefreshing = false;
-    }
-  }
-
-  // Wait for ongoing refresh to complete
-  static Future<void> _waitForRefresh() async {
-    while (_isRefreshing) {
-      await Future.delayed(Duration(milliseconds: 100));
     }
   }
 
@@ -850,6 +834,9 @@ class DioHelper {
           }
           if (error.error is TokenExpiredException) {
             return error.error as TokenExpiredException;
+          }
+          if (error.error is UnauthorizedException) {
+            return error.error as UnauthorizedException;
           }
           return ApiException('An unexpected error occurred: ${error.message}');
 

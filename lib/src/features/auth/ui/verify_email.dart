@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/auth/ui/components/error_snackbar.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 
@@ -106,20 +108,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                   return PrimaryButton(
                                     onTap: email != ''
                                         ? () async {
-                                            ref
-                                                .read(
-                                                  userNotifierProvider.notifier,
-                                                )
-                                                .create(
-                                                  email: emailController.text,
-                                                );
                                             if (formKey.currentState!
                                                 .validate()) {
                                               ref
-                                                  .read(
-                                                    userNotifierProvider
-                                                        .notifier,
-                                                  )
+                                                  .read(userProvider.notifier)
                                                   .create(
                                                     email: emailController.text,
                                                   );
@@ -131,26 +123,18 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                                     OTPType.email,
                                                   )
                                                   .catchError((error) {
-                                                    if (error.message.contains(
-                                                      "already exists",
-                                                    )) {
-                                                      setState(() {
-                                                        errorText =
-                                                            "Email already exists";
-                                                      });
-                                                    } else {
-                                                      setState(() {
-                                                        errorText =
-                                                            error.message;
-                                                      });
-                                                    }
+                                                    ScaffoldMessenger.of(
+                                                      context,
+                                                    ).showSnackBar(
+                                                      errorSnackBar(
+                                                        error,
+                                                        context,
+                                                      ),
+                                                    );
                                                   });
                                               if (!context.mounted) return;
                                               ref
-                                                  .read(
-                                                    userNotifierProvider
-                                                        .notifier,
-                                                  )
+                                                  .read(userProvider.notifier)
                                                   .create(
                                                     email: emailController.text,
                                                   );

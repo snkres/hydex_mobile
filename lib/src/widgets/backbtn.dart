@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/ui/type.dart';
 
 class CustomBackButton extends StatelessWidget {
   const CustomBackButton({super.key, this.onClick});
@@ -9,16 +10,12 @@ class CustomBackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: .all(16),
       child: IconButton(
-        iconSize: 24,
-        alignment: Alignment.center,
-        padding: EdgeInsets.zero,
-        style: ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(
-            Theme.of(context).colorScheme.secondaryContainer,
-          ),
-        ),
+        iconSize: AppTextStyles(context).accumulator * 24,
+        alignment: .center,
+        padding: .zero,
+        style: ButtonStyle(backgroundColor: .all(Color(0xff2C2C2E))),
         onPressed:
             onClick ??
             () {
@@ -30,11 +27,11 @@ class CustomBackButton extends StatelessWidget {
         icon: SvgPicture.asset(
           "img/svg/back.svg",
           package: "assets",
-          colorFilter: ColorFilter.mode(
+          colorFilter: .mode(
             Theme.of(context).brightness == Brightness.dark
                 ? Colors.white
                 : Colors.black,
-            BlendMode.srcIn,
+            .srcIn,
           ),
         ),
       ),

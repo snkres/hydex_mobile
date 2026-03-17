@@ -6,8 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/ui/type.dart';
-import 'package:hydex/src/features/auth/provider/nationality_provider.dart';
-import 'package:hydex/src/features/auth/provider/usertype_provider.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
@@ -36,7 +34,7 @@ class _NationalityTellUsState extends State<NationalityTellUs> {
           SafeArea(
             child: Consumer(
               builder: (context, ref, child) {
-                final userType = ref.watch(userTypeNotifierProvider);
+                final userType = ref.watch(userProvider.select((v) => v?.role));
 
                 return CustomScrollView(
                   slivers: [
@@ -177,7 +175,7 @@ class BusinessOnlyWidget extends StatelessWidget {
                       onTap: () async {
                         if (formKey.currentState!.validate()) {
                           ref
-                              .read(userNotifierProvider.notifier)
+                              .read(userProvider.notifier)
                               .create(
                                 businessName: businessController.text,
                                 instagram: linkController.text,
@@ -221,6 +219,7 @@ class _TellusForOthersState extends State<TellusForOthers> {
   final TextEditingController referralCodeController = TextEditingController();
 
   String? codeErrorText;
+  String? typeErrorText;
   String? type;
 
   @override
@@ -261,37 +260,58 @@ class _TellusForOthersState extends State<TellusForOthers> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           spacing: 12,
                           children: [
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                CustomChip(
-                                  title: "Self Employed",
-                                  isSelected: type == "Self Employed",
-                                  onTap: () {
-                                    setState(() {
-                                      type = "Self Employed";
-                                    });
-                                  },
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    CustomChip(
+                                      title: "Self Employed",
+                                      isSelected: type == "Self Employed",
+                                      onTap: () {
+                                        setState(() {
+                                          type = "Self Employed";
+                                          typeErrorText = null;
+                                        });
+                                      },
+                                    ),
+                                    CustomChip(
+                                      title: "Student",
+                                      isSelected: type == "Student",
+                                      onTap: () {
+                                        setState(() {
+                                          type = "Student";
+                                          typeErrorText = null;
+                                        });
+                                      },
+                                    ),
+                                    CustomChip(
+                                      title: "Employed",
+                                      isSelected: type == "Employed",
+                                      onTap: () {
+                                        setState(() {
+                                          type = "Employed";
+                                          typeErrorText = null;
+                                        });
+                                      },
+                                    ),
+                                  ],
                                 ),
-                                CustomChip(
-                                  title: "Student",
-                                  isSelected: type == "Student",
-                                  onTap: () {
-                                    setState(() {
-                                      type = "Student";
-                                    });
-                                  },
-                                ),
-                                CustomChip(
-                                  title: "Employed",
-                                  isSelected: type == "Employed",
-                                  onTap: () {
-                                    setState(() {
-                                      type = "Employed";
-                                    });
-                                  },
-                                ),
+                                if (typeErrorText != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Text(
+                                      typeErrorText!,
+                                      style: TextStyle(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.error,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
                               ],
                             ),
 
@@ -352,44 +372,42 @@ class _TellusForOthersState extends State<TellusForOthers> {
                                     textInputAction: TextInputAction.next,
                                     keyboardType: TextInputType.url,
                                     decoration: InputDecoration(
-                                      labelText: "Facebook Link",
+                                      labelText: "Facebook Link (Optional)",
                                       hintText: "https://facebook.com/username",
                                     ),
                                     validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return "Please enter facebook link";
+                                      // Allow empty values since it's optional
+                                      if (value == null || value.isEmpty) {
+                                        return null;
                                       }
-                                      if (value.isNotEmpty) {
-                                        // Basic URL validation
-                                        if (!Uri.tryParse(
-                                              value,
-                                            )!.hasAbsolutePath ==
-                                            true) {
-                                          return "Please enter a valid URL";
-                                        }
 
-                                        Uri? uri = Uri.tryParse(value);
-                                        if (uri == null) {
-                                          return "Please enter a valid URL";
-                                        }
+                                      // Basic URL validation
+                                      if (!Uri.tryParse(
+                                            value,
+                                          )!.hasAbsolutePath ==
+                                          true) {
+                                        return "Please enter a valid URL";
+                                      }
 
-                                        // Check if it's a valid Facebook URL
-                                        if (!uri.host.contains(
-                                              'facebook.com',
-                                            ) &&
-                                            !uri.host.contains('fb.com') &&
-                                            !uri.host.contains('fb.me')) {
-                                          return "Please enter a valid Facebook URL";
-                                        }
+                                      Uri? uri = Uri.tryParse(value);
+                                      if (uri == null) {
+                                        return "Please enter a valid URL";
+                                      }
 
-                                        // Check if URL has proper scheme
-                                        if (!uri.hasScheme ||
-                                            (!uri.scheme.startsWith('http') &&
-                                                !uri.scheme.startsWith(
-                                                  'https',
-                                                ))) {
-                                          return "URL must start with http:// or https://";
-                                        }
+                                      // Check if it's a valid Facebook URL
+                                      if (!uri.host.contains('facebook.com') &&
+                                          !uri.host.contains('fb.com') &&
+                                          !uri.host.contains('fb.me')) {
+                                        return "Please enter a valid Facebook URL";
+                                      }
+
+                                      // Check if URL has proper scheme
+                                      if (!uri.hasScheme ||
+                                          (!uri.scheme.startsWith('http') &&
+                                              !uri.scheme.startsWith(
+                                                'https',
+                                              ))) {
+                                        return "URL must start with http:// or https://";
                                       }
                                       return null;
                                     },
@@ -445,19 +463,25 @@ class _TellusForOthersState extends State<TellusForOthers> {
                     padding: const EdgeInsets.only(top: 16),
                     child: PrimaryButton(
                       onTap: () async {
+                        if (type == null || type!.isEmpty) {
+                          setState(() {
+                            typeErrorText = "Please select an employment type";
+                          });
+                          return;
+                        }
                         if (formKey.currentState!.validate()) {
                           widget.ref
-                              .read(userNotifierProvider.notifier)
+                              .read(userProvider.notifier)
                               .create(
                                 socialStatus: type,
                                 instagram: instagramController.text,
                                 facebook: facebookController.text,
-                                
+
                                 referralCode: referralCodeController.text,
                               );
 
                           final currentType = widget.ref.read(
-                            userTypeNotifierProvider,
+                            userProvider.select((v) => v?.role),
                           );
                           if (context.mounted) {
                             switch (currentType) {

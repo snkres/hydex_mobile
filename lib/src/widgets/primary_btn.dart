@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:lottie/lottie.dart';
 
@@ -7,10 +8,15 @@ class PrimaryButton extends StatefulWidget {
     super.key,
     required this.onTap,
     this.title = "Continue",
+    this.bgColor = AppColors.buttonPrimary,
+    this.frColor = AppColors.textInverse,
+    this.nullbgColor = AppColors.buttonPrimaryDisabled,
+    this.nullfrColor = AppColors.buttonTextDisabled,
   });
 
   final Future<void> Function()? onTap;
   final String title;
+  final Color bgColor, frColor, nullbgColor, nullfrColor;
 
   @override
   State<PrimaryButton> createState() => _PrimaryButtonState();
@@ -20,21 +26,18 @@ class _PrimaryButtonState extends State<PrimaryButton> {
   bool loading = false;
   @override
   Widget build(BuildContext context) {
-    final loadingPath = Theme.brightnessOf(context) == Brightness.dark
-        ? "json/dark_loading.json"
-        : "json/light_loading.json";
     return ConstrainedBox(
       constraints: BoxConstraints(minWidth: double.infinity, minHeight: 50),
       child: ElevatedButton(
+        
         onPressed: () async {
           setState(() {
             loading = true;
           });
           try {
-            await widget.onTap?.call(); // Wait for the async operation
+            await widget.onTap?.call(); 
           } finally {
             if (mounted) {
-              // Check if widget is still mounted
               setState(() {
                 loading = false;
               });
@@ -43,23 +46,27 @@ class _PrimaryButtonState extends State<PrimaryButton> {
         },
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(
-            widget.onTap != null
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.primaryContainer,
+            widget.onTap != null ? widget.bgColor : widget.nullbgColor,
           ),
           foregroundColor: WidgetStatePropertyAll(
-            Theme.of(context).colorScheme.onPrimary,
+            widget.onTap != null ? widget.frColor : widget.nullfrColor,
           ),
         ),
         child: loading
             ? LottieBuilder.asset(
-                loadingPath,
+                "json/dark_loading.json",
                 package: "assets",
                 width: 50,
                 height: 50,
                 fit: BoxFit.cover,
               )
-            : Text(widget.title, style: AppTextStyles(context).smallBold),
+            : Text(
+                widget.title,
+                style: TextStyle(
+                  fontSize: AppTextStyles(context).accumulator * 15,
+                  fontWeight: .w600,
+                ),
+              ),
       ),
     );
   }

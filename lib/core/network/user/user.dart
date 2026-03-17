@@ -1,4 +1,5 @@
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:hydex/src/features/booking/data/guest.dart';
 
 part 'user.mapper.dart';
 
@@ -38,7 +39,7 @@ class User with UserMappable {
   final String? nationality;
   final UserStatus status;
   final DateTime? dateOfBirth;
-  final String role;
+  final Role role;
   final String? referralCode;
   final String? password;
   final List<String>? interests;
@@ -48,6 +49,7 @@ class User with UserMappable {
   final String? audienceSizeRange;
   final String? groupSize;
   final String? preferredCountry;
+  final DateTime createdAt;
   final SocialLinks? socialLinks;
 
   User({
@@ -63,6 +65,7 @@ class User with UserMappable {
     this.audienceSizeRange,
     required this.role,
     this.referralCode,
+    required this.createdAt,
     this.interests,
     this.contentNiches,
     this.businessName,
@@ -81,4 +84,25 @@ class SocialLinks with SocialLinksMappable {
   final String? website;
 
   SocialLinks({this.facebook, this.instagram, this.website});
+}
+
+extension UserToGuest on User {
+  Guest toGuest() {
+    return Guest(
+      age: calcualteAge(dateOfBirth),
+      name: fullName ?? "Unnamed",
+      email: email,
+      phoneNumber: phone!,
+      instagram: socialLinks?.instagram ?? "",
+      gender: gender ?? "male",
+    );
+  }
+}
+
+int calcualteAge(DateTime? bDay) {
+  if (bDay == null) {
+    return 0;
+  }
+
+  return DateTime.now().year - bDay.year;
 }

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
+import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/country_picker_provider.dart';
 import 'package:hydex/src/features/auth/ui/components/country_picker.dart';
@@ -32,7 +33,7 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedCountry = ref.watch(countryPickerNotifierProvider);
+    final selectedCountry = ref.watch(countryPickerProvider);
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -96,18 +97,9 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                           keyboardType: TextInputType.phone,
                           textInputAction: TextInputAction.done,
                           onChanged: (v) {
-                            if (textController.text.startsWith("0")) {
-                              setState(() {
-                                phoneNumber =
-                                    data.dialCode +
-                                    textController.text.substring(1);
-                              });
-                            } else {
-                              setState(() {
-                                phoneNumber =
-                                    data.dialCode + textController.text;
-                              });
-                            }
+                            setState(() {
+                              phoneNumber = data.dialCode + textController.text;
+                            });
                           },
                           validator: (v) {
                             if (v!.isEmpty) {
@@ -119,10 +111,22 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                             return null;
                           },
                           inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'[0-9+]+'),
+                            FilteringTextInputFormatter.digitsOnly,
+                            TextInputFormatter.withFunction((
+                              oldValue,
+                              newValue,
+                            ) {
+                              if (data.code == "EG" &&
+                                  newValue.text.startsWith('0')) {
+                                return oldValue;
+                              }
+                              return newValue;
+                            }),
+                            LengthLimitingTextInputFormatter(
+                              data.code == "EG" ? 10 : 13,
                             ),
                           ],
+
                           forceErrorText: phoneError,
 
                           onFieldSubmitted: (v) async {
@@ -177,6 +181,11 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
         Padding(
           padding: const EdgeInsets.only(bottom: 24),
           child: PrimaryButton(
+            nullbgColor: Color(0xff080808),
+            nullfrColor: AppColors.surfaceContainer,
+            bgColor: Colors.white,
+            frColor: Colors.black,
+
             onTap: textController.text != ''
                 ? () async {
                     if (phoneError != null) {
@@ -201,7 +210,7 @@ class _SignUpComponentState extends ConsumerState<SignUpComponent> {
                             }
                           });
                       if (context.mounted) {
-                        context.go("/otp");
+                        context.push("/otp");
                       }
                     }
                   }

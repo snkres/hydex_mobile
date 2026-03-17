@@ -18,7 +18,7 @@ class ForgetResponse extends StatelessWidget {
                 },
                 heading: "Check your WhatsApp",
                 description:
-                    "If the email exists, a reset link has been sent check your messages to reset your password.",
+                    "A reset link has been sent. Check your messages to reset your password",
                 buttonText: 'Open Whatsapp',
               )
             : MessageResponse(

@@ -16,13 +16,13 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
     super.initState();
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadRequest(Uri.parse('https://hyde-x.com/terms-and-conditions/'));
+      ..loadRequest(Uri.parse('https://www.hyde-x.com/privacy-policy/'));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text("Privacy Policy")),
       body: WebViewWidget(controller: controller),
     );
   }

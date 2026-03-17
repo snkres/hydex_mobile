@@ -4,9 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
+import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/country_picker_provider.dart';
 import 'package:hydex/src/features/auth/ui/components/country_picker.dart';
+import 'package:hydex/src/features/auth/ui/components/error_snackbar.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 
@@ -44,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Consumer(
                         builder: (context, ref, child) {
                           final selectedCountry = ref.watch(
-                            countryPickerNotifierProvider,
+                            countryPickerProvider,
                           );
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,38 +125,44 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 autofocus: true,
 
                                                 keyboardType:
-                                                    TextInputType.phone,
+                                                    TextInputType.number,
                                                 textInputAction:
-                                                    TextInputAction.done,
+                                                    TextInputAction.next,
                                                 onChanged: (v) {
-                                                  if (phoneController.text
-                                                      .startsWith("0")) {
-                                                    setState(() {
-                                                      phoneNumber =
-                                                          data.dialCode +
-                                                          phoneController.text
-                                                              .substring(1);
-                                                    });
-                                                  } else {
-                                                    setState(() {
-                                                      phoneNumber =
-                                                          data.dialCode +
-                                                          phoneController.text;
-                                                    });
-                                                  }
+                                                  setState(() {
+                                                    phoneNumber =
+                                                        data.dialCode +
+                                                        phoneController.text;
+                                                  });
                                                 },
                                                 validator: (v) {
                                                   if (v!.isEmpty) {
                                                     return "Please add your phone number";
                                                   }
+
                                                   if (v.length > 13) {
                                                     return "Phone shouldn't be more than 13 characters";
                                                   }
                                                   return null;
                                                 },
                                                 inputFormatters: [
-                                                  FilteringTextInputFormatter.allow(
-                                                    RegExp(r'[0-9+]+'),
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly,
+                                                  // Prevent user from typing 0 as the first digit
+                                                  TextInputFormatter.withFunction(
+                                                    (oldValue, newValue) {
+                                                      if (data.code == "EG" &&
+                                                          newValue.text
+                                                              .startsWith(
+                                                                '0',
+                                                              )) {
+                                                        return oldValue;
+                                                      }
+                                                      return newValue;
+                                                    },
+                                                  ),
+                                                  LengthLimitingTextInputFormatter(
+                                                    data.code == "EG" ? 10 : 13,
                                                   ),
                                                 ],
                                                 forceErrorText: phoneError,
@@ -201,6 +209,29 @@ class _LoginScreenState extends State<LoginScreen> {
                                   TextFormField(
                                     controller: passwordController,
                                     obscureText: hidePassword,
+                                    onFieldSubmitted: (_) async {
+                                      if (!formKey.currentState!.validate()) {
+                                        return;
+                                      }
+                                      try {
+                                        await ref
+                                            .read(authServiceProvider)
+                                            .login(
+                                              phoneNumber!,
+                                              passwordController.text,
+                                            );
+
+                                        if (context.mounted) context.go("/");
+                                      } on ApiException catch (error) {
+                                        if (context.mounted) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            errorSnackBar(error, context),
+                                          );
+                                        }
+                                      }
+                                    },
                                     autovalidateMode:
                                         AutovalidateMode.onUserInteraction,
                                     validator: (value) {
@@ -209,7 +240,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       }
                                       return null;
                                     },
-                                    textInputAction: TextInputAction.next,
+                                    textInputAction: TextInputAction.done,
                                     decoration: InputDecoration(
                                       labelText: "Password",
                                       suffixIcon: Padding(
@@ -217,6 +248,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                           right: 8,
                                         ),
                                         child: IconButton(
+                                          style: ButtonStyle(
+                                            backgroundColor: .all(
+                                              Colors.transparent,
+                                            ),
+                                          ),
                                           onPressed: () {
                                             setState(() {
                                               hidePassword = !hidePassword;
@@ -268,33 +304,27 @@ class _LoginScreenState extends State<LoginScreen> {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 24),
                                 child: PrimaryButton(
+                                  
                                   onTap: () async {
-                                    if (formKey.currentState!.validate()) {
+                                    if (!formKey.currentState!.validate()) {
+                                      return;
+                                    }
+                                    try {
                                       await ref
                                           .read(authServiceProvider)
                                           .login(
                                             phoneNumber!,
                                             passwordController.text,
-                                          )
-                                          .catchError((error) {
-                                            if (context.mounted) {
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                SnackBar(
-                                                  content: Column(
-                                                    children: [
-                                                      Text(
-                                                        "❌ ${error.message}",
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                          });
+                                          );
+
+                                      if (context.mounted) context.go("/");
+                                    } on ApiException catch (error) {
                                       if (context.mounted) {
-                                        context.go("/waitlist");
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          errorSnackBar(error, context),
+                                        );
                                       }
                                     }
                                   },

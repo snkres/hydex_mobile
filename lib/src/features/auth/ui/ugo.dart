@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/auth/provider/cities_service.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/custom_radio.dart';
@@ -24,22 +25,6 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
   List<String> groupSizes = ["Solo", "2–3", "4–6", "Large group 7+"];
 
   Set<String> selectedArea = {};
-  List<String> egyptAreas = [
-    "Gouna",
-    "North Coast",
-    "Sheikh Zayed",
-    "Heliopolis",
-    "Zamalek",
-    "Maadi",
-    "New Cairo",
-    "Sharm El Sheikh",
-  ];
-  List<String> uaeAreas = [
-    "Dubai",
-    "Abu Dhabi ",
-    "Sharjah",
-    "Northern Emirates ",
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -273,7 +258,7 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
                                     return PrimaryButton(
                                       onTap: () async {
                                         ref
-                                            .read(userNotifierProvider.notifier)
+                                            .read(userProvider.notifier)
                                             .create(
                                               preferredCountry: selectedCountry,
                                               areas: selectedArea.toList(),
@@ -307,7 +292,7 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
   Widget _buildInlineAreaSelector() {
     if (selectedCountry == null) return const SizedBox.shrink();
 
-    final areas = selectedCountry == "EG" ? egyptAreas : uaeAreas;
+    final areas = selectedCountry == "EG" ? Cities.egyptAreas : Cities.uaeAreas;
 
     return Column(
       children: [
@@ -320,7 +305,13 @@ class _WhereWeGOScreenState extends State<WhereWeGOScreen> {
                 (area) => CustomChip(
                   title: area,
                   isSelected: selectedArea.contains(area),
-                  onTap: () => setState(() => selectedArea.add(area)),
+                  onTap: () => setState(() {
+                    if (selectedArea.contains(area)) {
+                      selectedArea.remove(area);
+                    } else {
+                      selectedArea.add(area);
+                    }
+                  }),
                 ),
               )
               .toList(),

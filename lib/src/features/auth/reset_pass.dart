@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/components/password_checker.dart';
-import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
 
 class ResetPassword extends StatefulWidget {
@@ -148,7 +147,7 @@ class _CreatePasswordState extends State<ResetPassword> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomBackButton(),
+                SizedBox(height: 36),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),

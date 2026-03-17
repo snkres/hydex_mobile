@@ -1,0 +1,138 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+
+# Disable interactive prompts for CI
+opt_out_usage if ENV['CI']
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Sync certificates and provisioning profiles"
+  lane :certificates do
+    setup_ci if ENV['CI']
+    
+    # Use different git URLs for CI vs local development
+    git_url = ENV['CI'] ? "https://github.com/snkres/ios-certs-hydex.git" : "git@github.com:snkres/ios-certs-hydex.git"
+    
+    match(
+      type: "appstore", 
+      app_identifier: "com.hyde-x.hydex",
+      readonly: is_ci,
+      git_url: git_url,
+      # Use Basic Auth for HTTPS in CI (expects env MATCH_GIT_BASIC_AUTHORIZATION)
+      git_basic_authorization: ENV['MATCH_GIT_BASIC_AUTHORIZATION']
+    )
+    match(
+      type: "development", 
+      app_identifier: "com.hyde-x.hydex",
+      readonly: is_ci,
+      git_url: git_url,
+      git_basic_authorization: ENV['MATCH_GIT_BASIC_AUTHORIZATION']
+    ) if !is_ci
+  end
+
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    # Sync certificates
+    certificates
+    
+    # Build Flutter iOS app with build number
+    build_number = ENV['BUILD_NUMBER'] || '1'
+    sh("cd .. && flutter build ios --release --build-number=#{build_number}")
+    
+    # Build and archive the app
+    build_app(
+      scheme: "Runner",
+      workspace: "ios/Runner.xcworkspace",
+      configuration: "Release",
+      export_options: {
+        method: "app-store",
+        provisioningProfiles: {
+          "com.hyde-x.hydex" => "match AppStore com.hyde-x.hydex"
+        }
+      }
+    )
+    
+    # Upload to TestFlight
+    upload_to_testflight(
+      api_key_path: ENV['APP_STORE_CONNECT_API_KEY_PATH'],
+      skip_waiting_for_build_processing: true,
+      changelog: "Automated build from development branch"
+    )
+  end
+
+  desc "Push a new release build to the App Store"
+  lane :release do
+    # Sync certificates
+    certificates
+    
+    # Build the app
+    build_app(
+      scheme: "Runner",
+      workspace: "ios/Runner.xcworkspace",
+      configuration: "Release",
+      export_options: {
+        method: "app-store",
+        provisioningProfiles: {
+          "com.hyde-x.hydex" => "match AppStore com.hyde-x.hydex"
+        }
+      }
+    )
+    
+    # Upload to App Store
+    upload_to_app_store(
+      api_key_path: ENV['APP_STORE_CONNECT_API_KEY_PATH'],
+      force: true,
+      reject_if_possible: true,
+      skip_metadata: false,
+      skip_screenshots: false,
+      submit_for_review: true,
+      automatic_release: false,
+      submission_information: {
+        add_id_info_uses_idfa: false,
+        add_id_info_serves_ads: false,
+        add_id_info_tracks_install: false,
+        add_id_info_tracks_action: false,
+        add_id_info_limits_tracking: true
+      }
+    )
+  end
+end
+
+platform :android do
+  desc "Build and deploy to Google Play Internal Testing"
+  lane :beta do
+    # Build Flutter Android app
+    sh("cd .. && flutter build appbundle --release --build-number=#{ENV['BUILD_NUMBER'] || '1'}")
+    
+    # Upload to Google Play Internal Testing
+    upload_to_play_store(
+      json_key: ENV['GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH'],
+      track: 'internal',
+      aab: '../build/app/outputs/bundle/release/app-release.aab',
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: false,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  desc "Build and deploy to Google Play Store"
+  lane :release do
+    # Build Flutter Android app
+    sh("cd .. && flutter build appbundle --release")
+    
+    # Upload to Google Play Production
+    upload_to_play_store(
+      json_key: ENV['GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_PATH'],
+      track: 'production',
+      aab: '../build/app/outputs/bundle/release/app-release.aab',
+      skip_upload_apk: true,
+      skip_upload_metadata: false,
+      skip_upload_changelogs: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: false
+    )
+  end
+end

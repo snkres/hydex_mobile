@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hydex/core/ui/colors.dart';
 
 class CustomRadio extends StatelessWidget {
   const CustomRadio({super.key, this.isSelected = false});
@@ -16,7 +17,7 @@ class CustomRadio extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         border: BoxBorder.all(
           width: isSelected ? 1 : 2,
-          color: isSelected ? Color(0xff0A7AFF) : Color(0xffE1EBED),
+          color: isSelected ? Color(0xff0A7AFF) : AppColors.textSecondary,
         ),
       ),
       child: isSelected

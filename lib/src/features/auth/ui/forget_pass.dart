@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/type.dart';
@@ -48,6 +49,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                           changeToEmail
                               ? TextButton(
                                   onPressed: () {
+                                    FocusScope.of(context).unfocus();
+                                    emailController.clear();
                                     setState(() {
                                       changeToEmail = false;
                                     });
@@ -65,12 +68,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                   builder: (context, ref, child) {
                                     return TextButton(
                                       onPressed: () {
+                                        FocusScope.of(context).unfocus();
+                                        emailController.clear();
                                         setState(() {
                                           changeToEmail = true;
                                         });
-                                        ref
-                                            .read(forgetPhoneProvider.notifier)
-                                            .dispose();
                                       },
                                       child: Text(
                                         "Recover with email",
@@ -135,6 +137,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                         final phone = ref.read(
                                           forgetPhoneProvider,
                                         );
+
                                         await ref
                                             .read(authServiceProvider)
                                             .forgetPassword(
@@ -195,7 +198,7 @@ class ForgotPasswordPhone extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final selectedCountry = ref.watch(countryPickerNotifierProvider);
+        final selectedCountry = ref.watch(countryPickerProvider);
 
         return selectedCountry.when(
           data: (data) {
@@ -257,7 +260,18 @@ class ForgotPasswordPhone extends StatelessWidget {
                         return null;
                       },
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9+]+')),
+                        FilteringTextInputFormatter.digitsOnly,
+                        // Prevent user from typing 0 as the first digit
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          if (data.code == "EG" &&
+                              newValue.text.startsWith('0')) {
+                            return oldValue;
+                          }
+                          return newValue;
+                        }),
+                        LengthLimitingTextInputFormatter(
+                          data.code == "EG" ? 10 : 13,
+                        ),
                       ],
                       forceErrorText: errorText,
 
@@ -299,8 +313,7 @@ class ForgotPasswordEmail extends StatelessWidget {
       key: formKey,
       child: TextFormField(
         controller: emailController,
-           keyboardType: TextInputType
-                                                        .emailAddress,
+        keyboardType: TextInputType.emailAddress,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: (value) {
           if (value!.isEmpty) {

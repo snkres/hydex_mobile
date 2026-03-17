@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
-import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:lottie/lottie.dart';
 
@@ -15,23 +14,6 @@ class WaitlistScreen extends ConsumerStatefulWidget {
 
 class _WaitlistScreenState extends ConsumerState<WaitlistScreen> {
   @override
-  void initState() {
-    super.initState();
-    _checkUserStatus();
-    ref.read(authServiceProvider).sendFCMNotification();
-  }
-
-  Future<void> _checkUserStatus() async {
-    try {
-      final user = await ref.read(currentUserProvider.future);
-      final status = user?.status;
-
-      if (status != null && status == UserStatus.active) {
-        if (mounted) context.go("/");
-      }
-    } catch (e) {}
-  }
-
   @override
   Widget build(BuildContext context) {
     final loadingPath = Theme.brightnessOf(context) == Brightness.dark
@@ -77,48 +59,6 @@ class _WaitlistScreenState extends ConsumerState<WaitlistScreen> {
 
                   style: AppTextStyles(context).smallRegular.copyWith(
                     color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-                SizedBox(height: 22),
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        "img/gold-ticket.png",
-                        package: "assets",
-                        width: 56,
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Your exclusive ticket awaits",
-                              style: AppTextStyles(context).secondaryMedium
-                                  .copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.surface,
-                                  ),
-                            ),
-                            Text(
-                              "Once your membership is approved, you’ll unlock access to our private launch event.",
-                              style: AppTextStyles(context).captionRegular
-                                  .copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.surface,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
                   ),
                 ),
 

@@ -6,17 +6,20 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 class FirebaseNotifications {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
-  init() async {
+  Future<void> init() async {
+    await _messaging.requestPermission();
+
     if (Platform.isIOS) {
-      await _messaging.requestPermission();
-      final token = await getToken();
-      log("Token $token");
-      return;
+      // Ensure iOS is registered for APNS
+      final apnsToken = await _messaging.getAPNSToken();
+      if (apnsToken == null) {
+        return;
+      }
+      log("APNS Token: $apnsToken");
     }
 
-    await _messaging.requestPermission();
     final token = await getToken();
-    log("Token $token");
+    log("FCM Token: $token");
   }
 
   Future<String?> getToken() async {

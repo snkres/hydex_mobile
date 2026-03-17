@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hydex/core/network/auth_handler.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/notification/notification.dart';
+import 'package:hydex/src/features/profile/domain/profile_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auth_service.g.dart';
 
@@ -14,36 +14,25 @@ enum AuthEvent { tokenRefreshed, tokenExpired, unauthorized }
 class AuthService {
   Ref ref;
   AuthService(this.ref);
-  static void initialize() {
-    DioHelper.init(
-      refreshTokenEndpoint: '/auth/refresh',
-      defaultHeaders: {
-        'X-App-Version': '0.1.4',
-        'X-Platform': Platform.isAndroid ? 'android' : 'ios',
-      },
-      authEventListener: AuthHandler(),
-    );
+  static Future<void> initialize() async {
+    await DioHelper().init();
   }
 
-  Future<User> login(String email, String password) async {
+  Future<void> login(String email, String password) async {
     try {
       // Use the enhanced login method that handles tokens automatically
-      final responseData = await DioHelper.authenticate('/auth/login', {
+      final responseData = await DioHelper.authenticate('/v2/auth/login', {
         'identifier': email,
         'password': password,
       });
 
+      // Clear any stale cached data from previous session
+      _clearUserState();
+
       // Parse user data from response
       final userData = responseData['data']['user'] as Map<String, dynamic>;
       final user = UserMapper.fromMap(userData);
-      ref.read(userNotifierProvider.notifier).setUser(user);
-      if (kDebugMode) {
-        print('✅ Login successful for user: ${user.email}');
-        print('🔐 Access token stored from response data');
-        print('🍪 Refresh token stored from cookies');
-      }
-
-      return user;
+      ref.read(userProvider.notifier).setUser(user);
     } catch (e) {
       if (kDebugMode) {
         print('❌ Login failed: $e');
@@ -80,9 +69,9 @@ class AuthService {
 
       if (response.success && response.data != null) {
         if (type == OTPType.email) {
-          ref.read(userNotifierProvider.notifier).create(email: identifier);
+          ref.read(userProvider.notifier).create(email: identifier);
         } else {
-          ref.read(userNotifierProvider.notifier).create(phone: identifier);
+          ref.read(userProvider.notifier).create(phone: identifier);
         }
         return response.data?["message"];
       } else {
@@ -114,7 +103,7 @@ class AuthService {
   }
 
   Future<bool> createProfile() async {
-    final user = ref.read(userNotifierProvider);
+    final user = ref.read(userProvider);
     final data = _getOnboardingData(user!);
     final response = await DioHelper.post<Map<String, dynamic>>(
       '/onboarding',
@@ -143,18 +132,21 @@ class AuthService {
 
   Future<String> register() async {
     try {
-      final user = ref.read(userNotifierProvider);
+      final user = ref.read(userProvider);
+      if (user == null || user.role == Role.none) {
+        throw ApiException('Please select a role before registering');
+      }
       final data = {
-        "email": user?.email,
-        "phone": user?.phone,
-        "password": user?.password,
-        "fullName": user?.fullName,
-        "role": user?.role,
-        "gender": user?.gender,
-        "nationality": user?.nationality,
-        "dateOfBirth": user?.dateOfBirth,
+        "email": user.email,
+        "phone": user.phone,
+        "password": user.password,
+        "fullName": user.fullName,
+        "role": user.role.toValue(),
+        "gender": user.gender,
+        "nationality": user.nationality,
+        "dateOfBirth": user.dateOfBirth,
       };
-      if (user!.referralCode!.isNotEmpty) {
+      if (user.referralCode != null && user.referralCode!.isNotEmpty) {
         data["referralCode"] = user.referralCode;
       }
 
@@ -215,6 +207,7 @@ class AuthService {
       final response = await DioHelper.delete('/auth/me');
       if (response.success) {
         DioHelper.clearTokens();
+        _clearUserState();
         return true;
       }
       return false;
@@ -227,9 +220,19 @@ class AuthService {
     try {
       await DioHelper.logout('/auth/logout');
       DioHelper.clearTokens();
+      _clearUserState();
     } catch (e) {
       rethrow;
     }
+  }
+
+  void _clearUserState() {
+    ref.read(userProvider.notifier).clearUser();
+    ref.invalidate(currentUserProvider);
+    ref.invalidate(getProfileProvider);
+    ref.invalidate(getUpcomingEventsProvider);
+    ref.invalidate(getHistoryProvider);
+    ref.invalidate(getPassportProvider);
   }
 
   Future<void> sendFCMNotification() async {
@@ -254,7 +257,7 @@ class AuthService {
           }
         : null;
     switch (user.role) {
-      case "SEEKER":
+      case Role.seeker:
         return {
           "preferences": {
             "interests": user.interests,
@@ -267,7 +270,7 @@ class AuthService {
 
           "socialLinks": socialLinks,
         };
-      case "AMBASSADOR":
+      case Role.ambassador:
         return {
           "preferences": {
             "contentNiches": user.contentNiches,
@@ -287,7 +290,7 @@ class AuthService {
 
           "socialLinks": socialLinks,
         };
-      case "OWNER":
+      case Role.owner:
         return {
           "businessName": user.businessName,
 
@@ -312,13 +315,17 @@ class UserNotifier extends _$UserNotifier {
     state = user;
   }
 
+  void clearUser() {
+    state = null;
+  }
+
   void create({
     String? email,
     String? phone,
     String? referralCode,
     String? fullName,
     String? password,
-    String? role,
+    Role? role,
     String? nationality,
     String? gender,
     String? dateOfBirth,
@@ -335,6 +342,7 @@ class UserNotifier extends _$UserNotifier {
   }) {
     if (state == null) {
       state = User(
+        createdAt: DateTime.now(),
         email: email ?? "",
         phone: phone,
         status: UserStatus.pending,
@@ -343,7 +351,7 @@ class UserNotifier extends _$UserNotifier {
         nationality: nationality ?? "",
         referralCode: referralCode ?? "",
         password: password ?? "",
-        role: role ?? "",
+        role: role ?? Role.seeker,
         interests: interests,
         contentNiches: contentNiches,
         audienceSizeRange: audienceSizeRange,
@@ -396,13 +404,12 @@ enum OTPType { phone, email }
 
 @Riverpod(keepAlive: true)
 Future<User?> currentUser(Ref ref) async {
-  final userState = ref.watch(userNotifierProvider);
-
+  final userState = ref.watch(userProvider);
   if (userState != null) {
     return userState;
   }
 
   // If no user in state, fetch from auth
-  final authNotifier = ref.watch(authServiceProvider);
+  final authNotifier = ref.read(authServiceProvider);
   return await authNotifier.currentUser();
 }

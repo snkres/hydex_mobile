@@ -6,37 +6,91 @@ part of 'auth_service.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currentUserHash() => r'907402853a89a37619559de9860532c57e2ff4cc';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [currentUser].
-@ProviderFor(currentUser)
-final currentUserProvider = FutureProvider<User?>.internal(
-  currentUser,
-  name: r'currentUserProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$currentUserHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef CurrentUserRef = FutureProviderRef<User?>;
-String _$userNotifierHash() => r'5c291a4a996e28cb11f084872d6ec723a0ba12e3';
-
-/// See also [UserNotifier].
 @ProviderFor(UserNotifier)
-final userNotifierProvider = NotifierProvider<UserNotifier, User?>.internal(
-  UserNotifier.new,
-  name: r'userNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$userNotifierHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+const userProvider = UserNotifierProvider._();
 
-typedef _$UserNotifier = Notifier<User?>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class UserNotifierProvider
+    extends $NotifierProvider<UserNotifier, User?> {
+  const UserNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'userProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$userNotifierHash();
+
+  @$internal
+  @override
+  UserNotifier create() => UserNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(User? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<User?>(value),
+    );
+  }
+}
+
+String _$userNotifierHash() => r'0a845d3d85017cfd09ae2e4a5fc70d0d6291fe69';
+
+abstract class _$UserNotifier extends $Notifier<User?> {
+  User? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<User?, User?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<User?, User?>,
+              User?,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(currentUser)
+const currentUserProvider = CurrentUserProvider._();
+
+final class CurrentUserProvider
+    extends $FunctionalProvider<AsyncValue<User?>, User?, FutureOr<User?>>
+    with $FutureModifier<User?>, $FutureProvider<User?> {
+  const CurrentUserProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'currentUserProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$currentUserHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<User?> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<User?> create(Ref ref) {
+    return currentUser(ref);
+  }
+}
+
+String _$currentUserHash() => r'c9e51fceec4e341bc9689db2039d989851b4e89f';
