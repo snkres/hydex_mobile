@@ -6,12 +6,14 @@
     {
       "layers" : [
         {
+          "blend-mode" : "darken",
+          "fill" : "automatic",
           "glass" : true,
           "hidden" : false,
           "image-name" : "Group 2085663410.svg",
           "name" : "Group 2085663410",
           "position" : {
-            "scale" : 1,
+            "scale" : 0.77,
             "translation-in-points" : [
               0.35589768276440736,
               1.4860816918371711e-05

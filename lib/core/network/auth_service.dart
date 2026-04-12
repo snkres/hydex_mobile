@@ -18,7 +18,7 @@ class AuthService {
     await DioHelper().init();
   }
 
-  Future<void> login(String email, String password) async {
+  Future<User> login(String email, String password) async {
     try {
       // Use the enhanced login method that handles tokens automatically
       final responseData = await DioHelper.authenticate('/v2/auth/login', {
@@ -33,6 +33,7 @@ class AuthService {
       final userData = responseData['data']['user'] as Map<String, dynamic>;
       final user = UserMapper.fromMap(userData);
       ref.read(userProvider.notifier).setUser(user);
+      return user;
     } catch (e) {
       if (kDebugMode) {
         print('❌ Login failed: $e');

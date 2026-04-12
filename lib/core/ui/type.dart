@@ -78,7 +78,7 @@ class AppTextStyles {
   TextStyle get secondaryMedium => TextStyle(
     fontFamily: fontFamily,
     fontSize: accumulator * 16,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     height: 1.25,
     letterSpacing: 0.0,
   );

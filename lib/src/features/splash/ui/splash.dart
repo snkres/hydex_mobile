@@ -8,6 +8,10 @@ import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/network/user/user.dart';
+import 'package:hydex/src/features/vibes/data/event.dart'
+    as vibes
+    show BannerType;
+import 'package:hydex/src/features/vibes/domain/vibes_repository.dart';
 import 'package:lottie/lottie.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -72,6 +76,21 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         if (!isActive) {
           return "/waitlist";
         } else {
+          if (currentUser.role == .owner) {
+            return "/owner/home";
+          } 
+          ref
+              .read(getBannersProvider(type: vibes.BannerType.featured).future)
+              .ignore();
+          ref
+              .read(
+                getBannersProvider(type: vibes.BannerType.promotional).future,
+              )
+              .ignore();
+          ref.read(getEventCategoriesProvider.future).ignore();
+          ref.read(getEventsProvider(page: 1).future).ignore();
+          ref.read(getVendorsProvider(page: 1).future).ignore();
+
           return "/";
         }
       } on UnauthorizedException catch (e) {

@@ -797,7 +797,7 @@ class AllVendorsWidget extends ConsumerWidget {
                           image: data[index].media.firstOrNull,
                           tag:
                               data[index].category?.name ??
-                              data[index].tags.first,
+                              data[index].tags.firstOrNull,
                           avatarImage: data[index].logo,
                           date: data[index].priceType?.label ?? "",
                         ),
@@ -1321,7 +1321,18 @@ class EventContainer extends StatelessWidget {
             SizedBox(
               height: MediaQuery.heightOf(context) * 0.28,
               width: width,
-              child: ImageOrVideoWidget(url: image ?? ""),
+              child: image != null
+                  ? ImageOrVideoWidget(url: image!)
+                  : Container(
+                      color: Colors.grey[800],
+                      child: const Center(
+                        child: Icon(
+                          Icons.broken_image,
+                          color: Colors.white54,
+                          size: 40,
+                        ),
+                      ),
+                    ),
             ),
             SizedBox(
               width: width,
