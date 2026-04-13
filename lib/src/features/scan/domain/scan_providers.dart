@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:hydex/core/network/connection.dart';
@@ -15,7 +16,7 @@ part 'scan_providers.g.dart';
 Future<void> getScanDetails(Ref ref, {required String id}) async {
   final response = await DioHelper.get("/owner/bookings/$id");
 
-  print(response.data);
+  log("Response Data: ${response.data}");
 }
 
 @riverpod
@@ -36,11 +37,13 @@ Future<void> updateBookingStatus(
 
     print(response.data);
   } on NetworkException {
-    await OfflineSyncDB.savePendingRequest(BulkRequest(
-      bookingID: id,
-      status: status.name.toUpperCase(),
-      rejectionReason: rejectionReason,
-    ));
+    await OfflineSyncDB.savePendingRequest(
+      BulkRequest(
+        bookingID: id,
+        status: status.name.toUpperCase(),
+        rejectionReason: rejectionReason,
+      ),
+    );
     if (kDebugMode) {
       print('📴 Offline — saved booking $id for later sync');
     }
@@ -54,9 +57,7 @@ Future<void> bulkUpdateBookingStatus(
 }) async {
   final response = await DioHelper.post(
     "/owner/bookings/status/bulk",
-    data: {
-      "items": items.map((e) => e.toJson()).toList(),
-    },
+    data: {"items": items.map((e) => e.toJson()).toList()},
   );
 
   print(response.data);
@@ -81,9 +82,7 @@ Future<void> _syncPendingRequests(Ref ref) async {
   }
 
   try {
-    await ref.read(
-      bulkUpdateBookingStatusProvider(items: pending).future,
-    );
+    await ref.read(bulkUpdateBookingStatusProvider(items: pending).future);
     await OfflineSyncDB.clearPendingRequests();
     if (kDebugMode) {
       print('✅ Offline sync complete');
