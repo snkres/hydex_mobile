@@ -78,7 +78,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         } else {
           if (currentUser.role == .owner) {
             return "/owner/home";
-          } 
+          }
           ref
               .read(getBannersProvider(type: vibes.BannerType.featured).future)
               .ignore();

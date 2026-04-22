@@ -63,7 +63,7 @@ class HistoryContainer extends StatelessWidget {
   }
 
   String? getStatus(UpcomingEventStatus status) {
-    if (status == UpcomingEventStatus.confirmed) {
+    if (status == UpcomingEventStatus.confirmed || status == .noShow) {
       return null;
     }
     return status.name.capitalize();
@@ -79,6 +79,8 @@ class HistoryContainer extends StatelessWidget {
         return AppColors.textWarning;
       case UpcomingEventStatus.invitation:
         return AppColors.textBrand;
+      default:
+        return AppColors.borderBrand;
     }
   }
 

@@ -7,7 +7,7 @@ class EventCardData {
   final String id;
   final String name;
   final String date;
-  final String tag;
+  final String? tag;
   final int sold;
   final int total;
   final String revenue;
@@ -16,7 +16,7 @@ class EventCardData {
     required this.id,
     required this.name,
     required this.date,
-    required this.tag,
+    this.tag,
     required this.sold,
     required this.total,
     required this.revenue,
@@ -103,25 +103,26 @@ class ActiveEventCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceContainerLighter,
-                    borderRadius: BorderRadius.circular(99),
-                  ),
-                  child: Text(
-                    event.tag,
-                    style: TextStyle(
-                      fontSize: styles.accumulator * 11,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                      height: 16 / 11,
+                if (event.tag != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceContainerLighter,
+                      borderRadius: BorderRadius.circular(99),
+                    ),
+                    child: Text(
+                      event.tag!,
+                      style: TextStyle(
+                        fontSize: styles.accumulator * 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                        height: 16 / 11,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
             if (status == EventStatus.active || status == null) ...[

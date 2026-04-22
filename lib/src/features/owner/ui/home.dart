@@ -5,7 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/owner/domain/owner_providers.dart';
+import 'package:hydex/src/features/owner/models/owner_event.dart';
 import 'package:hydex/src/widgets/active_event_card.dart';
+import 'package:intl/intl.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 class OwnerHomeScreen extends ConsumerStatefulWidget {
@@ -30,6 +33,8 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
     final user = ref.watch(currentUserProvider).value;
     final fullName = user?.fullName ?? 'Owner';
     final styles = AppTextStyles(context);
+    final allEventsAsync = ref.watch(getOwnerEventsProvider(active: false));
+    final allEvents = allEventsAsync.value;
 
     return Scaffold(
       body: SafeArea(
@@ -39,16 +44,12 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 12),
-              // Header
               _buildHeader(fullName, styles),
               const SizedBox(height: 32),
-              // Quick action cards
-              _buildQuickActions(styles),
+              _buildQuickActions(styles, allEvents),
               const SizedBox(height: 13),
-              // Scan tickets
               _buildScanTickets(styles),
               const SizedBox(height: 32),
-              // Active events
               _buildActiveEventsSection(styles),
             ],
           ),
@@ -117,7 +118,7 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
     );
   }
 
-  Widget _buildQuickActions(AppTextStyles styles) {
+  Widget _buildQuickActions(AppTextStyles styles, List<OwnerEvent>? events) {
     return Row(
       children: [
         Expanded(
@@ -130,15 +131,16 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
           ),
         ),
         const SizedBox(width: 8),
-        Expanded(
-          child: _QuickActionCard(
-            icon: 'img/svg/ticket.svg',
-            title: 'My Events',
-            subtitle: 'Manage events and tickets',
-            styles: styles,
-            onTap: () => context.push("/owner/events"),
+        if (events?.isNotEmpty ?? false)
+          Expanded(
+            child: _QuickActionCard(
+              icon: 'img/svg/ticket.svg',
+              title: 'My Events',
+              subtitle: 'Manage events and tickets',
+              styles: styles,
+              onTap: () => context.push("/owner/events", extra: events),
+            ),
           ),
-        ),
       ],
     );
   }
@@ -195,66 +197,84 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
     );
   }
 
+  String? _eventTag(DateTime startTime) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final eventDay = DateTime(startTime.year, startTime.month, startTime.day);
+    if (eventDay == today && startTime.isAfter(now)) return 'Tonight';
+    if (eventDay == today.add(const Duration(days: 1))) return 'Tomorrow';
+    return null;
+  }
+
   Widget _buildActiveEventsSection(AppTextStyles styles) {
-    // TODO: Replace with real event data
-    final events = [
-      EventCardData(
-        id: '#1231',
-        name: 'Astral Drift',
-        date: 'Sat 21 Feb, 11:30 PM',
-        tag: 'Tonight',
-        sold: 90,
-        total: 200,
-        revenue: '32,423 EGP',
-      ),
-      EventCardData(
-        id: '#1231',
-        name: 'Astral Drift',
-        date: 'Sat 21 Feb, 11:30 PM',
-        tag: 'Tomorrow',
-        sold: 90,
-        total: 200,
-        revenue: '32,423 EGP',
-      ),
-    ];
+    final asyncEvents = ref.watch(getOwnerEventsProvider(active: true));
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              'Active Events',
-              style: styles.secondaryMedium.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+    return asyncEvents.when(
+      loading: () => _ActiveEventCardSkeleton(styles: styles),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (ownerEvents) {
+        if (ownerEvents.isEmpty) return const SizedBox.shrink();
+
+        final events = ownerEvents
+            .map(
+              (e) => EventCardData(
+                id: e.displayCode,
+                name: e.name,
+                date: DateFormat('EEE d MMM, h:mm a').format(e.startTime),
+                tag: _eventTag(e.startTime),
+                sold: e.sales.sold,
+                total: e.sales.capacity,
+                revenue:
+                    '${e.revenue.amount.toStringAsFixed(0)} ${e.revenue.currency}',
               ),
-            ),
-            const Spacer(),
-            _buildPageIndicator(events.length),
-          ],
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 155,
-          child: PageView.builder(
-            controller: _eventsPageController,
+            )
+            .toList();
 
-            clipBehavior: Clip.none,
-            padEnds: false,
-            itemCount: events.length,
-            onPageChanged: (index) {
-              setState(() => _currentEventPage = index);
-            },
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: ActiveEventCard(event: events[index], styles: styles),
-              );
-            },
+        return SizedBox(
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Active Events',
+                    style: styles.secondaryMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const Spacer(),
+                  _buildPageIndicator(events.length),
+                ],
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 155,
+                child: PageView.builder(
+                  controller: _eventsPageController,
+                  clipBehavior: Clip.none,
+                  padEnds: false,
+                  itemCount: events.length,
+                  onPageChanged: (index) {
+                    setState(() => _currentEventPage = index);
+                  },
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: ActiveEventCard(
+                        event: events[index],
+                        styles: styles,
+                        status: EventStatus.active,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -274,6 +294,122 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
           ),
         );
       }),
+    );
+  }
+}
+
+class _ActiveEventCardSkeleton extends StatefulWidget {
+  final AppTextStyles styles;
+  const _ActiveEventCardSkeleton({required this.styles});
+
+  @override
+  State<_ActiveEventCardSkeleton> createState() =>
+      _ActiveEventCardSkeletonState();
+}
+
+class _ActiveEventCardSkeletonState extends State<_ActiveEventCardSkeleton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..repeat(reverse: true);
+    _animation = Tween<double>(
+      begin: 0.3,
+      end: 0.7,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            _ShimmerBox(animation: _animation, width: 100, height: 14),
+            const Spacer(),
+            _ShimmerBox(animation: _animation, width: 40, height: 7),
+          ],
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 155,
+          child: SmoothContainer(
+            padding: const EdgeInsets.all(16),
+            color: AppColors.containerDim,
+            smoothness: 1,
+            borderRadius: BorderRadius.circular(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _ShimmerBox(animation: _animation, width: 120, height: 12),
+                const SizedBox(height: 12),
+                _ShimmerBox(animation: _animation, width: 180, height: 16),
+                const SizedBox(height: 8),
+                _ShimmerBox(animation: _animation, width: 140, height: 12),
+                const Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _ShimmerBox(animation: _animation, width: 80, height: 12),
+                    _ShimmerBox(animation: _animation, width: 60, height: 12),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                _ShimmerBox(
+                  animation: _animation,
+                  width: double.infinity,
+                  height: 4,
+                  radius: 4,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ShimmerBox extends StatelessWidget {
+  final Animation<double> animation;
+  final double width;
+  final double height;
+  final double radius;
+
+  const _ShimmerBox({
+    required this.animation,
+    required this.width,
+    required this.height,
+    this.radius = 6,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (_, __) => Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: AppColors.textPrimary.withValues(
+            alpha: animation.value * 0.15,
+          ),
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      ),
     );
   }
 }

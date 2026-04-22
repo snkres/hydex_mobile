@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__figma-remote-mcp__get_design_context"
+    ]
+  }
+}

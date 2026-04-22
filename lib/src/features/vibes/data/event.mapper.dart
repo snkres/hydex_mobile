@@ -1999,18 +1999,13 @@ class PassesMapper extends ClassMapperBase<Passes> {
   );
   static double _$price(Passes v) => v.price;
   static const Field<Passes, double> _f$price = Field('price', _$price);
-  static int _$maximumAmount(Passes v) => v.maximumAmount;
-  static const Field<Passes, int> _f$maximumAmount = Field(
-    'maximumAmount',
-    _$maximumAmount,
-  );
   static int _$currentBookings(Passes v) => v.currentBookings;
   static const Field<Passes, int> _f$currentBookings = Field(
     'currentBookings',
     _$currentBookings,
+    opt: true,
+    def: 0,
   );
-  static bool _$isActive(Passes v) => v.isActive;
-  static const Field<Passes, bool> _f$isActive = Field('isActive', _$isActive);
   static int? _$rouletteRemainingWins(Passes v) => v.rouletteRemainingWins;
   static const Field<Passes, int> _f$rouletteRemainingWins = Field(
     'rouletteRemainingWins',
@@ -2035,9 +2030,7 @@ class PassesMapper extends ClassMapperBase<Passes> {
     #name: _f$name,
     #benefits: _f$benefits,
     #price: _f$price,
-    #maximumAmount: _f$maximumAmount,
     #currentBookings: _f$currentBookings,
-    #isActive: _f$isActive,
     #rouletteRemainingWins: _f$rouletteRemainingWins,
     #rouletteMaxWins: _f$rouletteMaxWins,
     #discountPercentage: _f$discountPercentage,
@@ -2049,9 +2042,7 @@ class PassesMapper extends ClassMapperBase<Passes> {
       name: data.dec(_f$name),
       benefits: data.dec(_f$benefits),
       price: data.dec(_f$price),
-      maximumAmount: data.dec(_f$maximumAmount),
       currentBookings: data.dec(_f$currentBookings),
-      isActive: data.dec(_f$isActive),
       rouletteRemainingWins: data.dec(_f$rouletteRemainingWins),
       rouletteMaxWins: data.dec(_f$rouletteMaxWins),
       discountPercentage: data.dec(_f$discountPercentage),
@@ -2109,9 +2100,7 @@ abstract class PassesCopyWith<$R, $In extends Passes, $Out>
     String? name,
     String? benefits,
     double? price,
-    int? maximumAmount,
     int? currentBookings,
-    bool? isActive,
     int? rouletteRemainingWins,
     int? rouletteMaxWins,
     int? discountPercentage,
@@ -2131,9 +2120,7 @@ class _PassesCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Passes, $Out>
     String? name,
     Object? benefits = $none,
     double? price,
-    int? maximumAmount,
     int? currentBookings,
-    bool? isActive,
     Object? rouletteRemainingWins = $none,
     Object? rouletteMaxWins = $none,
     Object? discountPercentage = $none,
@@ -2143,9 +2130,7 @@ class _PassesCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Passes, $Out>
       if (name != null) #name: name,
       if (benefits != $none) #benefits: benefits,
       if (price != null) #price: price,
-      if (maximumAmount != null) #maximumAmount: maximumAmount,
       if (currentBookings != null) #currentBookings: currentBookings,
-      if (isActive != null) #isActive: isActive,
       if (rouletteRemainingWins != $none)
         #rouletteRemainingWins: rouletteRemainingWins,
       if (rouletteMaxWins != $none) #rouletteMaxWins: rouletteMaxWins,
@@ -2158,9 +2143,7 @@ class _PassesCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Passes, $Out>
     name: data.get(#name, or: $value.name),
     benefits: data.get(#benefits, or: $value.benefits),
     price: data.get(#price, or: $value.price),
-    maximumAmount: data.get(#maximumAmount, or: $value.maximumAmount),
     currentBookings: data.get(#currentBookings, or: $value.currentBookings),
-    isActive: data.get(#isActive, or: $value.isActive),
     rouletteRemainingWins: data.get(
       #rouletteRemainingWins,
       or: $value.rouletteRemainingWins,

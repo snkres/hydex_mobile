@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -131,7 +133,9 @@ class BusinessOnlyWidget extends StatelessWidget {
                                   return "Please enter instagram or website link";
                                 }
                                 final uri = Uri.tryParse(value.trim());
-                                if (uri == null || !uri.hasScheme || uri.host.isEmpty) {
+                                if (uri == null ||
+                                    !uri.hasScheme ||
+                                    uri.host.isEmpty) {
                                   return "Must be a url";
                                 }
                                 return null;
@@ -179,7 +183,9 @@ class BusinessOnlyWidget extends StatelessWidget {
                                 businessName: businessController.text,
                                 instagram: linkController.text,
                               );
-
+                          unawaited(
+                            ref.read(authServiceProvider).createProfile(),
+                          );
                           if (context.mounted) {
                             context.push("/describe");
                           }
@@ -331,9 +337,14 @@ class _TellusForOthersState extends State<TellusForOthers> {
                                       if (value!.isEmpty) {
                                         return "Please enter instagram link";
                                       }
-                                      final trimmed = value.trim().replaceAll('"', '');
+                                      final trimmed = value.trim().replaceAll(
+                                        '"',
+                                        '',
+                                      );
                                       final uri = Uri.tryParse(trimmed);
-                                      if (uri == null || !uri.hasScheme || uri.host.isEmpty) {
+                                      if (uri == null ||
+                                          !uri.hasScheme ||
+                                          uri.host.isEmpty) {
                                         return "Must be a url";
                                       }
                                       if (!uri.host.contains('instagram.com') &&
@@ -360,9 +371,14 @@ class _TellusForOthersState extends State<TellusForOthers> {
                                       if (value == null || value.isEmpty) {
                                         return null;
                                       }
-                                      final trimmed = value.trim().replaceAll('"', '');
+                                      final trimmed = value.trim().replaceAll(
+                                        '"',
+                                        '',
+                                      );
                                       final uri = Uri.tryParse(trimmed);
-                                      if (uri == null || !uri.hasScheme || uri.host.isEmpty) {
+                                      if (uri == null ||
+                                          !uri.hasScheme ||
+                                          uri.host.isEmpty) {
                                         return "Please enter a valid URL";
                                       }
                                       if (!uri.host.contains('facebook.com') &&

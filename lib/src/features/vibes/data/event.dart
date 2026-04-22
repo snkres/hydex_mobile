@@ -201,9 +201,7 @@ class Passes with PassesMappable {
   final String name;
   final String? benefits;
   final double price;
-  final int maximumAmount;
   final int currentBookings;
-  final bool isActive;
   final int? rouletteRemainingWins;
   final int? rouletteMaxWins;
   final int? discountPercentage;
@@ -213,9 +211,7 @@ class Passes with PassesMappable {
     required this.name,
     required this.benefits,
     required this.price,
-    required this.maximumAmount,
-    required this.currentBookings,
-    required this.isActive,
+     this.currentBookings = 0,
     this.rouletteRemainingWins,
     this.rouletteMaxWins,
     required this.discountPercentage,

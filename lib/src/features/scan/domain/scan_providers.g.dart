@@ -58,7 +58,7 @@ final class GetScanDetailsProvider
   }
 }
 
-String _$getScanDetailsHash() => r'e100fadda81ec2712a95651209b9172ec1eed502';
+String _$getScanDetailsHash() => r'f2626971c2465ebd723f4bcf4ccf28ad0bc4673b';
 
 final class GetScanDetailsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<void>, String> {

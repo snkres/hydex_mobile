@@ -51,6 +51,7 @@ class User with UserMappable {
   final String? preferredCountry;
   final DateTime createdAt;
   final SocialLinks? socialLinks;
+  final String? businessCategory;
 
   User({
     this.id,
@@ -74,6 +75,7 @@ class User with UserMappable {
     this.preferredCountry,
     this.socialLinks,
     this.password,
+    this.businessCategory,
   });
 }
 

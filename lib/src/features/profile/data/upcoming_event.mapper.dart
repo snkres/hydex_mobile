@@ -34,6 +34,8 @@ class UpcomingEventStatusMapper extends EnumMapper<UpcomingEventStatus> {
         return UpcomingEventStatus.invitation;
       case 'Cancelled':
         return UpcomingEventStatus.cancelled;
+      case 'No Show':
+        return UpcomingEventStatus.noShow;
       default:
         throw MapperException.unknownEnumValue(value);
     }
@@ -50,6 +52,8 @@ class UpcomingEventStatusMapper extends EnumMapper<UpcomingEventStatus> {
         return 'Invitation';
       case UpcomingEventStatus.cancelled:
         return 'Cancelled';
+      case UpcomingEventStatus.noShow:
+        return 'No Show';
     }
   }
 }

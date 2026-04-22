@@ -288,13 +288,11 @@ class AuthService {
               "minimumEngagement": 3.5,
             },
           },
-
           "socialLinks": socialLinks,
         };
       case Role.owner:
         return {
           "businessName": user.businessName,
-
           "website": user.socialLinks?.website,
         };
       default:
@@ -338,6 +336,7 @@ class UserNotifier extends _$UserNotifier {
     String? audienceSizeRange,
     String? groupSize,
     String? preferredCountry,
+    String? businessCategory,
     String? businessName,
     List<String>? areas,
   }) {
@@ -346,6 +345,7 @@ class UserNotifier extends _$UserNotifier {
         createdAt: DateTime.now(),
         email: email ?? "",
         phone: phone,
+        businessCategory: businessCategory,
         status: UserStatus.pending,
         fullName: fullName ?? "",
         gender: gender ?? "",
@@ -380,6 +380,7 @@ class UserNotifier extends _$UserNotifier {
             ? DateTime.tryParse(dateOfBirth)
             : state?.dateOfBirth,
         interests: interests ?? state?.interests,
+        businessCategory: businessCategory ?? state?.businessCategory,
         contentNiches: contentNiches ?? state?.contentNiches,
         audienceSizeRange: audienceSizeRange ?? state?.audienceSizeRange,
         groupSize: groupSize ?? state?.groupSize,

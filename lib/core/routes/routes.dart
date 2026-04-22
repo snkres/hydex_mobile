@@ -26,7 +26,10 @@ import 'package:hydex/src/features/contact/ui/contacts.dart';
 import 'package:hydex/src/features/events/ui/events.dart';
 import 'package:hydex/src/features/location/ui/location_screen.dart';
 import 'package:hydex/src/features/notifications/ui/notifications_screen.dart';
+import 'package:hydex/src/features/owner/models/owner_event.dart';
+import 'package:hydex/src/features/owner/ui/components/event_details.dart';
 import 'package:hydex/src/features/owner/ui/events.dart';
+
 import 'package:hydex/src/features/owner/ui/home.dart';
 import 'package:hydex/src/features/owner/ui/login.dart';
 import 'package:hydex/src/features/owner/ui/owner_venue.dart';
@@ -116,7 +119,9 @@ class AppRoutes {
       ),
       GoRoute(
         path: "/owner/events",
-        builder: (context, state) => const OwnerEvents(),
+        builder: (context, state) => OwnerEvents(
+          preloadedEvents: state.extra as List<OwnerEvent>?,
+        ),
       ),
       GoRoute(
         path: "/owner/venue",
@@ -125,6 +130,12 @@ class AppRoutes {
       GoRoute(
         path: "/owner/scan",
         builder: (context, state) => const ScanScreen(),
+      ),
+      GoRoute(
+        path: "/owner/event-details",
+        builder: (context, state) => OwnerEventDetails(
+          eventID: state.extra as String,
+        ),
       ),
       GoRoute(
         path: '/forget-password',

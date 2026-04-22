@@ -488,6 +488,8 @@ class _TellusState extends State<Tellus> {
                                             isRegestered = true;
                                           });
 
+                                          
+
                                           if (context.mounted) {
                                             context.push("/nationality");
                                           }

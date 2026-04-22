@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/owner/domain/owner_providers.dart';
+import 'package:hydex/src/features/owner/models/event_status.dart';
+import 'package:hydex/src/features/owner/models/owner_event.dart';
+import 'package:hydex/src/features/search/ui/components/not_found.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
-class OwnerEvents extends StatelessWidget {
-  const OwnerEvents({super.key});
+class OwnerEvents extends ConsumerWidget {
+  const OwnerEvents({super.key, this.preloadedEvents});
+
+  final List<OwnerEvent>? preloadedEvents;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final styles = AppTextStyles(context);
     return Scaffold(
       backgroundColor: AppColors.backgroundBase,
@@ -26,9 +35,11 @@ class OwnerEvents extends StatelessWidget {
               ),
             ),
           ),
-          const SliverPadding(
-            padding: EdgeInsets.fromLTRB(16, 0, 16, 32),
-            sliver: SliverToBoxAdapter(child: EventsContent()),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+            sliver: SliverToBoxAdapter(
+              child: EventsContent(preloadedEvents: preloadedEvents),
+            ),
           ),
         ],
       ),
@@ -36,7 +47,7 @@ class OwnerEvents extends StatelessWidget {
   }
 }
 
-class EventsContent extends StatefulWidget {
+class EventsContent extends ConsumerStatefulWidget {
   const EventsContent({
     super.key,
     this.statsOrder = const [
@@ -44,46 +55,101 @@ class EventsContent extends StatefulWidget {
       EventStatType.pending,
       EventStatType.total,
     ],
+    this.preloadedEvents,
   });
 
   final List<EventStatType> statsOrder;
+  final List<OwnerEvent>? preloadedEvents;
 
   @override
-  State<EventsContent> createState() => _EventsContentState();
+  ConsumerState<EventsContent> createState() => _EventsContentState();
 }
 
-class _EventsContentState extends State<EventsContent> {
+class _EventsContentState extends ConsumerState<EventsContent> {
   int _eventFilter = 0;
+
+  static const _filters = ['All', 'Active', 'Pending', 'Rejected', 'Past'];
+
+  static const _filterToStatus = <int, EventStatus>{
+    1: EventStatus.active,
+    2: EventStatus.pending,
+    3: EventStatus.rejected,
+    4: EventStatus.past,
+  };
 
   @override
   Widget build(BuildContext context) {
     final styles = AppTextStyles(context);
+
+    if (widget.preloadedEvents != null) {
+      return _buildContent(context, styles, widget.preloadedEvents!);
+    }
+
+    final eventsAsync = ref.watch(getOwnerEventsProvider(active: false));
+
+    return eventsAsync.when(
+      loading: () => const _EventsSkeleton(),
+      error: (e, _) => Center(
+        child: Text(
+          'Failed to load events',
+          style: TextStyle(color: AppColors.textSecondary),
+        ),
+      ),
+      data: (events) => _buildContent(context, styles, events),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    AppTextStyles styles,
+    List<OwnerEvent> events,
+  ) {
+    final filtered = _eventFilter == 0
+        ? events
+        : events
+              .where((e) => e.status == _filterToStatus[_eventFilter])
+              .toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        EventStatsRow(styles: styles, order: widget.statsOrder),
+        EventStatsRow(styles: styles, order: widget.statsOrder, events: events),
         const SizedBox(height: 24),
         _buildEventFilters(styles),
         const SizedBox(height: 13),
-        _buildEventCard(styles),
+        if (filtered.isEmpty)
+          NotFoundWidget(
+            heading: "No event here",
+            description: "Try exploring other filters",
+          )
+        else
+          Column(
+            children: [
+              for (final event in filtered) ...[
+                _EventCard(event: event, styles: styles),
+                const SizedBox(height: 12),
+              ],
+            ],
+          ),
       ],
     );
   }
 
   Widget _buildEventFilters(AppTextStyles styles) {
-    final filters = ['All', 'Active', 'Pending', 'Rejected', 'Past'];
     const duration = Duration(milliseconds: 380);
     const containerCurve = Curves.easeOutCubic;
     const textCurve = Curves.easeOutBack;
     return Row(
-      children: List.generate(filters.length, (index) {
+      children: List.generate(_filters.length, (index) {
         final isSelected = _eventFilter == index;
         return GestureDetector(
           onTap: () => setState(() => _eventFilter = index),
           child: AnimatedContainer(
             duration: duration,
             curve: containerCurve,
-            margin: EdgeInsets.only(right: index < filters.length - 1 ? 16 : 0),
+            margin: EdgeInsets.only(
+              right: index < _filters.length - 1 ? 16 : 0,
+            ),
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
             decoration: BoxDecoration(
               border: Border(
@@ -113,136 +179,229 @@ class _EventsContentState extends State<EventsContent> {
                     : const Color(0xFF4B4B4D),
                 height: isSelected ? 24 / 15 : 20 / 14,
               ),
-              child: Text(filters[index]),
+              child: Text(_filters[index]),
             ),
           ),
         );
       }),
     );
   }
+}
 
-  Widget _buildEventCard(AppTextStyles styles) {
-    return SmoothContainer(
-      padding: const EdgeInsets.all(16),
-      color: AppColors.containerDim,
-      smoothness: 1,
-      borderRadius: BorderRadius.circular(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 3,
-                          height: 3,
-                          decoration: const BoxDecoration(
-                            color: AppColors.textSuccess,
-                            shape: BoxShape.circle,
+class _EventCard extends StatelessWidget {
+  const _EventCard({required this.event, required this.styles});
+
+  final OwnerEvent event;
+  final AppTextStyles styles;
+
+  static const _statusColors = <EventStatus, Color>{
+    EventStatus.active: AppColors.textSuccess,
+    EventStatus.pending: AppColors.textWarning,
+    EventStatus.rejected: AppColors.textError,
+    EventStatus.past: AppColors.textSecondary,
+  };
+
+  static const _statusLabels = <EventStatus, String>{
+    EventStatus.active: 'Active',
+    EventStatus.pending: 'Pending',
+    EventStatus.rejected: 'Rejected',
+    EventStatus.past: 'Past',
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final statusColor = _statusColors[event.status] ?? AppColors.textSecondary;
+    final statusLabel = _statusLabels[event.status] ?? '';
+    final soldFraction = event.sales.capacity > 0
+        ? event.sales.sold / event.sales.capacity
+        : 0.0;
+
+    return GestureDetector(
+      onTap: () => context.push("/owner/event-details", extra: event.id),
+      child: SmoothContainer(
+        padding: const EdgeInsets.all(16),
+        color: AppColors.containerDim,
+        smoothness: 1,
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 3,
+                            height: 3,
+                            decoration: BoxDecoration(
+                              color: statusColor,
+                              shape: BoxShape.circle,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Active Event #1231',
-                          style: TextStyle(
-                            fontSize: styles.accumulator * 11,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.textSuccess,
-                            height: 16 / 11,
+                          const SizedBox(width: 6),
+                          Text(
+                            '$statusLabel Event #${event.displayCode}',
+                            style: TextStyle(
+                              fontSize: styles.accumulator * 11,
+                              fontWeight: FontWeight.w500,
+                              color: statusColor,
+                              height: 16 / 11,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Astral Drift',
-                      style: TextStyle(
-                        fontFamily: styles.fontFamily,
-                        fontSize: styles.accumulator * 16,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                        height: 22 / 16,
+                        ],
                       ),
+                      const SizedBox(height: 8),
+                      Text(
+                        event.name,
+                        style: TextStyle(
+                          fontFamily: styles.fontFamily,
+                          fontSize: styles.accumulator * 16,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                          height: 22 / 16,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        event.timeLabel ?? "",
+                        style: TextStyle(
+                          fontSize: styles.accumulator * 11,
+                          color: AppColors.textSecondary,
+                          height: 16 / 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.confirmation_number_outlined,
+                      size: 16,
+                      color: AppColors.textSecondary,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Sat 21 Feb, 11:30 PM',
-                      style: TextStyle(
-                        fontSize: styles.accumulator * 11,
-                        color: AppColors.textSecondary,
-                        height: 16 / 11,
+                    const SizedBox(width: 6),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '${event.sales.sold}',
+                            style: TextStyle(
+                              fontSize: styles.accumulator * 13,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                          ),
+                          TextSpan(
+                            text: '/${event.sales.capacity} sold',
+                            style: TextStyle(
+                              fontSize: styles.accumulator * 13,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const Icon(
-                    Icons.confirmation_number_outlined,
-                    size: 16,
-                    color: AppColors.textSecondary,
+                Text(
+                  '${event.revenue.amount.toStringAsFixed(0)} ${event.revenue.currency}',
+                  style: TextStyle(
+                    fontFamily: styles.fontFamily,
+                    fontSize: styles.accumulator * 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
                   ),
-                  const SizedBox(width: 6),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '90',
-                          style: TextStyle(
-                            fontSize: styles.accumulator * 13,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
-                        ),
-                        TextSpan(
-                          text: '/200 sold',
-                          style: TextStyle(
-                            fontSize: styles.accumulator * 13,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Text(
-                '32,423 EGP',
-                style: TextStyle(
-                  fontFamily: styles.fontFamily,
-                  fontSize: styles.accumulator * 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: soldFraction,
+                minHeight: 4,
+                backgroundColor: AppColors.surfaceContainerLighter,
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  AppColors.buttonSecondary,
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: 90 / 200,
-              minHeight: 4,
-              backgroundColor: AppColors.surfaceContainerLighter,
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                AppColors.buttonSecondary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EventsSkeleton extends StatelessWidget {
+  const _EventsSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: AppColors.containerDim,
+      highlightColor: AppColors.surfaceContainerLighter,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Stat cards row
+          Row(
+            children: List.generate(
+              3,
+              (i) => Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(right: i < 2 ? 8 : 0),
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: AppColors.containerDim,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
               ),
             ),
           ),
+          const SizedBox(height: 24),
+          // Filter chips row
+          Row(
+            children: List.generate(
+              5,
+              (i) => Container(
+                margin: EdgeInsets.only(right: i < 4 ? 16 : 0),
+                width: 40 + i * 4.0,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: AppColors.containerDim,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 13),
+          // Event cards
+          for (int i = 0; i < 3; i++) ...[
+            Container(
+              width: double.infinity,
+              height: 130,
+              decoration: BoxDecoration(
+                color: AppColors.containerDim,
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
         ],
       ),
     );
@@ -256,6 +415,7 @@ class EventStatsRow extends StatelessWidget {
   const EventStatsRow({
     super.key,
     required this.styles,
+    required this.events,
     this.order = const [
       EventStatType.active,
       EventStatType.pending,
@@ -264,37 +424,50 @@ class EventStatsRow extends StatelessWidget {
   });
 
   final AppTextStyles styles;
+  final List<OwnerEvent> events;
   final List<EventStatType> order;
 
   @override
   Widget build(BuildContext context) {
+    final activeCount = events
+        .where((e) => e.status == EventStatus.active)
+        .length;
+    final pendingCount = events
+        .where((e) => e.status == EventStatus.pending)
+        .length;
+
     final cards = {
       EventStatType.active: _StatCard(
-        value: '4',
+        value: '$activeCount',
         label: 'Active',
         labelColor: AppColors.textSuccess,
         labelWeight: FontWeight.w500,
         styles: styles,
       ),
       EventStatType.pending: _StatCard(
-        value: '4',
+        value: '$pendingCount',
         label: 'Pending Approval',
         labelColor: AppColors.textWarning,
         styles: styles,
       ),
       EventStatType.total: _StatCard(
-        value: '10',
+        value: '${events.length}',
         label: 'Total events',
         labelColor: AppColors.textSecondary,
         styles: styles,
       ),
     };
 
+    final visibleOrder = order.where((type) {
+      if (type == EventStatType.pending && pendingCount == 0) return false;
+      return true;
+    }).toList();
+
     return Row(
       children: [
-        for (int i = 0; i < order.length; i++) ...[
+        for (int i = 0; i < visibleOrder.length; i++) ...[
           if (i > 0) const SizedBox(width: 8),
-          cards[order[i]]!,
+          cards[visibleOrder[i]]!,
         ],
       ],
     );

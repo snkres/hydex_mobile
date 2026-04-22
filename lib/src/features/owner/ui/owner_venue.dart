@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
-import 'package:hydex/src/features/owner/models/booking_status.dart';
+import 'package:hydex/src/features/owner/ui/components/booking_card.dart';
 import 'package:hydex/src/features/owner/ui/events.dart';
 import 'package:hydex/src/widgets/blur_app_bar.dart';
 import 'package:smooth_corner/smooth_corner.dart';
@@ -391,40 +391,40 @@ class _OwnerVenuesState extends State<OwnerVenues>
 
   List<Widget> _buildBookingCards(AppTextStyles styles) {
     final bookings = [
-      _BookingData(
-        '#132',
-        'Ahmed Abid',
-        'Sat 21 Feb, 11:30 PM',
-        'RSV',
-        'Pending',
+      const BookingCardData(
+        id: '#132',
+        name: 'Ahmed Abid',
+        date: 'Sat 21 Feb, 11:30 PM',
+        type: 'RSV',
+        status: 'Pending',
       ),
-      _BookingData(
-        '#132',
-        'Ahmed Abid',
-        'Sat 21 Feb, 11:30 PM',
-        'RSV',
-        'Pending',
+      const BookingCardData(
+        id: '#132',
+        name: 'Ahmed Abid',
+        date: 'Sat 21 Feb, 11:30 PM',
+        type: 'RSV',
+        status: 'Pending',
       ),
-      _BookingData(
-        '#132',
-        'Ahmed Abid',
-        'Sat 21 Feb, 11:30 PM',
-        'RSV',
-        'Confirmed',
+      const BookingCardData(
+        id: '#132',
+        name: 'Ahmed Abid',
+        date: 'Sat 21 Feb, 11:30 PM',
+        type: 'RSV',
+        status: 'Confirmed',
       ),
-      _BookingData(
-        '#132',
-        'Ahmed Abid',
-        'Sat 21 Feb, 11:30 PM',
-        'RSV',
-        'Entered',
+      const BookingCardData(
+        id: '#132',
+        name: 'Ahmed Abid',
+        date: 'Sat 21 Feb, 11:30 PM',
+        type: 'RSV',
+        status: 'Entered',
       ),
-      _BookingData(
-        '#132',
-        'Ahmed Abid',
-        'Sat 21 Feb, 11:30 PM',
-        'Event',
-        'Entered',
+      const BookingCardData(
+        id: '#132',
+        name: 'Ahmed Abid',
+        date: 'Sat 21 Feb, 11:30 PM',
+        type: 'Event',
+        status: 'Entered',
       ),
     ];
 
@@ -432,117 +432,10 @@ class _OwnerVenuesState extends State<OwnerVenues>
         .map(
           (b) => Padding(
             padding: const EdgeInsets.only(bottom: 12, left: 16, right: 16),
-            child: _buildBookingCard(styles, b),
+            child: OwnerBookingCard(booking: b, styles: styles),
           ),
         )
         .toList();
-  }
-
-  Widget _buildBookingCard(AppTextStyles styles, _BookingData booking) {
-    final statusColor =
-        BookingStatus.fromString(booking.status)?.color ??
-        AppColors.textWarning;
-
-    return SmoothContainer(
-      padding: const EdgeInsets.all(16),
-      color: AppColors.containerDim,
-      smoothness: 1,
-      borderRadius: BorderRadius.circular(20),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Opacity(
-                opacity: 0.3,
-                child: Text(
-                  booking.id,
-                  style: TextStyle(
-                    fontFamily: styles.fontFamily,
-                    fontSize: styles.accumulator * 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                    height: 20 / 14,
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceContainerLighter,
-                  borderRadius: BorderRadius.circular(99),
-                ),
-                child: Text(
-                  booking.type,
-                  style: TextStyle(
-                    fontSize: styles.accumulator * 11,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                    height: 16 / 11,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    booking.name,
-                    style: TextStyle(
-                      fontFamily: styles.fontFamily,
-                      fontSize: styles.accumulator * 14,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                      height: 20 / 14,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    booking.date,
-                    style: TextStyle(
-                      fontSize: styles.accumulator * 11,
-                      color: AppColors.textSecondary,
-                      height: 16 / 11,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Container(
-                    width: 3,
-                    height: 3,
-                    decoration: BoxDecoration(
-                      color: statusColor,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    booking.status,
-                    style: TextStyle(
-                      fontSize: styles.accumulator * 11,
-                      fontWeight: FontWeight.w500,
-                      color: statusColor,
-                      height: 16 / 11,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 
   // ─── SALES TAB ───
@@ -686,14 +579,4 @@ class _OwnerVenuesState extends State<OwnerVenues>
       ],
     );
   }
-}
-
-class _BookingData {
-  final String id;
-  final String name;
-  final String date;
-  final String type;
-  final String status;
-
-  _BookingData(this.id, this.name, this.date, this.type, this.status);
 }

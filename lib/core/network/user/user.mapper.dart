@@ -241,6 +241,12 @@ class UserMapper extends ClassMapperBase<User> {
     _$password,
     opt: true,
   );
+  static String? _$businessCategory(User v) => v.businessCategory;
+  static const Field<User, String> _f$businessCategory = Field(
+    'businessCategory',
+    _$businessCategory,
+    opt: true,
+  );
 
   @override
   final MappableFields<User> fields = const {
@@ -265,6 +271,7 @@ class UserMapper extends ClassMapperBase<User> {
     #preferredCountry: _f$preferredCountry,
     #socialLinks: _f$socialLinks,
     #password: _f$password,
+    #businessCategory: _f$businessCategory,
   };
 
   static User _instantiate(DecodingData data) {
@@ -290,6 +297,7 @@ class UserMapper extends ClassMapperBase<User> {
       preferredCountry: data.dec(_f$preferredCountry),
       socialLinks: data.dec(_f$socialLinks),
       password: data.dec(_f$password),
+      businessCategory: data.dec(_f$businessCategory),
     );
   }
 
@@ -366,6 +374,7 @@ abstract class UserCopyWith<$R, $In extends User, $Out>
     String? preferredCountry,
     SocialLinks? socialLinks,
     String? password,
+    String? businessCategory,
   });
   UserCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -429,6 +438,7 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
     Object? preferredCountry = $none,
     Object? socialLinks = $none,
     Object? password = $none,
+    Object? businessCategory = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != $none) #id: id,
@@ -452,6 +462,7 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
       if (preferredCountry != $none) #preferredCountry: preferredCountry,
       if (socialLinks != $none) #socialLinks: socialLinks,
       if (password != $none) #password: password,
+      if (businessCategory != $none) #businessCategory: businessCategory,
     }),
   );
   @override
@@ -480,6 +491,7 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
     preferredCountry: data.get(#preferredCountry, or: $value.preferredCountry),
     socialLinks: data.get(#socialLinks, or: $value.socialLinks),
     password: data.get(#password, or: $value.password),
+    businessCategory: data.get(#businessCategory, or: $value.businessCategory),
   );
 
   @override

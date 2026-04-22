@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -220,7 +222,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                               phoneNumber!,
                                               passwordController.text,
                                             );
-
                                         if (user.role == .owner) {
                                           if (context.mounted) {
                                             context.go("/owner/home");
@@ -315,14 +316,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                       return;
                                     }
                                     try {
-                                      await ref
+                                      final user = await ref
                                           .read(authServiceProvider)
                                           .login(
                                             phoneNumber!,
                                             passwordController.text,
                                           );
 
-                                      if (context.mounted) context.go("/");
+                                      if (user.role == .owner) {
+                                        if (context.mounted) {
+                                          context.go("/owner/home");
+                                        }
+                                      } else {
+                                        if (context.mounted) context.go("/");
+                                      }
                                     } on ApiException catch (error) {
                                       if (context.mounted) {
                                         ScaffoldMessenger.of(
