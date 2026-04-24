@@ -8,7 +8,6 @@ import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/owner/domain/owner_providers.dart';
 import 'package:hydex/src/features/owner/models/owner_event.dart';
 import 'package:hydex/src/widgets/active_event_card.dart';
-import 'package:intl/intl.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 class OwnerHomeScreen extends ConsumerStatefulWidget {
@@ -71,6 +70,7 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
                     const TextSpan(text: '👋 '),
                     TextSpan(
                       text: fullName,
+
                       style: TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: styles.accumulator * 19,
@@ -94,22 +94,25 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
             ],
           ),
         ),
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(32),
-          ),
-          child: Center(
-            child: SvgPicture.asset(
-              'img/svg/notification.svg',
-              package: 'assets',
-              width: 24,
-              height: 24,
-              colorFilter: const ColorFilter.mode(
-                AppColors.textPrimary,
-                BlendMode.srcIn,
+        GestureDetector(
+          onTap: () => context.push("/notifications"),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(32),
+            ),
+            child: Center(
+              child: SvgPicture.asset(
+                'img/svg/notification.svg',
+                package: 'assets',
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.textPrimary,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
@@ -127,7 +130,8 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
             title: 'My Venue',
             subtitle: 'Manage reservations',
             styles: styles,
-            onTap: () => context.push("/owner/venue"),
+            onTap: () =>
+                context.push("/owner/venue", extra: events?.length ?? 0),
           ),
         ),
         const SizedBox(width: 8),
@@ -197,15 +201,6 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
     );
   }
 
-  String? _eventTag(DateTime startTime) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final eventDay = DateTime(startTime.year, startTime.month, startTime.day);
-    if (eventDay == today && startTime.isAfter(now)) return 'Tonight';
-    if (eventDay == today.add(const Duration(days: 1))) return 'Tomorrow';
-    return null;
-  }
-
   Widget _buildActiveEventsSection(AppTextStyles styles) {
     final asyncEvents = ref.watch(getOwnerEventsProvider(active: true));
 
@@ -214,21 +209,6 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
       error: (_, __) => const SizedBox.shrink(),
       data: (ownerEvents) {
         if (ownerEvents.isEmpty) return const SizedBox.shrink();
-
-        final events = ownerEvents
-            .map(
-              (e) => EventCardData(
-                id: e.displayCode,
-                name: e.name,
-                date: DateFormat('EEE d MMM, h:mm a').format(e.startTime),
-                tag: _eventTag(e.startTime),
-                sold: e.sales.sold,
-                total: e.sales.capacity,
-                revenue:
-                    '${e.revenue.amount.toStringAsFixed(0)} ${e.revenue.currency}',
-              ),
-            )
-            .toList();
 
         return SizedBox(
           width: double.infinity,
@@ -245,7 +225,7 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
                     ),
                   ),
                   const Spacer(),
-                  _buildPageIndicator(events.length),
+                  _buildPageIndicator(ownerEvents.length),
                 ],
               ),
               const SizedBox(height: 12),
@@ -255,7 +235,7 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
                   controller: _eventsPageController,
                   clipBehavior: Clip.none,
                   padEnds: false,
-                  itemCount: events.length,
+                  itemCount: ownerEvents.length,
                   onPageChanged: (index) {
                     setState(() => _currentEventPage = index);
                   },
@@ -263,9 +243,10 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
                     return Padding(
                       padding: const EdgeInsets.only(right: 10),
                       child: ActiveEventCard(
-                        event: events[index],
+                        event: ownerEvents[index],
+
                         styles: styles,
-                        status: EventStatus.active,
+                        status: .active,
                       ),
                     );
                   },

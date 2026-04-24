@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/scan/domain/scan_providers.dart';
@@ -21,26 +23,30 @@ class ScanScreen extends StatefulWidget {
 
 class _ScanScreenState extends State<ScanScreen> {
   late final ScrollController controller;
+  late final MobileScannerController scannerController;
   _ScanState _scanState = _ScanState.idle;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
     controller = ScrollController();
+    scannerController = MobileScannerController();
   }
 
   @override
   void dispose() {
-    controller.dispose();
     super.dispose();
+    controller.dispose();
+    scannerController.dispose();
   }
 
   Color get _borderColor => switch (_scanState) {
-        _ScanState.loading => AppColors.signalBrandSolid,
-        _ScanState.success => AppColors.borderSuccess,
-        _ScanState.error => AppColors.borderError,
-        _ScanState.idle => Colors.transparent,
-      };
+    _ScanState.loading => AppColors.signalBrandSolid,
+    _ScanState.success => AppColors.borderSuccess,
+    _ScanState.error => AppColors.borderError,
+    _ScanState.idle => Colors.transparent,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -57,10 +63,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 shape: SmoothRectangleBorder(
                   smoothness: 1,
                   borderRadius: BorderRadius.circular(50),
-                  side: BorderSide(
-                    color: _borderColor,
-                    width: 3,
-                  ),
+                  side: BorderSide(color: _borderColor, width: 3),
                 ),
               ),
               child: SmoothClipRRect(
@@ -75,9 +78,7 @@ class _ScanScreenState extends State<ScanScreen> {
                       Consumer(
                         builder: (context, ref, _) {
                           return MobileScanner(
-                            controller: MobileScannerController(
-                              detectionTimeoutMs: 1000,
-                            ),
+                            controller: scannerController,
                             onDetectError: (error, stackTrace) {
                               log(
                                 "Error Scanning",
@@ -91,21 +92,44 @@ class _ScanScreenState extends State<ScanScreen> {
                               if (raw == null) return;
                               final json =
                                   jsonDecode(raw) as Map<String, dynamic>;
+                              final source = json["bookingSource"] as String;
                               final bookingId = json['bookingId'] as String?;
                               if (bookingId == null) return;
 
                               setState(() => _scanState = _ScanState.loading);
                               try {
-                                await ref.read(
+                                final data = await ref.read(
                                   getScanDetailsProvider(id: bookingId).future,
                                 );
-                                setState(
-                                    () => _scanState = _ScanState.success);
-                              } catch (_) {
-                                setState(() => _scanState = _ScanState.error);
-                              } finally {
+                                if (context.mounted) {
+                                  final router = GoRouter.of(context);
+                                  await scannerController.stop();
+                                  setState(() => _scanState = _ScanState.idle);
+                                  if (source == "EVENT") {
+                                    await router.push(
+                                      "/owner/scan/output",
+                                      extra: data,
+                                    );
+                                  } else {
+                                    await router.push(
+                                      "/owner/rsv/output",
+                                      extra: data,
+                                    );
+                                  }
+
+                                  await scannerController.start();
+                                }
+                              } catch (e, s) {
+                                log("Error Scan", error: e, stackTrace: s);
+                                setState(() {
+                                  _scanState = _ScanState.error;
+                                  _errorMessage = e is ApiException
+                                      ? e.message
+                                      : null;
+                                });
                                 await Future.delayed(
-                                    const Duration(seconds: 2));
+                                  const Duration(seconds: 2),
+                                );
                                 if (mounted) {
                                   setState(() => _scanState = _ScanState.idle);
                                 }
@@ -118,35 +142,34 @@ class _ScanScreenState extends State<ScanScreen> {
                         duration: const Duration(milliseconds: 250),
                         child: switch (_scanState) {
                           _ScanState.loading => _ScanOverlay(
-                              key: const ValueKey('loading'),
-                              color: AppColors.signalBrandSolid.withAlpha(180),
-                              child: const CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 3,
-                              ),
+                            key: const ValueKey('loading'),
+                            color: AppColors.signalBrandSolid.withAlpha(180),
+                            child: const CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 3,
                             ),
+                          ),
                           _ScanState.success => _ScanOverlay(
-                              key: const ValueKey('success'),
-                              color:
-                                  AppColors.signalFunSuccess.withAlpha(220),
-                              child: const Icon(
-                                Icons.check_circle_outline_rounded,
-                                color: Colors.white,
-                                size: 64,
-                              ),
+                            key: const ValueKey('success'),
+                            color: AppColors.signalFunSuccess.withAlpha(220),
+                            child: const Icon(
+                              Icons.check_circle_outline_rounded,
+                              color: Colors.white,
+                              size: 64,
                             ),
+                          ),
                           _ScanState.error => _ScanOverlay(
-                              key: const ValueKey('error'),
-                              color: const Color(0xFF301113).withAlpha(220),
-                              child: const Icon(
-                                Icons.cancel_outlined,
-                                color: Colors.white,
-                                size: 64,
-                              ),
+                            key: const ValueKey('error'),
+                            color: const Color(0xFF301113).withAlpha(220),
+                            child: const Icon(
+                              Icons.cancel_outlined,
+                              color: Colors.white,
+                              size: 64,
                             ),
+                          ),
                           _ScanState.idle => const SizedBox.shrink(
-                              key: ValueKey('idle'),
-                            ),
+                            key: ValueKey('idle'),
+                          ),
                         },
                       ),
                     ],
@@ -159,7 +182,7 @@ class _ScanScreenState extends State<ScanScreen> {
               switch (_scanState) {
                 _ScanState.loading => "Fetching details...",
                 _ScanState.success => "Scan successful",
-                _ScanState.error => "Something went wrong",
+                _ScanState.error => _errorMessage ?? "Something went wrong",
                 _ScanState.idle => "Point at guest's QR code",
               },
               style: TextStyle(

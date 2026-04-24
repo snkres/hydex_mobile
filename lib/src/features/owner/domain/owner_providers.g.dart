@@ -228,3 +228,227 @@ final class GetOwnerEventBookingsFamily extends $Family
   @override
   String toString() => r'getOwnerEventBookingsProvider';
 }
+
+@ProviderFor(getOwnerVendorBookings)
+const getOwnerVendorBookingsProvider = GetOwnerVendorBookingsFamily._();
+
+final class GetOwnerVendorBookingsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<VendorBookingItem>>,
+          List<VendorBookingItem>,
+          FutureOr<List<VendorBookingItem>>
+        >
+    with
+        $FutureModifier<List<VendorBookingItem>>,
+        $FutureProvider<List<VendorBookingItem>> {
+  const GetOwnerVendorBookingsProvider._({
+    required GetOwnerVendorBookingsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'getOwnerVendorBookingsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$getOwnerVendorBookingsHash();
+
+  @override
+  String toString() {
+    return r'getOwnerVendorBookingsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<List<VendorBookingItem>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<VendorBookingItem>> create(Ref ref) {
+    final argument = this.argument as String;
+    return getOwnerVendorBookings(ref, vendorId: argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetOwnerVendorBookingsProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$getOwnerVendorBookingsHash() =>
+    r'0519817a5051d0992d12bad1839fe5a9c3632c31';
+
+final class GetOwnerVendorBookingsFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<List<VendorBookingItem>>, String> {
+  const GetOwnerVendorBookingsFamily._()
+    : super(
+        retry: null,
+        name: r'getOwnerVendorBookingsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  GetOwnerVendorBookingsProvider call({required String vendorId}) =>
+      GetOwnerVendorBookingsProvider._(argument: vendorId, from: this);
+
+  @override
+  String toString() => r'getOwnerVendorBookingsProvider';
+}
+
+@ProviderFor(getVendorReservations)
+const getVendorReservationsProvider = GetVendorReservationsFamily._();
+
+final class GetVendorReservationsProvider
+    extends $FunctionalProvider<AsyncValue<int>, int, FutureOr<int>>
+    with $FutureModifier<int>, $FutureProvider<int> {
+  const GetVendorReservationsProvider._({
+    required GetVendorReservationsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'getVendorReservationsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$getVendorReservationsHash();
+
+  @override
+  String toString() {
+    return r'getVendorReservationsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<int> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<int> create(Ref ref) {
+    final argument = this.argument as String;
+    return getVendorReservations(ref, vendorId: argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetVendorReservationsProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$getVendorReservationsHash() =>
+    r'b840dbb658752689d00bf64f134fc5fe39fd38ec';
+
+final class GetVendorReservationsFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<int>, String> {
+  const GetVendorReservationsFamily._()
+    : super(
+        retry: null,
+        name: r'getVendorReservationsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  GetVendorReservationsProvider call({required String vendorId}) =>
+      GetVendorReservationsProvider._(argument: vendorId, from: this);
+
+  @override
+  String toString() => r'getVendorReservationsProvider';
+}
+
+@ProviderFor(getVendorSales)
+const getVendorSalesProvider = GetVendorSalesFamily._();
+
+final class GetVendorSalesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<VendorSales>,
+          VendorSales,
+          FutureOr<VendorSales>
+        >
+    with $FutureModifier<VendorSales>, $FutureProvider<VendorSales> {
+  const GetVendorSalesProvider._({
+    required GetVendorSalesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'getVendorSalesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$getVendorSalesHash();
+
+  @override
+  String toString() {
+    return r'getVendorSalesProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<VendorSales> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<VendorSales> create(Ref ref) {
+    final argument = this.argument as String;
+    return getVendorSales(ref, vendorId: argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetVendorSalesProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$getVendorSalesHash() => r'57bd5af04fa27bc3654731251cd16766f52d8485';
+
+final class GetVendorSalesFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<VendorSales>, String> {
+  const GetVendorSalesFamily._()
+    : super(
+        retry: null,
+        name: r'getVendorSalesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  GetVendorSalesProvider call({required String vendorId}) =>
+      GetVendorSalesProvider._(argument: vendorId, from: this);
+
+  @override
+  String toString() => r'getVendorSalesProvider';
+}

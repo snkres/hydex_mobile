@@ -25,15 +25,18 @@ class OwnerBookingCard extends StatelessWidget {
     super.key,
     required this.booking,
     required this.styles,
+    this.rsv,
   });
 
   final BookingCardData booking;
   final AppTextStyles styles;
+  final String? rsv;
 
   @override
   Widget build(BuildContext context) {
     final statusColor =
-        BookingStatus.fromString(booking.status)?.color ?? AppColors.textWarning;
+        BookingStatus.fromString(booking.status)?.color ??
+        AppColors.textWarning;
 
     return SmoothContainer(
       padding: const EdgeInsets.all(16),
@@ -46,40 +49,65 @@ class OwnerBookingCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Opacity(
-                opacity: 0.3,
-                child: Text(
-                  booking.id,
-                  style: TextStyle(
-                    fontFamily: styles.fontFamily,
-                    fontSize: styles.accumulator * 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                    height: 20 / 14,
+              Expanded(
+                child: Opacity(
+                  opacity: 0.3,
+                  child: Text(
+                    booking.id,
+                    style: TextStyle(
+                      fontFamily: styles.fontFamily,
+                      fontSize: styles.accumulator * 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                      height: 20 / 14,
+                    ),
                   ),
                 ),
               ),
-              Row(
-                children: [
-                  Container(
-                    width: 3,
-                    height: 3,
-                    decoration: BoxDecoration(
-                      color: statusColor,
-                      shape: BoxShape.circle,
+              Visibility(
+                visible: rsv == null,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 3,
+                      height: 3,
+                      decoration: BoxDecoration(
+                        color: statusColor,
+                        shape: BoxShape.circle,
+                      ),
                     ),
+                    const SizedBox(width: 6),
+                    Text(
+                      booking.status,
+                      style: TextStyle(
+                        fontSize: styles.accumulator * 11,
+                        fontWeight: FontWeight.w500,
+                        color: statusColor,
+                        height: 16 / 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Visibility(
+                visible: rsv != null,
+                child: Container(
+                  width: 43,
+                  height: 28,
+                  alignment: .center,
+                  decoration: BoxDecoration(
+                    borderRadius: .circular(100),
+                    color: AppColors.surfaceContainerLighter,
                   ),
-                  const SizedBox(width: 6),
-                  Text(
-                    booking.status,
+                  child: Text(
+                    rsv?.toUpperCase() ?? "",
                     style: TextStyle(
-                      fontSize: styles.accumulator * 11,
-                      fontWeight: FontWeight.w500,
-                      color: statusColor,
-                      height: 16 / 11,
+                      fontSize: AppTextStyles(context).accumulator * 11,
+                      fontWeight: .w600,
                     ),
                   ),
-                ],
+                ),
               ),
             ],
           ),
@@ -106,12 +134,44 @@ class OwnerBookingCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              Text(
-                '${booking.type} guest',
-                style: TextStyle(
-                  fontSize: styles.accumulator * 11,
-                  color: AppColors.textSecondary,
-                  height: 16 / 11,
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: .spaceBetween,
+                  children: [
+                    Text(
+                      '${booking.type} guest',
+                      style: TextStyle(
+                        fontSize: styles.accumulator * 11,
+                        color: AppColors.textSecondary,
+                        height: 16 / 11,
+                      ),
+                    ),
+                    Visibility(
+                      visible: rsv != null,
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 3,
+                            height: 3,
+                            decoration: BoxDecoration(
+                              color: statusColor,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            booking.status,
+                            style: TextStyle(
+                              fontSize: styles.accumulator * 11,
+                              fontWeight: FontWeight.w500,
+                              color: statusColor,
+                              height: 16 / 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

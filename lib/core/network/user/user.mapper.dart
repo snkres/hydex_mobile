@@ -125,6 +125,7 @@ class UserMapper extends ClassMapperBase<User> {
       UserStatusMapper.ensureInitialized();
       RoleMapper.ensureInitialized();
       SocialLinksMapper.ensureInitialized();
+      OwnerProfileMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -247,6 +248,12 @@ class UserMapper extends ClassMapperBase<User> {
     _$businessCategory,
     opt: true,
   );
+  static OwnerProfile? _$ownerProfile(User v) => v.ownerProfile;
+  static const Field<User, OwnerProfile> _f$ownerProfile = Field(
+    'ownerProfile',
+    _$ownerProfile,
+    opt: true,
+  );
 
   @override
   final MappableFields<User> fields = const {
@@ -272,6 +279,7 @@ class UserMapper extends ClassMapperBase<User> {
     #socialLinks: _f$socialLinks,
     #password: _f$password,
     #businessCategory: _f$businessCategory,
+    #ownerProfile: _f$ownerProfile,
   };
 
   static User _instantiate(DecodingData data) {
@@ -298,6 +306,7 @@ class UserMapper extends ClassMapperBase<User> {
       socialLinks: data.dec(_f$socialLinks),
       password: data.dec(_f$password),
       businessCategory: data.dec(_f$businessCategory),
+      ownerProfile: data.dec(_f$ownerProfile),
     );
   }
 
@@ -352,6 +361,7 @@ abstract class UserCopyWith<$R, $In extends User, $Out>
   get contentNiches;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get areas;
   SocialLinksCopyWith<$R, SocialLinks, SocialLinks>? get socialLinks;
+  OwnerProfileCopyWith<$R, OwnerProfile, OwnerProfile>? get ownerProfile;
   $R call({
     String? id,
     String? email,
@@ -375,6 +385,7 @@ abstract class UserCopyWith<$R, $In extends User, $Out>
     SocialLinks? socialLinks,
     String? password,
     String? businessCategory,
+    OwnerProfile? ownerProfile,
   });
   UserCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -416,6 +427,9 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
   SocialLinksCopyWith<$R, SocialLinks, SocialLinks>? get socialLinks =>
       $value.socialLinks?.copyWith.$chain((v) => call(socialLinks: v));
   @override
+  OwnerProfileCopyWith<$R, OwnerProfile, OwnerProfile>? get ownerProfile =>
+      $value.ownerProfile?.copyWith.$chain((v) => call(ownerProfile: v));
+  @override
   $R call({
     Object? id = $none,
     String? email,
@@ -439,6 +453,7 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
     Object? socialLinks = $none,
     Object? password = $none,
     Object? businessCategory = $none,
+    Object? ownerProfile = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != $none) #id: id,
@@ -463,6 +478,7 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
       if (socialLinks != $none) #socialLinks: socialLinks,
       if (password != $none) #password: password,
       if (businessCategory != $none) #businessCategory: businessCategory,
+      if (ownerProfile != $none) #ownerProfile: ownerProfile,
     }),
   );
   @override
@@ -492,6 +508,7 @@ class _UserCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, User, $Out>
     socialLinks: data.get(#socialLinks, or: $value.socialLinks),
     password: data.get(#password, or: $value.password),
     businessCategory: data.get(#businessCategory, or: $value.businessCategory),
+    ownerProfile: data.get(#ownerProfile, or: $value.ownerProfile),
   );
 
   @override
@@ -642,5 +659,259 @@ class _SocialLinksCopyWithImpl<$R, $Out>
   SocialLinksCopyWith<$R2, SocialLinks, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   ) => _SocialLinksCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class OwnerProfileMapper extends ClassMapperBase<OwnerProfile> {
+  OwnerProfileMapper._();
+
+  static OwnerProfileMapper? _instance;
+  static OwnerProfileMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = OwnerProfileMapper._());
+      VendorSummaryMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'OwnerProfile';
+
+  static List<VendorSummary>? _$vendors(OwnerProfile v) => v.vendors;
+  static const Field<OwnerProfile, List<VendorSummary>> _f$vendors = Field(
+    'vendors',
+    _$vendors,
+    opt: true,
+  );
+
+  @override
+  final MappableFields<OwnerProfile> fields = const {#vendors: _f$vendors};
+
+  static OwnerProfile _instantiate(DecodingData data) {
+    return OwnerProfile(vendors: data.dec(_f$vendors));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static OwnerProfile fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<OwnerProfile>(map);
+  }
+
+  static OwnerProfile fromJson(String json) {
+    return ensureInitialized().decodeJson<OwnerProfile>(json);
+  }
+}
+
+mixin OwnerProfileMappable {
+  String toJson() {
+    return OwnerProfileMapper.ensureInitialized().encodeJson<OwnerProfile>(
+      this as OwnerProfile,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return OwnerProfileMapper.ensureInitialized().encodeMap<OwnerProfile>(
+      this as OwnerProfile,
+    );
+  }
+
+  OwnerProfileCopyWith<OwnerProfile, OwnerProfile, OwnerProfile> get copyWith =>
+      _OwnerProfileCopyWithImpl<OwnerProfile, OwnerProfile>(
+        this as OwnerProfile,
+        $identity,
+        $identity,
+      );
+  @override
+  String toString() {
+    return OwnerProfileMapper.ensureInitialized().stringifyValue(
+      this as OwnerProfile,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return OwnerProfileMapper.ensureInitialized().equalsValue(
+      this as OwnerProfile,
+      other,
+    );
+  }
+
+  @override
+  int get hashCode {
+    return OwnerProfileMapper.ensureInitialized().hashValue(
+      this as OwnerProfile,
+    );
+  }
+}
+
+extension OwnerProfileValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, OwnerProfile, $Out> {
+  OwnerProfileCopyWith<$R, OwnerProfile, $Out> get $asOwnerProfile =>
+      $base.as((v, t, t2) => _OwnerProfileCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class OwnerProfileCopyWith<$R, $In extends OwnerProfile, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  ListCopyWith<
+    $R,
+    VendorSummary,
+    VendorSummaryCopyWith<$R, VendorSummary, VendorSummary>
+  >?
+  get vendors;
+  $R call({List<VendorSummary>? vendors});
+  OwnerProfileCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+}
+
+class _OwnerProfileCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, OwnerProfile, $Out>
+    implements OwnerProfileCopyWith<$R, OwnerProfile, $Out> {
+  _OwnerProfileCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<OwnerProfile> $mapper =
+      OwnerProfileMapper.ensureInitialized();
+  @override
+  ListCopyWith<
+    $R,
+    VendorSummary,
+    VendorSummaryCopyWith<$R, VendorSummary, VendorSummary>
+  >?
+  get vendors => $value.vendors != null
+      ? ListCopyWith(
+          $value.vendors!,
+          (v, t) => v.copyWith.$chain(t),
+          (v) => call(vendors: v),
+        )
+      : null;
+  @override
+  $R call({Object? vendors = $none}) =>
+      $apply(FieldCopyWithData({if (vendors != $none) #vendors: vendors}));
+  @override
+  OwnerProfile $make(CopyWithData data) =>
+      OwnerProfile(vendors: data.get(#vendors, or: $value.vendors));
+
+  @override
+  OwnerProfileCopyWith<$R2, OwnerProfile, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  ) => _OwnerProfileCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class VendorSummaryMapper extends ClassMapperBase<VendorSummary> {
+  VendorSummaryMapper._();
+
+  static VendorSummaryMapper? _instance;
+  static VendorSummaryMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = VendorSummaryMapper._());
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'VendorSummary';
+
+  static String _$id(VendorSummary v) => v.id;
+  static const Field<VendorSummary, String> _f$id = Field('id', _$id);
+  static String _$name(VendorSummary v) => v.name;
+  static const Field<VendorSummary, String> _f$name = Field('name', _$name);
+
+  @override
+  final MappableFields<VendorSummary> fields = const {
+    #id: _f$id,
+    #name: _f$name,
+  };
+
+  static VendorSummary _instantiate(DecodingData data) {
+    return VendorSummary(id: data.dec(_f$id), name: data.dec(_f$name));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static VendorSummary fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<VendorSummary>(map);
+  }
+
+  static VendorSummary fromJson(String json) {
+    return ensureInitialized().decodeJson<VendorSummary>(json);
+  }
+}
+
+mixin VendorSummaryMappable {
+  String toJson() {
+    return VendorSummaryMapper.ensureInitialized().encodeJson<VendorSummary>(
+      this as VendorSummary,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return VendorSummaryMapper.ensureInitialized().encodeMap<VendorSummary>(
+      this as VendorSummary,
+    );
+  }
+
+  VendorSummaryCopyWith<VendorSummary, VendorSummary, VendorSummary>
+  get copyWith => _VendorSummaryCopyWithImpl<VendorSummary, VendorSummary>(
+    this as VendorSummary,
+    $identity,
+    $identity,
+  );
+  @override
+  String toString() {
+    return VendorSummaryMapper.ensureInitialized().stringifyValue(
+      this as VendorSummary,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return VendorSummaryMapper.ensureInitialized().equalsValue(
+      this as VendorSummary,
+      other,
+    );
+  }
+
+  @override
+  int get hashCode {
+    return VendorSummaryMapper.ensureInitialized().hashValue(
+      this as VendorSummary,
+    );
+  }
+}
+
+extension VendorSummaryValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, VendorSummary, $Out> {
+  VendorSummaryCopyWith<$R, VendorSummary, $Out> get $asVendorSummary =>
+      $base.as((v, t, t2) => _VendorSummaryCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class VendorSummaryCopyWith<$R, $In extends VendorSummary, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  $R call({String? id, String? name});
+  VendorSummaryCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+}
+
+class _VendorSummaryCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, VendorSummary, $Out>
+    implements VendorSummaryCopyWith<$R, VendorSummary, $Out> {
+  _VendorSummaryCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<VendorSummary> $mapper =
+      VendorSummaryMapper.ensureInitialized();
+  @override
+  $R call({String? id, String? name}) => $apply(
+    FieldCopyWithData({if (id != null) #id: id, if (name != null) #name: name}),
+  );
+  @override
+  VendorSummary $make(CopyWithData data) => VendorSummary(
+    id: data.get(#id, or: $value.id),
+    name: data.get(#name, or: $value.name),
+  );
+
+  @override
+  VendorSummaryCopyWith<$R2, VendorSummary, $Out2> $chain<$R2, $Out2>(
+    Then<$Out2, $R2> t,
+  ) => _VendorSummaryCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 

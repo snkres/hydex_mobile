@@ -1981,6 +1981,7 @@ class PassesMapper extends ClassMapperBase<Passes> {
   static PassesMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = PassesMapper._());
+      BookingExperienceMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -2023,6 +2024,13 @@ class PassesMapper extends ClassMapperBase<Passes> {
     'discountPercentage',
     _$discountPercentage,
   );
+  static BookingExperience? _$bookingExperience(Passes v) =>
+      v.bookingExperience;
+  static const Field<Passes, BookingExperience> _f$bookingExperience = Field(
+    'bookingExperience',
+    _$bookingExperience,
+    opt: true,
+  );
 
   @override
   final MappableFields<Passes> fields = const {
@@ -2034,6 +2042,7 @@ class PassesMapper extends ClassMapperBase<Passes> {
     #rouletteRemainingWins: _f$rouletteRemainingWins,
     #rouletteMaxWins: _f$rouletteMaxWins,
     #discountPercentage: _f$discountPercentage,
+    #bookingExperience: _f$bookingExperience,
   };
 
   static Passes _instantiate(DecodingData data) {
@@ -2046,6 +2055,7 @@ class PassesMapper extends ClassMapperBase<Passes> {
       rouletteRemainingWins: data.dec(_f$rouletteRemainingWins),
       rouletteMaxWins: data.dec(_f$rouletteMaxWins),
       discountPercentage: data.dec(_f$discountPercentage),
+      bookingExperience: data.dec(_f$bookingExperience),
     );
   }
 
@@ -2095,6 +2105,8 @@ extension PassesValueCopy<$R, $Out> on ObjectCopyWith<$R, Passes, $Out> {
 
 abstract class PassesCopyWith<$R, $In extends Passes, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
+  BookingExperienceCopyWith<$R, BookingExperience, BookingExperience>?
+  get bookingExperience;
   $R call({
     String? id,
     String? name,
@@ -2104,6 +2116,7 @@ abstract class PassesCopyWith<$R, $In extends Passes, $Out>
     int? rouletteRemainingWins,
     int? rouletteMaxWins,
     int? discountPercentage,
+    BookingExperience? bookingExperience,
   });
   PassesCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -2115,6 +2128,11 @@ class _PassesCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Passes, $Out>
   @override
   late final ClassMapperBase<Passes> $mapper = PassesMapper.ensureInitialized();
   @override
+  BookingExperienceCopyWith<$R, BookingExperience, BookingExperience>?
+  get bookingExperience => $value.bookingExperience?.copyWith.$chain(
+    (v) => call(bookingExperience: v),
+  );
+  @override
   $R call({
     String? id,
     String? name,
@@ -2124,6 +2142,7 @@ class _PassesCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Passes, $Out>
     Object? rouletteRemainingWins = $none,
     Object? rouletteMaxWins = $none,
     Object? discountPercentage = $none,
+    Object? bookingExperience = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -2135,6 +2154,7 @@ class _PassesCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Passes, $Out>
         #rouletteRemainingWins: rouletteRemainingWins,
       if (rouletteMaxWins != $none) #rouletteMaxWins: rouletteMaxWins,
       if (discountPercentage != $none) #discountPercentage: discountPercentage,
+      if (bookingExperience != $none) #bookingExperience: bookingExperience,
     }),
   );
   @override
@@ -2152,6 +2172,10 @@ class _PassesCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Passes, $Out>
     discountPercentage: data.get(
       #discountPercentage,
       or: $value.discountPercentage,
+    ),
+    bookingExperience: data.get(
+      #bookingExperience,
+      or: $value.bookingExperience,
     ),
   );
 

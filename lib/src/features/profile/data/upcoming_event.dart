@@ -75,6 +75,9 @@ enum UpcomingEventStatus {
 
   @MappableValue('No Show')
   noShow,
+
+  @MappableValue('No Entry')
+  noEntry,
 }
 
 @MappableClass()

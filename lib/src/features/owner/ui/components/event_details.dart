@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/src/features/owner/domain/owner_providers.dart';
@@ -9,6 +11,199 @@ import 'package:hydex/src/features/owner/models/owner_event.dart';
 import 'package:hydex/src/features/owner/ui/components/booking_card.dart';
 import 'package:hydex/src/widgets/blur_app_bar.dart';
 import 'package:smooth_corner/smooth_corner.dart';
+
+class _SkeletonBox extends StatefulWidget {
+  const _SkeletonBox({this.width, this.height = 14, this.borderRadius = 8});
+
+  final double? width;
+  final double height;
+  final double borderRadius;
+
+  @override
+  State<_SkeletonBox> createState() => _SkeletonBoxState();
+}
+
+class _SkeletonBoxState extends State<_SkeletonBox>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _anim;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..repeat(reverse: true);
+    _anim = Tween<double>(
+      begin: 0.3,
+      end: 0.7,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _anim,
+      builder: (_, __) => Container(
+        width: widget.width,
+        height: widget.height,
+        decoration: BoxDecoration(
+          color: AppColors.containerDim.withOpacity(_anim.value + 0.3),
+          borderRadius: BorderRadius.circular(widget.borderRadius),
+        ),
+      ),
+    );
+  }
+}
+
+class _EventDetailsSkeleton extends StatelessWidget {
+  const _EventDetailsSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        // Header card
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: SmoothContainer(
+            padding: const EdgeInsets.all(16),
+            color: AppColors.containerDim,
+            smoothness: 1,
+            borderRadius: BorderRadius.circular(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const _SkeletonBox(width: 140, height: 16),
+                    const _SkeletonBox(width: 90, height: 12),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const _SkeletonBox(width: 100, height: 13),
+                    const _SkeletonBox(width: 60, height: 13),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: const _SkeletonBox(height: 4, borderRadius: 4),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        // Info cards row
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              Expanded(
+                child: SmoothContainer(
+                  padding: const EdgeInsets.all(12),
+                  color: AppColors.containerDim,
+                  smoothness: 1,
+                  borderRadius: BorderRadius.circular(16),
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _SkeletonBox(width: 16, height: 16),
+                      SizedBox(height: 10),
+                      _SkeletonBox(width: 80, height: 13),
+                      SizedBox(height: 4),
+                      _SkeletonBox(width: 50, height: 11),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: SmoothContainer(
+                  padding: const EdgeInsets.all(12),
+                  color: AppColors.containerDim,
+                  smoothness: 1,
+                  borderRadius: BorderRadius.circular(16),
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _SkeletonBox(width: 16, height: 16),
+                      SizedBox(height: 10),
+                      _SkeletonBox(width: 100, height: 13),
+                      SizedBox(height: 4),
+                      _SkeletonBox(width: 70, height: 11),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+        // Filter row
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              _SkeletonBox(width: 30, height: 14),
+              SizedBox(width: 16),
+              _SkeletonBox(width: 60, height: 14),
+              SizedBox(width: 16),
+              _SkeletonBox(width: 50, height: 14),
+              SizedBox(width: 16),
+              _SkeletonBox(width: 55, height: 14),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        // Booking cards
+        ...List.generate(
+          4,
+          (i) => Padding(
+            padding: const EdgeInsets.only(bottom: 12, left: 16, right: 16),
+            child: SmoothContainer(
+              padding: const EdgeInsets.all(16),
+              color: AppColors.containerDim,
+              smoothness: 1,
+              borderRadius: BorderRadius.circular(16),
+              child: const Row(
+                children: [
+                  _SkeletonBox(width: 40, height: 40, borderRadius: 12),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _SkeletonBox(width: 100, height: 13),
+                        SizedBox(height: 6),
+                        _SkeletonBox(width: 140, height: 11),
+                      ],
+                    ),
+                  ),
+                  _SkeletonBox(width: 60, height: 24, borderRadius: 99),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 class OwnerEventDetails extends ConsumerStatefulWidget {
   const OwnerEventDetails({super.key, required this.eventID});
@@ -47,20 +242,35 @@ class _OwnerEventDetailsState extends ConsumerState<OwnerEventDetails> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.eventID);
     final styles = AppTextStyles(context);
     final eventAsync = ref.watch(
       getOwnerEventDetailsProvider(eventID: widget.eventID),
     );
-    ref.read(getOwnerEventBookingsProvider(eventID: widget.eventID));
     return eventAsync.when(
-      loading: () => const Scaffold(
+      loading: () => Scaffold(
         backgroundColor: AppColors.backgroundBase,
-        body: Center(child: CircularProgressIndicator()),
+        extendBodyBehindAppBar: true,
+        appBar: BlurAppBar(
+          title: 'My Event',
+          scrollController: _scrollController,
+        ),
+        body: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top + kToolbarHeight + 8,
+            bottom: 32,
+          ),
+          child: const _EventDetailsSkeleton(),
+        ),
       ),
-      error: (e, _) => Scaffold(
-        backgroundColor: AppColors.backgroundBase,
-        body: Center(child: Text(e.toString())),
-      ),
+      error: (e, st) {
+        log("Event Error", error: e, stackTrace: st);
+        return Scaffold(
+          backgroundColor: AppColors.backgroundBase,
+          body: Center(child: Text(e.toString())),
+        );
+      },
       data: (event) => _buildScaffold(context, styles, event),
     );
   }

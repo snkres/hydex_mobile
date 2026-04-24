@@ -13,8 +13,13 @@ part of 'scan_providers.dart';
 const getScanDetailsProvider = GetScanDetailsFamily._();
 
 final class GetScanDetailsProvider
-    extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
-    with $FutureModifier<void>, $FutureProvider<void> {
+    extends
+        $FunctionalProvider<
+          AsyncValue<ScanResponse>,
+          ScanResponse,
+          FutureOr<ScanResponse>
+        >
+    with $FutureModifier<ScanResponse>, $FutureProvider<ScanResponse> {
   const GetScanDetailsProvider._({
     required GetScanDetailsFamily super.from,
     required String super.argument,
@@ -38,11 +43,12 @@ final class GetScanDetailsProvider
 
   @$internal
   @override
-  $FutureProviderElement<void> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
+  $FutureProviderElement<ScanResponse> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
-  FutureOr<void> create(Ref ref) {
+  FutureOr<ScanResponse> create(Ref ref) {
     final argument = this.argument as String;
     return getScanDetails(ref, id: argument);
   }
@@ -58,10 +64,10 @@ final class GetScanDetailsProvider
   }
 }
 
-String _$getScanDetailsHash() => r'f2626971c2465ebd723f4bcf4ccf28ad0bc4673b';
+String _$getScanDetailsHash() => r'351af00ebd9c970094efb0d51ab59f76c7f69adf';
 
 final class GetScanDetailsFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<void>, String> {
+    with $FunctionalFamilyOverride<FutureOr<ScanResponse>, String> {
   const GetScanDetailsFamily._()
     : super(
         retry: null,
@@ -136,7 +142,7 @@ final class UpdateBookingStatusProvider
 }
 
 String _$updateBookingStatusHash() =>
-    r'6965357af8acef5fdbf5ba335a006093f33d0ed4';
+    r'2ca0f0d16ad24018a7830d382f9708a51f2bcc4c';
 
 final class UpdateBookingStatusFamily extends $Family
     with

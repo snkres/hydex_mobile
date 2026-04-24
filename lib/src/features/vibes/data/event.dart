@@ -205,16 +205,18 @@ class Passes with PassesMappable {
   final int? rouletteRemainingWins;
   final int? rouletteMaxWins;
   final int? discountPercentage;
+  final BookingExperience? bookingExperience;
 
   Passes({
     required this.id,
     required this.name,
     required this.benefits,
     required this.price,
-     this.currentBookings = 0,
+    this.currentBookings = 0,
     this.rouletteRemainingWins,
     this.rouletteMaxWins,
     required this.discountPercentage,
+    this.bookingExperience,
   });
 }
 

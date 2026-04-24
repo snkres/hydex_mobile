@@ -36,7 +36,10 @@ import 'package:hydex/src/features/owner/ui/owner_venue.dart';
 import 'package:hydex/src/features/profile/data/upcoming_event.dart';
 import 'package:hydex/src/features/profile/ui/profile_screen.dart';
 import 'package:hydex/src/features/profile_summary/ui/profile_summary.dart';
+import 'package:hydex/src/features/scan/data/scan_response.dart';
+import 'package:hydex/src/features/scan/ui/rsv_output.dart';
 import 'package:hydex/src/features/scan/ui/scan.dart';
+import 'package:hydex/src/features/scan/ui/scan_output.dart';
 import 'package:hydex/src/features/splash/ui/splash.dart';
 import 'package:hydex/src/features/vendors/ui/vendors.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
@@ -119,23 +122,33 @@ class AppRoutes {
       ),
       GoRoute(
         path: "/owner/events",
-        builder: (context, state) => OwnerEvents(
-          preloadedEvents: state.extra as List<OwnerEvent>?,
-        ),
+        builder: (context, state) =>
+            OwnerEvents(preloadedEvents: state.extra as List<OwnerEvent>?),
       ),
       GoRoute(
         path: "/owner/venue",
-        builder: (context, state) => const OwnerVenues(),
+        builder: (context, state) =>
+            OwnerVenues(eventsLength: state.extra as int),
       ),
       GoRoute(
         path: "/owner/scan",
         builder: (context, state) => const ScanScreen(),
       ),
       GoRoute(
+        path: "/owner/scan/output",
+        builder: (context, state) =>
+            ScanOutput(data: state.extra as ScanResponse),
+      ),
+      GoRoute(
+        path: "/owner/rsv/output",
+        builder: (context, state) =>
+            RsvOutput(data: state.extra as ScanResponse),
+      ),
+      GoRoute(
         path: "/owner/event-details",
-        builder: (context, state) => OwnerEventDetails(
-          eventID: state.extra as String,
-        ),
+        name: "EventDetails",
+        builder: (context, state) =>
+            OwnerEventDetails(eventID: state.extra as String),
       ),
       GoRoute(
         path: '/forget-password',

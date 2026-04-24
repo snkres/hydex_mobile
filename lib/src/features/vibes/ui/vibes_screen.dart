@@ -878,7 +878,7 @@ class AllEventsWidget extends ConsumerWidget {
                             loading: () => Container(),
                             data: (data) => Text.rich(
                               TextSpan(
-                                text: "${data?.fullName}, ",
+                                text: "${data?.fullName?.split(" ").first}, ",
                                 style: TextStyle(
                                   fontSize:
                                       AppTextStyles(context).accumulator * 18,

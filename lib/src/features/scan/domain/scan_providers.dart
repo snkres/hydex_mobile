@@ -6,6 +6,7 @@ import 'package:hydex/core/network/connection.dart';
 import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/scan/data/bulk_request.dart';
 import 'package:hydex/src/features/scan/data/rsv_status.dart';
+import 'package:hydex/src/features/scan/data/scan_response.dart';
 import 'package:hydex/src/features/scan/domain/offline_sync.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -13,10 +14,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'scan_providers.g.dart';
 
 @riverpod
-Future<void> getScanDetails(Ref ref, {required String id}) async {
+Future<ScanResponse> getScanDetails(Ref ref, {required String id}) async {
   final response = await DioHelper.get("/owner/bookings/$id");
 
-  log("Response Data: ${response.data}");
+  final data = response.data["data"];
+
+  return ScanResponseMapper.fromMap(data);
 }
 
 @riverpod
@@ -30,7 +33,7 @@ Future<void> updateBookingStatus(
     final response = await DioHelper.patch(
       "/owner/bookings/$id/status",
       data: {
-        "status": status.name.toUpperCase(),
+        "status": status.value,
         if (rejectionReason != null) "rejectionReason": rejectionReason,
       },
     );

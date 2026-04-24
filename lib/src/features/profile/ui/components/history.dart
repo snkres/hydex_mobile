@@ -63,7 +63,9 @@ class HistoryContainer extends StatelessWidget {
   }
 
   String? getStatus(UpcomingEventStatus status) {
-    if (status == UpcomingEventStatus.confirmed || status == .noShow) {
+    if (status == UpcomingEventStatus.confirmed ||
+        status == .noShow ||
+        status == .noEntry) {
       return null;
     }
     return status.name.capitalize();

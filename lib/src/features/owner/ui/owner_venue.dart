@@ -1,19 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hydex/src/features/search/ui/components/not_found.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:hydex/core/network/auth_service.dart';
+import 'package:hydex/core/network/user/user.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/owner/domain/owner_providers.dart';
+import 'package:hydex/src/features/owner/models/vendor_booking_response.dart';
+import 'package:hydex/src/features/owner/models/vendor_sales.dart';
 import 'package:hydex/src/features/owner/ui/components/booking_card.dart';
 import 'package:hydex/src/features/owner/ui/events.dart';
+import 'package:hydex/src/features/scan/data/rsv_status.dart';
 import 'package:hydex/src/widgets/blur_app_bar.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
-class OwnerVenues extends StatefulWidget {
-  const OwnerVenues({super.key});
+class OwnerVenues extends ConsumerStatefulWidget {
+  const OwnerVenues({super.key, required this.eventsLength});
+
+  final int eventsLength;
 
   @override
-  State<OwnerVenues> createState() => _OwnerVenuesState();
+  ConsumerState<OwnerVenues> createState() => _OwnerVenuesState();
 }
 
-class _OwnerVenuesState extends State<OwnerVenues>
+class _OwnerVenuesState extends ConsumerState<OwnerVenues>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
@@ -36,7 +47,7 @@ class _OwnerVenuesState extends State<OwnerVenues>
   @override
   Widget build(BuildContext context) {
     final styles = AppTextStyles(context);
-
+    final currentUser = ref.watch(currentUserProvider).value;
     return Scaffold(
       backgroundColor: AppColors.backgroundBase,
       extendBodyBehindAppBar: true,
@@ -55,22 +66,22 @@ class _OwnerVenuesState extends State<OwnerVenues>
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _buildVenueHeader(styles),
+              child: _buildVenueHeader(styles, currentUser),
             ),
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _buildTabBar(styles),
+              child: _buildTabBar(styles, currentUser),
             ),
             const SizedBox(height: 16),
-            _buildTabContent(styles),
+            _buildTabContent(styles, currentUser),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildVenueHeader(AppTextStyles styles) {
+  Widget _buildVenueHeader(AppTextStyles styles, User? currentUser) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -131,7 +142,7 @@ class _OwnerVenuesState extends State<OwnerVenues>
         ),
         const SizedBox(height: 16),
         Text(
-          'Echo Lounge',
+          currentUser?.ownerProfile?.vendors?.firstOrNull?.name ?? 'My Venue',
           style: TextStyle(
             fontFamily: styles.fontFamily,
             fontSize: styles.accumulator * 20,
@@ -167,8 +178,13 @@ class _OwnerVenuesState extends State<OwnerVenues>
     );
   }
 
-  Widget _buildTabBar(AppTextStyles styles) {
-    final tabs = ['Bookings', 'Events (2)', 'Sales'];
+  Widget _buildTabBar(AppTextStyles styles, User? user) {
+    final eventsLength = widget.eventsLength > 1 ? widget.eventsLength : null;
+    final tabs = [
+      'Bookings',
+      eventsLength != null ? 'Events ($eventsLength)' : 'Events',
+      'Sales',
+    ];
     return Row(
       children: List.generate(tabs.length, (index) {
         final isSelected = _tabController.index == index;
@@ -216,10 +232,10 @@ class _OwnerVenuesState extends State<OwnerVenues>
     );
   }
 
-  Widget _buildTabContent(AppTextStyles styles) {
+  Widget _buildTabContent(AppTextStyles styles, User? user) {
     switch (_tabController.index) {
       case 0:
-        return _buildBookingsTab(styles);
+        return _buildBookingsTab(styles, user);
       case 1:
         return const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
@@ -234,7 +250,7 @@ class _OwnerVenuesState extends State<OwnerVenues>
       case 2:
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: _buildSalesTab(styles),
+          child: _buildSalesTab(styles, user),
         );
       default:
         return const SizedBox.shrink();
@@ -243,23 +259,54 @@ class _OwnerVenuesState extends State<OwnerVenues>
 
   // ─── BOOKINGS TAB ───
 
-  Widget _buildBookingsTab(AppTextStyles styles) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: _buildUpcomingReservations(styles),
-        ),
-        const SizedBox(height: 32),
-        _buildBookingFilters(styles),
-        const SizedBox(height: 16),
-        ..._buildBookingCards(styles),
-      ],
+  static const _filterStatuses = [
+    null, // All
+    RsvStatus.confirmed,
+    RsvStatus.pending,
+    RsvStatus.rejected,
+    null, // Expired — no matching RsvStatus, kept separate
+  ];
+
+  Widget _buildBookingsTab(AppTextStyles styles, User? user) {
+    final vendorId = user?.ownerProfile?.vendors?.firstOrNull?.id ?? '';
+    final bookingsAsync = ref.watch(
+      getOwnerVendorBookingsProvider(vendorId: vendorId),
+    );
+    return bookingsAsync.when(
+      loading: () => Center(child: CircularProgressIndicator()),
+      error: (e, _) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Text(e.toString(), style: const TextStyle(color: Colors.red)),
+      ),
+      data: (bookings) {
+        final pendingCount = bookings
+            .where((b) => b.uiStatus == RsvStatus.pending)
+            .length;
+        final filtered = _bookingFilter == 0
+            ? bookings
+            : _filterStatuses[_bookingFilter] != null
+            ? bookings
+                  .where((b) => b.uiStatus == _filterStatuses[_bookingFilter])
+                  .toList()
+            : <VendorBookingItem>[];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _buildUpcomingReservations(styles, user),
+            ),
+            const SizedBox(height: 32),
+            _buildBookingFilters(styles, bookings, pendingCount),
+            const SizedBox(height: 16),
+            ..._buildBookingCards(styles, filtered),
+          ],
+        );
+      },
     );
   }
 
-  Widget _buildUpcomingReservations(AppTextStyles styles) {
+  Widget _buildUpcomingReservations(AppTextStyles styles, User? user) {
     return SmoothContainer(
       padding: const EdgeInsets.all(16),
       color: AppColors.containerDim,
@@ -300,7 +347,18 @@ class _OwnerVenuesState extends State<OwnerVenues>
             ),
           ),
           Text(
-            '7',
+            ref
+                .watch(
+                  getVendorReservationsProvider(
+                    vendorId:
+                        user?.ownerProfile?.vendors?.firstOrNull?.id ?? "",
+                  ),
+                )
+                .when(
+                  data: (count) => count.toString(),
+                  loading: () => '—',
+                  error: (_, __) => '—',
+                ),
             style: TextStyle(
               fontFamily: styles.fontFamily,
               fontSize: styles.accumulator * 22,
@@ -315,7 +373,7 @@ class _OwnerVenuesState extends State<OwnerVenues>
             child: Icon(
               Icons.people_outline,
               size: 16,
-              color: AppColors.textPrimary,
+              color: Color(0xffA25BFF),
             ),
           ),
         ],
@@ -323,7 +381,11 @@ class _OwnerVenuesState extends State<OwnerVenues>
     );
   }
 
-  Widget _buildBookingFilters(AppTextStyles styles) {
+  Widget _buildBookingFilters(
+    AppTextStyles styles,
+    List<VendorBookingItem> allBookings,
+    int pendingCount,
+  ) {
     final filters = ['All', 'Confirmed', 'Pending', 'Rejected', 'Expired'];
     const duration = Duration(milliseconds: 380);
     const containerCurve = Curves.easeOutCubic;
@@ -368,10 +430,10 @@ class _OwnerVenuesState extends State<OwnerVenues>
                     ),
                     child: Text(filters[index]),
                   ),
-                  if (filters[index] == 'Pending') ...[
+                  if (filters[index] == 'Pending' && pendingCount > 0) ...[
                     const SizedBox(width: 4),
                     Text(
-                      '(5)',
+                      '($pendingCount)',
                       style: TextStyle(
                         fontSize: styles.accumulator * 12,
                         fontWeight: FontWeight.w500,
@@ -389,69 +451,139 @@ class _OwnerVenuesState extends State<OwnerVenues>
     );
   }
 
-  List<Widget> _buildBookingCards(AppTextStyles styles) {
-    final bookings = [
-      const BookingCardData(
-        id: '#132',
-        name: 'Ahmed Abid',
-        date: 'Sat 21 Feb, 11:30 PM',
-        type: 'RSV',
-        status: 'Pending',
-      ),
-      const BookingCardData(
-        id: '#132',
-        name: 'Ahmed Abid',
-        date: 'Sat 21 Feb, 11:30 PM',
-        type: 'RSV',
-        status: 'Pending',
-      ),
-      const BookingCardData(
-        id: '#132',
-        name: 'Ahmed Abid',
-        date: 'Sat 21 Feb, 11:30 PM',
-        type: 'RSV',
-        status: 'Confirmed',
-      ),
-      const BookingCardData(
-        id: '#132',
-        name: 'Ahmed Abid',
-        date: 'Sat 21 Feb, 11:30 PM',
-        type: 'RSV',
-        status: 'Entered',
-      ),
-      const BookingCardData(
-        id: '#132',
-        name: 'Ahmed Abid',
-        date: 'Sat 21 Feb, 11:30 PM',
-        type: 'Event',
-        status: 'Entered',
-      ),
-    ];
-
-    return bookings
-        .map(
-          (b) => Padding(
+  Widget _buildBookingCardsSkeleton() {
+    return Shimmer.fromColors(
+      baseColor: AppColors.containerDim,
+      highlightColor: const Color(0xFF3A3A3C),
+      child: Column(
+        children: List.generate(
+          4,
+          (_) => Padding(
             padding: const EdgeInsets.only(bottom: 12, left: 16, right: 16),
-            child: OwnerBookingCard(booking: b, styles: styles),
+            child: SmoothContainer(
+              padding: const EdgeInsets.all(16),
+              color: AppColors.containerDim,
+              smoothness: 1,
+              borderRadius: BorderRadius.circular(20),
+              child: const SizedBox(height: 72),
+            ),
           ),
-        )
-        .toList();
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildBookingCards(
+    AppTextStyles styles,
+    List<VendorBookingItem> bookings,
+  ) {
+    if (bookings.isEmpty) {
+      return [
+        NotFoundWidget(
+          heading: "No booking here",
+          description: "Try exploring other filters",
+        ),
+      ];
+    }
+    return bookings.map((b) {
+      final data = BookingCardData(
+        id: b.displayCode,
+        name: b.fullName,
+        date: _formatDate(b.bookingDate),
+        type: 'RSV',
+        status: b.uiStatus.label,
+      );
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 12, left: 16, right: 16),
+        child: OwnerBookingCard(rsv: "RSV", booking: data, styles: styles),
+      );
+    }).toList();
+  }
+
+  String _formatDate(DateTime dt) {
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
+    final minute = dt.minute.toString().padLeft(2, '0');
+    final ampm = dt.hour < 12 ? 'AM' : 'PM';
+    return '${days[dt.weekday - 1]} ${dt.day} ${months[dt.month - 1]}, $hour:$minute $ampm';
   }
 
   // ─── SALES TAB ───
 
-  Widget _buildSalesTab(AppTextStyles styles) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSalesGrid(styles),
-        const SizedBox(height: 16),
-        _buildPageDots(),
-      ],
+  Widget _buildSalesTab(AppTextStyles styles, User? user) {
+    final salesAsync = ref.watch(
+      getVendorSalesProvider(
+        vendorId: user?.ownerProfile?.vendors?.first.id ?? "",
+      ),
+    );
+    return salesAsync.when(
+      loading: () => _buildSalesSkeleton(),
+      error: (e, _) => Center(child: Text(e.toString())),
+      data: (sales) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSalesGrid(styles, sales),
+          const SizedBox(height: 16),
+          _buildPageDots(),
+        ],
+      ),
     );
   }
 
-  Widget _buildSalesGrid(AppTextStyles styles) {
+  Widget _buildSalesSkeleton() {
+    return Shimmer.fromColors(
+      baseColor: AppColors.containerDim,
+      highlightColor: const Color(0xFF3A3A3C),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(child: _buildSkeletonCard()),
+              const SizedBox(width: 6),
+              Expanded(child: _buildSkeletonCard()),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              Expanded(child: _buildSkeletonCard()),
+              const SizedBox(width: 6),
+              Expanded(child: _buildSkeletonCard()),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkeletonCard() {
+    return SmoothContainer(
+      padding: const EdgeInsets.all(14),
+      color: AppColors.containerDim,
+      smoothness: 1,
+      borderRadius: BorderRadius.circular(16),
+      child: const SizedBox(height: 69),
+    );
+  }
+
+  Widget _buildSalesGrid(AppTextStyles styles, VendorSales sales) {
+    String formatRevenue(VendorSalesRevenue r) =>
+        '${r.amount.toStringAsFixed(0)} ${r.currency}';
+
     return Column(
       children: [
         Row(
@@ -460,7 +592,7 @@ class _OwnerVenuesState extends State<OwnerVenues>
               child: _buildSalesCard(
                 styles,
                 icon: Icons.attach_money,
-                value: '8,325 EGP',
+                value: formatRevenue(sales.venueRevenue),
                 label: 'Venue Revenue',
               ),
             ),
@@ -469,7 +601,7 @@ class _OwnerVenuesState extends State<OwnerVenues>
               child: _buildSalesCard(
                 styles,
                 icon: Icons.confirmation_number_outlined,
-                value: '47,650 EGP',
+                value: formatRevenue(sales.eventTicketRevenue),
                 label: 'Event Ticket Revenue',
               ),
             ),
@@ -484,7 +616,7 @@ class _OwnerVenuesState extends State<OwnerVenues>
                 child: _buildSalesCard(
                   styles,
                   icon: Icons.people_outline,
-                  value: '185',
+                  value: '${sales.totalGuests}',
                   label: 'Total Guests',
                 ),
               ),
@@ -493,7 +625,8 @@ class _OwnerVenuesState extends State<OwnerVenues>
                 child: _buildSalesCard(
                   styles,
                   icon: Icons.trending_up,
-                  value: '2,00 EGP',
+                  value:
+                      '${sales.averageRevenuePerGuest.toStringAsFixed(0)} EGP',
                   label: 'Avg per Guest',
                 ),
               ),

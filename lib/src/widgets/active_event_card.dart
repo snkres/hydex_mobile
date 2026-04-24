@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/owner/models/owner_event.dart';
+import 'package:intl/intl.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 class EventCardData {
@@ -26,7 +29,7 @@ class EventCardData {
 enum EventStatus { active, pending, rejected, past }
 
 class ActiveEventCard extends StatelessWidget {
-  final EventCardData event;
+  final OwnerEvent event;
   final AppTextStyles styles;
   final VoidCallback? onTap;
   final EventStatus? status;
@@ -56,10 +59,10 @@ class ActiveEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = event.sold / event.total;
+    final progress = event.sales.sold / event.sales.capacity;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => context.pushNamed("EventDetails", extra: event.id),
       child: SmoothContainer(
         padding: const EdgeInsets.all(16),
         color: AppColors.containerDim,
@@ -77,7 +80,7 @@ class ActiveEventCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '$_statusLabel ${event.id}',
+                        _statusLabel,
                         style: TextStyle(
                           fontSize: styles.accumulator * 12,
                           color: _statusColor,
@@ -93,7 +96,9 @@ class ActiveEventCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        event.date,
+                        DateFormat(
+                          'EEE d MMM, hh:mm a',
+                        ).format(event.startTime),
                         style: TextStyle(
                           fontSize: styles.accumulator * 11,
                           color: AppColors.textSecondary,
@@ -103,7 +108,7 @@ class ActiveEventCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (event.tag != null)
+                if (_eventTag(event.startTime) != null)
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
@@ -114,7 +119,7 @@ class ActiveEventCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(99),
                     ),
                     child: Text(
-                      event.tag!,
+                      _eventTag(event.startTime) ?? "",
                       style: TextStyle(
                         fontSize: styles.accumulator * 11,
                         fontWeight: FontWeight.w600,
@@ -131,13 +136,13 @@ class ActiveEventCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${event.sold}/${event.total} sold',
+                    '${event.sales.sold}/${event.sales.capacity} sold',
                     style: styles.smallMedium.copyWith(
                       color: AppColors.textSecondary,
                     ),
                   ),
                   Text(
-                    event.revenue,
+                    '${event.revenue.amount.toStringAsFixed(0)} ${event.revenue.currency}',
                     style: styles.smallMedium.copyWith(
                       color: AppColors.textPrimary,
                     ),
@@ -162,4 +167,13 @@ class ActiveEventCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String? _eventTag(DateTime startTime) {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final eventDay = DateTime(startTime.year, startTime.month, startTime.day);
+  if (eventDay == today && startTime.isAfter(now)) return 'Tonight';
+  if (eventDay == today.add(const Duration(days: 1))) return 'Tomorrow';
+  return null;
 }

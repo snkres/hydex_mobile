@@ -1,29 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/profile_summary/components/ticket.dart';
-import 'package:hydex/src/features/scan/ui/components/rsv_component.dart';
-import 'package:smooth_corner/smooth_corner.dart';
+import 'package:hydex/src/features/scan/data/scan_response.dart';
+import 'package:hydex/src/features/scan/ui/components/scan_action_buttons.dart';
 
-class ScanOutput extends StatelessWidget {
-  const ScanOutput({super.key});
+class ScanOutput extends ConsumerWidget {
+  const ScanOutput({super.key, required this.data});
+
+  final ScanResponse data;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final scrollController = ScrollController();
     return Scaffold(
       body: SingleChildScrollView(
+        controller: scrollController,
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 12,
               children: [
                 BackButton(),
                 Text(
-                  "TICKET#1231231",
-                  style: TextStyle(fontSize: 20, fontWeight: .w700),
+                  "TICKET #${data.id.substring(0, 7).toUpperCase()}",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                 ),
                 TicketContainer(
                   backgroundColor: AppColors.surfaceContainer,
@@ -35,7 +40,7 @@ class ScanOutput extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              "Neon Nights Festival",
+                              data.pass.bookingExperience?.event?.name ?? "",
                               style: TextStyle(
                                 fontSize:
                                     AppTextStyles(context).accumulator * 20,
@@ -43,26 +48,56 @@ class ScanOutput extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Container(
-                            width: 70,
-                            height: 70,
-                            decoration: ShapeDecoration(
-                              color: AppColors.surfaceContainer,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  color: AppColors.borderDefault,
-                                  width: 1,
+                          Builder(
+                            builder: (context) {
+                              final imageUrl = data
+                                  .pass
+                                  .bookingExperience
+                                  ?.event
+                                  ?.media
+                                  ?.firstOrNull;
+                              return Container(
+                                width: 70,
+                                height: 70,
+                                decoration: BoxDecoration(
+                                  color: AppColors.surfaceContainer,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: imageUrl == null || imageUrl.isEmpty
+                                      ? Border.all(
+                                          color: Colors.grey,
+                                          width: 1.5,
+                                        )
+                                      : null,
                                 ),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: imageUrl != null && imageUrl.isNotEmpty
+                                      ? Image.network(
+                                          imageUrl,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) =>
+                                              const Icon(
+                                                Icons.broken_image,
+                                                size: 32,
+                                              ),
+                                        )
+                                      : const Center(
+                                          child: Icon(
+                                            Icons.broken_image,
+                                            size: 32,
+                                          ),
+                                        ),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
                       SizedBox(
                         width: 150,
                         child: Text(
-                          "12 Harbor Blvd, Miami, US",
+                          data.pass.bookingExperience?.event?.location.address ??
+                              "",
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -83,7 +118,7 @@ class ScanOutput extends StatelessWidget {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        "Alex Johnson",
+                        data.fullName,
                         style: TextStyle(
                           fontSize: AppTextStyles(context).accumulator * 16,
                           fontWeight: FontWeight.w700,
@@ -91,7 +126,7 @@ class ScanOutput extends StatelessWidget {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        "VIP Ticket",
+                        "${data.email} - ${data.gender}",
                         style: TextStyle(
                           fontSize: AppTextStyles(context).accumulator * 12,
                           color: Color(0xff77767B),
@@ -114,7 +149,7 @@ class ScanOutput extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "Sat",
+                                DateFormat('EEE').format(data.bookingDate),
                                 style: TextStyle(
                                   fontSize:
                                       AppTextStyles(context).accumulator * 16,
@@ -122,7 +157,7 @@ class ScanOutput extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "14 Jun 2025",
+                                DateFormat('d MMM yyyy').format(data.bookingDate),
                                 style: TextStyle(
                                   fontSize:
                                       AppTextStyles(context).accumulator * 12,
@@ -144,7 +179,7 @@ class ScanOutput extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "09:00 PM",
+                                DateFormat('hh:mm a').format(data.bookingDate),
                                 style: TextStyle(
                                   fontSize:
                                       AppTextStyles(context).accumulator * 16,
@@ -171,7 +206,11 @@ class ScanOutput extends StatelessWidget {
                       child: Column(
                         spacing: 8,
                         children: [
-                          Icon(Icons.qr_code, size: 125),
+                          Image.network(
+                            data.qrCodeUrl ?? "",
+                            width: 125,
+                            height: 125,
+                          ),
                           Text(
                             "Scan at entrance",
                             style: TextStyle(
@@ -184,69 +223,7 @@ class ScanOutput extends StatelessWidget {
                     ),
                   ),
                 ),
-                RsvComponent(status: .entered),
-                Row(
-                  spacing: 8,
-                  children: [
-                    SizedBox(
-                      width: 212,
-                      height: 52,
-                      child: ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: SvgPicture.asset(
-                          'img/svg/correct.svg',
-                          package: "assets",
-                          width: 20,
-                          height: 20,
-                        ),
-                        label: Text(
-                          "Confirm Entry",
-                          style: TextStyle(
-                            fontSize: AppTextStyles(context).accumulator * 15,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xff6e1fd8),
-                          shape: SmoothRectangleBorder(
-                            smoothness: 1,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: SizedBox(
-                        height: 52,
-                        child: ElevatedButton.icon(
-                          onPressed: () {},
-                          icon: SvgPicture.asset(
-                            'img/svg/error.svg',
-                            package: "assets",
-                            width: 20,
-                            height: 20,
-                          ),
-                          label: Text(
-                            "No Entry",
-                            style: TextStyle(
-                              fontSize: AppTextStyles(context).accumulator * 15,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xffff0003),
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xff301113),
-                            shape: SmoothRectangleBorder(
-                              smoothness: 1,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                ScanActionButtons(bookingId: data.id),
               ],
             ),
           ),
