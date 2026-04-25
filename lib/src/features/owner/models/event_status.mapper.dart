@@ -34,6 +34,8 @@ class EventStatusMapper extends EnumMapper<EventStatus> {
         return EventStatus.rejected;
       case 'past':
         return EventStatus.past;
+      case 'cancelled':
+        return EventStatus.cancelled;
       default:
         throw MapperException.unknownEnumValue(value);
     }
@@ -50,6 +52,8 @@ class EventStatusMapper extends EnumMapper<EventStatus> {
         return 'rejected';
       case EventStatus.past:
         return 'past';
+      case EventStatus.cancelled:
+        return 'cancelled';
     }
   }
 }

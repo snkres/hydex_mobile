@@ -1,4 +1,5 @@
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:hydex/src/features/scan/data/rsv_status.dart';
 import 'package:hydex/src/features/vibes/data/location.dart';
 part 'scan_response.mapper.dart';
 
@@ -11,6 +12,9 @@ class ScanResponse with ScanResponseMappable {
   final String? phone;
   final String? gender;
   final String? qrCodeUrl;
+  final int? guestNumber;
+  final int? numberOfGuests;
+
   final String status;
   final ScanPass pass;
 
@@ -24,6 +28,8 @@ class ScanResponse with ScanResponseMappable {
     this.qrCodeUrl,
     required this.status,
     required this.pass,
+    this.guestNumber,
+    this.numberOfGuests,
   });
 }
 

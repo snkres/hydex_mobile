@@ -1,4 +1,5 @@
 import 'package:hydex/core/network/network.dart';
+import 'package:hydex/src/features/owner/models/event_booking_response.dart';
 import 'package:hydex/src/features/owner/models/owner_event.dart';
 import 'package:hydex/src/features/owner/models/vendor_booking_response.dart';
 import 'package:hydex/src/features/owner/models/vendor_sales.dart';
@@ -35,10 +36,16 @@ Future<OwnerEvent> getOwnerEventDetails(
 }
 
 @riverpod
-Future<void> getOwnerEventBookings(Ref ref, {required String eventID}) async {
+Future<List<EventBookingItem>> getOwnerEventBookings(
+  Ref ref, {
+  required String eventID,
+}) async {
   try {
     final response = await DioHelper.get("/owner/events/$eventID/bookings");
-    final data = response.data['data'];
+    final items = response.data['data']['items'] as List<dynamic>;
+    return items
+        .map((e) => EventBookingItemMapper.fromMap(e as Map<String, dynamic>))
+        .toList();
   } catch (e) {
     throw Exception('Failed to load owner events: $e');
   }

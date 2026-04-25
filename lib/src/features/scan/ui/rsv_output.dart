@@ -29,7 +29,7 @@ class RsvOutput extends ConsumerWidget {
                 children: [
                   BackButton(),
                   Visibility(
-                    visible: false,
+                    visible: data.status.toLowerCase().contains("pending"),
                     child: CancelBookingButton(bookingId: data.id),
                   ),
                 ],
@@ -201,26 +201,29 @@ class RsvOutput extends ConsumerWidget {
                                 ],
                               ),
                             ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                spacing: 4,
-                                children: [
-                                  Text(
-                                    "Guest(s)",
-                                    style: TextStyle(
-                                      fontSize: acc * 11,
-                                      color: AppColors.textSecondary,
+                            Visibility(
+                              visible: data.guestNumber != null,
+                              child: Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  spacing: 4,
+                                  children: [
+                                    Text(
+                                      "Guest(s)",
+                                      style: TextStyle(
+                                        fontSize: acc * 11,
+                                        color: AppColors.textSecondary,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    "1 out of 3",
-                                    style: TextStyle(
-                                      fontSize: acc * 16,
-                                      fontWeight: FontWeight.w700,
+                                    Text(
+                                      "${data.guestNumber} out of ${data.numberOfGuests}",
+                                      style: TextStyle(
+                                        fontSize: acc * 16,
+                                        fontWeight: FontWeight.w700,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ],
@@ -229,8 +232,11 @@ class RsvOutput extends ConsumerWidget {
                   ),
                 ),
               ),
-              Spacer(),
-              ScanActionButtons(bookingId: data.id),
+              ScanActionButtons(
+                bookingId: data.id,
+                isTicket: true,
+                givenStatus: data.status,
+              ),
             ],
           ),
         ),

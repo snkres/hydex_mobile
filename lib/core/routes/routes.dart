@@ -27,12 +27,14 @@ import 'package:hydex/src/features/events/ui/events.dart';
 import 'package:hydex/src/features/location/ui/location_screen.dart';
 import 'package:hydex/src/features/notifications/ui/notifications_screen.dart';
 import 'package:hydex/src/features/owner/models/owner_event.dart';
+import 'package:hydex/src/features/owner/models/scan_type.dart';
 import 'package:hydex/src/features/owner/ui/components/event_details.dart';
 import 'package:hydex/src/features/owner/ui/events.dart';
 
 import 'package:hydex/src/features/owner/ui/home.dart';
 import 'package:hydex/src/features/owner/ui/login.dart';
 import 'package:hydex/src/features/owner/ui/owner_venue.dart';
+import 'package:hydex/src/features/owner/ui/ticket_view.dart';
 import 'package:hydex/src/features/profile/data/upcoming_event.dart';
 import 'package:hydex/src/features/profile/ui/profile_screen.dart';
 import 'package:hydex/src/features/profile_summary/ui/profile_summary.dart';
@@ -130,6 +132,14 @@ class AppRoutes {
         builder: (context, state) =>
             OwnerVenues(eventsLength: state.extra as int),
       ),
+      GoRoute(
+        path: "/scan/ticket/:id",
+        builder: (context, state) => ScanTicket(
+          type: state.extra as ScanType,
+          bookingId: state.pathParameters['id'] as String,
+        ),
+      ),
+
       GoRoute(
         path: "/owner/scan",
         builder: (context, state) => const ScanScreen(),

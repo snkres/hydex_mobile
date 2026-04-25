@@ -61,6 +61,18 @@ class ScanResponseMapper extends ClassMapperBase<ScanResponse> {
   );
   static ScanPass _$pass(ScanResponse v) => v.pass;
   static const Field<ScanResponse, ScanPass> _f$pass = Field('pass', _$pass);
+  static int? _$guestNumber(ScanResponse v) => v.guestNumber;
+  static const Field<ScanResponse, int> _f$guestNumber = Field(
+    'guestNumber',
+    _$guestNumber,
+    opt: true,
+  );
+  static int? _$numberOfGuests(ScanResponse v) => v.numberOfGuests;
+  static const Field<ScanResponse, int> _f$numberOfGuests = Field(
+    'numberOfGuests',
+    _$numberOfGuests,
+    opt: true,
+  );
 
   @override
   final MappableFields<ScanResponse> fields = const {
@@ -73,6 +85,8 @@ class ScanResponseMapper extends ClassMapperBase<ScanResponse> {
     #qrCodeUrl: _f$qrCodeUrl,
     #status: _f$status,
     #pass: _f$pass,
+    #guestNumber: _f$guestNumber,
+    #numberOfGuests: _f$numberOfGuests,
   };
 
   static ScanResponse _instantiate(DecodingData data) {
@@ -86,6 +100,8 @@ class ScanResponseMapper extends ClassMapperBase<ScanResponse> {
       qrCodeUrl: data.dec(_f$qrCodeUrl),
       status: data.dec(_f$status),
       pass: data.dec(_f$pass),
+      guestNumber: data.dec(_f$guestNumber),
+      numberOfGuests: data.dec(_f$numberOfGuests),
     );
   }
 
@@ -162,6 +178,8 @@ abstract class ScanResponseCopyWith<$R, $In extends ScanResponse, $Out>
     String? qrCodeUrl,
     String? status,
     ScanPass? pass,
+    int? guestNumber,
+    int? numberOfGuests,
   });
   ScanResponseCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -188,6 +206,8 @@ class _ScanResponseCopyWithImpl<$R, $Out>
     Object? qrCodeUrl = $none,
     String? status,
     ScanPass? pass,
+    Object? guestNumber = $none,
+    Object? numberOfGuests = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -199,6 +219,8 @@ class _ScanResponseCopyWithImpl<$R, $Out>
       if (qrCodeUrl != $none) #qrCodeUrl: qrCodeUrl,
       if (status != null) #status: status,
       if (pass != null) #pass: pass,
+      if (guestNumber != $none) #guestNumber: guestNumber,
+      if (numberOfGuests != $none) #numberOfGuests: numberOfGuests,
     }),
   );
   @override
@@ -212,6 +234,8 @@ class _ScanResponseCopyWithImpl<$R, $Out>
     qrCodeUrl: data.get(#qrCodeUrl, or: $value.qrCodeUrl),
     status: data.get(#status, or: $value.status),
     pass: data.get(#pass, or: $value.pass),
+    guestNumber: data.get(#guestNumber, or: $value.guestNumber),
+    numberOfGuests: data.get(#numberOfGuests, or: $value.numberOfGuests),
   );
 
   @override

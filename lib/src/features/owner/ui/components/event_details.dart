@@ -3,12 +3,15 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/src/features/owner/domain/owner_providers.dart';
+import 'package:hydex/src/features/owner/models/event_booking_response.dart';
 import 'package:intl/intl.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/owner/models/event_status.dart';
 import 'package:hydex/src/features/owner/models/owner_event.dart';
 import 'package:hydex/src/features/owner/ui/components/booking_card.dart';
+import 'package:hydex/src/features/scan/data/rsv_status.dart' show RsvStatus;
+import 'package:hydex/src/features/search/ui/components/not_found.dart';
 import 'package:hydex/src/widgets/blur_app_bar.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
@@ -58,6 +61,40 @@ class _SkeletonBoxState extends State<_SkeletonBox>
           color: AppColors.containerDim.withOpacity(_anim.value + 0.3),
           borderRadius: BorderRadius.circular(widget.borderRadius),
         ),
+      ),
+    );
+  }
+}
+
+class _SkeletonBookingCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SmoothContainer(
+      padding: const EdgeInsets.all(16),
+      color: AppColors.containerDim,
+      smoothness: 1,
+      borderRadius: BorderRadius.circular(20),
+      child: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _SkeletonBox(width: 60, height: 13),
+              _SkeletonBox(width: 70, height: 13),
+            ],
+          ),
+          SizedBox(height: 10),
+          _SkeletonBox(width: 140, height: 15),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              _SkeletonBox(width: 100, height: 11),
+              SizedBox(width: 8),
+              _SkeletonBox(width: 60, height: 11),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -280,6 +317,9 @@ class _OwnerEventDetailsState extends ConsumerState<OwnerEventDetails> {
     AppTextStyles styles,
     OwnerEvent event,
   ) {
+    final bookingsAsync = ref.watch(
+      getOwnerEventBookingsProvider(eventID: widget.eventID),
+    );
     return Scaffold(
       backgroundColor: AppColors.backgroundBase,
       extendBodyBehindAppBar: true,
@@ -309,10 +349,10 @@ class _OwnerEventDetailsState extends ConsumerState<OwnerEventDetails> {
             const SizedBox(height: 24),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _buildBookingFilters(styles),
+              child: _buildBookingFilters(styles, bookingsAsync),
             ),
             const SizedBox(height: 16),
-            ..._buildBookingCards(styles),
+            _buildBookingCards(styles, bookingsAsync),
           ],
         ),
       ),
@@ -524,9 +564,17 @@ class _OwnerEventDetailsState extends ConsumerState<OwnerEventDetails> {
     );
   }
 
-  Widget _buildBookingFilters(AppTextStyles styles) {
+  Widget _buildBookingFilters(
+    AppTextStyles styles,
+    AsyncValue<List<EventBookingItem>> bookingsAsync,
+  ) {
     const duration = Duration(milliseconds: 380);
     const curve = Curves.easeOutCubic;
+    final pendingCount =
+        bookingsAsync.value
+            ?.where((b) => b.status == RsvStatus.pending)
+            .length ??
+        0;
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -565,10 +613,11 @@ class _OwnerEventDetailsState extends ConsumerState<OwnerEventDetails> {
                     ),
                     child: Text(_bookingFilters[index]),
                   ),
-                  if (_bookingFilters[index] == 'Pending') ...[
+                  if (_bookingFilters[index] == 'Pending' &&
+                      pendingCount > 0) ...[
                     const SizedBox(width: 4),
                     Text(
-                      '(5)',
+                      '($pendingCount)',
                       style: TextStyle(
                         fontSize: styles.accumulator * 12,
                         fontWeight: FontWeight.w500,
@@ -586,44 +635,71 @@ class _OwnerEventDetailsState extends ConsumerState<OwnerEventDetails> {
     );
   }
 
-  List<Widget> _buildBookingCards(AppTextStyles styles) {
-    final bookings = [
-      const BookingCardData(
-        id: '#132',
-        name: 'Ahmed Abid',
-        date: 'Sat 21 Feb, 11:30 PM',
-        type: 'Event',
-        status: 'Pending',
-      ),
-      const BookingCardData(
-        id: '#133',
-        name: 'Sara Mahmoud',
-        date: 'Sat 21 Feb, 11:30 PM',
-        type: 'Event',
-        status: 'Pending',
-      ),
-      const BookingCardData(
-        id: '#134',
-        name: 'Khaled Hassan',
-        date: 'Sat 21 Feb, 11:30 PM',
-        type: 'Event',
-        status: 'Confirmed',
-      ),
-      const BookingCardData(
-        id: '#135',
-        name: 'Nour Ali',
-        date: 'Sat 21 Feb, 11:30 PM',
-        type: 'Event',
-        status: 'Entered',
-      ),
-    ];
-    return bookings
-        .map(
-          (b) => Padding(
+  Widget _buildBookingCards(
+    AppTextStyles styles,
+    AsyncValue<List<EventBookingItem>> bookingsAsync,
+  ) {
+    return bookingsAsync.when(
+      loading: () => Column(
+        children: List.generate(
+          4,
+          (_) => Padding(
             padding: const EdgeInsets.only(bottom: 12, left: 16, right: 16),
-            child: OwnerBookingCard(booking: b, styles: styles),
+            child: _SkeletonBookingCard(),
           ),
-        )
-        .toList();
+        ),
+      ),
+      error: (e, _) => const SizedBox.shrink(),
+      data: (bookings) {
+        final filtered = _bookingFilter == 0
+            ? bookings
+            : bookings.where((b) {
+                return switch (_bookingFilter) {
+                  1 =>
+                    b.status == RsvStatus.confirmed ||
+                        b.status == RsvStatus.entered,
+                  2 => b.status == RsvStatus.pending,
+                  3 =>
+                    b.status == RsvStatus.rejected ||
+                        b.status == RsvStatus.cancelled,
+                  _ => true,
+                };
+              }).toList();
+
+        if (filtered.isEmpty) {
+          return const NotFoundWidget(
+            heading: 'No bookings found',
+            description: 'There are no bookings matching this filter.',
+          );
+        }
+
+        return Column(
+          children: filtered
+              .map(
+                (b) => Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 12,
+                    left: 16,
+                    right: 16,
+                  ),
+                  child: OwnerBookingCard(
+                    booking: BookingCardData(
+                      id: b.id,
+                      code: b.displayCode,
+                      name: b.fullName,
+                      date: DateFormat(
+                        'EEE d MMM, hh:mm a',
+                      ).format(b.bookingDate),
+                      type: b.passName,
+                      status: b.status.label,
+                    ),
+                    styles: styles,
+                  ),
+                ),
+              )
+              .toList(),
+        );
+      },
+    );
   }
 }

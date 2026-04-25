@@ -244,9 +244,8 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
                       padding: const EdgeInsets.only(right: 10),
                       child: ActiveEventCard(
                         event: ownerEvents[index],
-
                         styles: styles,
-                        status: .active,
+                        activeOnly: true,
                       ),
                     );
                   },

@@ -7,6 +7,7 @@ import 'package:hydex/src/features/owner/domain/owner_providers.dart';
 import 'package:hydex/src/features/owner/models/event_status.dart';
 import 'package:hydex/src/features/owner/models/owner_event.dart';
 import 'package:hydex/src/features/search/ui/components/not_found.dart';
+import 'package:hydex/src/widgets/active_event_card.dart' hide EventStatus;
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
@@ -86,7 +87,6 @@ class _EventsContentState extends ConsumerState<EventsContent> {
     }
 
     final eventsAsync = ref.watch(getOwnerEventsProvider(active: false));
-
     return eventsAsync.when(
       loading: () => const _EventsSkeleton(),
       error: (e, _) => Center(
@@ -126,7 +126,7 @@ class _EventsContentState extends ConsumerState<EventsContent> {
           Column(
             children: [
               for (final event in filtered) ...[
-                _EventCard(event: event, styles: styles),
+                ActiveEventCard(event: event, styles: styles),
                 const SizedBox(height: 12),
               ],
             ],
@@ -184,164 +184,6 @@ class _EventsContentState extends ConsumerState<EventsContent> {
           ),
         );
       }),
-    );
-  }
-}
-
-class _EventCard extends StatelessWidget {
-  const _EventCard({required this.event, required this.styles});
-
-  final OwnerEvent event;
-  final AppTextStyles styles;
-
-  static const _statusColors = <EventStatus, Color>{
-    EventStatus.active: AppColors.textSuccess,
-    EventStatus.pending: AppColors.textWarning,
-    EventStatus.rejected: AppColors.textError,
-    EventStatus.past: AppColors.textSecondary,
-  };
-
-  static const _statusLabels = <EventStatus, String>{
-    EventStatus.active: 'Active',
-    EventStatus.pending: 'Pending',
-    EventStatus.rejected: 'Rejected',
-    EventStatus.past: 'Past',
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    final statusColor = _statusColors[event.status] ?? AppColors.textSecondary;
-    final statusLabel = _statusLabels[event.status] ?? '';
-    final soldFraction = event.sales.capacity > 0
-        ? event.sales.sold / event.sales.capacity
-        : 0.0;
-
-    return GestureDetector(
-      onTap: () => context.push("/owner/event-details", extra: event.id),
-      child: SmoothContainer(
-        padding: const EdgeInsets.all(16),
-        color: AppColors.containerDim,
-        smoothness: 1,
-        borderRadius: BorderRadius.circular(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 3,
-                            height: 3,
-                            decoration: BoxDecoration(
-                              color: statusColor,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            '$statusLabel Event #${event.displayCode}',
-                            style: TextStyle(
-                              fontSize: styles.accumulator * 11,
-                              fontWeight: FontWeight.w500,
-                              color: statusColor,
-                              height: 16 / 11,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        event.name,
-                        style: TextStyle(
-                          fontFamily: styles.fontFamily,
-                          fontSize: styles.accumulator * 16,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                          height: 22 / 16,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        event.timeLabel ?? "",
-                        style: TextStyle(
-                          fontSize: styles.accumulator * 11,
-                          color: AppColors.textSecondary,
-                          height: 16 / 11,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.confirmation_number_outlined,
-                      size: 16,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 6),
-                    Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '${event.sales.sold}',
-                            style: TextStyle(
-                              fontSize: styles.accumulator * 13,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                          TextSpan(
-                            text: '/${event.sales.capacity} sold',
-                            style: TextStyle(
-                              fontSize: styles.accumulator * 13,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Text(
-                  '${event.revenue.amount.toStringAsFixed(0)} ${event.revenue.currency}',
-                  style: TextStyle(
-                    fontFamily: styles.fontFamily,
-                    fontSize: styles.accumulator * 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: LinearProgressIndicator(
-                value: soldFraction,
-                minHeight: 4,
-                backgroundColor: AppColors.surfaceContainerLighter,
-                valueColor: const AlwaysStoppedAnimation<Color>(
-                  AppColors.buttonSecondary,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

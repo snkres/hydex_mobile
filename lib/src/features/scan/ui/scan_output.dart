@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hydex/src/features/scan/data/rsv_status.dart';
 import 'package:intl/intl.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
@@ -8,9 +9,12 @@ import 'package:hydex/src/features/scan/data/scan_response.dart';
 import 'package:hydex/src/features/scan/ui/components/scan_action_buttons.dart';
 
 class ScanOutput extends ConsumerWidget {
-  const ScanOutput({super.key, required this.data});
+  const ScanOutput({super.key, required this.data, this.isTicket = false});
 
   final ScanResponse data;
+  final bool isTicket;
+
+  bool get isCancelled => data.status.toLowerCase().contains("cancel");
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -31,7 +35,9 @@ class ScanOutput extends ConsumerWidget {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                 ),
                 TicketContainer(
-                  backgroundColor: AppColors.surfaceContainer,
+                  backgroundColor: isCancelled
+                      ? Color.fromARGB(255, 141, 141, 156)
+                      : AppColors.surfaceContainer,
                   upperChild: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -96,7 +102,12 @@ class ScanOutput extends ConsumerWidget {
                       SizedBox(
                         width: 150,
                         child: Text(
-                          data.pass.bookingExperience?.event?.location.address ??
+                          data
+                                  .pass
+                                  .bookingExperience
+                                  ?.event
+                                  ?.location
+                                  .address ??
                               "",
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -157,7 +168,9 @@ class ScanOutput extends ConsumerWidget {
                                 ),
                               ),
                               Text(
-                                DateFormat('d MMM yyyy').format(data.bookingDate),
+                                DateFormat(
+                                  'd MMM yyyy',
+                                ).format(data.bookingDate),
                                 style: TextStyle(
                                   fontSize:
                                       AppTextStyles(context).accumulator * 12,
@@ -223,7 +236,12 @@ class ScanOutput extends ConsumerWidget {
                     ),
                   ),
                 ),
-                ScanActionButtons(bookingId: data.id),
+
+                ScanActionButtons(
+                  bookingId: data.id,
+                  isTicket: isTicket,
+                  givenStatus: data.status,
+                ),
               ],
             ),
           ),

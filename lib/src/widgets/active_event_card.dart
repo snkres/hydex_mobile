@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/booking/data/booking.dart';
+import 'package:hydex/src/features/owner/models/event_status.dart';
 import 'package:hydex/src/features/owner/models/owner_event.dart';
 import 'package:intl/intl.dart';
 import 'package:smooth_corner/smooth_corner.dart';
@@ -26,43 +28,41 @@ class EventCardData {
   });
 }
 
-enum EventStatus { active, pending, rejected, past }
-
 class ActiveEventCard extends StatelessWidget {
   final OwnerEvent event;
   final AppTextStyles styles;
   final VoidCallback? onTap;
-  final EventStatus? status;
+  final bool activeOnly;
 
   const ActiveEventCard({
     super.key,
     required this.event,
     required this.styles,
+    this.activeOnly = false,
     this.onTap,
-    this.status,
   });
 
-  String get _statusLabel => switch (status) {
-    EventStatus.active => '• Active Event',
-    EventStatus.pending => '• Pending Event',
-    EventStatus.rejected => '• Rejected Event',
-    EventStatus.past => '• Past Event',
-    null => 'Event',
-  };
+  String get _statusLabel => '• ${event.status.name.capitalize()} Event';
 
-  Color get _statusColor => switch (status) {
+  Color get _statusColor => switch (event.status) {
     EventStatus.active => AppColors.textSuccess,
     EventStatus.pending => AppColors.textWarning,
     EventStatus.rejected => AppColors.textError,
+    EventStatus.cancelled => AppColors.textError,
     _ => AppColors.textSecondary,
   };
+
+  bool get isGray => event.status == .past || event.status == .cancelled;
 
   @override
   Widget build(BuildContext context) {
     final progress = event.sales.sold / event.sales.capacity;
 
     return GestureDetector(
-      onTap: () => context.pushNamed("EventDetails", extra: event.id),
+      onTap: () => context.pushNamed(
+        "EventDetails",
+        extra: event.id,
+      ),
       child: SmoothContainer(
         padding: const EdgeInsets.all(16),
         color: AppColors.containerDim,
@@ -80,10 +80,14 @@ class ActiveEventCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _statusLabel,
+                        activeOnly
+                            ? "Event ${event.displayCode}"
+                            : "$_statusLabel ${event.displayCode}",
                         style: TextStyle(
                           fontSize: styles.accumulator * 12,
-                          color: _statusColor,
+                          color: activeOnly
+                              ? AppColors.textSecondary
+                              : _statusColor,
                           height: 16 / 12,
                         ),
                       ),
@@ -91,7 +95,9 @@ class ActiveEventCard extends StatelessWidget {
                       Text(
                         event.name,
                         style: styles.secondaryBold.copyWith(
-                          color: AppColors.textPrimary,
+                          color: isGray
+                              ? AppColors.textSecondary
+                              : AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -130,7 +136,7 @@ class ActiveEventCard extends StatelessWidget {
                   ),
               ],
             ),
-            if (status == EventStatus.active || status == null) ...[
+            if (event.status == EventStatus.active) ...[
               SizedBox(height: styles.accumulator * 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -12,4 +12,6 @@ enum EventStatus {
   rejected,
   @MappableValue('past')
   past,
+  @MappableValue('cancelled')
+  cancelled,
 }

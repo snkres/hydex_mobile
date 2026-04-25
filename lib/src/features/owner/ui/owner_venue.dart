@@ -487,7 +487,8 @@ class _OwnerVenuesState extends ConsumerState<OwnerVenues>
     }
     return bookings.map((b) {
       final data = BookingCardData(
-        id: b.displayCode,
+        id: b.id,
+        code: b.displayCode,
         name: b.fullName,
         date: _formatDate(b.bookingDate),
         type: 'RSV',

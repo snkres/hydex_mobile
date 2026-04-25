@@ -163,8 +163,15 @@ final class GetOwnerEventDetailsFamily extends $Family
 const getOwnerEventBookingsProvider = GetOwnerEventBookingsFamily._();
 
 final class GetOwnerEventBookingsProvider
-    extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
-    with $FutureModifier<void>, $FutureProvider<void> {
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<EventBookingItem>>,
+          List<EventBookingItem>,
+          FutureOr<List<EventBookingItem>>
+        >
+    with
+        $FutureModifier<List<EventBookingItem>>,
+        $FutureProvider<List<EventBookingItem>> {
   const GetOwnerEventBookingsProvider._({
     required GetOwnerEventBookingsFamily super.from,
     required String super.argument,
@@ -188,11 +195,12 @@ final class GetOwnerEventBookingsProvider
 
   @$internal
   @override
-  $FutureProviderElement<void> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
+  $FutureProviderElement<List<EventBookingItem>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
-  FutureOr<void> create(Ref ref) {
+  FutureOr<List<EventBookingItem>> create(Ref ref) {
     final argument = this.argument as String;
     return getOwnerEventBookings(ref, eventID: argument);
   }
@@ -209,10 +217,10 @@ final class GetOwnerEventBookingsProvider
 }
 
 String _$getOwnerEventBookingsHash() =>
-    r'626b33c8f9e0a1b6d4c2a273944edc4641f528f5';
+    r'750075753cd1fa480e18e03517989b9ec9580d4e';
 
 final class GetOwnerEventBookingsFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<void>, String> {
+    with $FunctionalFamilyOverride<FutureOr<List<EventBookingItem>>, String> {
   const GetOwnerEventBookingsFamily._()
     : super(
         retry: null,
