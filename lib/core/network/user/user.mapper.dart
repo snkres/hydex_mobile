@@ -803,6 +803,8 @@ class VendorSummaryMapper extends ClassMapperBase<VendorSummary> {
   static VendorSummaryMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = VendorSummaryMapper._());
+      CategoryNoDescMapper.ensureInitialized();
+      LocationMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -814,15 +816,41 @@ class VendorSummaryMapper extends ClassMapperBase<VendorSummary> {
   static const Field<VendorSummary, String> _f$id = Field('id', _$id);
   static String _$name(VendorSummary v) => v.name;
   static const Field<VendorSummary, String> _f$name = Field('name', _$name);
+  static String? _$image(VendorSummary v) => v.image;
+  static const Field<VendorSummary, String> _f$image = Field(
+    'image',
+    _$image,
+    opt: true,
+  );
+  static CategoryNoDesc? _$category(VendorSummary v) => v.category;
+  static const Field<VendorSummary, CategoryNoDesc> _f$category = Field(
+    'category',
+    _$category,
+    opt: true,
+  );
+  static Location _$location(VendorSummary v) => v.location;
+  static const Field<VendorSummary, Location> _f$location = Field(
+    'location',
+    _$location,
+  );
 
   @override
   final MappableFields<VendorSummary> fields = const {
     #id: _f$id,
     #name: _f$name,
+    #image: _f$image,
+    #category: _f$category,
+    #location: _f$location,
   };
 
   static VendorSummary _instantiate(DecodingData data) {
-    return VendorSummary(id: data.dec(_f$id), name: data.dec(_f$name));
+    return VendorSummary(
+      id: data.dec(_f$id),
+      name: data.dec(_f$name),
+      image: data.dec(_f$image),
+      category: data.dec(_f$category),
+      location: data.dec(_f$location),
+    );
   }
 
   @override
@@ -887,7 +915,15 @@ extension VendorSummaryValueCopy<$R, $Out>
 
 abstract class VendorSummaryCopyWith<$R, $In extends VendorSummary, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  $R call({String? id, String? name});
+  CategoryNoDescCopyWith<$R, CategoryNoDesc, CategoryNoDesc>? get category;
+  LocationCopyWith<$R, Location, Location> get location;
+  $R call({
+    String? id,
+    String? name,
+    String? image,
+    CategoryNoDesc? category,
+    Location? location,
+  });
   VendorSummaryCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -900,13 +936,34 @@ class _VendorSummaryCopyWithImpl<$R, $Out>
   late final ClassMapperBase<VendorSummary> $mapper =
       VendorSummaryMapper.ensureInitialized();
   @override
-  $R call({String? id, String? name}) => $apply(
-    FieldCopyWithData({if (id != null) #id: id, if (name != null) #name: name}),
+  CategoryNoDescCopyWith<$R, CategoryNoDesc, CategoryNoDesc>? get category =>
+      $value.category?.copyWith.$chain((v) => call(category: v));
+  @override
+  LocationCopyWith<$R, Location, Location> get location =>
+      $value.location.copyWith.$chain((v) => call(location: v));
+  @override
+  $R call({
+    String? id,
+    String? name,
+    Object? image = $none,
+    Object? category = $none,
+    Location? location,
+  }) => $apply(
+    FieldCopyWithData({
+      if (id != null) #id: id,
+      if (name != null) #name: name,
+      if (image != $none) #image: image,
+      if (category != $none) #category: category,
+      if (location != null) #location: location,
+    }),
   );
   @override
   VendorSummary $make(CopyWithData data) => VendorSummary(
     id: data.get(#id, or: $value.id),
     name: data.get(#name, or: $value.name),
+    image: data.get(#image, or: $value.image),
+    category: data.get(#category, or: $value.category),
+    location: data.get(#location, or: $value.location),
   );
 
   @override

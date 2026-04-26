@@ -1,5 +1,7 @@
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:hydex/src/features/booking/data/guest.dart';
+import 'package:hydex/src/features/vibes/data/event.dart';
+import 'package:hydex/src/features/vibes/data/location.dart';
 
 part 'user.mapper.dart';
 
@@ -92,8 +94,17 @@ class OwnerProfile with OwnerProfileMappable {
 class VendorSummary with VendorSummaryMappable {
   final String id;
   final String name;
+  final String? image;
+  final CategoryNoDesc? category;
+  final Location location;
 
-  VendorSummary({required this.id, required this.name});
+  VendorSummary({
+    required this.id,
+    required this.name,
+    this.image,
+    this.category,
+    required this.location,
+  });
 }
 
 @MappableClass()

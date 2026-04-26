@@ -1,5 +1,6 @@
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:hydex/src/features/owner/models/event_status.dart';
+import 'package:hydex/src/features/vibes/data/location.dart';
 
 part 'owner_event.mapper.dart';
 
@@ -11,6 +12,7 @@ class OwnerEvent with OwnerEventMappable {
   final DateTime startTime;
   final DateTime endTime;
   final String? timeLabel;
+
   @MappableField(key: 'uiStatus')
   final EventStatus status;
   final OwnerEventSales sales;
@@ -22,7 +24,7 @@ class OwnerEvent with OwnerEventMappable {
     required this.name,
     required this.startTime,
     required this.endTime,
-     this.timeLabel,
+    this.timeLabel,
     required this.status,
     required this.sales,
     required this.revenue,

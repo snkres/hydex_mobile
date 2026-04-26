@@ -33,6 +33,7 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
     final fullName = user?.fullName ?? 'Owner';
     final styles = AppTextStyles(context);
     final allEventsAsync = ref.watch(getOwnerEventsProvider(active: false));
+
     final allEvents = allEventsAsync.value;
 
     return Scaffold(
