@@ -499,7 +499,7 @@ class _OwnerEventDetailsState extends ConsumerState<OwnerEventDetails> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  "event.vendorName",
+                  "Place",
                   style: TextStyle(
                     fontFamily: styles.fontFamily,
                     fontSize: styles.accumulator * 13,

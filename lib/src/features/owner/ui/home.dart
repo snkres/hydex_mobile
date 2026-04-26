@@ -70,7 +70,6 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
                     const TextSpan(text: '👋 '),
                     TextSpan(
                       text: fullName,
-
                       style: TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: styles.accumulator * 19,

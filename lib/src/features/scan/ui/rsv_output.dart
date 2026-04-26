@@ -9,9 +9,10 @@ import 'package:hydex/src/features/scan/ui/components/scan_action_buttons.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 class RsvOutput extends ConsumerWidget {
-  const RsvOutput({super.key, required this.data});
+  const RsvOutput({super.key, required this.data, this.isTicket = false});
 
   final ScanResponse data;
+  final bool isTicket;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -234,8 +235,8 @@ class RsvOutput extends ConsumerWidget {
               ),
               ScanActionButtons(
                 bookingId: data.id,
-                isTicket: true,
-                givenStatus: data.status,
+                isTicket: isTicket,
+                givenStatus: isTicket ? data.status : null,
               ),
             ],
           ),

@@ -19,7 +19,7 @@ class ScanTicket extends ConsumerWidget {
     return details.when(
       data: (data) => type == .booking
           ? ScanOutput(data: data, isTicket: true)
-          : RsvOutput(data: data),
+          : RsvOutput(data: data, isTicket: true),
       error: (e, s) {
         log("Error", error: e, stackTrace: s);
         return Scaffold(body: Center(child: Text("Error")));

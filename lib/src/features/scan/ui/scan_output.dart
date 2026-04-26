@@ -240,7 +240,7 @@ class ScanOutput extends ConsumerWidget {
                 ScanActionButtons(
                   bookingId: data.id,
                   isTicket: isTicket,
-                  givenStatus: data.status,
+                  givenStatus: isTicket ? data.status : null,
                 ),
               ],
             ),

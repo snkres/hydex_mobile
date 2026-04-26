@@ -47,11 +47,13 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
   @override
   void initState() {
     super.initState();
-    _rsvStatus = RsvStatus.values
-        .where(
-          (e) => e.value.toLowerCase() == widget.givenStatus?.toLowerCase(),
-        )
-        .first;
+    if (widget.givenStatus != null) {
+      _rsvStatus = RsvStatus.values
+          .where(
+            (e) => e.value.toLowerCase() == widget.givenStatus!.toLowerCase(),
+          )
+          .first;
+    }
     _springController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
@@ -250,7 +252,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 12,
       children: [
-        if (_rsvStatus != null || widget.isTicket)
+        if (_rsvStatus != null)
           if (widget.isTicket)
             RsvComponent(status: _rsvStatus!)
           else
