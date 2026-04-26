@@ -1981,6 +1981,7 @@ class PassesMapper extends ClassMapperBase<Passes> {
   static PassesMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = PassesMapper._());
+      BookingExperienceMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -1999,18 +2000,13 @@ class PassesMapper extends ClassMapperBase<Passes> {
   );
   static double _$price(Passes v) => v.price;
   static const Field<Passes, double> _f$price = Field('price', _$price);
-  static int _$maximumAmount(Passes v) => v.maximumAmount;
-  static const Field<Passes, int> _f$maximumAmount = Field(
-    'maximumAmount',
-    _$maximumAmount,
-  );
   static int _$currentBookings(Passes v) => v.currentBookings;
   static const Field<Passes, int> _f$currentBookings = Field(
     'currentBookings',
     _$currentBookings,
+    opt: true,
+    def: 0,
   );
-  static bool _$isActive(Passes v) => v.isActive;
-  static const Field<Passes, bool> _f$isActive = Field('isActive', _$isActive);
   static int? _$rouletteRemainingWins(Passes v) => v.rouletteRemainingWins;
   static const Field<Passes, int> _f$rouletteRemainingWins = Field(
     'rouletteRemainingWins',
@@ -2028,6 +2024,13 @@ class PassesMapper extends ClassMapperBase<Passes> {
     'discountPercentage',
     _$discountPercentage,
   );
+  static BookingExperience? _$bookingExperience(Passes v) =>
+      v.bookingExperience;
+  static const Field<Passes, BookingExperience> _f$bookingExperience = Field(
+    'bookingExperience',
+    _$bookingExperience,
+    opt: true,
+  );
 
   @override
   final MappableFields<Passes> fields = const {
@@ -2035,12 +2038,11 @@ class PassesMapper extends ClassMapperBase<Passes> {
     #name: _f$name,
     #benefits: _f$benefits,
     #price: _f$price,
-    #maximumAmount: _f$maximumAmount,
     #currentBookings: _f$currentBookings,
-    #isActive: _f$isActive,
     #rouletteRemainingWins: _f$rouletteRemainingWins,
     #rouletteMaxWins: _f$rouletteMaxWins,
     #discountPercentage: _f$discountPercentage,
+    #bookingExperience: _f$bookingExperience,
   };
 
   static Passes _instantiate(DecodingData data) {
@@ -2049,12 +2051,11 @@ class PassesMapper extends ClassMapperBase<Passes> {
       name: data.dec(_f$name),
       benefits: data.dec(_f$benefits),
       price: data.dec(_f$price),
-      maximumAmount: data.dec(_f$maximumAmount),
       currentBookings: data.dec(_f$currentBookings),
-      isActive: data.dec(_f$isActive),
       rouletteRemainingWins: data.dec(_f$rouletteRemainingWins),
       rouletteMaxWins: data.dec(_f$rouletteMaxWins),
       discountPercentage: data.dec(_f$discountPercentage),
+      bookingExperience: data.dec(_f$bookingExperience),
     );
   }
 
@@ -2104,17 +2105,18 @@ extension PassesValueCopy<$R, $Out> on ObjectCopyWith<$R, Passes, $Out> {
 
 abstract class PassesCopyWith<$R, $In extends Passes, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
+  BookingExperienceCopyWith<$R, BookingExperience, BookingExperience>?
+  get bookingExperience;
   $R call({
     String? id,
     String? name,
     String? benefits,
     double? price,
-    int? maximumAmount,
     int? currentBookings,
-    bool? isActive,
     int? rouletteRemainingWins,
     int? rouletteMaxWins,
     int? discountPercentage,
+    BookingExperience? bookingExperience,
   });
   PassesCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -2126,30 +2128,33 @@ class _PassesCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Passes, $Out>
   @override
   late final ClassMapperBase<Passes> $mapper = PassesMapper.ensureInitialized();
   @override
+  BookingExperienceCopyWith<$R, BookingExperience, BookingExperience>?
+  get bookingExperience => $value.bookingExperience?.copyWith.$chain(
+    (v) => call(bookingExperience: v),
+  );
+  @override
   $R call({
     String? id,
     String? name,
     Object? benefits = $none,
     double? price,
-    int? maximumAmount,
     int? currentBookings,
-    bool? isActive,
     Object? rouletteRemainingWins = $none,
     Object? rouletteMaxWins = $none,
     Object? discountPercentage = $none,
+    Object? bookingExperience = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
       if (name != null) #name: name,
       if (benefits != $none) #benefits: benefits,
       if (price != null) #price: price,
-      if (maximumAmount != null) #maximumAmount: maximumAmount,
       if (currentBookings != null) #currentBookings: currentBookings,
-      if (isActive != null) #isActive: isActive,
       if (rouletteRemainingWins != $none)
         #rouletteRemainingWins: rouletteRemainingWins,
       if (rouletteMaxWins != $none) #rouletteMaxWins: rouletteMaxWins,
       if (discountPercentage != $none) #discountPercentage: discountPercentage,
+      if (bookingExperience != $none) #bookingExperience: bookingExperience,
     }),
   );
   @override
@@ -2158,9 +2163,7 @@ class _PassesCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Passes, $Out>
     name: data.get(#name, or: $value.name),
     benefits: data.get(#benefits, or: $value.benefits),
     price: data.get(#price, or: $value.price),
-    maximumAmount: data.get(#maximumAmount, or: $value.maximumAmount),
     currentBookings: data.get(#currentBookings, or: $value.currentBookings),
-    isActive: data.get(#isActive, or: $value.isActive),
     rouletteRemainingWins: data.get(
       #rouletteRemainingWins,
       or: $value.rouletteRemainingWins,
@@ -2169,6 +2172,10 @@ class _PassesCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Passes, $Out>
     discountPercentage: data.get(
       #discountPercentage,
       or: $value.discountPercentage,
+    ),
+    bookingExperience: data.get(
+      #bookingExperience,
+      or: $value.bookingExperience,
     ),
   );
 

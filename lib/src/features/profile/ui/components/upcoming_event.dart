@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydex/src/features/profile/domain/profile_providers.dart';
@@ -25,7 +27,10 @@ class UpcomingEventSection extends ConsumerWidget {
           ),
         );
       },
-      error: (e, s) => Center(child: Text("Error")),
+      error: (e, s) {
+        log("UpcomingEVent Error",error: e ,stackTrace: s);
+        return Center(child: Text("Error"));
+      },
       loading: () => Center(child: CircularProgressIndicator.adaptive()),
     );
   }

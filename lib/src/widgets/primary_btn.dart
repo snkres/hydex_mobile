@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:lottie/lottie.dart';
+import 'package:smooth_corner/smooth_corner.dart';
 
 class PrimaryButton extends StatefulWidget {
   const PrimaryButton({
@@ -29,13 +30,12 @@ class _PrimaryButtonState extends State<PrimaryButton> {
     return ConstrainedBox(
       constraints: BoxConstraints(minWidth: double.infinity, minHeight: 50),
       child: ElevatedButton(
-        
         onPressed: () async {
           setState(() {
             loading = true;
           });
           try {
-            await widget.onTap?.call(); 
+            await widget.onTap?.call();
           } finally {
             if (mounted) {
               setState(() {
@@ -45,6 +45,9 @@ class _PrimaryButtonState extends State<PrimaryButton> {
           }
         },
         style: ButtonStyle(
+          shape: WidgetStatePropertyAll(
+            SmoothRectangleBorder(smoothness: 1, borderRadius: .circular(12)),
+          ),
           backgroundColor: WidgetStatePropertyAll(
             widget.onTap != null ? widget.bgColor : widget.nullbgColor,
           ),

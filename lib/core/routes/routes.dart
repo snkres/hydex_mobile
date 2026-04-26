@@ -26,9 +26,22 @@ import 'package:hydex/src/features/contact/ui/contacts.dart';
 import 'package:hydex/src/features/events/ui/events.dart';
 import 'package:hydex/src/features/location/ui/location_screen.dart';
 import 'package:hydex/src/features/notifications/ui/notifications_screen.dart';
+import 'package:hydex/src/features/owner/models/owner_event.dart';
+import 'package:hydex/src/features/owner/models/scan_type.dart';
+import 'package:hydex/src/features/owner/ui/components/event_details.dart';
+import 'package:hydex/src/features/owner/ui/events.dart';
+
+import 'package:hydex/src/features/owner/ui/home.dart';
+import 'package:hydex/src/features/owner/ui/login.dart';
+import 'package:hydex/src/features/owner/ui/owner_venue.dart';
+import 'package:hydex/src/features/owner/ui/ticket_view.dart';
 import 'package:hydex/src/features/profile/data/upcoming_event.dart';
 import 'package:hydex/src/features/profile/ui/profile_screen.dart';
 import 'package:hydex/src/features/profile_summary/ui/profile_summary.dart';
+import 'package:hydex/src/features/scan/data/scan_response.dart';
+import 'package:hydex/src/features/scan/ui/rsv_output.dart';
+import 'package:hydex/src/features/scan/ui/scan.dart';
+import 'package:hydex/src/features/scan/ui/scan_output.dart';
 import 'package:hydex/src/features/splash/ui/splash.dart';
 import 'package:hydex/src/features/vendors/ui/vendors.dart';
 import 'package:hydex/src/features/vibes/data/category.dart';
@@ -96,8 +109,57 @@ class AppRoutes {
         builder: (context, state) => const InfluencerScreen(),
       ),
 
-      // Protected routes
       GoRoute(path: "/login", builder: (context, state) => const LoginScreen()),
+      GoRoute(
+        path: "/owner/login",
+
+        builder: (context, state) {
+          final token = state.uri.queryParameters['token'] ?? "test_token";
+          return OwnerLogin(token: token);
+        },
+      ),
+      GoRoute(
+        path: "/owner/home",
+        builder: (context, state) => const OwnerHomeScreen(),
+      ),
+      GoRoute(
+        path: "/owner/events",
+        builder: (context, state) =>
+            OwnerEvents(preloadedEvents: state.extra as List<OwnerEvent>?),
+      ),
+      GoRoute(
+        path: "/owner/venue",
+        builder: (context, state) =>
+            OwnerVenues(eventsLength: state.extra as int),
+      ),
+      GoRoute(
+        path: "/scan/ticket/:id",
+        builder: (context, state) => ScanTicket(
+          type: state.extra as ScanType,
+          bookingId: state.pathParameters['id'] as String,
+        ),
+      ),
+
+      GoRoute(
+        path: "/owner/scan",
+        builder: (context, state) => const ScanScreen(),
+      ),
+      GoRoute(
+        path: "/owner/scan/output",
+        builder: (context, state) =>
+            ScanOutput(data: state.extra as ScanResponse),
+      ),
+      GoRoute(
+        path: "/owner/rsv/output",
+        builder: (context, state) =>
+            RsvOutput(data: state.extra as ScanResponse),
+      ),
+      GoRoute(
+        path: "/owner/event-details",
+        name: "EventDetails",
+        builder: (context, state) =>
+            OwnerEventDetails(eventID: state.extra as String),
+      ),
       GoRoute(
         path: '/forget-password',
         builder: (context, state) => ForgetPassword(),

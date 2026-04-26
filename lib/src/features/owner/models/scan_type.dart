@@ -1,0 +1,1 @@
+enum ScanType { reservation, booking }

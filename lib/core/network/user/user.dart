@@ -51,6 +51,8 @@ class User with UserMappable {
   final String? preferredCountry;
   final DateTime createdAt;
   final SocialLinks? socialLinks;
+  final String? businessCategory;
+  final OwnerProfile? ownerProfile;
 
   User({
     this.id,
@@ -74,7 +76,24 @@ class User with UserMappable {
     this.preferredCountry,
     this.socialLinks,
     this.password,
+    this.businessCategory,
+    this.ownerProfile,
   });
+}
+
+@MappableClass()
+class OwnerProfile with OwnerProfileMappable {
+  final List<VendorSummary>? vendors;
+
+  OwnerProfile({this.vendors});
+}
+
+@MappableClass()
+class VendorSummary with VendorSummaryMappable {
+  final String id;
+  final String name;
+
+  VendorSummary({required this.id, required this.name});
 }
 
 @MappableClass()

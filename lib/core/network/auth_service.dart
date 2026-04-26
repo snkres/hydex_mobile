@@ -18,7 +18,7 @@ class AuthService {
     await DioHelper().init();
   }
 
-  Future<void> login(String email, String password) async {
+  Future<User> login(String email, String password) async {
     try {
       // Use the enhanced login method that handles tokens automatically
       final responseData = await DioHelper.authenticate('/v2/auth/login', {
@@ -33,6 +33,7 @@ class AuthService {
       final userData = responseData['data']['user'] as Map<String, dynamic>;
       final user = UserMapper.fromMap(userData);
       ref.read(userProvider.notifier).setUser(user);
+      return user;
     } catch (e) {
       if (kDebugMode) {
         print('❌ Login failed: $e');
@@ -287,13 +288,11 @@ class AuthService {
               "minimumEngagement": 3.5,
             },
           },
-
           "socialLinks": socialLinks,
         };
       case Role.owner:
         return {
           "businessName": user.businessName,
-
           "website": user.socialLinks?.website,
         };
       default:
@@ -337,6 +336,7 @@ class UserNotifier extends _$UserNotifier {
     String? audienceSizeRange,
     String? groupSize,
     String? preferredCountry,
+    String? businessCategory,
     String? businessName,
     List<String>? areas,
   }) {
@@ -345,6 +345,7 @@ class UserNotifier extends _$UserNotifier {
         createdAt: DateTime.now(),
         email: email ?? "",
         phone: phone,
+        businessCategory: businessCategory,
         status: UserStatus.pending,
         fullName: fullName ?? "",
         gender: gender ?? "",
@@ -379,6 +380,7 @@ class UserNotifier extends _$UserNotifier {
             ? DateTime.tryParse(dateOfBirth)
             : state?.dateOfBirth,
         interests: interests ?? state?.interests,
+        businessCategory: businessCategory ?? state?.businessCategory,
         contentNiches: contentNiches ?? state?.contentNiches,
         audienceSizeRange: audienceSizeRange ?? state?.audienceSizeRange,
         groupSize: groupSize ?? state?.groupSize,

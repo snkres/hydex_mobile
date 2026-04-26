@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -130,10 +132,11 @@ class BusinessOnlyWidget extends StatelessWidget {
                                 if (value!.isEmpty) {
                                   return "Please enter instagram or website link";
                                 }
-                                if (value.isNotEmpty) {
-                                  if (!value.endsWith(".com")) {
-                                    return "Must be a url";
-                                  }
+                                final uri = Uri.tryParse(value.trim());
+                                if (uri == null ||
+                                    !uri.hasScheme ||
+                                    uri.host.isEmpty) {
+                                  return "Must be a url";
                                 }
                                 return null;
                               },
@@ -180,7 +183,9 @@ class BusinessOnlyWidget extends StatelessWidget {
                                 businessName: businessController.text,
                                 instagram: linkController.text,
                               );
-
+                          unawaited(
+                            ref.read(authServiceProvider).createProfile(),
+                          );
                           if (context.mounted) {
                             context.push("/describe");
                           }
@@ -332,35 +337,22 @@ class _TellusForOthersState extends State<TellusForOthers> {
                                       if (value!.isEmpty) {
                                         return "Please enter instagram link";
                                       }
-                                      if (value.isNotEmpty) {
-                                        if (!Uri.tryParse(
-                                              value,
-                                            )!.hasAbsolutePath ==
-                                            true) {
-                                          return "Must be a url";
-                                        }
-
-                                        Uri? uri = Uri.tryParse(value);
-                                        if (uri == null) {
-                                          return "Must be a url";
-                                        }
-
-                                        // Check if it's a valid Instagram URL
-                                        if (!uri.host.contains(
-                                              'instagram.com',
-                                            ) &&
-                                            !uri.host.contains('instagr.am')) {
-                                          return "Please enter a valid Instagram URL";
-                                        }
-
-                                        // Check if URL has proper scheme
-                                        if (!uri.hasScheme ||
-                                            (!uri.scheme.startsWith('http') &&
-                                                !uri.scheme.startsWith(
-                                                  'https',
-                                                ))) {
-                                          return "URL must start with http:// or https://";
-                                        }
+                                      final trimmed = value.trim().replaceAll(
+                                        '"',
+                                        '',
+                                      );
+                                      final uri = Uri.tryParse(trimmed);
+                                      if (uri == null ||
+                                          !uri.hasScheme ||
+                                          uri.host.isEmpty) {
+                                        return "Must be a url";
+                                      }
+                                      if (!uri.host.contains('instagram.com') &&
+                                          !uri.host.contains('instagr.am')) {
+                                        return "Please enter a valid Instagram URL";
+                                      }
+                                      if (!uri.scheme.startsWith('http')) {
+                                        return "URL must start with http:// or https://";
                                       }
                                       return null;
                                     },
@@ -376,37 +368,25 @@ class _TellusForOthersState extends State<TellusForOthers> {
                                       hintText: "https://facebook.com/username",
                                     ),
                                     validator: (value) {
-                                      // Allow empty values since it's optional
                                       if (value == null || value.isEmpty) {
                                         return null;
                                       }
-
-                                      // Basic URL validation
-                                      if (!Uri.tryParse(
-                                            value,
-                                          )!.hasAbsolutePath ==
-                                          true) {
+                                      final trimmed = value.trim().replaceAll(
+                                        '"',
+                                        '',
+                                      );
+                                      final uri = Uri.tryParse(trimmed);
+                                      if (uri == null ||
+                                          !uri.hasScheme ||
+                                          uri.host.isEmpty) {
                                         return "Please enter a valid URL";
                                       }
-
-                                      Uri? uri = Uri.tryParse(value);
-                                      if (uri == null) {
-                                        return "Please enter a valid URL";
-                                      }
-
-                                      // Check if it's a valid Facebook URL
                                       if (!uri.host.contains('facebook.com') &&
                                           !uri.host.contains('fb.com') &&
                                           !uri.host.contains('fb.me')) {
                                         return "Please enter a valid Facebook URL";
                                       }
-
-                                      // Check if URL has proper scheme
-                                      if (!uri.hasScheme ||
-                                          (!uri.scheme.startsWith('http') &&
-                                              !uri.scheme.startsWith(
-                                                'https',
-                                              ))) {
+                                      if (!uri.scheme.startsWith('http')) {
                                         return "URL must start with http:// or https://";
                                       }
                                       return null;

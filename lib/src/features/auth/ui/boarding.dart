@@ -11,6 +11,7 @@ import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/data/boarding_type.dart';
 import 'package:hydex/src/features/auth/ui/components/pick_type.dart';
 import 'package:hydex/src/features/auth/ui/components/sign_up.dart';
+import 'package:smooth_corner/smooth_corner.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:video_player/video_player.dart';
 
@@ -127,8 +128,16 @@ class _BoardingScreenState extends State<BoardingScreen> {
                   builder: (context, ref, child) {
                     return ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor: .all(AppColors.buttonPrimary),
-                        foregroundColor: .all(Colors.black),
+                        shape: WidgetStatePropertyAll(
+                          SmoothRectangleBorder(
+                            smoothness: 1,
+                            borderRadius: .circular(12),
+                          ),
+                        ),
+                        backgroundColor: WidgetStatePropertyAll(
+                          AppColors.buttonPrimary,
+                        ),
+                        foregroundColor: WidgetStatePropertyAll(Colors.black),
                       ),
                       onPressed: () {
                         showModalBottomSheet(

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -214,14 +216,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                         return;
                                       }
                                       try {
-                                        await ref
+                                        final user = await ref
                                             .read(authServiceProvider)
                                             .login(
                                               phoneNumber!,
                                               passwordController.text,
                                             );
-
-                                        if (context.mounted) context.go("/");
+                                        if (user.role == .owner) {
+                                          if (context.mounted) {
+                                            context.go("/owner/home");
+                                          }
+                                        } else {
+                                          if (context.mounted) context.go("/");
+                                        }
                                       } on ApiException catch (error) {
                                         if (context.mounted) {
                                           ScaffoldMessenger.of(
@@ -304,20 +311,25 @@ class _LoginScreenState extends State<LoginScreen> {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 24),
                                 child: PrimaryButton(
-                                  
                                   onTap: () async {
                                     if (!formKey.currentState!.validate()) {
                                       return;
                                     }
                                     try {
-                                      await ref
+                                      final user = await ref
                                           .read(authServiceProvider)
                                           .login(
                                             phoneNumber!,
                                             passwordController.text,
                                           );
 
-                                      if (context.mounted) context.go("/");
+                                      if (user.role == .owner) {
+                                        if (context.mounted) {
+                                          context.go("/owner/home");
+                                        }
+                                      } else {
+                                        if (context.mounted) context.go("/");
+                                      }
                                     } on ApiException catch (error) {
                                       if (context.mounted) {
                                         ScaffoldMessenger.of(

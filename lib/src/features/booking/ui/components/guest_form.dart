@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/provider/country_picker_provider.dart';
 import 'package:hydex/src/features/auth/ui/components/country_picker.dart';
+import 'package:hydex/src/features/auth/ui/components/error_snackbar.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/features/booking/data/guest.dart';
 import 'package:hydex/src/features/booking/domain/guests_repo.dart';
@@ -485,11 +486,13 @@ class _GuestFormState extends ConsumerState<GuestForm> {
                   );
                 }
                 if (selectedGender == null) {
-                  Fluttertoast.showToast(
-                    msg: "Please select your gender",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                  );
+                  if (context.mounted) {
+                    errorSnackBar(
+                      ApiException("Please select your gender"),
+                      context,
+                    );
+                  }
+
                   return;
                 }
               },

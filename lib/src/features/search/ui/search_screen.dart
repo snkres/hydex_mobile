@@ -41,212 +41,37 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final featuredEvents = ref.watch(getBannersProvider(type: .featured));
     final currentUser = ref.watch(currentUserProvider).value;
 
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Visibility(
-              visible: !isClicked,
-              child: Image.asset(
-                "img/search_gradient.png",
-                package: "assets",
-                width: .infinity,
-                fit: BoxFit.cover,
+    return PopScope(
+      canPop: !isClicked,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && isClicked) {
+          setState(() {
+            isClicked = false;
+          });
+        }
+      },
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Stack(
+            children: [
+              Visibility(
+                visible: !isClicked,
+                child: Image.asset(
+                  "img/search_gradient.png",
+                  package: "assets",
+                  width: .infinity,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            SafeArea(
-              child: Column(
-                crossAxisAlignment: .start,
-                children: [
-                  AnimatedSize(
-                    duration: Duration(milliseconds: 400),
-                    curve: Curves.easeInOutCubic,
-                    child: !isClicked
-                        ? Column(
-                            crossAxisAlignment: .start,
-                            children: [
-                              SizedBox(height: 24),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: .spaceBetween,
-                                  children: [
-                                    Text(
-                                      "👋 Hi, ${(currentUser?.fullName ?? "...")}",
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.white.withValues(
-                                          alpha: 0.5,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 16),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: .start,
-                                  children: [
-                                    Text(
-                                      "Find your",
-                                      style: TextStyle(
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            38,
-                                        fontWeight: .w900,
-                                      ),
-                                    ),
-                                    const AnimatedText(),
-                                    SizedBox(height: 24),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          )
-                        : SizedBox.shrink(),
-                  ),
-                  SizedBox(height: isClicked ? 12 : 0),
-
-                  AnimatedSearch(
-                    searchController: searchController,
-                    isClicked: isClicked,
-                    onCancel: () {
-                      setState(() {
-                        isClicked = false;
-                      });
-                    },
-                    onClick: () {
-                      setState(() {
-                        isClicked = true;
-                      });
-                    },
-                  ),
-
-                  SizedBox(height: isClicked ? 12 : 32),
-                  Visibility(
-                    visible: !isClicked,
-                    child: categories.when(
-                      data: (data) {
-                        return Column(
-                          crossAxisAlignment: .start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                              child: Text(
-                                "Curated Collections".toUpperCase(),
-                                style: TextStyle(
-                                  fontSize:
-                                      AppTextStyles(context).accumulator * 12,
-                                  color: Color(0xff878788),
-                                  fontWeight: .w700,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 12),
-                            SizedBox(
-                              height:
-                                  AppTextStyles(context).heightAccumulator *
-                                  135,
-                              child: ListView.separated(
-                                scrollDirection: .horizontal,
-                                itemCount: data.length,
-                                padding: .symmetric(horizontal: 16),
-                                separatorBuilder: (_, _) => SizedBox(width: 8),
-                                itemBuilder: (context, index) =>
-                                    SmoothClipRRect(
-                                      borderRadius: .circular(20),
-                                      smoothness: 1,
-                                      child: SizedBox(
-                                        width:
-                                            AppTextStyles(context).accumulator *
-                                            157,
-                                        child: CuratedContainer(
-                                          heading: data[index].name,
-                                          endText: data[index].description,
-                                          image: data[index].image!,
-                                          onTap: () {
-                                            context.pushNamed(
-                                              "category_detail",
-                                              extra: data[index],
-                                            );
-                                          },
-                                          showExplore: false,
-                                          endTextSize: 10,
-                                          spaceBetweenHeadingAndEnd: 4,
-                                          radius: 20,
-                                          headingSize: 15,
-                                        ),
-                                      ),
-                                    ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                      error: (e, s) => SizedBox.shrink(),
-                      loading: () => SizedBox.shrink(),
-                    ),
-                  ),
-
-                  Visibility(
-                    visible: isClicked,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Wrap(
-                        spacing: 8,
-                        children: [
-                          CustomChip(
-                            title: "All",
-                            isSelected: _selectedFilter == "All",
-                            onTap: () {
-                              setState(() {
-                                _selectedFilter = "All";
-                              });
-                            },
-                          ),
-                          CustomChip(
-                            title: "Events",
-                            isSelected: _selectedFilter == "Events",
-                            onTap: () {
-                              setState(() {
-                                _selectedFilter = "Events";
-                              });
-                            },
-                          ),
-                          CustomChip(
-                            title: "Venues",
-                            isSelected: _selectedFilter == "Venues",
-                            onTap: () {
-                              setState(() {
-                                _selectedFilter = "Venues";
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Visibility(
-                    visible: isClicked,
-                    child: searchAsync.when(
-                      data: (data) {
-                        final allEmpty =
-                            (data.events?.isEmpty ?? false) &&
-                            (data.vendors?.isEmpty ?? false);
-                        if (allEmpty) return NotFoundWidget();
-
-                        if (isClicked) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 100),
-                            child: Column(
+              SafeArea(
+                child: Column(
+                  crossAxisAlignment: .start,
+                  children: [
+                    AnimatedSize(
+                      duration: Duration(milliseconds: 400),
+                      curve: Curves.easeInOutCubic,
+                      child: !isClicked
+                          ? Column(
                               crossAxisAlignment: .start,
                               children: [
                                 SizedBox(height: 24),
@@ -254,83 +79,414 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                   ),
-                                  child: FutureBuilder<List<RecentlyViewedItem>>(
-                                    future:
-                                        RecentlyViewedHelper.getRecentlyViewed(),
-                                    builder: (context, snapshot) {
-                                      final items = snapshot.data ?? [];
-                                      return Visibility(
-                                        visible:
-                                            items.isNotEmpty &&
-                                            searchController.text.isEmpty,
-                                        child: Column(
-                                          crossAxisAlignment: .start,
-                                          children: [
-                                            Text(
-                                              "Recently Viewed".toUpperCase(),
-                                              style: TextStyle(
-                                                color: Color(0xff89898F),
-                                              ),
-                                            ),
-                                            SizedBox(height: 16),
-                                            Visibility(
-                                              visible: items.isNotEmpty,
-                                              child: Wrap(
-                                                spacing: 8,
-                                                runSpacing: 8,
-                                                children: items
-                                                    .map(
-                                                      (item) => CustomChip(
-                                                        title: item.name,
-                                                        isSelected: false,
-
-                                                        onTap: () {
-                                                          if (item.type ==
-                                                              'event') {
-                                                            context.pushNamed(
-                                                              "event_detail",
-                                                              pathParameters: {
-                                                                "id": item.id,
-                                                              },
-                                                            );
-                                                          } else {
-                                                            context.pushNamed(
-                                                              "vendor_detail",
-                                                              pathParameters: {
-                                                                "id": item.id,
-                                                              },
-                                                            );
-                                                          }
-                                                        },
-                                                        isRecentViewed: true,
-                                                      ),
-                                                    )
-                                                    .toList(),
-                                              ),
-                                            ),
-                                          ],
+                                  child: Row(
+                                    mainAxisAlignment: .spaceBetween,
+                                    children: [
+                                      Text(
+                                        "👋 Hi, ${(currentUser?.fullName ?? "...")}",
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.white.withValues(
+                                            alpha: 0.5,
+                                          ),
                                         ),
-                                      );
-                                    },
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 SizedBox(height: 16),
-
-                                Visibility(
-                                  visible:
-                                      (_selectedFilter == "All" ||
-                                          _selectedFilter == "Events") &&
-                                      (data.events?.isNotEmpty ?? false),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
                                   child: Column(
                                     crossAxisAlignment: .start,
                                     children: [
-                                      SizedBox(height: 12),
-                                      ListView.separated(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
+                                      Text(
+                                        "Find your",
+                                        style: TextStyle(
+                                          fontSize:
+                                              AppTextStyles(
+                                                context,
+                                              ).accumulator *
+                                              38,
+                                          fontWeight: .w900,
+                                        ),
+                                      ),
+                                      const AnimatedText(),
+                                      SizedBox(height: 24),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                          : SizedBox.shrink(),
+                    ),
+                    SizedBox(height: isClicked ? 12 : 0),
+
+                    AnimatedSearch(
+                      searchController: searchController,
+                      isClicked: isClicked,
+                      onCancel: () {
+                        setState(() {
+                          isClicked = false;
+                        });
+                      },
+                      onClick: () {
+                        setState(() {
+                          isClicked = true;
+                        });
+                      },
+                    ),
+
+                    SizedBox(height: isClicked ? 12 : 32),
+                    Visibility(
+                      visible: !isClicked,
+                      child: categories.when(
+                        data: (data) {
+                          return Column(
+                            crossAxisAlignment: .start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                child: Text(
+                                  "Curated Collections".toUpperCase(),
+                                  style: TextStyle(
+                                    fontSize:
+                                        AppTextStyles(context).accumulator * 12,
+                                    color: Color(0xff878788),
+                                    fontWeight: .w700,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 12),
+                              SizedBox(
+                                height:
+                                    AppTextStyles(context).heightAccumulator *
+                                    135,
+                                child: ListView.separated(
+                                  scrollDirection: .horizontal,
+                                  itemCount: data.length,
+                                  padding: .symmetric(horizontal: 16),
+                                  separatorBuilder: (_, _) =>
+                                      SizedBox(width: 8),
+                                  itemBuilder: (context, index) =>
+                                      SmoothClipRRect(
+                                        borderRadius: .circular(20),
+                                        smoothness: 1,
+                                        child: SizedBox(
+                                          width:
+                                              AppTextStyles(
+                                                context,
+                                              ).accumulator *
+                                              157,
+                                          child: CuratedContainer(
+                                            heading: data[index].name,
+                                            endText: data[index].description,
+                                            image: data[index].image!,
+                                            onTap: () {
+                                              context.pushNamed(
+                                                "category_detail",
+                                                extra: data[index],
+                                              );
+                                            },
+                                            showExplore: false,
+                                            endTextSize: 10,
+                                            spaceBetweenHeadingAndEnd: 4,
+                                            radius: 20,
+                                            headingSize: 15,
+                                          ),
+                                        ),
+                                      ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        error: (e, s) => SizedBox.shrink(),
+                        loading: () => SizedBox.shrink(),
+                      ),
+                    ),
+
+                    Visibility(
+                      visible: isClicked,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Wrap(
+                          spacing: 8,
+                          children: [
+                            CustomChip(
+                              title: "All",
+                              isSelected: _selectedFilter == "All",
+                              onTap: () {
+                                setState(() {
+                                  _selectedFilter = "All";
+                                });
+                              },
+                            ),
+                            CustomChip(
+                              title: "Events",
+                              isSelected: _selectedFilter == "Events",
+                              onTap: () {
+                                setState(() {
+                                  _selectedFilter = "Events";
+                                });
+                              },
+                            ),
+                            CustomChip(
+                              title: "Venues",
+                              isSelected: _selectedFilter == "Venues",
+                              onTap: () {
+                                setState(() {
+                                  _selectedFilter = "Venues";
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: isClicked,
+                      child: searchAsync.when(
+                        data: (data) {
+                          final allEmpty =
+                              (data.events?.isEmpty ?? false) &&
+                              (data.vendors?.isEmpty ?? false);
+                          if (allEmpty) return NotFoundWidget();
+
+                          if (isClicked) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 100),
+                              child: Column(
+                                crossAxisAlignment: .start,
+                                children: [
+                                  SizedBox(height: 24),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: FutureBuilder<List<RecentlyViewedItem>>(
+                                      future:
+                                          RecentlyViewedHelper.getRecentlyViewed(),
+                                      builder: (context, snapshot) {
+                                        final items = snapshot.data ?? [];
+                                        return Visibility(
+                                          visible:
+                                              items.isNotEmpty &&
+                                              searchController.text.isEmpty,
+                                          child: Column(
+                                            crossAxisAlignment: .start,
+                                            children: [
+                                              Text(
+                                                "Recently Viewed".toUpperCase(),
+                                                style: TextStyle(
+                                                  color: Color(0xff89898F),
+                                                ),
+                                              ),
+                                              SizedBox(height: 16),
+                                              Visibility(
+                                                visible: items.isNotEmpty,
+                                                child: Wrap(
+                                                  spacing: 8,
+                                                  runSpacing: 8,
+                                                  children: items
+                                                      .map(
+                                                        (item) => CustomChip(
+                                                          title: item.name,
+                                                          isSelected: false,
+
+                                                          onTap: () {
+                                                            if (item.type ==
+                                                                'event') {
+                                                              context.pushNamed(
+                                                                "event_detail",
+                                                                pathParameters:
+                                                                    {
+                                                                      "id": item
+                                                                          .id,
+                                                                    },
+                                                              );
+                                                            } else {
+                                                              context.pushNamed(
+                                                                "vendor_detail",
+                                                                pathParameters:
+                                                                    {
+                                                                      "id": item
+                                                                          .id,
+                                                                    },
+                                                              );
+                                                            }
+                                                          },
+                                                          isRecentViewed: true,
+                                                        ),
+                                                      )
+                                                      .toList(),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(height: 16),
+
+                                  Visibility(
+                                    visible:
+                                        (_selectedFilter == "All" ||
+                                            _selectedFilter == "Events") &&
+                                        (data.events?.isNotEmpty ?? false),
+                                    child: Column(
+                                      crossAxisAlignment: .start,
+                                      children: [
+                                        SizedBox(height: 12),
+                                        ListView.separated(
+                                          shrinkWrap: true,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          padding: .symmetric(horizontal: 16),
+                                          separatorBuilder: (_, _) =>
+                                              SizedBox(height: 8),
+                                          itemCount: data.events?.length ?? 0,
+                                          itemBuilder: (context, index) {
+                                            final event = data.events?[index];
+                                            if (event == null) {
+                                              return SizedBox.shrink();
+                                            }
+                                            return TrendContainer(
+                                              width: double.infinity,
+                                              name: event.name,
+                                              image: event.media.isNotEmpty
+                                                  ? event.media.first
+                                                  : "",
+                                              duration: event
+                                                  .getEventDurationHours(),
+                                              formattedDate: event
+                                                  .getFormattedEventTimeRange(),
+                                              priceType:
+                                                  "Event - ${event.priceType?.label}",
+                                              category: event.category.name,
+                                              location:
+                                                  event.location.address ?? "",
+                                              onTap: () {
+                                                RecentlyViewedHelper.addRecentlyViewed(
+                                                  id: event.id,
+                                                  name: event.name,
+                                                  type: 'event',
+                                                );
+                                                context.pushNamed(
+                                                  "event_detail",
+                                                  pathParameters: {
+                                                    "id": event.id,
+                                                  },
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        SizedBox(height: 8),
+                                      ],
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible:
+                                        (_selectedFilter == "All" ||
+                                            _selectedFilter == "Venues") &&
+                                        (data.vendors?.isNotEmpty ?? false),
+                                    child: Column(
+                                      crossAxisAlignment: .start,
+                                      children: [
+                                        SizedBox(height: 8),
+                                        ListView.separated(
+                                          shrinkWrap: true,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          padding: .symmetric(horizontal: 16),
+                                          separatorBuilder: (_, _) =>
+                                              SizedBox(height: 8),
+                                          itemCount: data.vendors?.length ?? 0,
+                                          itemBuilder: (context, index) {
+                                            final vendor = data.vendors?[index];
+                                            if (vendor == null) {
+                                              return SizedBox.shrink();
+                                            }
+                                            return TrendContainer(
+                                              width: double.infinity,
+                                              name: vendor.name ?? "",
+                                              image: vendor.media.first,
+
+                                              priceType:
+                                                  vendor.priceType?.label ?? "",
+                                              category:
+                                                  vendor.category?.name ?? "",
+                                              duration: vendor
+                                                  .getTodayOperatingHoursDuration(),
+                                              formattedDate: vendor
+                                                  .getFormattedOperatingHoursRange(),
+                                              location:
+                                                  vendor.location?.address ??
+                                                  "",
+                                              onTap: () {
+                                                RecentlyViewedHelper.addRecentlyViewed(
+                                                  id: vendor.id,
+                                                  name: vendor.name ?? "",
+                                                  type: 'vendor',
+                                                );
+                                                context.pushNamed(
+                                                  "vendor_detail",
+                                                  pathParameters: {
+                                                    "id": vendor.id,
+                                                  },
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
+                          return Column(
+                            crossAxisAlignment: .start,
+                            children: [
+                              Visibility(
+                                visible: data.events?.isNotEmpty ?? true,
+                                child: Column(
+                                  crossAxisAlignment: .start,
+                                  children: [
+                                    SizedBox(height: 24),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                      ),
+                                      child: Text(
+                                        "Trending",
+                                        style: TextStyle(
+                                          color: AppColors.textSecondary,
+                                          fontSize:
+                                              AppTextStyles(
+                                                context,
+                                              ).accumulator *
+                                              16,
+                                          fontWeight: .w500,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 12),
+                                    SizedBox(
+                                      height: 90,
+                                      child: ListView.separated(
+                                        scrollDirection: .horizontal,
                                         padding: .symmetric(horizontal: 16),
                                         separatorBuilder: (_, _) =>
-                                            SizedBox(height: 8),
+                                            SizedBox(width: 8),
                                         itemCount: data.events?.length ?? 0,
                                         itemBuilder: (context, index) {
                                           final event = data.events?[index];
@@ -338,18 +494,16 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                             return SizedBox.shrink();
                                           }
                                           return TrendContainer(
-                                            width: double.infinity,
                                             name: event.name,
-                                            image: event.media.isNotEmpty
-                                                ? event.media.first
-                                                : "",
+                                            image: event.media.first,
+                                            priceType:
+                                                event.priceType?.label ?? "",
+                                            category: event.category.name,
                                             duration: event
                                                 .getEventDurationHours(),
                                             formattedDate: event
                                                 .getFormattedEventTimeRange(),
-                                            priceType:
-                                                "Event - ${event.priceType?.label}",
-                                            category: event.category.name,
+
                                             location:
                                                 event.location.address ?? "",
                                             onTap: () {
@@ -368,276 +522,154 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                           );
                                         },
                                       ),
-                                      SizedBox(height: 8),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                Visibility(
-                                  visible:
-                                      (_selectedFilter == "All" ||
-                                          _selectedFilter == "Venues") &&
-                                      (data.vendors?.isNotEmpty ?? false),
-                                  child: Column(
-                                    crossAxisAlignment: .start,
-                                    children: [
-                                      SizedBox(height: 8),
-                                      ListView.separated(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
+                              ),
+                            ],
+                          );
+                        },
+                        error: (e, s) {
+                          log("Search Error: ", error: e, stackTrace: s);
+                          return Center(child: Text("Error"));
+                        },
+                        loading: () => Padding(
+                          padding: const EdgeInsets.only(top: 32),
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: !isClicked,
+                      child: featuredEvents.when(
+                        data: (data) {
+                          return Column(
+                            crossAxisAlignment: .start,
+                            children: [
+                              Visibility(
+                                visible: data.isNotEmpty,
+                                child: Column(
+                                  crossAxisAlignment: .start,
+                                  children: [
+                                    SizedBox(height: 24),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                      ),
+                                      child: Text(
+                                        "Trending",
+                                        style: TextStyle(
+                                          color: AppColors.textSecondary,
+                                          fontSize:
+                                              AppTextStyles(
+                                                context,
+                                              ).accumulator *
+                                              16,
+                                          fontWeight: .w500,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 12),
+                                    SizedBox(
+                                      height: 90,
+                                      child: ListView.separated(
+                                        scrollDirection: .horizontal,
                                         padding: .symmetric(horizontal: 16),
                                         separatorBuilder: (_, _) =>
-                                            SizedBox(height: 8),
-                                        itemCount: data.vendors?.length ?? 0,
+                                            SizedBox(width: 8),
+                                        itemCount: data.length,
                                         itemBuilder: (context, index) {
-                                          final vendor = data.vendors?[index];
-                                          if (vendor == null) {
-                                            return SizedBox.shrink();
-                                          }
-                                          return TrendContainer(
-                                            width: double.infinity,
-                                            name: vendor.name ?? "",
-                                            image: vendor.media.first,
+                                          final assignment =
+                                              data[index].assignment;
+                                          final isEvent =
+                                              assignment.targetType == .event;
 
-                                            priceType:
-                                                vendor.priceType?.label ?? "",
+                                          return TrendContainer(
+                                            name: isEvent
+                                                ? assignment.event!.name
+                                                : assignment.vendor!.name,
+                                            image: isEvent
+                                                ? assignment.event!.media.first
+                                                : assignment
+                                                      .vendor!
+                                                      .media
+                                                      .first,
+                                            priceType: isEvent
+                                                ? "Event"
+                                                : assignment
+                                                          .vendor
+                                                          ?.priceType
+                                                          ?.label ??
+                                                      "",
                                             category:
-                                                vendor.category?.name ?? "",
-                                            duration: vendor
-                                                .getTodayOperatingHoursDuration(),
-                                            formattedDate: vendor
-                                                .getFormattedOperatingHoursRange(),
-                                            location:
-                                                vendor.location?.address ?? "",
+                                                data[index].category?.name ??
+                                                "",
+                                            duration: isEvent
+                                                ? assignment.event!
+                                                      .getEventDurationHours()
+                                                : "",
+                                            formattedDate: isEvent
+                                                ? assignment.event!
+                                                      .getFormattedEventTimeRange()
+                                                : assignment.vendor!
+                                                      .getFormattedOperatingHoursRange(),
+                                            location: isEvent
+                                                ? assignment
+                                                          .event!
+                                                          .location
+                                                          .address ??
+                                                      ""
+                                                : assignment
+                                                          .vendor!
+                                                          .location
+                                                          .address ??
+                                                      "",
                                             onTap: () {
+                                              final id = isEvent
+                                                  ? assignment.event!.id
+                                                  : assignment.vendor!.id;
+                                              final name = isEvent
+                                                  ? assignment.event!.name
+                                                  : assignment.vendor!.name;
+                                              final type = isEvent
+                                                  ? 'event'
+                                                  : 'vendor';
                                               RecentlyViewedHelper.addRecentlyViewed(
-                                                id: vendor.id,
-                                                name: vendor.name ?? "",
-                                                type: 'vendor',
+                                                id: id,
+                                                name: name,
+                                                type: type,
                                               );
-                                              context.pushNamed(
-                                                "vendor_detail",
-                                                pathParameters: {
-                                                  "id": vendor.id,
-                                                },
-                                              );
+                                              if (isEvent) {
+                                                context.pushNamed(
+                                                  "event_detail",
+                                                  pathParameters: {"id": id},
+                                                );
+                                              } else {
+                                                context.pushNamed(
+                                                  "vendor_detail",
+                                                  pathParameters: {"id": id},
+                                                );
+                                              }
                                             },
                                           );
                                         },
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          );
-                        }
-
-                        return Column(
-                          crossAxisAlignment: .start,
-                          children: [
-                            Visibility(
-                              visible: data.events?.isNotEmpty ?? true,
-                              child: Column(
-                                crossAxisAlignment: .start,
-                                children: [
-                                  SizedBox(height: 24),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                    ),
-                                    child: Text(
-                                      "Trending",
-                                      style: TextStyle(
-                                        color: AppColors.textSecondary,
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            16,
-                                        fontWeight: .w500,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 12),
-                                  SizedBox(
-                                    height: 90,
-                                    child: ListView.separated(
-                                      scrollDirection: .horizontal,
-                                      padding: .symmetric(horizontal: 16),
-                                      separatorBuilder: (_, _) =>
-                                          SizedBox(width: 8),
-                                      itemCount: data.events?.length ?? 0,
-                                      itemBuilder: (context, index) {
-                                        final event = data.events?[index];
-                                        if (event == null) {
-                                          return SizedBox.shrink();
-                                        }
-                                        return TrendContainer(
-                                          name: event.name,
-                                          image: event.media.first,
-                                          priceType:
-                                              event.priceType?.label ?? "",
-                                          category: event.category.name,
-                                          duration: event
-                                              .getEventDurationHours(),
-                                          formattedDate: event
-                                              .getFormattedEventTimeRange(),
-
-                                          location:
-                                              event.location.address ?? "",
-                                          onTap: () {
-                                            RecentlyViewedHelper.addRecentlyViewed(
-                                              id: event.id,
-                                              name: event.name,
-                                              type: 'event',
-                                            );
-                                            context.pushNamed(
-                                              "event_detail",
-                                              pathParameters: {"id": event.id},
-                                            );
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
                               ),
-                            ),
-                          ],
-                        );
-                      },
-                      error: (e, s) {
-                        log("Search Error: ", error: e, stackTrace: s);
-                        return Center(child: Text("Error"));
-                      },
-                      loading: () => Padding(
-                        padding: const EdgeInsets.only(top: 32),
-                        child: Center(child: CircularProgressIndicator()),
+                            ],
+                          );
+                        },
+                        error: (e, s) => Text("Error"),
+                        loading: () => CircularProgressIndicator(),
                       ),
                     ),
-                  ),
-                  Visibility(
-                    visible: !isClicked,
-                    child: featuredEvents.when(
-                      data: (data) {
-                        return Column(
-                          crossAxisAlignment: .start,
-                          children: [
-                            Visibility(
-                              visible: data.isNotEmpty,
-                              child: Column(
-                                crossAxisAlignment: .start,
-                                children: [
-                                  SizedBox(height: 24),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                    ),
-                                    child: Text(
-                                      "Trending",
-                                      style: TextStyle(
-                                        color: AppColors.textSecondary,
-                                        fontSize:
-                                            AppTextStyles(context).accumulator *
-                                            16,
-                                        fontWeight: .w500,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 12),
-                                  SizedBox(
-                                    height: 90,
-                                    child: ListView.separated(
-                                      scrollDirection: .horizontal,
-                                      padding: .symmetric(horizontal: 16),
-                                      separatorBuilder: (_, _) =>
-                                          SizedBox(width: 8),
-                                      itemCount: data.length,
-                                      itemBuilder: (context, index) {
-                                        final assignment =
-                                            data[index].assignment;
-                                        final isEvent =
-                                            assignment.targetType == .event;
-
-                                        return TrendContainer(
-                                          name: isEvent
-                                              ? assignment.event!.name
-                                              : assignment.vendor!.name,
-                                          image: isEvent
-                                              ? assignment.event!.media.first
-                                              : assignment.vendor!.media.first,
-                                          priceType: isEvent
-                                              ? "Event"
-                                              : assignment
-                                                        .vendor
-                                                        ?.priceType
-                                                        ?.label ??
-                                                    "",
-                                          category:
-                                              data[index].category?.name ?? "",
-                                          duration: isEvent
-                                              ? assignment.event!
-                                                    .getEventDurationHours()
-                                              : "",
-                                          formattedDate: isEvent
-                                              ? assignment.event!
-                                                    .getFormattedEventTimeRange()
-                                              : assignment.vendor!
-                                                    .getFormattedOperatingHoursRange(),
-                                          location: isEvent
-                                              ? assignment
-                                                        .event!
-                                                        .location
-                                                        .address ??
-                                                    ""
-                                              : assignment
-                                                        .vendor!
-                                                        .location
-                                                        .address ??
-                                                    "",
-                                          onTap: () {
-                                            final id = isEvent
-                                                ? assignment.event!.id
-                                                : assignment.vendor!.id;
-                                            final name = isEvent
-                                                ? assignment.event!.name
-                                                : assignment.vendor!.name;
-                                            final type = isEvent
-                                                ? 'event'
-                                                : 'vendor';
-                                            RecentlyViewedHelper.addRecentlyViewed(
-                                              id: id,
-                                              name: name,
-                                              type: type,
-                                            );
-                                            if (isEvent) {
-                                              context.pushNamed(
-                                                "event_detail",
-                                                pathParameters: {"id": id},
-                                              );
-                                            } else {
-                                              context.pushNamed(
-                                                "vendor_detail",
-                                                pathParameters: {"id": id},
-                                              );
-                                            }
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                      error: (e, s) => Text("Error"),
-                      loading: () => CircularProgressIndicator(),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

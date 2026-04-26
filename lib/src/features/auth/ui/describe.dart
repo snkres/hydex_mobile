@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
@@ -97,10 +98,19 @@ class _DescribeState extends State<Describe> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 16),
-                          child: PrimaryButton(
-                            onTap: describeType != null
-                                ? () async => context.go("/waitlist")
-                                : null,
+                          child: Consumer(
+                            builder: (context, ref, _) {
+                              return PrimaryButton(
+                                onTap: describeType != null
+                                    ? () async {
+                                       
+                                        if (context.mounted) {
+                                          context.go("/waitlist");
+                                        }
+                                      }
+                                    : null,
+                              );
+                            },
                           ),
                         ),
                       ],
@@ -150,7 +160,9 @@ class DescribeItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: AppTextStyles(context).smallMedium),
+            Flexible(
+              child: Text(title, style: AppTextStyles(context).smallMedium),
+            ),
             Text(
               description,
               style: AppTextStyles(context).captionRegular.copyWith(

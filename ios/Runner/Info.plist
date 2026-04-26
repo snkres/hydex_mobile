@@ -42,8 +42,11 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app may access your location while it is in use to give you the close events based on your location</string>
 	<key>NSUserNotificationUsageDescription</key>
-	
+
 	<string>This app uses notification to update you with important events and notify you whether your membership is accepted or not</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to scan QR codes</string>
+	
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

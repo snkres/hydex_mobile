@@ -72,6 +72,12 @@ enum UpcomingEventStatus {
 
   @MappableValue('Cancelled')
   cancelled,
+
+  @MappableValue('No Show')
+  noShow,
+
+  @MappableValue('No Entry')
+  noEntry,
 }
 
 @MappableClass()

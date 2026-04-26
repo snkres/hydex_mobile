@@ -63,8 +63,16 @@
                     android:host="app.hyde-x.com"
                     android:pathPrefix="/vendor/" />
             </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-
+                <data
+                    android:scheme="https"
+                    android:host="app.hyde-x.com"
+                    android:path="/owner/login" />
+            </intent-filter>
 
 
             <meta-data

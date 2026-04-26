@@ -184,14 +184,12 @@ class _AllVendorsState extends ConsumerState<AllVendors> {
                       ),
 
                       noMoreItemsIndicatorBuilder: (ctx) => SizedBox.shrink(),
-
                       itemBuilder: (context, item, index) => EventContainer(
                         width: double.infinity,
                         heading: item.name ?? "",
                         tag: item.category?.name,
                         description: item.location?.address,
-
-                        image: item.media.first,
+                        image: item.media.firstOrNull,
                         avatarImage: item.logo,
                         onView: () => context.pushNamed(
                           "vendor_detail",
