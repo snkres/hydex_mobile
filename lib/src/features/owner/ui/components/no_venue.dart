@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NoVenue extends StatelessWidget {
   const NoVenue({super.key});
+
+  Future<void> _openWhatsApp() async {
+    final uri = Uri.parse('https://wa.me/+201111607028');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +45,13 @@ class NoVenue extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             GestureDetector(
-              onTap: () {
-                // TODO: open WhatsApp chat with Hydex
-              },
+              onTap: _openWhatsApp,
               child: Container(
                 height: 32,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.buttonSecondaryPressed,
                   borderRadius: BorderRadius.circular(8),

@@ -279,7 +279,6 @@ class _OwnerEventDetailsState extends ConsumerState<OwnerEventDetails> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.eventID);
     final styles = AppTextStyles(context);
     final eventAsync = ref.watch(
       getOwnerEventDetailsProvider(eventID: widget.eventID),

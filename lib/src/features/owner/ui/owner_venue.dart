@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_avif/flutter_avif.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hydex/src/features/owner/ui/components/no_venue.dart';
 import 'package:hydex/src/features/search/ui/components/not_found.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:hydex/core/network/auth_service.dart';
@@ -48,6 +50,9 @@ class _OwnerVenuesState extends ConsumerState<OwnerVenues>
   Widget build(BuildContext context) {
     final styles = AppTextStyles(context);
     final currentUser = ref.watch(currentUserProvider).value;
+    if (currentUser?.ownerProfile?.vendors?.isEmpty == true) {
+      return NoVenue();
+    }
     return Scaffold(
       backgroundColor: AppColors.backgroundBase,
       extendBodyBehindAppBar: true,
@@ -92,12 +97,14 @@ class _OwnerVenuesState extends ConsumerState<OwnerVenues>
               width: 55,
               height: 55,
               decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: .cover,
+                  image: CachedNetworkAvifImageProvider(
+                    currentUser?.ownerProfile?.vendors?.first.image ?? "",
+                  ),
+                ),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: const Color(0xFF414141), width: 0.8),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Container(color: AppColors.containerDim),
               ),
             ),
             const Spacer(),
@@ -130,7 +137,7 @@ class _OwnerVenuesState extends ConsumerState<OwnerVenues>
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
-                'Nightclub & Lounge',
+                currentUser?.ownerProfile?.vendors?.first.category?.name ?? "",
                 style: TextStyle(
                   fontSize: styles.accumulator * 11,
                   fontWeight: FontWeight.w500,
@@ -165,7 +172,7 @@ class _OwnerVenuesState extends ConsumerState<OwnerVenues>
             ),
             const SizedBox(width: 5),
             Text(
-              '742 Vine St, Los Angeles, CA 90038',
+              currentUser?.ownerProfile?.vendors?.first.location.address ?? "",
               style: TextStyle(
                 fontSize: styles.accumulator * 11,
                 color: AppColors.textSecondary,
