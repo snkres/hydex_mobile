@@ -129,22 +129,25 @@ class _OwnerVenuesState extends ConsumerState<OwnerVenues>
                 ],
               ),
             ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              decoration: BoxDecoration(
-                color: AppColors.buttonSecondaryDisabled,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                currentUser?.ownerProfile?.vendors?.first.category?.name ?? "",
-                style: TextStyle(
-                  fontSize: styles.accumulator * 11,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textBrand,
+            if (currentUser?.ownerProfile?.vendors?.first.category?.name !=
+                null) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColors.buttonSecondaryDisabled,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  currentUser!.ownerProfile!.vendors!.first.category!.name,
+                  style: TextStyle(
+                    fontSize: styles.accumulator * 11,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textBrand,
+                  ),
                 ),
               ),
-            ),
+            ],
           ],
         ),
         const SizedBox(height: 16),
@@ -159,28 +162,31 @@ class _OwnerVenuesState extends ConsumerState<OwnerVenues>
             height: 21 / 20,
           ),
         ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Opacity(
-              opacity: 0.9,
-              child: Icon(
-                Icons.location_on_outlined,
-                size: 16,
-                color: AppColors.textSecondary,
+        if (currentUser?.ownerProfile?.vendors?.first.location?.address !=
+            null) ...[
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Opacity(
+                opacity: 0.9,
+                child: Icon(
+                  Icons.location_on_outlined,
+                  size: 16,
+                  color: AppColors.textSecondary,
+                ),
               ),
-            ),
-            const SizedBox(width: 5),
-            Text(
-              currentUser?.ownerProfile?.vendors?.first.location.address ?? "",
-              style: TextStyle(
-                fontSize: styles.accumulator * 11,
-                color: AppColors.textSecondary,
-                height: 16 / 11,
+              const SizedBox(width: 5),
+              Text(
+                currentUser!.ownerProfile!.vendors!.first.location!.address!,
+                style: TextStyle(
+                  fontSize: styles.accumulator * 11,
+                  color: AppColors.textSecondary,
+                  height: 16 / 11,
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ],
     );
   }

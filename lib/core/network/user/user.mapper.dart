@@ -828,10 +828,11 @@ class VendorSummaryMapper extends ClassMapperBase<VendorSummary> {
     _$category,
     opt: true,
   );
-  static Location _$location(VendorSummary v) => v.location;
+  static Location? _$location(VendorSummary v) => v.location;
   static const Field<VendorSummary, Location> _f$location = Field(
     'location',
     _$location,
+    opt: true,
   );
 
   @override
@@ -916,7 +917,7 @@ extension VendorSummaryValueCopy<$R, $Out>
 abstract class VendorSummaryCopyWith<$R, $In extends VendorSummary, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   CategoryNoDescCopyWith<$R, CategoryNoDesc, CategoryNoDesc>? get category;
-  LocationCopyWith<$R, Location, Location> get location;
+  LocationCopyWith<$R, Location, Location>? get location;
   $R call({
     String? id,
     String? name,
@@ -939,22 +940,22 @@ class _VendorSummaryCopyWithImpl<$R, $Out>
   CategoryNoDescCopyWith<$R, CategoryNoDesc, CategoryNoDesc>? get category =>
       $value.category?.copyWith.$chain((v) => call(category: v));
   @override
-  LocationCopyWith<$R, Location, Location> get location =>
-      $value.location.copyWith.$chain((v) => call(location: v));
+  LocationCopyWith<$R, Location, Location>? get location =>
+      $value.location?.copyWith.$chain((v) => call(location: v));
   @override
   $R call({
     String? id,
     String? name,
     Object? image = $none,
     Object? category = $none,
-    Location? location,
+    Object? location = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
       if (name != null) #name: name,
       if (image != $none) #image: image,
       if (category != $none) #category: category,
-      if (location != null) #location: location,
+      if (location != $none) #location: location,
     }),
   );
   @override
