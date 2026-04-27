@@ -96,14 +96,14 @@ class VendorSummary with VendorSummaryMappable {
   final String name;
   final String? image;
   final CategoryNoDesc? category;
-  final Location location;
+  final Location? location;
 
   VendorSummary({
     required this.id,
     required this.name,
     this.image,
     this.category,
-    required this.location,
+     this.location,
   });
 }
 
