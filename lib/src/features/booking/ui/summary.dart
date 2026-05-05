@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/booking/data/create_book.dart';
 import 'package:hydex/src/features/booking/domain/booking_repository.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
@@ -24,6 +25,10 @@ class SummaryBooking extends ConsumerWidget {
     final totalGuests = ref.watch(guestsProvider);
     final totalPrice = ref.watch(formattedTotalPriceProvider);
     final booking = ref.watch(createBookProvider);
+    if (booking == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => context.pop());
+      return const Scaffold(body: SizedBox.shrink());
+    }
 
     return Scaffold(
       floatingActionButtonLocation: .centerFloat,
@@ -67,7 +72,7 @@ class SummaryBooking extends ConsumerWidget {
                 ),
                 SizedBox(height: 26),
                 VendorContainer(
-                  location: booking!.location,
+                  location: booking.location,
                   name: booking.name,
                   date: booking.selectedDate!,
                   time: booking.selectedSlot!,
@@ -122,7 +127,7 @@ class SummaryBooking extends ConsumerWidget {
                   ),
                 ),
                 Visibility(
-                  visible: booking.requiresApproval ?? false,
+                  visible: booking.requiresApproval,
                   child: Column(
                     crossAxisAlignment: .start,
                     children: [
@@ -230,80 +235,79 @@ class _LoadingFloatingButtonState extends ConsumerState<LoadingFloatingButton> {
                 loading = true;
               });
 
-              final status = await ref
-                  .read(createBookingProvider.future)
-                  .catchError((e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text(e.message)));
-                    }
-                    return false;
-                  });
-              if (status && context.mounted) {
-                ref.refresh(getUpcomingEventsProvider);
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => Center(
-                    child: Column(
-                      mainAxisAlignment: .center,
-                      children: [
-                        LottieBuilder.asset(
-                          "json/success.json",
-                          package: "assets",
-                          width: 150,
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          "Your booking is confirmed",
-                          style: AppTextStyles(context).primaryBold,
-                        ),
-                        SizedBox(height: 12),
-                        Text(
-                          "Please arrive at least 15 minutes before the show. Reservations are held for 1 hour",
-                          textAlign: .center,
-                          style: AppTextStyles(context).smallRegular.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                        SizedBox(height: 16),
-
-                        Row(
-                          spacing: 8,
-                          mainAxisAlignment: .center,
-                          children: [
-                            SvgPicture.asset(
-                              "img/svg/information.svg",
-                              package: "assets",
-                            ),
-                            Text(
-                              "Payment will be collected ondoor",
-                              style: TextStyle(
-                                fontWeight: .w700,
-                                fontSize:
-                                    AppTextStyles(context).accumulator * 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 26),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: PrimaryButton(
-                            onTap: () async {
-                              context.push("/", extra: 2);
-                            },
-                            title: "View my Bookings",
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
+              bool status = false;
+              try {
+                status = await ref.read(createBookingProvider.future);
+              } catch (e) {
+                if (!context.mounted) return;
+                final msg = e is ApiException ? e.message : e.toString();
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(msg)));
+                setState(() {
+                  loading = false;
+                });
+                return;
               }
-              setState(() {
-                loading = false;
-              });
+              if (!context.mounted || !status) return;
+              ref.invalidate(getUpcomingEventsProvider);
+              ref.invalidate(createBookProvider);
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      LottieBuilder.asset(
+                        "json/success.json",
+                        package: "assets",
+                        width: 150,
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        "Your booking is confirmed",
+                        style: AppTextStyles(context).primaryBold,
+                      ),
+                      SizedBox(height: 12),
+                      Text(
+                        "Please arrive at least 15 minutes before the show. Reservations are held for 1 hour",
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles(
+                          context,
+                        ).smallRegular.copyWith(color: AppColors.textSecondary),
+                      ),
+                      SizedBox(height: 16),
+                      Row(
+                        spacing: 8,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            "img/svg/information.svg",
+                            package: "assets",
+                          ),
+                          Text(
+                            "Payment will be collected ondoor",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: AppTextStyles(context).accumulator * 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 26),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: PrimaryButton(
+                          onTap: () async {
+                            context.push("/", extra: 2);
+                          },
+                          title: "View my Bookings",
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
             },
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,

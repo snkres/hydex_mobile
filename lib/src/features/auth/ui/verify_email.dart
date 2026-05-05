@@ -123,6 +123,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                                     OTPType.email,
                                                   )
                                                   .catchError((error) {
+                                                    if (!context.mounted) {
+                                                      return '';
+                                                    }
                                                     ScaffoldMessenger.of(
                                                       context,
                                                     ).showSnackBar(
@@ -131,6 +134,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                                         context,
                                                       ),
                                                     );
+                                                    return '';
                                                   });
                                               if (!context.mounted) return;
                                               ref

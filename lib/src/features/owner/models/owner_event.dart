@@ -1,6 +1,5 @@
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:hydex/src/features/owner/models/event_status.dart';
-import 'package:hydex/src/features/vibes/data/location.dart';
 
 part 'owner_event.mapper.dart';
 

@@ -418,6 +418,7 @@ class _TellusForOthersState extends State<TellusForOthers> {
                                         setState(() {
                                           codeErrorText = e.message;
                                         });
+                                        return '';
                                       });
                                 }
                               },

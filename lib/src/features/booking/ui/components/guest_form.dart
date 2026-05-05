@@ -414,6 +414,7 @@ class _GuestFormState extends ConsumerState<GuestForm> {
                         ),
                         onPressed: () async {
                           if (await Permission.contacts.request().isGranted) {
+                            if (!context.mounted) return;
                             final selectedContact =
                                 await context.push("/contacts") as String;
                             setState(() {
@@ -472,6 +473,7 @@ class _GuestFormState extends ConsumerState<GuestForm> {
                   await ref
                       .read(guestFormProvider(widget.totalGuests).notifier)
                       .saveGuest(guest);
+                  if (!context.mounted) return;
                   ref
                       .read(guestFormProvider(widget.totalGuests).notifier)
                       .next();

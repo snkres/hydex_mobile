@@ -10,7 +10,6 @@ class FirebaseNotifications {
     await _messaging.requestPermission();
 
     if (Platform.isIOS) {
-      // Ensure iOS is registered for APNS
       final apnsToken = await _messaging.getAPNSToken();
       if (apnsToken == null) {
         return;

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:hydex/core/network/connection.dart';
@@ -30,7 +29,7 @@ Future<void> updateBookingStatus(
   String? rejectionReason,
 }) async {
   try {
-    final response = await DioHelper.patch(
+    await DioHelper.patch(
       "/owner/bookings/$id/status",
       data: {
         "status": status.value,
@@ -38,7 +37,6 @@ Future<void> updateBookingStatus(
       },
     );
 
-    print(response.data);
   } on NetworkException {
     await OfflineSyncDB.savePendingRequest(
       BulkRequest(

@@ -5,6 +5,9 @@ import 'package:sqflite/sqflite.dart';
 class OfflineSyncDB {
   static Database? _db;
 
+  // Override the database path for tests; null uses the default on-device path.
+  static String? testDatabasePath;
+
   static Future<Database> get database async {
     if (_db != null) return _db!;
     _db = await _initDB();
@@ -12,7 +15,8 @@ class OfflineSyncDB {
   }
 
   static Future<Database> _initDB() async {
-    final dbPath = '${await getDatabasesPath()}/offline_sync.db';
+    final dbPath =
+        testDatabasePath ?? '${await getDatabasesPath()}/offline_sync.db';
     return openDatabase(
       dbPath,
       version: 1,
@@ -68,5 +72,12 @@ class OfflineSyncDB {
     final result =
         await db.rawQuery('SELECT COUNT(*) as count FROM pending_requests');
     return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  // Resets the cached database instance and path override. Use only in tests.
+  static Future<void> resetForTesting() async {
+    await _db?.close();
+    _db = null;
+    testDatabasePath = null;
   }
 }

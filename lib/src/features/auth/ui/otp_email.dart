@@ -209,6 +209,7 @@ class _OtpEmailScreenState extends State<OtpEmailScreen> {
                                                     setState(() {
                                                       errorText = error.message;
                                                     });
+                                                    return '';
                                                   });
 
                                               ref

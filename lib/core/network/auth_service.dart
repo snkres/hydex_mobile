@@ -239,13 +239,18 @@ class AuthService {
   Future<void> sendFCMNotification() async {
     try {
       final deviceToken = await FirebaseNotifications().getToken();
+      if (deviceToken == null) {
+        if (kDebugMode) print('⚠️ FCM token is null, skipping device registration');
+        return;
+      }
       final data = {
         "token": deviceToken,
         "platform": Platform.isAndroid ? "ANDROID" : "IOS",
       };
+      if (kDebugMode) print("FCM registration data: $data");
       await DioHelper.post('/notifications/register-device', data: data);
     } catch (e) {
-      rethrow;
+      if (kDebugMode) print('❌ Failed to register FCM device: $e');
     }
   }
 

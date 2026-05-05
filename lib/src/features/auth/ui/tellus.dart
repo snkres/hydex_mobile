@@ -378,6 +378,7 @@ class _TellusState extends State<Tellus> {
                                                           codeErrorText =
                                                               e.message;
                                                         });
+                                                        return '';
                                                       });
                                                 }
                                               },
@@ -482,6 +483,7 @@ class _TellusState extends State<Tellus> {
                                                       ),
                                                     );
                                                   }
+                                                  return '';
                                                 });
                                           }
                                           setState(() {

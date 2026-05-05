@@ -1,4 +1,5 @@
-import 'dart:developer';
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -222,6 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               phoneNumber!,
                                               passwordController.text,
                                             );
+                                        unawaited(ref.read(authServiceProvider).sendFCMNotification());
                                         if (user.role == .owner) {
                                           if (context.mounted) {
                                             context.go("/owner/home");
@@ -322,7 +324,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             phoneNumber!,
                                             passwordController.text,
                                           );
-
+                                      unawaited(ref.read(authServiceProvider).sendFCMNotification());
                                       if (user.role == .owner) {
                                         if (context.mounted) {
                                           context.go("/owner/home");

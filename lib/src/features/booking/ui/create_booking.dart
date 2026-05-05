@@ -153,9 +153,9 @@ class _CreateBookingState extends ConsumerState<CreateBooking> {
                           ),
                           Spacer(),
                           CircleAvatar(
-                            backgroundImage: CachedNetworkImageProvider(
-                              widget.book.image,
-                            ),
+                            backgroundImage: widget.book.image.isNotEmpty
+                                ? CachedNetworkImageProvider(widget.book.image)
+                                : null,
                           ),
                           SizedBox(width: 16),
                         ],

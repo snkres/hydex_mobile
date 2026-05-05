@@ -16,7 +16,6 @@ class _DescribeState extends State<Describe> {
   String? describeType;
   @override
   Widget build(BuildContext context) {
-    print("DescribeType: $describeType");
     return Scaffold(
       body: Stack(
         children: [

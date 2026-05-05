@@ -183,7 +183,6 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
             onTap: () async {
               try {
                 final vendor = vendorAsync.requireValue;
-                print("Vendor: ${vendor.operatingHours}");
                 final book = CreateBook(
                   image: vendor.logo ?? "",
                   location:
@@ -924,7 +923,8 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                       ),
                                       SizedBox(height: 24),
                                       Visibility(
-                                        visible: vendor.details.isNotEmpty,
+                                        visible:
+                                            vendor.details?.isNotEmpty ?? false,
                                         child: Column(
                                           crossAxisAlignment: .start,
                                           children: [
@@ -972,89 +972,98 @@ class _VendorDetailsScreenState extends ConsumerState<VendorDetailsScreen> {
                                               ),
                                             ),
                                             SizedBox(height: 12),
-                                            SizedBox(
-                                              height: 200,
-                                              child: ListView.separated(
-                                                itemCount:
-                                                    vendor.details.length,
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal: 16,
-                                                ),
+                                            vendor.details != null
+                                                ? SizedBox(
+                                                    height: 200,
+                                                    child: ListView.separated(
+                                                      itemCount:
+                                                          vendor
+                                                              .details
+                                                              ?.length ??
+                                                          0,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal: 16,
+                                                          ),
 
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                separatorBuilder:
-                                                    (context, index) =>
-                                                        SizedBox(width: 8),
-                                                itemBuilder: (context, index) {
-                                                  final item =
-                                                      vendor.details[index];
-                                                  return OpenContainer(
-                                                    closedColor:
-                                                        Colors.transparent,
-                                                    closedElevation: 0,
-                                                    closedBuilder: (context, _) {
-                                                      return Column(
-                                                        spacing: 12,
-                                                        children: [
-                                                          SmoothClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  24,
+                                                      scrollDirection:
+                                                          Axis.horizontal,
+                                                      separatorBuilder:
+                                                          (context, index) =>
+                                                              SizedBox(
+                                                                width: 8,
+                                                              ),
+                                                      itemBuilder: (context, index) {
+                                                        final item = vendor
+                                                            .details![index];
+                                                        return OpenContainer(
+                                                          closedColor: Colors
+                                                              .transparent,
+                                                          closedElevation: 0,
+                                                          closedBuilder: (context, _) {
+                                                            return Column(
+                                                              spacing: 12,
+                                                              children: [
+                                                                SmoothClipRRect(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        24,
+                                                                      ),
+                                                                  smoothness: 1,
+                                                                  child: SizedBox(
+                                                                    width: 165,
+                                                                    height: 168,
+                                                                    child:
+                                                                        item.image.endsWith(
+                                                                          '.avif',
+                                                                        )
+                                                                        ? CachedNetworkAvifImage(
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                            item.image,
+                                                                          )
+                                                                        : ImageOrVideoWidget(
+                                                                            url:
+                                                                                item.image,
+                                                                          ),
+                                                                  ),
                                                                 ),
-                                                            smoothness: 1,
-                                                            child: SizedBox(
-                                                              width: 165,
-                                                              height: 168,
-                                                              child:
-                                                                  item.image
-                                                                      .endsWith(
-                                                                        '.avif',
-                                                                      )
-                                                                  ? CachedNetworkAvifImage(
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                      item.image,
-                                                                    )
-                                                                  : ImageOrVideoWidget(
-                                                                      url: item
+                                                                Text(
+                                                                  item.title,
+                                                                  style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    fontSize:
+                                                                        AppTextStyles(
+                                                                          context,
+                                                                        ).accumulator *
+                                                                        12,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                          openBuilder:
+                                                              (
+                                                                context,
+                                                                action,
+                                                              ) => Gallery(
+                                                                gallery: vendor
+                                                                    .details!
+                                                                    .map(
+                                                                      (e) => e
                                                                           .image,
-                                                                    ),
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            item.title,
-                                                            style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                              fontSize:
-                                                                  AppTextStyles(
-                                                                    context,
-                                                                  ).accumulator *
-                                                                  12,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                    openBuilder:
-                                                        (context, action) =>
-                                                            Gallery(
-                                                              gallery: vendor
-                                                                  .details
-                                                                  .map(
-                                                                    (e) =>
-                                                                        e.image,
-                                                                  )
-                                                                  .toList(),
-                                                              clickedPhoto:
-                                                                  item.image,
-                                                            ),
-                                                  );
-                                                },
-                                              ),
-                                            ),
+                                                                    )
+                                                                    .toList(),
+                                                                clickedPhoto:
+                                                                    item.image,
+                                                              ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  )
+                                                : SizedBox.shrink(),
                                             SizedBox(height: 24),
                                           ],
                                         ),

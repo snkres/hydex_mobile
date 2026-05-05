@@ -16,21 +16,18 @@ class AuthHandler implements AuthEventListener {
 
   @override
   void onTokenRefreshed(TokenPair newTokens) {
-    print('✅ Token refreshed successfully');
     _authEventController.add(AuthEvent.tokenRefreshed);
     _saveTokensToStorage(newTokens);
   }
 
   @override
   void onTokenRefreshFailed() {
-    print('❌ Token refresh failed');
     _authEventController.add(AuthEvent.tokenExpired);
     _clearStoredTokens();
   }
 
   @override
   void onUnauthorized() {
-    print('🚫 Unauthorized access');
     _authEventController.add(AuthEvent.unauthorized);
     _clearStoredTokens();
   }

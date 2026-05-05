@@ -211,8 +211,8 @@ class _LocationScreenState extends ConsumerState<LocationScreen> {
                                 .setCountry(
                                   countries[index] == "Egypt" ? "EGYPT" : "UAE",
                                 );
-                            ref.refresh(getEventsProvider());
-                            ref.refresh(getVendorsProvider());
+                            ref.invalidate(getEventsProvider());
+                            ref.invalidate(getVendorsProvider());
                           },
                           child: AnimatedContainer(
                             duration: Duration(milliseconds: 300),

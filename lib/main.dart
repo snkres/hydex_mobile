@@ -24,7 +24,9 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     await (FirebaseNotifications().init());
-  } catch (e) {}
+  } catch (e) {
+    // Firebase init failure is non-fatal; app continues without notifications
+  }
 
   if (kDebugMode) {
     runApp(

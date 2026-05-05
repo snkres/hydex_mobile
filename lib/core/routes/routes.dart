@@ -59,7 +59,6 @@ class AppRoutes {
   AppRoutes(this.ref);
   final routes = GoRouter(
     initialLocation: '/splash',
-
     routes: [
       GoRoute(path: "/splash", builder: (context, state) => SplashScreen()),
       GoRoute(
@@ -114,7 +113,7 @@ class AppRoutes {
         path: "/owner/login",
 
         builder: (context, state) {
-          final token = state.uri.queryParameters['token'] ?? "test_token";
+          final token = state.uri.queryParameters['token']!;
           return OwnerLogin(token: token);
         },
       ),

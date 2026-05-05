@@ -6,6 +6,7 @@ import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/owner/domain/owner_providers.dart';
+import 'package:hydex/src/features/settings/ui/settings.dart';
 import 'package:hydex/src/features/owner/models/owner_event.dart';
 import 'package:hydex/src/widgets/active_event_card.dart';
 import 'package:smooth_corner/smooth_corner.dart';
@@ -114,6 +115,21 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
                   BlendMode.srcIn,
                 ),
               ),
+            ),
+          ),
+        ),
+        SizedBox(width: 8),
+        GestureDetector(
+          onTap: () => showLogoutBottomSheet(context),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.signalFunError,
+              borderRadius: BorderRadius.circular(32),
+            ),
+            child: Center(
+              child: Icon(Icons.logout_rounded, color: AppColors.borderError),
             ),
           ),
         ),

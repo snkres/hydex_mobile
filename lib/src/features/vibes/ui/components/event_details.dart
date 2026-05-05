@@ -777,15 +777,17 @@ class CollapsedEventContainer extends ConsumerWidget {
                                     SmoothClipRRect(
                                       smoothness: 1,
                                       borderRadius: BorderRadius.circular(12),
-                                      child: CachedNetworkImage(
-                                        fit: .cover,
-                                        width: 47,
-                                        height: 47,
-                                        imageUrl: owner.logo ?? "",
-                                        errorWidget: (_, _, _) => Center(
-                                          child: Icon(Icons.broken_image),
-                                        ),
-                                      ),
+                                      child: owner.logo != null && owner.logo!.isNotEmpty
+                                          ? CachedNetworkImage(
+                                              fit: BoxFit.cover,
+                                              width: 47,
+                                              height: 47,
+                                              imageUrl: owner.logo!,
+                                              errorWidget: (_, _, _) => Center(
+                                                child: Icon(Icons.broken_image),
+                                              ),
+                                            )
+                                          : SizedBox(width: 47, height: 47),
                                     ),
                                     Text(
                                       owner.name ?? "",
@@ -967,14 +969,16 @@ class CollapsedEventContainer extends ConsumerWidget {
                           SmoothClipRRect(
                             smoothness: 1,
                             borderRadius: BorderRadius.circular(8),
-                            child: CachedNetworkImage(
-                              fit: .cover,
-                              width: 32,
-                              height: 32,
-                              imageUrl: owner.logo ?? "",
-                              errorWidget: (_, _, _) =>
-                                  Center(child: Icon(Icons.broken_image)),
-                            ),
+                            child: owner.logo != null && owner.logo!.isNotEmpty
+                                ? CachedNetworkImage(
+                                    fit: BoxFit.cover,
+                                    width: 32,
+                                    height: 32,
+                                    imageUrl: owner.logo!,
+                                    errorWidget: (_, _, _) =>
+                                        Center(child: Icon(Icons.broken_image)),
+                                  )
+                                : SizedBox(width: 32, height: 32),
                           ),
 
                           Expanded(

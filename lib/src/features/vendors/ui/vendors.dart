@@ -30,7 +30,7 @@ class _AllVendorsState extends ConsumerState<AllVendors> {
   late final _pagingController = PagingController<int, Vendor>(
     getNextPageKey: (state) =>
         state.lastPageIsEmpty ? null : state.nextIntPageKey,
-    fetchPage: (pageKey) async => ref.watch(
+    fetchPage: (pageKey) async => ref.read(
       getVendorsProvider(page: pageKey, categoryId: selectedCategory.id).future,
     ),
   );
