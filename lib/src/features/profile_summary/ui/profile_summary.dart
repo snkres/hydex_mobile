@@ -842,26 +842,37 @@ class _CancelationWidgetState extends State<CancelationWidget> {
                   return PrimaryButton(
                     onTap: selectedReason != null
                         ? () async {
-                            final result = await ref.read(
-                              cancelBookingProvider(
-                                id: widget.id,
-                                reason: selectedReason!,
-                              ).future,
-                            );
+                            int count = 0;
 
-                            if (result && context.mounted) {
-                              int count = 0;
-                              ref.refresh(getUpcomingEventsProvider);
-                              ref.refresh(getProfileProvider);
-                              Navigator.of(
-                                context,
-                              ).popUntil((_) => count++ >= 2);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                successSnackBar(
-                                  "Booking cancelled successfully",
-                                  context,
-                                ),
+                            try {
+                              final result = await ref.read(
+                                cancelBookingProvider(
+                                  id: widget.id,
+                                  reason: selectedReason!,
+                                ).future,
                               );
+                              if (result && context.mounted) {
+                                if (context.mounted) {
+                                  Navigator.of(
+                                    context,
+                                  ).popUntil((_) => count++ >= 2);
+                                  ref.invalidate(getUpcomingEventsProvider);
+                                  ref.invalidate(getProfileProvider);
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    successSnackBar(
+                                      "Booking cancelled successfully",
+                                      context,
+                                    ),
+                                  );
+                                }
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                Navigator.of(
+                                  context,
+                                ).popUntil((_) => count++ >= 2);
+                              }
                             }
                           }
                         : null,

@@ -137,9 +137,6 @@ class _OwnerLoginState extends ConsumerState<OwnerLogin> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(currentUserProvider).value;
-    final fullName = user?.fullName ?? '';
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -202,14 +199,9 @@ class _OwnerLoginState extends ConsumerState<OwnerLogin> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Greeting
                     Text.rich(
                       TextSpan(
                         children: [
-                          TextSpan(
-                            text: "Mahmoud ",
-                            style: TextStyle(fontWeight: FontWeight.w700),
-                          ),
                           TextSpan(
                             text: "👋\n",
                             style: TextStyle(fontWeight: FontWeight.normal),
@@ -365,7 +357,6 @@ class _OwnerLoginState extends ConsumerState<OwnerLogin> {
                                       _confirmPasswordController.text,
                                       widget.token,
                                     );
-                                // TODO: navigate after password creation
                               }
                             },
                     ),

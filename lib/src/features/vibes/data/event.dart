@@ -319,9 +319,6 @@ extension AssignmentEventExtensions on AssignmentVendor {
       final closeTime = _parseTimeString(todayHours.close, now);
 
       if (openTime == null || closeTime == null) {
-        print("Close Time $closeTime");
-        print("Open Time $openTime");
-
         return "Closed";
       }
 

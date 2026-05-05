@@ -90,8 +90,22 @@ class _ScanScreenState extends State<ScanScreen> {
                               if (_scanState != _ScanState.idle) return;
                               final raw = result.barcodes.first.rawValue;
                               if (raw == null) return;
-                              final json =
-                                  jsonDecode(raw) as Map<String, dynamic>;
+                              final Map<String, dynamic> json;
+                              try {
+                                json = jsonDecode(raw) as Map<String, dynamic>;
+                              } catch (_) {
+                                setState(() {
+                                  _scanState = _ScanState.error;
+                                  _errorMessage = "Invalid QR code";
+                                });
+                                await Future.delayed(
+                                  const Duration(seconds: 2),
+                                );
+                                if (mounted) {
+                                  setState(() => _scanState = _ScanState.idle);
+                                }
+                                return;
+                              }
                               final source = json["bookingSource"] as String;
                               final bookingId = json['bookingId'] as String?;
                               if (bookingId == null) return;
@@ -102,6 +116,25 @@ class _ScanScreenState extends State<ScanScreen> {
                                   getScanDetailsProvider(id: bookingId).future,
                                 );
                                 if (context.mounted) {
+                                  final statusUp = data.status.toUpperCase();
+                                  final canScan = source == "EVENT"
+                                      ? statusUp == "PENDING"
+                                      : statusUp == "CONFIRMED";
+                                  if (!canScan) {
+                                    setState(() {
+                                      _scanState = _ScanState.error;
+                                      _errorMessage = "Already scanned";
+                                    });
+                                    await Future.delayed(
+                                      const Duration(seconds: 2),
+                                    );
+                                    if (mounted) {
+                                      setState(
+                                        () => _scanState = _ScanState.idle,
+                                      );
+                                    }
+                                    return;
+                                  }
                                   final router = GoRouter.of(context);
                                   await scannerController.stop();
                                   setState(() => _scanState = _ScanState.idle);

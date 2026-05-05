@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +8,81 @@ import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/settings/domain/settings_domain.dart';
 import 'package:hydex/src/widgets/primary_btn.dart';
+
+void showLogoutBottomSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    builder: (context) {
+      return Wrap(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            child: Consumer(
+              builder: (context, ref, child) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        height: 4,
+                        width: 44,
+                        decoration: BoxDecoration(
+                          color: Color(0xffDEDEDE),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      "Log out?",
+                      style: AppTextStyles(context).primaryBold.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      "You'll need to sign in again to access your account.",
+                      style: AppTextStyles(context).smallRegular.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    SizedBox(height: 32),
+                    PrimaryButton(
+                      onTap: () async => context.pop(),
+                      title: "Cancel",
+                    ),
+                    SizedBox(height: 8),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minWidth: double.infinity,
+                        minHeight: 50,
+                      ),
+                      child: TextButton(
+                        onPressed: () async {
+                          unawaited(ref.read(authServiceProvider).logout());
+                          if (context.mounted) {
+                            context.go("/boarding");
+                          }
+                        },
+                        child: Text(
+                          "Log Out",
+                          style: AppTextStyles(context).smallBold.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -129,99 +206,7 @@ class SettingsScreen extends StatelessWidget {
                   spacing: 6,
                   children: [
                     ElevatedButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) {
-                            return Wrap(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 20,
-                                  ),
-                                  child: Consumer(
-                                    builder: (context, ref, child) {
-                                      return Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Center(
-                                            child: Container(
-                                              height: 4,
-                                              width: 44,
-                                              decoration: BoxDecoration(
-                                                color: Color(0xffDEDEDE),
-                                                borderRadius:
-                                                    BorderRadius.circular(4),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(height: 16),
-                                          Text(
-                                            "Log out?",
-                                            style: AppTextStyles(context)
-                                                .primaryBold
-                                                .copyWith(
-                                                  color: Theme.of(
-                                                    context,
-                                                  ).colorScheme.onSurface,
-                                                ),
-                                          ),
-                                          SizedBox(height: 16),
-                                          Text(
-                                            "You’ll need to sign in again to access your account.",
-                                            style: AppTextStyles(context)
-                                                .smallRegular
-                                                .copyWith(
-                                                  color: Theme.of(
-                                                    context,
-                                                  ).colorScheme.onSurface,
-                                                ),
-                                          ),
-                                          SizedBox(height: 32),
-                                          PrimaryButton(
-                                            onTap: () async => context.pop(),
-                                            title: "Cancel",
-                                          ),
-                                          SizedBox(height: 8),
-                                          ConstrainedBox(
-                                            constraints: BoxConstraints(
-                                              minWidth: double.infinity,
-                                              minHeight: 50,
-                                            ),
-                                            child: TextButton(
-                                              onPressed: () async {
-                                                await ref
-                                                    .read(authServiceProvider)
-                                                    .logout();
-                                                if (context.mounted) {
-                                                  context.go("/boarding");
-                                                }
-                                              },
-                                              child: Text(
-                                                "Log Out",
-                                                style: AppTextStyles(context)
-                                                    .smallBold
-                                                    .copyWith(
-                                                      color: Theme.of(
-                                                        context,
-                                                      ).colorScheme.primary,
-                                                    ),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(height: 16),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
+                      onPressed: () => showLogoutBottomSheet(context),
                       style: ButtonStyle(
                         foregroundColor: .all(AppColors.textPrimary),
                         backgroundColor: .all(AppColors.surfaceInputField),

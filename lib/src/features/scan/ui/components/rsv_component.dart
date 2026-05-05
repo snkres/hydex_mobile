@@ -27,11 +27,12 @@ class RsvComponent extends StatelessWidget {
                 width: 22,
                 height: 22,
               ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 4,
-              children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 4,
+                children: [
                 Text(
                   status.label,
                   style: TextStyle(
@@ -51,6 +52,7 @@ class RsvComponent extends StatelessWidget {
                   ),
                 ),
               ],
+              ),
             ),
           ],
         ),

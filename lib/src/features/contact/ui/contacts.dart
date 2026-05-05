@@ -92,7 +92,7 @@ class ContactsScreen extends ConsumerWidget {
                               children: filtered[index].phones.map((e) {
                                 return ListTile(
                                   title: Text(e.number),
-                                  subtitle: Text(e.label ?? ""),
+                                  subtitle: Text(e.label),
                                   onTap: () {
                                     context.pop(e.number);
                                   },
@@ -102,7 +102,7 @@ class ContactsScreen extends ConsumerWidget {
                           },
                         );
 
-                        if (selectedPhone != null) {
+                        if (selectedPhone != null && context.mounted) {
                           context.pop(selectedPhone);
                         }
                       },

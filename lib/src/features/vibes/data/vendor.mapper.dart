@@ -94,10 +94,11 @@ class VendorMapper extends ClassMapperBase<Vendor> {
     'gallery',
     _$gallery,
   );
-  static List<Detail> _$details(Vendor v) => v.details;
+  static List<Detail>? _$details(Vendor v) => v.details;
   static const Field<Vendor, List<Detail>> _f$details = Field(
     'details',
     _$details,
+    opt: true,
   );
   static String? _$detailsDescription(Vendor v) => v.detailsDescription;
   static const Field<Vendor, String> _f$detailsDescription = Field(
@@ -237,7 +238,7 @@ abstract class VendorCopyWith<$R, $In extends Vendor, $Out>
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get experiences;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get media;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get gallery;
-  ListCopyWith<$R, Detail, DetailCopyWith<$R, Detail, Detail>> get details;
+  ListCopyWith<$R, Detail, DetailCopyWith<$R, Detail, Detail>>? get details;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get tags;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get thingsToKnow;
   $R call({
@@ -326,12 +327,14 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
         (v) => call(gallery: v),
       );
   @override
-  ListCopyWith<$R, Detail, DetailCopyWith<$R, Detail, Detail>> get details =>
-      ListCopyWith(
-        $value.details,
-        (v, t) => v.copyWith.$chain(t),
-        (v) => call(details: v),
-      );
+  ListCopyWith<$R, Detail, DetailCopyWith<$R, Detail, Detail>>? get details =>
+      $value.details != null
+      ? ListCopyWith(
+          $value.details!,
+          (v, t) => v.copyWith.$chain(t),
+          (v) => call(details: v),
+        )
+      : null;
   @override
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get tags =>
       ListCopyWith(
@@ -362,7 +365,7 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
     List<String>? experiences,
     List<String>? media,
     List<String>? gallery,
-    List<Detail>? details,
+    Object? details = $none,
     Object? detailsDescription = $none,
     List<String>? tags,
     List<String>? thingsToKnow,
@@ -383,7 +386,7 @@ class _VendorCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Vendor, $Out>
       if (experiences != null) #experiences: experiences,
       if (media != null) #media: media,
       if (gallery != null) #gallery: gallery,
-      if (details != null) #details: details,
+      if (details != $none) #details: details,
       if (detailsDescription != $none) #detailsDescription: detailsDescription,
       if (tags != null) #tags: tags,
       if (thingsToKnow != null) #thingsToKnow: thingsToKnow,

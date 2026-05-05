@@ -222,6 +222,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                                     setState(() {
                                                       errorText = error.message;
                                                     });
+                                                    return '';
                                                   });
 
                                               if (!context.mounted) return;

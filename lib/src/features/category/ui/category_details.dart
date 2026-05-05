@@ -52,7 +52,7 @@ class _CategoryDetailsState extends ConsumerState<CategoryDetails>
   late final _vendorsPagingController = PagingController<int, Vendor>(
     getNextPageKey: (state) =>
         state.lastPageIsEmpty ? null : state.nextIntPageKey,
-    fetchPage: (pageKey) async => ref.watch(
+    fetchPage: (pageKey) async => ref.read(
       getVendorsProvider(
         page: pageKey,
         categoryId: widget.category.id,

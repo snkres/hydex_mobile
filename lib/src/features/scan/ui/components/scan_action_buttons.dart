@@ -9,7 +9,6 @@ import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/scan/data/rsv_status.dart';
 import 'package:hydex/src/features/scan/domain/scan_providers.dart';
 import 'package:hydex/src/features/scan/ui/components/rsv_component.dart';
-import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 const _rejectReasons = [
@@ -52,7 +51,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
           .where(
             (e) => e.value.toLowerCase() == widget.givenStatus!.toLowerCase(),
           )
-          .first;
+          .firstOrNull;
     }
     _springController = AnimationController(
       vsync: this,
@@ -79,6 +78,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
   }
 
   void _onAction(RsvStatus status) {
+    if (!mounted) return;
     setState(() => _rsvStatus = status);
     _springController.forward(from: 0);
     _slideController.forward(from: 0);
@@ -129,7 +129,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
                               'Reject Entry?',
                               style: TextStyle(
                                 fontSize:
-                                    AppTextStyles(context).accumulator * 20,
+                                    AppTextStyles(ctx).accumulator * 20,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
                                 height: 28 / 20,
@@ -140,7 +140,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
                               'Select the reason below',
                               style: TextStyle(
                                 fontSize:
-                                    AppTextStyles(context).accumulator * 13,
+                                    AppTextStyles(ctx).accumulator * 13,
                                 fontWeight: FontWeight.w400,
                                 color: Colors.white.withValues(alpha: 0.35),
                               ),
@@ -167,7 +167,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
                                         style: TextStyle(
                                           fontSize:
                                               AppTextStyles(
-                                                context,
+                                                ctx,
                                               ).accumulator *
                                               14,
                                           fontWeight: selectedReason == reason
@@ -204,7 +204,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
                                 'Yes, reject entry',
                                 style: TextStyle(
                                   fontSize:
-                                      AppTextStyles(context).accumulator * 15,
+                                      AppTextStyles(ctx).accumulator * 15,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),
@@ -226,7 +226,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
                                 'Cancel',
                                 style: TextStyle(
                                   fontSize:
-                                      AppTextStyles(context).accumulator * 15,
+                                      AppTextStyles(ctx).accumulator * 15,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),

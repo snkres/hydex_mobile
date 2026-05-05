@@ -307,7 +307,7 @@ class _OwnerVenuesState extends ConsumerState<OwnerVenues>
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _buildUpcomingReservations(styles, user),
+              child: _buildUpcomingReservations(styles, bookings),
             ),
             const SizedBox(height: 32),
             _buildBookingFilters(styles, bookings, pendingCount),
@@ -319,7 +319,10 @@ class _OwnerVenuesState extends ConsumerState<OwnerVenues>
     );
   }
 
-  Widget _buildUpcomingReservations(AppTextStyles styles, User? user) {
+  Widget _buildUpcomingReservations(
+    AppTextStyles styles,
+    List<VendorBookingItem> bookings,
+  ) {
     return SmoothContainer(
       padding: const EdgeInsets.all(16),
       color: AppColors.containerDim,
@@ -360,18 +363,7 @@ class _OwnerVenuesState extends ConsumerState<OwnerVenues>
             ),
           ),
           Text(
-            ref
-                .watch(
-                  getVendorReservationsProvider(
-                    vendorId:
-                        user?.ownerProfile?.vendors?.firstOrNull?.id ?? "",
-                  ),
-                )
-                .when(
-                  data: (count) => count.toString(),
-                  loading: () => '—',
-                  error: (_, __) => '—',
-                ),
+            bookings.length.toString(),
             style: TextStyle(
               fontFamily: styles.fontFamily,
               fontSize: styles.accumulator * 22,

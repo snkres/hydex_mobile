@@ -21,7 +21,7 @@ class Vendor with VendorMappable {
   final List<String> media;
 
   final List<String> gallery;
-  final List<Detail> details;
+  final List<Detail>? details;
   final String? detailsDescription;
   final VendorCategory? category;
   final List<String> tags;
@@ -45,7 +45,7 @@ class Vendor with VendorMappable {
     required this.experiences,
     required this.media,
     required this.gallery,
-    required this.details,
+    this.details,
     this.detailsDescription,
     this.tags = const [],
     required this.thingsToKnow,
@@ -193,7 +193,6 @@ extension VendorExtensions on Vendor {
 
       return "$startStr – $endDateStr, $endTimeStr";
     } catch (e) {
-      print("Error Time: $e");
       return "Closed";
     }
   }

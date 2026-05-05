@@ -67,11 +67,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         final isActive = currentUser.status == UserStatus.active;
 
         // Send FCM notification in background (don't await)
-        ref.read(authServiceProvider).sendFCMNotification().catchError((e) {
-          if (kDebugMode) {
-            print('⚠️ FCM notification failed: $e');
-          }
-        });
+        unawaited(ref.read(authServiceProvider).sendFCMNotification());
 
         if (!isActive) {
           return "/waitlist";
