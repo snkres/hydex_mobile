@@ -50,20 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCdqVlHUJrKxMvY-QBrZcxY_21BsgPcJyM',
-    appId: '1:781755219907:android:298477f745588fc6198776',
-    messagingSenderId: '781755219907',
-    projectId: 'massive-capsule-246916',
-    storageBucket: 'massive-capsule-246916.firebasestorage.app',
+    apiKey: 'AIzaSyCxwwY4nty_L8Tn7VrZBWtEgxQpYVwvi5U',
+    appId: '1:427325460457:android:a0fdedb453df58aaf90578',
+    messagingSenderId: '427325460457',
+    projectId: 'hydex-4adc5',
+    storageBucket: 'hydex-4adc5.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDgzMNzEej8CtpA8VdMd1EuoVejrNRPnOg',
-    appId: '1:781755219907:ios:2fb9e3af0d4be3a5198776',
-    messagingSenderId: '781755219907',
-    projectId: 'massive-capsule-246916',
-    storageBucket: 'massive-capsule-246916.firebasestorage.app',
-    iosBundleId: 'com.example.hydex',
+    apiKey: 'AIzaSyCABdwkIjrA4Eym1yT4VcAY5etVvJAQRPU',
+    appId: '1:427325460457:ios:fe5ef7bdd1e53210f90578',
+    messagingSenderId: '427325460457',
+    projectId: 'hydex-4adc5',
+    storageBucket: 'hydex-4adc5.firebasestorage.app',
+    iosBundleId: 'com.example.hydex.RunnerTests',
   );
 
 }

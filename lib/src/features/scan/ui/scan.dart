@@ -41,6 +41,80 @@ class _ScanScreenState extends State<ScanScreen> {
     scannerController.dispose();
   }
 
+  Future<void> _onDetect(BarcodeCapture result, WidgetRef ref) async {
+    if (_scanState != _ScanState.idle) return;
+    final raw = result.barcodes.first.rawValue;
+    if (raw == null) return;
+    final Map<String, dynamic> json;
+    try {
+      json = jsonDecode(raw) as Map<String, dynamic>;
+    } catch (_) {
+      setState(() {
+        _scanState = _ScanState.error;
+        _errorMessage = "Invalid QR code";
+      });
+      await Future.delayed(const Duration(seconds: 2));
+      if (mounted) setState(() => _scanState = _ScanState.idle);
+      return;
+    }
+    final source = json["bookingSource"] as String;
+    final bookingId = json['bookingId'] as String?;
+    if (bookingId == null) return;
+
+    setState(() => _scanState = _ScanState.loading);
+    try {
+      final data = await ref.read(getScanDetailsProvider(id: bookingId).future);
+      if (!mounted) return;
+
+      final today = DateTime.now();
+      final bd = data.bookingDate;
+      log("Booking Date: $data");
+      if (today.year != bd.year ||
+          today.month != bd.month ||
+          today.day != bd.day) {
+        setState(() {
+          _scanState = _ScanState.error;
+          _errorMessage = "Event is not active";
+        });
+        await Future.delayed(const Duration(seconds: 2));
+        if (mounted) setState(() => _scanState = _ScanState.idle);
+        return;
+      }
+
+      final statusUp = data.status.toUpperCase();
+      final canScan = source == "EVENT"
+          ? statusUp == "PENDING"
+          : statusUp == "CONFIRMED";
+      if (!canScan) {
+        setState(() {
+          _scanState = _ScanState.error;
+          _errorMessage = "Already scanned";
+        });
+        await Future.delayed(const Duration(seconds: 2));
+        if (mounted) setState(() => _scanState = _ScanState.idle);
+        return;
+      }
+
+      final router = GoRouter.of(context);
+      await scannerController.stop();
+      setState(() => _scanState = _ScanState.idle);
+      if (source == "EVENT") {
+        await router.push("/owner/scan/output", extra: data);
+      } else {
+        await router.push("/owner/rsv/output", extra: data);
+      }
+      await scannerController.start();
+    } catch (e, s) {
+      log("Error Scan", error: e, stackTrace: s);
+      setState(() {
+        _scanState = _ScanState.error;
+        _errorMessage = e is ApiException ? e.message : null;
+      });
+      await Future.delayed(const Duration(seconds: 2));
+      if (mounted) setState(() => _scanState = _ScanState.idle);
+    }
+  }
+
   Color get _borderColor => switch (_scanState) {
     _ScanState.loading => AppColors.signalBrandSolid,
     _ScanState.success => AppColors.borderSuccess,
@@ -86,88 +160,7 @@ class _ScanScreenState extends State<ScanScreen> {
                                 stackTrace: stackTrace,
                               );
                             },
-                            onDetect: (result) async {
-                              if (_scanState != _ScanState.idle) return;
-                              final raw = result.barcodes.first.rawValue;
-                              if (raw == null) return;
-                              final Map<String, dynamic> json;
-                              try {
-                                json = jsonDecode(raw) as Map<String, dynamic>;
-                              } catch (_) {
-                                setState(() {
-                                  _scanState = _ScanState.error;
-                                  _errorMessage = "Invalid QR code";
-                                });
-                                await Future.delayed(
-                                  const Duration(seconds: 2),
-                                );
-                                if (mounted) {
-                                  setState(() => _scanState = _ScanState.idle);
-                                }
-                                return;
-                              }
-                              final source = json["bookingSource"] as String;
-                              final bookingId = json['bookingId'] as String?;
-                              if (bookingId == null) return;
-
-                              setState(() => _scanState = _ScanState.loading);
-                              try {
-                                final data = await ref.read(
-                                  getScanDetailsProvider(id: bookingId).future,
-                                );
-                                if (context.mounted) {
-                                  final statusUp = data.status.toUpperCase();
-                                  final canScan = source == "EVENT"
-                                      ? statusUp == "PENDING"
-                                      : statusUp == "CONFIRMED";
-                                  if (!canScan) {
-                                    setState(() {
-                                      _scanState = _ScanState.error;
-                                      _errorMessage = "Already scanned";
-                                    });
-                                    await Future.delayed(
-                                      const Duration(seconds: 2),
-                                    );
-                                    if (mounted) {
-                                      setState(
-                                        () => _scanState = _ScanState.idle,
-                                      );
-                                    }
-                                    return;
-                                  }
-                                  final router = GoRouter.of(context);
-                                  await scannerController.stop();
-                                  setState(() => _scanState = _ScanState.idle);
-                                  if (source == "EVENT") {
-                                    await router.push(
-                                      "/owner/scan/output",
-                                      extra: data,
-                                    );
-                                  } else {
-                                    await router.push(
-                                      "/owner/rsv/output",
-                                      extra: data,
-                                    );
-                                  }
-
-                                  await scannerController.start();
-                                }
-                              } catch (e, s) {
-                                log("Error Scan", error: e, stackTrace: s);
-                                setState(() {
-                                  _scanState = _ScanState.error;
-                                  _errorMessage = e is ApiException
-                                      ? e.message
-                                      : null;
-                                });
-                                await Future.delayed(
-                                  const Duration(seconds: 2),
-                                );
-                                if (mounted) {
-                                  setState(() => _scanState = _ScanState.idle);
-                                }
-                              }
-                            },
+                            onDetect: (result) => _onDetect(result, ref),
                           );
                         },
                       ),

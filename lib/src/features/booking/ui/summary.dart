@@ -300,6 +300,7 @@ class _LoadingFloatingButtonState extends ConsumerState<LoadingFloatingButton> {
                         child: PrimaryButton(
                           onTap: () async {
                             context.push("/", extra: 2);
+                            ref.invalidate(createBookProvider);
                           },
                           title: "View my Bookings",
                         ),

@@ -34,7 +34,7 @@ class RsvStatusHook extends MappingHook {
   Object? beforeDecode(Object? value) {
     if (value is String) {
       return RsvStatus.values.firstWhere(
-        (e) => e.name.toLowerCase() == value.toLowerCase(),
+        (e) => e.value.toLowerCase() == value.toLowerCase(),
         orElse: () => RsvStatus.pending,
       );
     }

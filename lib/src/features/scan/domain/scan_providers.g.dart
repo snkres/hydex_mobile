@@ -142,7 +142,7 @@ final class UpdateBookingStatusProvider
 }
 
 String _$updateBookingStatusHash() =>
-    r'2ca0f0d16ad24018a7830d382f9708a51f2bcc4c';
+    r'2d0d3c91f936faf2bf406f6f2299a56ea5806368';
 
 final class UpdateBookingStatusFamily extends $Family
     with
