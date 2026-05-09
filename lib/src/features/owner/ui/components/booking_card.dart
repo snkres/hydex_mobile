@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
-import 'package:hydex/src/features/owner/models/booking_status.dart';
 import 'package:hydex/src/features/owner/models/scan_type.dart';
+import 'package:hydex/src/features/scan/data/rsv_status.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
 class BookingCardData {
@@ -38,9 +38,10 @@ class OwnerBookingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor =
-        BookingStatus.fromString(booking.status)?.color ??
-        AppColors.textWarning;
+    final statusColor = RsvStatus.values
+        .where((e) => e.label == booking.status)
+        .first
+        .textColor;
 
     return GestureDetector(
       onTap: () => context.push(

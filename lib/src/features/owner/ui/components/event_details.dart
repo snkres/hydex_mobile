@@ -15,6 +15,21 @@ import 'package:hydex/src/features/search/ui/components/not_found.dart';
 import 'package:hydex/src/widgets/blur_app_bar.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
+({String place, String venue}) _splitAddress(String? address) {
+  if (address == null || address.trim().isEmpty) {
+    return (place: 'Place', venue: 'Venue');
+  }
+  final parts = address.contains(',')
+      ? address.split(',')
+      : address.trim().split(RegExp(r'\s+'));
+  final place = parts.first.trim();
+  final venue = parts.length > 1 ? parts.last.trim() : '';
+  return (
+    place: place.isEmpty ? 'Place' : place,
+    venue: venue.isEmpty ? 'Venue' : venue,
+  );
+}
+
 class _SkeletonBox extends StatefulWidget {
   const _SkeletonBox({this.width, this.height = 14, this.borderRadius = 8});
 
@@ -400,7 +415,7 @@ class _OwnerEventDetailsState extends ConsumerState<OwnerEventDetails> {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    '$statusLabel Event #${event.displayCode}',
+                    '$statusLabel Event ${event.displayCode}',
                     style: TextStyle(
                       fontSize: styles.accumulator * 11,
                       fontWeight: FontWeight.w500,
@@ -498,7 +513,7 @@ class _OwnerEventDetailsState extends ConsumerState<OwnerEventDetails> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  "Place",
+                  _splitAddress(event.location?.address).place,
                   style: TextStyle(
                     fontFamily: styles.fontFamily,
                     fontSize: styles.accumulator * 13,
@@ -509,7 +524,8 @@ class _OwnerEventDetailsState extends ConsumerState<OwnerEventDetails> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Venue',
+                  _splitAddress(event.location?.address).venue,
+
                   style: TextStyle(
                     fontSize: styles.accumulator * 11,
                     color: AppColors.textSecondary,

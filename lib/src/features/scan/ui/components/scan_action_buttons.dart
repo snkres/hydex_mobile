@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/owner/domain/owner_providers.dart';
 import 'package:hydex/src/features/scan/data/rsv_status.dart';
 import 'package:hydex/src/features/scan/domain/scan_providers.dart';
 import 'package:hydex/src/features/scan/ui/components/rsv_component.dart';
@@ -90,6 +91,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
         ).future,
       ),
     );
+    ref.invalidate(getOwnerEventBookingsProvider);
   }
 
   void _showRejectBottomSheet() {
@@ -128,8 +130,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
                             Text(
                               'Reject Entry?',
                               style: TextStyle(
-                                fontSize:
-                                    AppTextStyles(ctx).accumulator * 20,
+                                fontSize: AppTextStyles(ctx).accumulator * 20,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
                                 height: 28 / 20,
@@ -139,8 +140,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
                             Text(
                               'Select the reason below',
                               style: TextStyle(
-                                fontSize:
-                                    AppTextStyles(ctx).accumulator * 13,
+                                fontSize: AppTextStyles(ctx).accumulator * 13,
                                 fontWeight: FontWeight.w400,
                                 color: Colors.white.withValues(alpha: 0.35),
                               ),
@@ -166,9 +166,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
                                         reason,
                                         style: TextStyle(
                                           fontSize:
-                                              AppTextStyles(
-                                                ctx,
-                                              ).accumulator *
+                                              AppTextStyles(ctx).accumulator *
                                               14,
                                           fontWeight: selectedReason == reason
                                               ? FontWeight.w500
@@ -203,8 +201,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
                               child: Text(
                                 'Yes, reject entry',
                                 style: TextStyle(
-                                  fontSize:
-                                      AppTextStyles(ctx).accumulator * 15,
+                                  fontSize: AppTextStyles(ctx).accumulator * 15,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),
@@ -225,8 +222,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
                               child: Text(
                                 'Cancel',
                                 style: TextStyle(
-                                  fontSize:
-                                      AppTextStyles(ctx).accumulator * 15,
+                                  fontSize: AppTextStyles(ctx).accumulator * 15,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),
@@ -272,7 +268,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
                 height: 15,
               ),
               label: Text(
-                'Scan Another',
+                widget.isTicket ? "Go Back" : 'Scan Another',
                 style: TextStyle(
                   fontSize: AppTextStyles(context).accumulator * 15,
                   fontWeight: FontWeight.w600,
@@ -298,9 +294,7 @@ class _ScanActionButtonsState extends ConsumerState<ScanActionButtons>
                 width: 212,
                 height: 52,
                 child: ElevatedButton.icon(
-                  onPressed: _rsvStatus != null
-                      ? null
-                      : () => _onAction(RsvStatus.entered),
+                  onPressed: () => _onAction(RsvStatus.entered),
                   icon: SvgPicture.asset(
                     'img/svg/correct.svg',
                     package: 'assets',

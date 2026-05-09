@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hydex/core/network/auth_service.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
+import 'package:hydex/src/features/notifications/domain/notifications_providers.dart';
 import 'package:hydex/src/features/owner/domain/owner_providers.dart';
 import 'package:hydex/src/features/settings/ui/settings.dart';
 import 'package:hydex/src/features/owner/models/owner_event.dart';
@@ -97,25 +98,47 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
         ),
         GestureDetector(
           onTap: () => context.push("/notifications"),
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(32),
-            ),
-            child: Center(
-              child: SvgPicture.asset(
-                'img/svg/notification.svg',
-                package: 'assets',
-                width: 24,
-                height: 24,
-                colorFilter: const ColorFilter.mode(
-                  AppColors.textPrimary,
-                  BlendMode.srcIn,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                child: Center(
+                  child: SvgPicture.asset(
+                    'img/svg/notification.svg',
+                    package: 'assets',
+                    width: 24,
+                    height: 24,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.textPrimary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
                 ),
               ),
-            ),
+              if (ref
+                      .watch(getNotificationsProvider)
+                      .whenData((list) => list.any((n) => !n.isRead))
+                      .value ??
+                  false)
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Container(
+                    width: 10,
+                    height: 10,
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
         SizedBox(width: 8),

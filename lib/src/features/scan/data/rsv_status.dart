@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 enum RsvStatus {
   pending(
-    label: 'Pending Approval',
+    label: 'Pending',
     subLabel: 'Review the reservation details and take action.',
     svgPath: 'img/svg/pending.svg',
     backgroundColor: Color(0xff302617),
@@ -33,6 +33,7 @@ enum RsvStatus {
     textColor: Color(0xffff0003),
     value: 'NO_ENTRY',
   ),
+
   rejected(
     label: 'Rejected',
     subLabel: "You've declined this booking.",

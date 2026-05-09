@@ -17,6 +17,7 @@ class OwnerEventMapper extends ClassMapperBase<OwnerEvent> {
       EventStatusMapper.ensureInitialized();
       OwnerEventSalesMapper.ensureInitialized();
       OwnerEventRevenueMapper.ensureInitialized();
+      LocationMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -65,6 +66,12 @@ class OwnerEventMapper extends ClassMapperBase<OwnerEvent> {
     'revenue',
     _$revenue,
   );
+  static Location? _$location(OwnerEvent v) => v.location;
+  static const Field<OwnerEvent, Location> _f$location = Field(
+    'location',
+    _$location,
+    opt: true,
+  );
 
   @override
   final MappableFields<OwnerEvent> fields = const {
@@ -77,6 +84,7 @@ class OwnerEventMapper extends ClassMapperBase<OwnerEvent> {
     #status: _f$status,
     #sales: _f$sales,
     #revenue: _f$revenue,
+    #location: _f$location,
   };
 
   static OwnerEvent _instantiate(DecodingData data) {
@@ -90,6 +98,7 @@ class OwnerEventMapper extends ClassMapperBase<OwnerEvent> {
       status: data.dec(_f$status),
       sales: data.dec(_f$sales),
       revenue: data.dec(_f$revenue),
+      location: data.dec(_f$location),
     );
   }
 
@@ -156,6 +165,7 @@ abstract class OwnerEventCopyWith<$R, $In extends OwnerEvent, $Out>
   OwnerEventSalesCopyWith<$R, OwnerEventSales, OwnerEventSales> get sales;
   OwnerEventRevenueCopyWith<$R, OwnerEventRevenue, OwnerEventRevenue>
   get revenue;
+  LocationCopyWith<$R, Location, Location>? get location;
   $R call({
     String? id,
     String? displayCode,
@@ -166,6 +176,7 @@ abstract class OwnerEventCopyWith<$R, $In extends OwnerEvent, $Out>
     EventStatus? status,
     OwnerEventSales? sales,
     OwnerEventRevenue? revenue,
+    Location? location,
   });
   OwnerEventCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -185,6 +196,9 @@ class _OwnerEventCopyWithImpl<$R, $Out>
   OwnerEventRevenueCopyWith<$R, OwnerEventRevenue, OwnerEventRevenue>
   get revenue => $value.revenue.copyWith.$chain((v) => call(revenue: v));
   @override
+  LocationCopyWith<$R, Location, Location>? get location =>
+      $value.location?.copyWith.$chain((v) => call(location: v));
+  @override
   $R call({
     String? id,
     String? displayCode,
@@ -195,6 +209,7 @@ class _OwnerEventCopyWithImpl<$R, $Out>
     EventStatus? status,
     OwnerEventSales? sales,
     OwnerEventRevenue? revenue,
+    Object? location = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -206,6 +221,7 @@ class _OwnerEventCopyWithImpl<$R, $Out>
       if (status != null) #status: status,
       if (sales != null) #sales: sales,
       if (revenue != null) #revenue: revenue,
+      if (location != $none) #location: location,
     }),
   );
   @override
@@ -219,6 +235,7 @@ class _OwnerEventCopyWithImpl<$R, $Out>
     status: data.get(#status, or: $value.status),
     sales: data.get(#sales, or: $value.sales),
     revenue: data.get(#revenue, or: $value.revenue),
+    location: data.get(#location, or: $value.location),
   );
 
   @override
