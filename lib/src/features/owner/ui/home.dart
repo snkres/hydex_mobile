@@ -96,49 +96,52 @@ class _OwnerHomeScreenState extends ConsumerState<OwnerHomeScreen> {
             ],
           ),
         ),
-        GestureDetector(
-          onTap: () => context.push("/notifications"),
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(32),
-                ),
-                child: Center(
-                  child: SvgPicture.asset(
-                    'img/svg/notification.svg',
-                    package: 'assets',
-                    width: 24,
-                    height: 24,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.textPrimary,
-                      BlendMode.srcIn,
+        Semantics(
+          label: "notifications",
+          child: GestureDetector(
+            onTap: () => context.push("/notifications"),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  child: Center(
+                    child: SvgPicture.asset(
+                      'img/svg/notification.svg',
+                      package: 'assets',
+                      width: 24,
+                      height: 24,
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.textPrimary,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              if (ref
-                      .watch(getNotificationsProvider)
-                      .whenData((list) => list.any((n) => !n.isRead))
-                      .value ??
-                  false)
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
+                if (ref
+                        .watch(getNotificationsProvider)
+                        .whenData((list) => list.any((n) => !n.isRead))
+                        .value ??
+                    false)
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
         SizedBox(width: 8),

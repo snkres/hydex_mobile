@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:hydex/src/features/notifications/data/notification.dart';
 import 'package:hydex/core/network/network.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'notifications_providers.g.dart';
 
@@ -20,4 +21,9 @@ Future<List<AppNotification>> getNotifications(Ref ref) async {
 @riverpod
 Future<void> markAllNotificationsAsRead(Ref ref) async {
   await DioHelper.patch("/notifications/user/mark-all-read");
+}
+
+@riverpod
+Future<PermissionStatus> notificationPermissionStatus(Ref ref) async {
+  return Permission.notification.status;
 }

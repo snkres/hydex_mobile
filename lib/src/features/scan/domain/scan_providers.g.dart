@@ -9,6 +9,46 @@ part of 'scan_providers.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(cameraPermissionStatus)
+const cameraPermissionStatusProvider = CameraPermissionStatusProvider._();
+
+final class CameraPermissionStatusProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<PermissionStatus>,
+          PermissionStatus,
+          FutureOr<PermissionStatus>
+        >
+    with $FutureModifier<PermissionStatus>, $FutureProvider<PermissionStatus> {
+  const CameraPermissionStatusProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'cameraPermissionStatusProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$cameraPermissionStatusHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<PermissionStatus> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<PermissionStatus> create(Ref ref) {
+    return cameraPermissionStatus(ref);
+  }
+}
+
+String _$cameraPermissionStatusHash() =>
+    r'053f2612ef22227705f987428934f0a611fc99a6';
+
 @ProviderFor(getScanDetails)
 const getScanDetailsProvider = GetScanDetailsFamily._();
 

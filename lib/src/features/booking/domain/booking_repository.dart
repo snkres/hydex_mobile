@@ -5,6 +5,7 @@ import 'package:hydex/core/network/network.dart';
 import 'package:hydex/src/features/booking/data/booking.dart';
 import 'package:hydex/src/features/booking/data/create_book.dart';
 import 'package:hydex/src/features/booking/data/format_time.dart';
+import 'package:hydex/src/features/booking/data/guest.dart';
 import 'package:hydex/src/features/booking/domain/guests_repo.dart';
 import 'package:hydex/src/features/booking/ui/components/guests_container.dart';
 import 'package:intl/intl.dart';
@@ -50,16 +51,16 @@ Future<bool> createBooking(Ref ref) async {
     guestFormProvider(numberOfGuests).future,
   );
 
-  final booking = ref.watch(createBookProvider);
+  final booking = ref.read(createBookProvider);
   final isVendor = booking?.isVendor ?? false;
 
   final formGuests = guestsFormState.guests;
 
-  final guests = formGuests.skip(1).toList();
+  final guests = formGuests.skip(1).whereType<Guest>().toList();
 
   final List<Map<String, dynamic>> guestsData = guests.map((e) {
     final guestMap = {
-      "fullName": e!.name,
+      "fullName": e.name,
       "email": e.email,
       "phone": e.phoneNumber,
       "age": e.age,
@@ -73,7 +74,8 @@ Future<bool> createBooking(Ref ref) async {
     return guestMap;
   }).toList();
 
-  final data = {"guests": guestsData, "passId": booking!.selectedPasses?.id};
+  if (booking == null) throw Exception("Booking state was lost. Please try again.");
+  final data = {"guests": guestsData, "passId": booking.selectedPasses?.id};
   if (isVendor) {
     data["date"] = booking.selectedDate?.toIso8601String();
     data["timeSlot"] = booking.selectedSlot?.toFullTime();

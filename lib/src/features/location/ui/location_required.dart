@@ -3,57 +3,69 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hydex/src/features/location/domain/location_notifier.dart';
 import 'package:hydex/src/features/location/domain/location_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-class LocationRequired extends ConsumerWidget {
+class LocationRequired extends ConsumerStatefulWidget {
   final Widget child;
   const LocationRequired({super.key, required this.child});
 
-  Widget _buildLocationDeniedWidget(BuildContext context, WidgetRef ref) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.location_off, size: 64, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            Text(
-              'Location Required',
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'This app needs access to your location to function properly.',
-              textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () async {
-                await ref
-                    .read(locationCheckerProvider.notifier)
-                    .requestPermissionAndUpdate();
-              },
-              icon: const Icon(Icons.location_on),
-              label: const Text('Continue'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 12,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  @override
+  ConsumerState<LocationRequired> createState() => _LocationRequiredState();
+}
+
+class _LocationRequiredState extends ConsumerState<LocationRequired>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
   }
 
-  Widget _buildServiceDisabledWidget(BuildContext context) {
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      ref.read(locationCheckerProvider.notifier).checkStatus();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final locationState = ref.watch(locationCheckerProvider);
+    final locationStatus = locationState.value;
+
+    if (locationState.isLoading || locationStatus == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (!locationStatus.isServiceEnabled) {
+      return _LocationServiceDisabled();
+    }
+
+    if (locationStatus.permission == LocationPermission.denied) {
+      return _LocationPermissionDenied(
+        onRequest: () => ref
+            .read(locationCheckerProvider.notifier)
+            .requestPermissionAndUpdate(),
+      );
+    }
+
+    if (locationStatus.permission == LocationPermission.deniedForever) {
+      return const _LocationPermissionPermanentlyDenied();
+    }
+
+    return widget.child;
+  }
+}
+
+class _LocationServiceDisabled extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -95,8 +107,60 @@ class LocationRequired extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildLocationPermanentlyDeniedWidget(BuildContext context) {
+class _LocationPermissionDenied extends StatelessWidget {
+  final VoidCallback onRequest;
+  const _LocationPermissionDenied({required this.onRequest});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.location_off, size: 64, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              'Location Required',
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'This app needs access to your location to function properly.',
+              textAlign: TextAlign.center,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: onRequest,
+              icon: const Icon(Icons.location_on),
+              label: const Text('Continue'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 12,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LocationPermissionPermanentlyDenied extends StatelessWidget {
+  const _LocationPermissionPermanentlyDenied();
+
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -107,7 +171,7 @@ class LocationRequired extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               'Location Access Denied',
-              textAlign: .center,
+              textAlign: TextAlign.center,
               style: Theme.of(
                 context,
               ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
@@ -123,7 +187,7 @@ class LocationRequired extends ConsumerWidget {
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: () async {
-                await LocationService().openLocationSettings();
+                await openAppSettings();
               },
               icon: const Icon(Icons.settings),
               label: const Text('Open Settings'),
@@ -138,34 +202,5 @@ class LocationRequired extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final locationState = ref.watch(locationCheckerProvider);
-    final locationStatus = locationState.value;
-
-    // Still loading or not yet checked
-    if (locationState.isLoading || locationStatus == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    // Location service (GPS) is disabled
-    if (!locationStatus.isServiceEnabled) {
-      return _buildServiceDisabledWidget(context);
-    }
-
-    // Permission denied
-    if (locationStatus.permission == LocationPermission.denied) {
-      return _buildLocationDeniedWidget(context, ref);
-    }
-
-    // Permission permanently denied
-    if (locationStatus.permission == LocationPermission.deniedForever) {
-      return _buildLocationPermanentlyDeniedWidget(context);
-    }
-
-    // Permission granted and service enabled
-    return child;
   }
 }

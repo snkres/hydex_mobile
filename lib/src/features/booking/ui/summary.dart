@@ -25,8 +25,10 @@ class SummaryBooking extends ConsumerWidget {
     final totalGuests = ref.watch(guestsProvider);
     final totalPrice = ref.watch(formattedTotalPriceProvider);
     final booking = ref.watch(createBookProvider);
-    if (booking == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => context.pop());
+
+    if (booking == null ||
+        booking.selectedDate == null ||
+        booking.selectedSlot == null) {
       return const Scaffold(body: SizedBox.shrink());
     }
 
@@ -251,7 +253,6 @@ class _LoadingFloatingButtonState extends ConsumerState<LoadingFloatingButton> {
               }
               if (!context.mounted || !status) return;
               ref.invalidate(getUpcomingEventsProvider);
-              ref.invalidate(createBookProvider);
               showModalBottomSheet(
                 context: context,
                 builder: (context) => Center(

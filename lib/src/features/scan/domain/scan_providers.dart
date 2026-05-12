@@ -8,9 +8,15 @@ import 'package:hydex/src/features/scan/data/rsv_status.dart';
 import 'package:hydex/src/features/scan/data/scan_response.dart';
 import 'package:hydex/src/features/scan/domain/offline_sync.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'scan_providers.g.dart';
+
+@riverpod
+Future<PermissionStatus> cameraPermissionStatus(Ref ref) async {
+  return Permission.camera.status;
+}
 
 @riverpod
 Future<ScanResponse> getScanDetails(Ref ref, {required String id}) async {

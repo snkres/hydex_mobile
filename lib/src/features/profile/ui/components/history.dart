@@ -25,8 +25,11 @@ class History extends ConsumerWidget {
           return Center(child: Text("Empty History"));
         }
         return Padding(
-          padding: const EdgeInsets.only(left: 16, bottom: 100, right: 16),
+          padding: const EdgeInsets.only(left: 16, right: 16),
           child: ListView.separated(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).padding.bottom + 80,
+            ),
             separatorBuilder: (_, _) =>
                 Column(children: [Divider(), SizedBox(height: 16)]),
             itemCount: data.length,
