@@ -19,16 +19,20 @@ class UpcomingEventSection extends ConsumerWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: ListView.separated(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).padding.bottom + 80,
+            ),
+
             separatorBuilder: (_, _) =>
                 Column(children: [Divider(), SizedBox(height: 16)]),
             itemCount: data.length,
             itemBuilder: (context, index) =>
-                HistoryContainer(event: data[index],isHistory: false,),
+                HistoryContainer(event: data[index], isHistory: false),
           ),
         );
       },
       error: (e, s) {
-        log("UpcomingEVent Error",error: e ,stackTrace: s);
+        log("UpcomingEVent Error", error: e, stackTrace: s);
         return Center(child: Text("Error"));
       },
       loading: () => Center(child: CircularProgressIndicator.adaptive()),

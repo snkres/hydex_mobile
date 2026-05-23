@@ -179,38 +179,42 @@ class _CategoryDetailsState extends ConsumerState<CategoryDetails>
               ),
             ),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.only(top: 10),
-            sliver: SliverToBoxAdapter(
-              child: SizedBox(
-                height: 38,
-                child: ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: widget.subCategories.length + 1,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(width: 8),
-                  itemBuilder: (context, index) {
-                    final List<SubCategories> labels = [
-                      SubCategories(id: "all", title: "All"),
-                      ...widget.subCategories,
-                    ];
-                    return CustomChip(
-                      title: labels[index].title ?? "All",
-                      isSelected: selectedCategory.id == labels[index].id,
-                      onTap: () {
-                        setState(() {
-                          selectedCategory = labels[index];
-                        });
-                        _eventsPagingController.refresh();
-                        _vendorsPagingController.refresh();
-                      },
-                    );
-                  },
+
+          if (widget.subCategories.isNotEmpty)
+            SliverPadding(
+              padding: const EdgeInsets.only(top: 10),
+              sliver: SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 38,
+                  child: Builder(
+                    builder: (context) {
+                      final labels = [
+                        SubCategories(id: "all", title: "All"),
+                        ...widget.subCategories,
+                      ];
+                      return ListView.separated(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: labels.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(width: 8),
+                        itemBuilder: (context, index) => CustomChip(
+                          title: labels[index].title ?? "All",
+                          isSelected: selectedCategory.id == labels[index].id,
+                          onTap: () {
+                            setState(() {
+                              selectedCategory = labels[index];
+                            });
+                            _eventsPagingController.refresh();
+                            _vendorsPagingController.refresh();
+                          },
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
-          ),
           _tabController.index == 0
               ? SliverPadding(
                   padding: .only(top: 10, left: 16, right: 16),

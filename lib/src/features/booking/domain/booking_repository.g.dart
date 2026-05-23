@@ -79,7 +79,7 @@ final class CreateBookingProvider
   }
 }
 
-String _$createBookingHash() => r'b9ba55bcd87e2534d9cc29ec36b5532570c4bfed';
+String _$createBookingHash() => r'5294efcdbacbe3d3db3b5d77ca8f39e588cff238';
 
 @ProviderFor(cancelBooking)
 const cancelBookingProvider = CancelBookingFamily._();

@@ -6,6 +6,7 @@ import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/auth/ui/tellus.dart';
 import 'package:hydex/src/features/notifications/domain/notifications_providers.dart';
 import 'package:hydex/src/features/notifications/ui/components/notification_card.dart';
+import 'package:hydex/src/features/notifications/ui/permission_required.dart';
 import 'package:hydex/src/widgets/backbtn.dart';
 import 'package:smooth_corner/smooth_corner.dart';
 
@@ -57,93 +58,97 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: SafeArea(
-              bottom: false,
-              child: Row(
-                children: [
-                  const CustomBackButton(),
-                  SizedBox(width: 45),
-                  SvgPicture.asset(
-                    "img/svg/notification.svg",
-                    package: "assets",
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    "My Notifications",
-                    style: TextStyle(
-                      fontSize: AppTextStyles(context).accumulator * 16,
-                      fontWeight: FontWeight.w700,
+      body: NotificationPermissionRequired(
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: SafeArea(
+                bottom: false,
+                child: Row(
+                  children: [
+                    const CustomBackButton(),
+                    SizedBox(width: 45),
+                    SvgPicture.asset(
+                      "img/svg/notification.svg",
+                      package: "assets",
                     ),
-                  ),
-                ],
+                    SizedBox(width: 8),
+                    Text(
+                      "My Notifications",
+                      style: TextStyle(
+                        fontSize: AppTextStyles(context).accumulator * 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
 
-          // SliverToBoxAdapter(
-          //   child: SizedBox(
-          //     height: 37,
-          //     child: ListView.separated(
-          //       scrollDirection: Axis.horizontal,
-          //       padding: EdgeInsets.symmetric(horizontal: 16),
-          //       itemBuilder: (context, index) {
-          //         return CustomChip(
-          //           title: filters[index],
-          //           isSelected: selectedFilter == filters[index],
-          //           onTap: () {
-          //             setState(() {
-          //               selectedFilter = filters[index];
-          //             });
-          //           },
-          //         );
-          //       },
-          //       separatorBuilder: (context, index) => SizedBox(width: 10),
-          //       itemCount: filters.length,
-          //     ),
-          //   ),
-          // ),
-          ref
-              .watch(getNotificationsProvider)
-              .when(
-                loading: () => SliverPadding(
-                  padding: const EdgeInsets.all(16),
-                  sliver: SliverList.separated(
-                    itemCount: 4,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) =>
-                        _NotificationCardSkeleton(animation: _shimmerAnimation),
-                  ),
-                ),
-                error: (_, __) => const SliverToBoxAdapter(child: SizedBox()),
-                data: (items) {
-                  if (items.isEmpty) {
-                    return const SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: _EmptyNotifications(),
-                    );
-                  }
-                  return SliverPadding(
+            // SliverToBoxAdapter(
+            //   child: SizedBox(
+            //     height: 37,
+            //     child: ListView.separated(
+            //       scrollDirection: Axis.horizontal,
+            //       padding: EdgeInsets.symmetric(horizontal: 16),
+            //       itemBuilder: (context, index) {
+            //         return CustomChip(
+            //           title: filters[index],
+            //           isSelected: selectedFilter == filters[index],
+            //           onTap: () {
+            //             setState(() {
+            //               selectedFilter = filters[index];
+            //             });
+            //           },
+            //         );
+            //       },
+            //       separatorBuilder: (context, index) => SizedBox(width: 10),
+            //       itemCount: filters.length,
+            //     ),
+            //   ),
+            // ),
+            ref
+                .watch(getNotificationsProvider)
+                .when(
+                  loading: () => SliverPadding(
                     padding: const EdgeInsets.all(16),
                     sliver: SliverList.separated(
-                      itemCount: items.length,
+                      itemCount: 4,
                       separatorBuilder: (_, __) => const SizedBox(height: 12),
-                      itemBuilder: (context, index) {
-                        final n = items[index];
-                        return NotificationCard(
-                          title: n.title,
-                          subtitle: n.body,
-                          isRead: n.isRead,
-                          timestamp: _formatTimestamp(n.createdAt),
-                        );
-                      },
+                      itemBuilder: (context, index) =>
+                          _NotificationCardSkeleton(
+                            animation: _shimmerAnimation,
+                          ),
                     ),
-                  );
-                },
-              ),
-        ],
+                  ),
+                  error: (_, __) => const SliverToBoxAdapter(child: SizedBox()),
+                  data: (items) {
+                    if (items.isEmpty) {
+                      return const SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: _EmptyNotifications(),
+                      );
+                    }
+                    return SliverPadding(
+                      padding: const EdgeInsets.all(16),
+                      sliver: SliverList.separated(
+                        itemCount: items.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        itemBuilder: (context, index) {
+                          final n = items[index];
+                          return NotificationCard(
+                            title: n.title,
+                            subtitle: n.body,
+                            isRead: n.isRead,
+                            timestamp: _formatTimestamp(n.createdAt),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+          ],
+        ),
       ),
     );
   }

@@ -8,6 +8,7 @@ import 'package:hydex/core/network/network.dart';
 import 'package:hydex/core/ui/colors.dart';
 import 'package:hydex/core/ui/type.dart';
 import 'package:hydex/src/features/scan/domain/scan_providers.dart';
+import 'package:hydex/src/features/scan/ui/components/camera_permission_required.dart';
 import 'package:hydex/src/widgets/blur_app_bar.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:smooth_corner/smooth_corner.dart';
@@ -68,7 +69,6 @@ class _ScanScreenState extends State<ScanScreen> {
 
       final today = DateTime.now();
       final bd = data.bookingDate;
-      log("Booking Date: $data");
       if (today.year != bd.year ||
           today.month != bd.month ||
           today.day != bd.day) {
@@ -126,101 +126,103 @@ class _ScanScreenState extends State<ScanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BlurAppBar(title: "QR Scanner", scrollController: controller),
-      body: Center(
-        child: Column(
-          children: [
-            SizedBox(height: 62.5),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              decoration: ShapeDecoration(
-                shape: SmoothRectangleBorder(
-                  smoothness: 1,
-                  borderRadius: BorderRadius.circular(50),
-                  side: BorderSide(color: _borderColor, width: 3),
+      body: CameraPermissionRequired(
+        child: Center(
+          child: Column(
+            children: [
+              SizedBox(height: 62.5),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                decoration: ShapeDecoration(
+                  shape: SmoothRectangleBorder(
+                    smoothness: 1,
+                    borderRadius: BorderRadius.circular(50),
+                    side: BorderSide(color: _borderColor, width: 3),
+                  ),
                 ),
-              ),
-              child: SmoothClipRRect(
-                borderRadius: .circular(50),
-                smoothness: 1,
-                child: SizedBox(
-                  height: 250,
-                  width: 250,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Consumer(
-                        builder: (context, ref, _) {
-                          return MobileScanner(
-                            controller: scannerController,
-                            onDetectError: (error, stackTrace) {
-                              log(
-                                "Error Scanning",
-                                error: error,
-                                stackTrace: stackTrace,
-                              );
-                            },
-                            onDetect: (result) => _onDetect(result, ref),
-                          );
-                        },
-                      ),
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 250),
-                        child: switch (_scanState) {
-                          _ScanState.loading => _ScanOverlay(
-                            key: const ValueKey('loading'),
-                            color: AppColors.signalBrandSolid.withAlpha(180),
-                            child: const CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 3,
+                child: SmoothClipRRect(
+                  borderRadius: .circular(50),
+                  smoothness: 1,
+                  child: SizedBox(
+                    height: 250,
+                    width: 250,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Consumer(
+                          builder: (context, ref, _) {
+                            return MobileScanner(
+                              controller: scannerController,
+                              onDetectError: (error, stackTrace) {
+                                log(
+                                  "Error Scanning",
+                                  error: error,
+                                  stackTrace: stackTrace,
+                                );
+                              },
+                              onDetect: (result) => _onDetect(result, ref),
+                            );
+                          },
+                        ),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 250),
+                          child: switch (_scanState) {
+                            _ScanState.loading => _ScanOverlay(
+                              key: const ValueKey('loading'),
+                              color: AppColors.signalBrandSolid.withAlpha(180),
+                              child: const CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3,
+                              ),
                             ),
-                          ),
-                          _ScanState.success => _ScanOverlay(
-                            key: const ValueKey('success'),
-                            color: AppColors.signalFunSuccess.withAlpha(220),
-                            child: const Icon(
-                              Icons.check_circle_outline_rounded,
-                              color: Colors.white,
-                              size: 64,
+                            _ScanState.success => _ScanOverlay(
+                              key: const ValueKey('success'),
+                              color: AppColors.signalFunSuccess.withAlpha(220),
+                              child: const Icon(
+                                Icons.check_circle_outline_rounded,
+                                color: Colors.white,
+                                size: 64,
+                              ),
                             ),
-                          ),
-                          _ScanState.error => _ScanOverlay(
-                            key: const ValueKey('error'),
-                            color: const Color(0xFF301113).withAlpha(220),
-                            child: const Icon(
-                              Icons.cancel_outlined,
-                              color: Colors.white,
-                              size: 64,
+                            _ScanState.error => _ScanOverlay(
+                              key: const ValueKey('error'),
+                              color: const Color(0xFF301113).withAlpha(220),
+                              child: const Icon(
+                                Icons.cancel_outlined,
+                                color: Colors.white,
+                                size: 64,
+                              ),
                             ),
-                          ),
-                          _ScanState.idle => const SizedBox.shrink(
-                            key: ValueKey('idle'),
-                          ),
-                        },
-                      ),
-                    ],
+                            _ScanState.idle => const SizedBox.shrink(
+                              key: ValueKey('idle'),
+                            ),
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 42),
-            Text(
-              switch (_scanState) {
-                _ScanState.loading => "Fetching details...",
-                _ScanState.success => "Scan successful",
-                _ScanState.error => _errorMessage ?? "Something went wrong",
-                _ScanState.idle => "Point at guest's QR code",
-              },
-              style: TextStyle(
-                fontSize: AppTextStyles(context).accumulator * 14,
-                color: switch (_scanState) {
-                  _ScanState.success => AppColors.textSuccess,
-                  _ScanState.error => AppColors.textError,
-                  _ => AppColors.textSecondary,
+              SizedBox(height: 42),
+              Text(
+                switch (_scanState) {
+                  _ScanState.loading => "Fetching details...",
+                  _ScanState.success => "Scan successful",
+                  _ScanState.error => _errorMessage ?? "Something went wrong",
+                  _ScanState.idle => "Point at guest's QR code",
                 },
+                style: TextStyle(
+                  fontSize: AppTextStyles(context).accumulator * 14,
+                  color: switch (_scanState) {
+                    _ScanState.success => AppColors.textSuccess,
+                    _ScanState.error => AppColors.textError,
+                    _ => AppColors.textSecondary,
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

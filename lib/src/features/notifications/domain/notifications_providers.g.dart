@@ -84,3 +84,44 @@ final class MarkAllNotificationsAsReadProvider
 
 String _$markAllNotificationsAsReadHash() =>
     r'fc11dd53f86e744aaf27f23e637961020ec8715c';
+
+@ProviderFor(notificationPermissionStatus)
+const notificationPermissionStatusProvider =
+    NotificationPermissionStatusProvider._();
+
+final class NotificationPermissionStatusProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<PermissionStatus>,
+          PermissionStatus,
+          FutureOr<PermissionStatus>
+        >
+    with $FutureModifier<PermissionStatus>, $FutureProvider<PermissionStatus> {
+  const NotificationPermissionStatusProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'notificationPermissionStatusProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$notificationPermissionStatusHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<PermissionStatus> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<PermissionStatus> create(Ref ref) {
+    return notificationPermissionStatus(ref);
+  }
+}
+
+String _$notificationPermissionStatusHash() =>
+    r'dce8e992582dff4989e881f3d2d12b445263a437';
