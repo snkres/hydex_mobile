@@ -12,6 +12,7 @@ class MyApp extends ConsumerWidget {
     ref.watch(offlineSyncListenerProvider);
     return MaterialApp.router(
       routerConfig: ref.watch(goRouterProvider),
+      debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme(),
     );
   }

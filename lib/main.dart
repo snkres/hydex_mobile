@@ -31,6 +31,7 @@ void main() async {
   if (kDebugMode) {
     runApp(
       DevicePreview(
+        enabled: false,
         builder: (context) {
           return ProviderScope(child: const MyApp());
         },
